@@ -88,3 +88,6 @@ target/
 
 # Mypy cache
 .mypy_cache/
+
+# notes
+DEVELOPMENT_PLAN.md
