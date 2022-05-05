@@ -1,0 +1,2 @@
+source_id,target_id,relation,prov
+MONDO:0008798,MONDO:0019211,rdfs:subClassOf,MONDO

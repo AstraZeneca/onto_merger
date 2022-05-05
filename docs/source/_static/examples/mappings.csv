@@ -1,0 +1,2 @@
+source_id,target_id,relation,prov
+MONDO:0004979,SNOMED:31387002,equivalent_to,MONDO

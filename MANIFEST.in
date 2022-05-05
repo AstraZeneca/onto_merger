@@ -1,0 +1,7 @@
+graft onto_merger
+graft tests
+
+prune docs
+
+include LICENSE README.md
+exclude tox.ini .pre-commit-config.yaml dev_setup.sh readthedocs.yaml

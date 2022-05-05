@@ -1,0 +1,92 @@
+"""Tests for the data classes."""
+
+import numpy as np
+import pandas as pd
+from pandas import DataFrame
+
+from onto_merger.data.constants import (
+    SCHEMA_DATA_REPO_SUMMARY,
+    SCHEMA_MAPPING_TABLE,
+    TABLE_MAPPINGS,
+)
+from onto_merger.data.dataclasses import (
+    AlignmentConfigMappingTypeGroups,
+    AlignmentStep,
+    DataRepository,
+    NamedTable,
+)
+
+
+def test_alignment_step_dataclass():
+    mapping_type_group = "foo"
+    source_id = "MONDO"
+    step_counter = 1
+    count_unmapped_nodes = 100
+
+    actual = AlignmentStep(
+        mapping_type_group=mapping_type_group,
+        source_id=source_id,
+        step_counter=step_counter,
+        count_unmapped_nodes=count_unmapped_nodes,
+    )
+
+    assert actual.mapping_type_group == mapping_type_group
+    assert actual.source_id == source_id
+    assert actual.step_counter == step_counter
+    assert actual.count_unmapped_nodes == count_unmapped_nodes
+    assert actual.count_mappings == 0
+    assert actual.count_nodes_one_source_to_many_target == 0
+    assert actual.count_merged_nodes == 0
+
+
+def test_alignment_config_mapping_type_groups_dataclass():
+    equivalence = ["foo"]
+    database_reference = ["bar"]
+    label_match = ["bla"]
+
+    actual = AlignmentConfigMappingTypeGroups(
+        equivalence=equivalence,
+        database_reference=database_reference,
+        label_match=label_match,
+    )
+
+    assert actual.equivalence == equivalence
+    assert actual.database_reference == database_reference
+    assert actual.label_match == label_match
+    assert actual.all_mapping_types == (equivalence + database_reference + label_match)
+
+
+def test_data_repository_dataclass():
+    # empty
+    data_repo = DataRepository()
+    assert data_repo.get_output_tables() == []
+    assert data_repo.get_input_tables() == []
+
+    # update table
+    table = NamedTable(
+        TABLE_MAPPINGS,
+        pd.DataFrame(
+            [
+                ("MONDO:0000004", "MONDO:0000123", "equivalent_to", "MONDO"),
+                ("MONDO:0000005", "MONDO:0000456", "equivalent_to", "MONDO"),
+            ],
+            columns=SCHEMA_MAPPING_TABLE,
+        ),
+    )
+    data_repo.update(table=table)
+    result = data_repo.get_input_tables()[0]
+    assert isinstance(result, NamedTable)
+    assert isinstance(data_repo.get(table_name=TABLE_MAPPINGS), NamedTable)
+
+    # get_repo_summary
+    exp_repo_summary = pd.DataFrame(
+        [
+            (TABLE_MAPPINGS, "2", SCHEMA_MAPPING_TABLE),
+        ],
+        columns=SCHEMA_DATA_REPO_SUMMARY,
+    )
+    result_repo_summary = data_repo.get_repo_summary()
+    print(result_repo_summary)
+    print(exp_repo_summary)
+    assert isinstance(result_repo_summary, DataFrame)
+    assert np.array_equal(result_repo_summary.values, exp_repo_summary.values) is True

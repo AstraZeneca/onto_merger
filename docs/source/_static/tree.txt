@@ -1,0 +1,227 @@
+.
+├── input
+│   ├── config.json
+│   ├── edges_hierarchy.csv
+│   ├── mappings.csv
+│   ├── nodes.csv
+│   └── nodes_obsolete.csv
+├── output
+│   ├── domain_ontology
+│   │   ├── edges_hierarchy.csv
+│   │   ├── mappings.csv
+│   │   ├── merges.csv
+│   │   └── nodes.csv
+│   ├── intermediate
+│   │   ├── alignment_steps_report.csv
+│   │   ├── data_tests
+│   │   │   ├── checkpoints
+│   │   │   │   └── first_checkpoint.yml
+│   │   │   ├── expectations
+│   │   │   │   ├── alignment_steps_report_table.json
+│   │   │   │   ├── edges_hierarchy_post_table.json
+│   │   │   │   ├── edges_hierarchy_table.json
+│   │   │   │   ├── mappings_obsolete_to_current_table.json
+│   │   │   │   ├── mappings_table.json
+│   │   │   │   ├── mappings_updated_table.json
+│   │   │   │   ├── merges_aggregated_table.json
+│   │   │   │   ├── merges_table.json
+│   │   │   │   ├── nodes_dangling_table.json
+│   │   │   │   ├── nodes_merged_table.json
+│   │   │   │   ├── nodes_obsolete_table.json
+│   │   │   │   ├── nodes_only_connected_table.json
+│   │   │   │   ├── nodes_table.json
+│   │   │   │   └── nodes_unmapped_table.json
+│   │   │   ├── profilers
+│   │   │   └── uncommitted
+│   │   │       └── validations
+│   │   │           ├── alignment_steps_report_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105042.030899Z
+│   │   │           │           └── 5552e151f188ee57311fc238b8170815.json
+│   │   │           ├── edges_hierarchy_post_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105035.121627Z
+│   │   │           │           └── 7cb457b0254ddb98e780278a30a4d9c4.json
+│   │   │           ├── edges_hierarchy_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T104956.299701Z
+│   │   │           │           └── e796f8604aa560e0c100853f40f13898.json
+│   │   │           ├── mappings_obsolete_to_current_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105041.006390Z
+│   │   │           │           └── 200f561a2dac724ec22aec3c34feb46d.json
+│   │   │           ├── mappings_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T104955.245204Z
+│   │   │           │           └── 6682f24a1874ad590cc50ea8153e91f2.json
+│   │   │           ├── mappings_updated_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105039.763304Z
+│   │   │           │           └── 115b6f4225d30e538109d3e405e596f2.json
+│   │   │           ├── merges_aggregated_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105038.736038Z
+│   │   │           │           └── 5effc596f94fe428307b0e926c7cb5fe.json
+│   │   │           ├── merges_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105036.690981Z
+│   │   │           │           └── 54748d1cc54b1cf50fee5532fb26ffa3.json
+│   │   │           ├── nodes_dangling_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105033.885748Z
+│   │   │           │           └── 9ec9bb6c1af546667eb8c1ae9002245f.json
+│   │   │           ├── nodes_merged_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105031.918387Z
+│   │   │           │           └── ae54c00c1086efa2f494fe8dd9416516.json
+│   │   │           ├── nodes_obsolete_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T104953.993112Z
+│   │   │           │           └── 52f6094e9d70477069b500d67d9793ab.json
+│   │   │           ├── nodes_only_connected_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T105032.877826Z
+│   │   │           │           └── 44e36aed3d6a48fc44f22ab94286098e.json
+│   │   │           ├── nodes_table
+│   │   │           │   └── __none__
+│   │   │           │       └── 20220429T104952.507189Z
+│   │   │           │           └── 1492c1a249e722230b08d7fac4419762.json
+│   │   │           └── nodes_unmapped_table
+│   │   │               └── __none__
+│   │   │                   └── 20220429T105030.608064Z
+│   │   │                       └── 0e41d50bc6383fa58a8b64acb0cae2fe.json
+│   │   ├── dropped_mappings
+│   │   │   ├── database_reference_1_MONDO.csv
+│   │   │   ├── database_reference_3_ICD10CM.csv
+│   │   │   ├── database_reference_7_UMLS.csv
+│   │   │   ├── equivalence_10_UK_BIOBANK.csv
+│   │   │   └── equivalence_1_MONDO.csv
+│   │   ├── mappings_obsolete_to_current.csv
+│   │   ├── mappings_updated.csv
+│   │   ├── merges_aggregated.csv
+│   │   ├── nodes_dangling.csv
+│   │   ├── nodes_merged.csv
+│   │   ├── nodes_only_connected.csv
+│   │   └── nodes_unmapped.csv
+│   └── report
+│       ├── data_docs
+│       │   └── local_site
+│       │       ├── expectations
+│       │       │   ├── alignment_steps_report_table.html
+│       │       │   ├── edges_hierarchy_post_table.html
+│       │       │   ├── edges_hierarchy_table.html
+│       │       │   ├── mappings_obsolete_to_current_table.html
+│       │       │   ├── mappings_table.html
+│       │       │   ├── mappings_updated_table.html
+│       │       │   ├── merges_aggregated_table.html
+│       │       │   ├── merges_table.html
+│       │       │   ├── nodes_dangling_table.html
+│       │       │   ├── nodes_merged_table.html
+│       │       │   ├── nodes_obsolete_table.html
+│       │       │   ├── nodes_only_connected_table.html
+│       │       │   ├── nodes_table.html
+│       │       │   └── nodes_unmapped_table.html
+│       │       ├── index.html
+│       │       ├── static
+│       │       │   ├── fonts
+│       │       │   │   └── HKGrotesk
+│       │       │   │       ├── HKGrotesk-Bold.otf
+│       │       │   │       ├── HKGrotesk-BoldItalic.otf
+│       │       │   │       ├── HKGrotesk-Italic.otf
+│       │       │   │       ├── HKGrotesk-Light.otf
+│       │       │   │       ├── HKGrotesk-LightItalic.otf
+│       │       │   │       ├── HKGrotesk-Medium.otf
+│       │       │   │       ├── HKGrotesk-MediumItalic.otf
+│       │       │   │       ├── HKGrotesk-Regular.otf
+│       │       │   │       ├── HKGrotesk-SemiBold.otf
+│       │       │   │       └── HKGrotesk-SemiBoldItalic.otf
+│       │       │   ├── images
+│       │       │   │   ├── favicon.ico
+│       │       │   │   ├── glossary_scroller.gif
+│       │       │   │   ├── iterative-dev-loop.png
+│       │       │   │   ├── logo-long-vector.svg
+│       │       │   │   ├── logo-long.png
+│       │       │   │   ├── short-logo-vector.svg
+│       │       │   │   ├── short-logo.png
+│       │       │   │   └── validation_failed_unexpected_values.gif
+│       │       │   └── styles
+│       │       │       ├── data_docs_custom_styles_template.css
+│       │       │       └── data_docs_default_styles.css
+│       │       └── validations
+│       │           ├── alignment_steps_report_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105042.030899Z
+│       │           │           └── 5552e151f188ee57311fc238b8170815.html
+│       │           ├── edges_hierarchy_post_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105035.121627Z
+│       │           │           └── 7cb457b0254ddb98e780278a30a4d9c4.html
+│       │           ├── edges_hierarchy_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T104956.299701Z
+│       │           │           └── e796f8604aa560e0c100853f40f13898.html
+│       │           ├── mappings_obsolete_to_current_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105041.006390Z
+│       │           │           └── 200f561a2dac724ec22aec3c34feb46d.html
+│       │           ├── mappings_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T104955.245204Z
+│       │           │           └── 6682f24a1874ad590cc50ea8153e91f2.html
+│       │           ├── mappings_updated_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105039.763304Z
+│       │           │           └── 115b6f4225d30e538109d3e405e596f2.html
+│       │           ├── merges_aggregated_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105038.736038Z
+│       │           │           └── 5effc596f94fe428307b0e926c7cb5fe.html
+│       │           ├── merges_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105036.690981Z
+│       │           │           └── 54748d1cc54b1cf50fee5532fb26ffa3.html
+│       │           ├── nodes_dangling_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105033.885748Z
+│       │           │           └── 9ec9bb6c1af546667eb8c1ae9002245f.html
+│       │           ├── nodes_merged_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105031.918387Z
+│       │           │           └── ae54c00c1086efa2f494fe8dd9416516.html
+│       │           ├── nodes_obsolete_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T104953.993112Z
+│       │           │           └── 52f6094e9d70477069b500d67d9793ab.html
+│       │           ├── nodes_only_connected_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T105032.877826Z
+│       │           │           └── 44e36aed3d6a48fc44f22ab94286098e.html
+│       │           ├── nodes_table
+│       │           │   └── __none__
+│       │           │       └── 20220429T104952.507189Z
+│       │           │           └── 1492c1a249e722230b08d7fac4419762.html
+│       │           └── nodes_unmapped_table
+│       │               └── __none__
+│       │                   └── 20220429T105030.608064Z
+│       │                       └── 0e41d50bc6383fa58a8b64acb0cae2fe.html
+│       ├── data_profile_reports
+│       │   ├── alignment_steps_report_report.html
+│       │   ├── edges_hierarchy_post_report.html
+│       │   ├── edges_hierarchy_report.html
+│       │   ├── mappings_obsolete_to_current_report.html
+│       │   ├── mappings_report.html
+│       │   ├── mappings_updated_report.html
+│       │   ├── merges_aggregated_report.html
+│       │   ├── merges_report.html
+│       │   ├── nodes_dangling_report.html
+│       │   ├── nodes_merged_report.html
+│       │   ├── nodes_obsolete_report.html
+│       │   ├── nodes_only_connected_report.html
+│       │   ├── nodes_report.html
+│       │   └── nodes_unmapped_report.html
+│       ├── index.html
+│       └── logs
+│           └── onto-merger.logger
+└── tree.txt
+
+107 directories, 117 files
