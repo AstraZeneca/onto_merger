@@ -46,7 +46,9 @@ setup(
     package_dir={"": "onto_merger"},
     version="0.1.0",
     license="Apache License, Version 2.0",
-    description="Create a hierarchical node network by merging and connecting nodes " + "in a domain (e.g. Disease).",
+    description="OntoMerge* is an ontology alignment library for deduplicatin knowledge graph nodes,(i.e. ontology "
+                + "concepts) that represent the *same domain*, e.g. diseases, and **connecting** them to form a "
+                + "single directed acyclic hierarchical graph (DAG) (i.e. an ontology class hierarchy).",
     author="David Geleta",
     author_email="davidgeleta@gmail.com",
     url="https://github.com/AstraZeneca/onto_merger",

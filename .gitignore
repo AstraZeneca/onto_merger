@@ -89,5 +89,6 @@ target/
 # Mypy cache
 .mypy_cache/
 
-# notes
+# notes & dev helpers
 DEVELOPMENT_PLAN.md
+dev_doc_gen.sh
