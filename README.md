@@ -32,9 +32,7 @@ If you find *OntoMerger* useful in your work or research, please consider adding
 
 **Getting Started**
 
-The API of `chemicalx` provides a high-level function for training and evaluating models
-that's heavily influenced by the [PyKEEN](https://github.com/pykeen/pykeen/)
-training and evaluation pipeline:
+The API of `onto_merger` ...
 
 ```python
 
@@ -60,4 +58,4 @@ $ tox -e py
 
 **License**
 
-- [Apache 2.0 License](https://github.com/AstraZeneca/chemicalx/blob/main/LICENSE)
+- [Apache 2.0 License](https://github.com/AstraZeneca/onto_merger/blob/main/LICENSE)

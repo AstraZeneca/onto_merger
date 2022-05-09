@@ -9,12 +9,12 @@ install_requires = [
     "dataclasses-json==0.5.7",
     "great_expectations==0.15.2",
     "jinja2==3.0.3",
-    "jsonschema",
-    "wget",
-    "docopt",
+    "jsonschema==4.4.0",
+    "wget==3.2",
     "networkx",
-    "ruamel.yaml",
-    "numpy"
+    "networkit==9.1.1",
+    "ruamel.yaml==0.17.17",
+    "numpy==1.21.5"
 ]
 
 setup_requires = ["pytest-runner"]

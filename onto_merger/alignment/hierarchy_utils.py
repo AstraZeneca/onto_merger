@@ -1,4 +1,5 @@
 import itertools
+import sys
 from typing import List, Optional, Tuple
 
 import pandas as pd
@@ -6,6 +7,7 @@ from networkx import Graph
 from pandas import DataFrame
 
 from onto_merger.alignment import networkx_utils, mapping_utils
+from onto_merger.alignment.networkit_utils import NetworkitGraph
 from onto_merger.analyser.analysis_util import (
     get_namespace_column_name_for_column,
     produce_table_with_namespace_column_for_node_ids
@@ -137,7 +139,7 @@ def produce_table_nodes_dangling(nodes: DataFrame, hierarchy_edges: DataFrame,
     return NamedTable(TABLE_NODES_DANGLING, nodes_dangling)
 
 
-def produce_node_id_table_from_edge_table(edges: DataFrame):
+def produce_node_id_table_from_edge_table(edges: DataFrame) -> DataFrame:
     """Produces a node ID table (i.e. a table containing node IDs only) from a
     given edge set by aggregating the source and target node IDs.
 
@@ -235,25 +237,40 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
     unmapped_node_ids_for_namespace = filter_nodes_for_namespace(
         nodes=unmapped_nodes, namespace=node_namespace
     )[COLUMN_DEFAULT_ID].tolist()
-    logger.info(f"Starting to establish connectivity for {node_namespace} "
-                + f"({len(unmapped_node_ids_for_namespace):,d} unmapped)")
+    logger.info(f"* * * Connectivity for {node_namespace} "
+                + f"({len(unmapped_node_ids_for_namespace):,d} unmapped, "
+                + f"{(len(unmapped_node_ids_for_namespace) * 100) / len(unmapped_nodes):.2f}% of total) * * *")
     if not unmapped_node_ids_for_namespace:
         return []
 
-    # create the hierarchy graph for the namespace
-    hierarchy_graph_for_ns = networkx_utils.create_networkx_graph(
-        edges=mapping_utils.get_mappings_for_namespace(
-            namespace=node_namespace,
-            edges=hierarchy_edges
-        )
+    # get edges for ns
+    edges_for_ns = mapping_utils.get_mappings_for_namespace(
+        namespace=node_namespace,
+        edges=hierarchy_edges
     )
+    if edges_for_ns.empty:
+        return [], merge_and_connectivity_map_for_ns
+
+    # create the hierarchy graph for the namespace
+    hierarchy_graph_for_ns = NetworkitGraph(edges=edges_for_ns)
+    reachable_nodes = list(hierarchy_graph_for_ns.node_id_to_index_map.keys())
+    reachable_unmapped_nodes = [node_id for node_id in unmapped_node_ids_for_namespace
+                                if node_id in reachable_nodes]
+    count_unmapped = len(reachable_unmapped_nodes)
+    logger.info(f"Reachable unmapped nodes {len(reachable_unmapped_nodes):,d} "
+                + f"({(len(reachable_unmapped_nodes) * 100) / len(unmapped_node_ids_for_namespace):.2f}%)")
 
     # connect
     edges_for_namespace_nodes = []
-    for node_to_connect in unmapped_node_ids_for_namespace:
-        if unmapped_node_ids_for_namespace.index(node_to_connect) % 100 == 0:
-            logger.info(f"{node_namespace} | {unmapped_node_ids_for_namespace.index(node_to_connect):,d} "
-                        + f"of {len(unmapped_node_ids_for_namespace):,d}")
+
+    counter = 1
+    for node_to_connect in reachable_unmapped_nodes:
+        progress_bar(
+            count=counter,
+            total=count_unmapped,
+            status=f" Connecting {node_namespace} "
+        )
+        counter += 1
         if node_to_connect not in merge_and_connectivity_map:
             edges_for_node = produce_hierarchy_path_for_unmapped_node(
                 node_to_connect=node_to_connect,
@@ -282,33 +299,30 @@ def produce_hierarchy_path_for_unmapped_node(
         node_to_connect: str,
         unmapped_node_ids: List[str],
         merge_and_connectivity_map_for_ns: dict,
-        hierarchy_graph_for_ns: Graph) -> List[Tuple[str, str]]:
+        hierarchy_graph_for_ns: NetworkitGraph) -> List[Tuple[str, str]]:
     # get paths paths with merged nodes
-    paths_terminating_with_a_merged_node = _get_hierarchy_paths_with_merged_nodes(
-        shortest_paths=networkx_utils.get_shortest_paths_for_node(
-            node_id=node_to_connect,
-            graph=hierarchy_graph_for_ns
-        ),
-        merge_map=merge_and_connectivity_map_for_ns
+    shortest_path = hierarchy_graph_for_ns.get_path_for_node(
+        node_id=node_to_connect
     )
-    if not paths_terminating_with_a_merged_node:
+    if not shortest_path:
         return []
 
-    # find the shortest path with a merged node
-    shortest_path = _find_shortest_path_with_a_merged_node(
-        paths_terminating_with_a_merged_node=paths_terminating_with_a_merged_node
-    )
-
-    # prune path between the unmapped and the merged node: remove all nodes that are not
-    # also unmapped
-    pruned_path = _prune_hierarchy_path(
-        shortest_path=shortest_path,
-        unmapped_node_ids=unmapped_node_ids,
-        merge_map=merge_and_connectivity_map_for_ns
-    )
+    # terminating with merged node
+    merged_node_ids_in_path = [node_id
+                               for node_id in shortest_path
+                               if node_id in merge_and_connectivity_map_for_ns.keys()]
+    if not merged_node_ids_in_path:
+        return []
+    index_of_first_merged_node = sorted([shortest_path.index(node_id) for node_id in merged_node_ids_in_path])[0]
+    pruned_path = shortest_path[0:index_of_first_merged_node]
+    unmapped_node_ids_in_path = [node_id
+                                 for node_id in shortest_path
+                                 if node_id in unmapped_node_ids]
+    permitted_node_ids_in_path = unmapped_node_ids_in_path + merged_node_ids_in_path
+    final_path = [node_id for node_id in pruned_path if node_id in permitted_node_ids_in_path]
 
     # convert the path into a hierarchy edge tuple list
-    edges = _convert_hierarchy_path_into_tuple_list(pruned_path=pruned_path)
+    edges = _convert_hierarchy_path_into_tuple_list(pruned_path=final_path)
 
     return edges
 
@@ -320,36 +334,18 @@ def _produce_merge_map(merges: DataFrame) -> dict:
     }
 
 
-def _get_hierarchy_paths_with_merged_nodes(shortest_paths, merge_map: dict) -> dict:
-    if not shortest_paths:
-        return {}
-    merged_node_ids_in_paths = [node_id
-                                for node_id in shortest_paths.keys()
-                                if node_id in merge_map.keys()]
-    path_dict_terminating_with_a_merged_node = {
-        key: value
-        for key, value in shortest_paths.items()
-        if key in merged_node_ids_in_paths
-    }
-    return path_dict_terminating_with_a_merged_node
-
-
-def _find_shortest_path_with_a_merged_node(paths_terminating_with_a_merged_node: dict) -> List[str]:
-    path_list_terminating_with_a_merged_node = \
-        list(paths_terminating_with_a_merged_node.values())
-    path_list_terminating_with_a_merged_node.sort(key=len)
-    shortest_path = path_list_terminating_with_a_merged_node[0]
-    return shortest_path
-
-
-def _prune_hierarchy_path(shortest_path: List[str], unmapped_node_ids: List[str], merge_map: dict) -> List[str]:
-    return [node_id
-            for node_id in shortest_path
-            if node_id in unmapped_node_ids] + [merge_map[shortest_path[-1]]]
-
-
 def _convert_hierarchy_path_into_tuple_list(pruned_path: List[str]) -> List[Tuple[str, str]]:
     return [
         (pruned_path[source_index], pruned_path[source_index + 1])
         for source_index in range(0, (len(pruned_path) - 1))
     ]
+
+
+def progress_bar(count, total, status=''):
+    bar_len = 60
+    filled_len = int(round(bar_len * count / float(total)))
+    percents = round(100.1 * count / float(total), 1)
+    bar = '=' * filled_len + '-' * (bar_len - filled_len)
+    sys.stdout = sys.__stdout__
+    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', status))
+    sys.stdout.flush()

@@ -10,9 +10,7 @@ from onto_merger.data.constants import TABLE_EDGES_HIERARCHY, TABLE_MERGES, TABL
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository
 from onto_merger.data_testing.ge_runner import GERunner
-from onto_merger.logger.log import add_logger_file, setup_logger
-
-logger = setup_logger()
+from onto_merger.logger.log import setup_logger
 
 
 class Pipeline:
@@ -32,7 +30,7 @@ class Pipeline:
         self._short_project_name = self._project_folder_path.split("/")[-1]
         self._data_manager = DataManager(project_folder_path=self._project_folder_path)
         self._alignment_config = self._data_manager.load_alignment_config()
-        add_logger_file(logger=logger, file_name=self._data_manager.get_log_file_path())
+        self.logger = setup_logger(module_name=__name__, file_name=self._data_manager.get_log_file_path())
         self._source_alignment_order: List[str] = []
 
     def run_alignment_and_connection_process(self) -> None:
@@ -41,7 +39,7 @@ class Pipeline:
 
         :return:
         """
-        logger.info("Started running alignment and connection process for " + f"'{self._short_project_name}'")
+        self.logger.info("Started running alignment and connection process for " + f"'{self._short_project_name}'")
 
         # (1) VALIDATE CONFIG
         self._validate_alignment_config()
@@ -68,7 +66,7 @@ class Pipeline:
         # (8) PRODUCE REPORT
         self._produce_report()
 
-        logger.info("Finished running alignment and connection process for " + f"'{self._short_project_name}'")
+        self.logger.info("Finished running alignment and connection process for " + f"'{self._short_project_name}'")
 
     def _validate_alignment_config(self) -> None:
         """Runs the alignment configuration JSON schema validator.
@@ -77,11 +75,11 @@ class Pipeline:
 
         :return:
         """
-        logger.info("Started validating alignment config...")
+        self.logger.info("Started validating alignment config...")
         config_json_is_valid = validate_alignment_configuration(alignment_config=self._alignment_config.as_dict)
         if config_json_is_valid is False:
             raise Exception
-        logger.info("Finished validating alignment config.")
+        self.logger.info("Finished validating alignment config.")
 
     def _process_input_data(self) -> None:
         """Loads, preprocess, profiles and validates the input data.
@@ -91,7 +89,7 @@ class Pipeline:
 
         :return:
         """
-        logger.info("Started processing input data...")
+        self.logger.info("Started processing input data...")
 
         # load  and preprocess input tables: add namespaces for downstream processing
         self._data_repo.update(
@@ -107,7 +105,7 @@ class Pipeline:
         #     ge_base_directory=self._data_manager.get_data_tests_path(),
         # ).run_ge_tests(named_tables=self._data_repo.get_input_tables())
 
-        logger.info("Finished processing input data.")
+        self.logger.info("Finished processing input data.")
 
     def _align_nodes(self) -> None:
         """Runs the alignment process.
@@ -116,7 +114,7 @@ class Pipeline:
 
         :return:
         """
-        logger.info("Started aligning nodes...")
+        self.logger.info("Started aligning nodes...")
 
         alignment_results, source_alignment_order = AlignmentManager(
             alignment_config=self._alignment_config,
@@ -125,7 +123,7 @@ class Pipeline:
         ).align_nodes()
         self._data_repo.update(tables=alignment_results.get_output_tables())
         self._source_alignment_order.extend(source_alignment_order)
-        logger.info("Finished aligning nodes...")
+        self.logger.info("Finished aligning nodes...")
 
     def _aggregate_merges(self) -> None:
         """Runs the merge aggregation process (merges targets become only canonical
@@ -135,7 +133,7 @@ class Pipeline:
 
         :return:
         """
-        logger.info("Started aggregating merges...")
+        self.logger.info("Started aggregating merges...")
         table_aggregated_merges = merge_utils.produce_named_table_aggregate_merges(
             merges=self._data_repo.get(TABLE_MERGES).dataframe,
             alignment_priority_order=self._source_alignment_order,
@@ -148,7 +146,7 @@ class Pipeline:
             merges=self._data_repo.get(TABLE_MERGES).dataframe,
         )
         self._data_repo.update(tables=[table_aggregated_merges, table_merged_nodes, table_unmapped_nodes])
-        logger.info("Finished aggregating merges.")
+        self.logger.info("Finished aggregating merges.")
 
     def _connect_nodes(self) -> None:
         """Runs the connectivity process to produce the domain ontology hierarchy.
@@ -157,13 +155,13 @@ class Pipeline:
 
         :return:
         """
-        logger.info("Started connecting nodes...")
+        self.logger.info("Started connecting nodes...")
         self._data_repo.update(
             table=hierarchy_utils.connect_nodes(alignment_config=self._alignment_config,
                                                 source_alignment_order=self._source_alignment_order,
                                                 data_repo=self._data_repo)
         )
-        logger.info("Finished connecting nodes.")
+        self.logger.info("Finished connecting nodes.")
 
     def _finalise_outputs(self) -> None:
         """Produces the final merged ontology and pre-processes tables for validation.
@@ -173,7 +171,7 @@ class Pipeline:
 
         :return:
         """
-        logger.info("Started finalising outputs...")
+        self.logger.info("Started finalising outputs...")
 
         # compute: unmapped, dangling, only connected
         self._data_repo.update(
@@ -202,19 +200,19 @@ class Pipeline:
         # save all outputs
         self._data_manager.save_tables(tables=self._data_repo.get_output_tables())
 
-        logger.info("Finished finalising outputs.")
+        self.logger.info("Finished finalising outputs.")
 
     def _validate_outputs(self) -> None:
         """Runs the output data validation process.
 
         :return:
         """
-        logger.info("Started validating produced data...")
+        self.logger.info("Started validating produced data...")
         GERunner(
             alignment_config=self._alignment_config,
             ge_base_directory=self._data_manager.get_data_tests_path(),
         ).run_ge_tests(named_tables=self._data_repo.get_output_tables())
-        logger.info("Finished validating produced data.")
+        self.logger.info("Finished validating produced data.")
 
     def _produce_report(self) -> None:
         """Runs the alignment and connectivity evaluation process.
@@ -228,4 +226,4 @@ class Pipeline:
         report_path = MergedOntologyAnalyser(
             data_repo=self._data_repo, data_manager=self._data_manager
         ).produce_report()
-        logger.info(f"Saved report to {report_path}.")
+        self.logger.info(f"Saved report to {report_path}.")

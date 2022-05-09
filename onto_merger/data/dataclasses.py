@@ -68,7 +68,6 @@ class NamedTable:
     dataframe: DataFrame
 
 
-@dataclass
 class DataRepository:
     """Stores named tables in a dictionary and provides access and update
     convenience methods."""
@@ -104,9 +103,9 @@ class DataRepository:
         return [self.get(table_name=table_name) for table_name in OUTPUT_TABLES if table_name in self.data]
 
     def update(
-        self,
-        table: Optional[NamedTable] = None,
-        tables: Optional[List[NamedTable]] = None,
+            self,
+            table: Optional[NamedTable] = None,
+            tables: Optional[List[NamedTable]] = None,
     ) -> None:
         """Updates (adds or overwrites) either a single table or a list
         of named tables in the repository dictionary.
@@ -155,11 +154,11 @@ class AlignmentStep:
     count_merged_nodes: int
 
     def __init__(
-        self,
-        mapping_type_group: str,
-        source_id: str,
-        step_counter: int,
-        count_unmapped_nodes: int,
+            self,
+            mapping_type_group: str,
+            source_id: str,
+            step_counter: int,
+            count_unmapped_nodes: int,
     ):
         """Initialises the AlignmentStep dataclass.
 

@@ -6,7 +6,7 @@ from typing import Any
 APP_NAME = "OntoMerger"
 
 
-def setup_logger(logger_name=APP_NAME, is_debug=True) -> Logger:
+def setup_logger(module_name: str, file_name: str, logger_name=APP_NAME, is_debug=False) -> Logger:
     """Produces and configures the project logger with the output stream,
     formatting and log level.
 
@@ -15,37 +15,24 @@ def setup_logger(logger_name=APP_NAME, is_debug=True) -> Logger:
     :return: The logger.
     """
     logger = logging.getLogger(logger_name)
-    logger.setLevel(logging.DEBUG if is_debug else logging.INFO)
-
-    formatter = get_formatter()
-
-    sh = logging.StreamHandler(sys.stdout)
-    sh.setFormatter(formatter)
     logger.handlers.clear()
-    logger.addHandler(sh)
+    logger.setLevel(logging.DEBUG if is_debug else logging.INFO)
+    logger.propagate = 0
 
-    return logger
-
-
-def get_formatter() -> logging.Formatter:
-    """Configures the logger formatter.
-
-    :return: The formatter.
-    """
-    return logging.Formatter(
+    formatter = logging.Formatter(
         fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
+    sh = logging.StreamHandler(sys.stdout)
+    sh.setFormatter(formatter)
+    logger.addHandler(hdlr=sh)
 
-def add_logger_file(logger: Logger, file_name=str) -> None:
-    """Sets the log output file path.
+    fh = logging.FileHandler(file_name)
+    fh.setFormatter(fmt=formatter)
+    logger.addHandler(hdlr=fh)
 
-    :param logger: The logger.
-    :param file_name: The file path.
-    :return:
-    """
-    logger.addHandler(hdlr=logging.FileHandler(file_name))
+    return logger.getChild(module_name)
 
 
 def get_logger(module_name) -> Any:

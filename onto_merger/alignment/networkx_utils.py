@@ -41,3 +41,10 @@ def get_shortest_paths_for_node(node_id: str, graph: Graph) -> dict:
         return {}
     shortest_paths = nx.shortest_path(graph, source=node_id)
     return shortest_paths
+
+
+def get_shortest_path_for_node(node_id: str, graph: Graph) -> dict:
+    if node_id not in graph.nodes:
+        return {}
+    shortest_paths = nx.single_source_shortest_path(graph, source=node_id)
+    return shortest_paths
