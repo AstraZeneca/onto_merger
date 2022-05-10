@@ -6,7 +6,12 @@ from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.alignment_config.validator import validate_alignment_configuration
 from onto_merger.analyser import analysis_util, pandas_profiler
 from onto_merger.analyser.merged_ontology_analyser import MergedOntologyAnalyser
-from onto_merger.data.constants import TABLE_EDGES_HIERARCHY, TABLE_MERGES, TABLE_NODES, TABLE_MERGES_AGGREGATED
+from onto_merger.data.constants import (
+    TABLE_EDGES_HIERARCHY,
+    TABLE_MERGES,
+    TABLE_MERGES_AGGREGATED,
+    TABLE_NODES,
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository
 from onto_merger.data_testing.ge_runner import GERunner
@@ -138,9 +143,7 @@ class Pipeline:
             merges=self._data_repo.get(TABLE_MERGES).dataframe,
             alignment_priority_order=self._source_alignment_order,
         )
-        table_merged_nodes = merge_utils.produce_named_table_merged_nodes(
-            merges=table_aggregated_merges.dataframe
-        )
+        table_merged_nodes = merge_utils.produce_named_table_merged_nodes(merges=table_aggregated_merges.dataframe)
         table_unmapped_nodes = mapping_utils.produce_named_table_unmapped_nodes(
             nodes=self._data_repo.get(TABLE_NODES).dataframe,
             merges=self._data_repo.get(TABLE_MERGES).dataframe,
@@ -157,9 +160,11 @@ class Pipeline:
         """
         self.logger.info("Started connecting nodes...")
         self._data_repo.update(
-            table=hierarchy_utils.connect_nodes(alignment_config=self._alignment_config,
-                                                source_alignment_order=self._source_alignment_order,
-                                                data_repo=self._data_repo)
+            table=hierarchy_utils.connect_nodes(
+                alignment_config=self._alignment_config,
+                source_alignment_order=self._source_alignment_order,
+                data_repo=self._data_repo,
+            )
         )
         self.logger.info("Finished connecting nodes.")
 

@@ -16,8 +16,7 @@ def create_networkx_graph(edges: DataFrame) -> Graph:
     :param edges: The hierarchy edge table.
     :return: The network x graph.
     """
-    graph: Graph = nx.from_pandas_edgelist(df=edges, source=COLUMN_SOURCE_ID,
-                                           target=COLUMN_TARGET_ID)
+    graph: Graph = nx.from_pandas_edgelist(df=edges, source=COLUMN_SOURCE_ID, target=COLUMN_TARGET_ID)
     return graph
 
 
@@ -27,8 +26,7 @@ def is_single_subgraph(graph: Graph) -> bool:
     :param graph: The graph to check for sub-graph count.
     :return: True if there is only one sub-graph, otherwise False.
     """
-    sub_graphs: List[Graph] = list(
-        graph.subgraph(c) for c in connected_components(graph))
+    sub_graphs: List[Graph] = list(graph.subgraph(c) for c in connected_components(graph))
     if len(sub_graphs) == 1:
         return True
     else:

@@ -14,7 +14,7 @@ install_requires = [
     "networkx",
     "networkit==9.1.1",
     "ruamel.yaml==0.17.17",
-    "numpy==1.21.5"
+    "numpy==1.21.5",
 ]
 
 setup_requires = ["pytest-runner"]
@@ -47,8 +47,8 @@ setup(
     version="0.1.0",
     license="Apache License, Version 2.0",
     description="OntoMerge* is an ontology alignment library for deduplicatin knowledge graph nodes,(i.e. ontology "
-                + "concepts) that represent the *same domain*, e.g. diseases, and **connecting** them to form a "
-                + "single directed acyclic hierarchical graph (DAG) (i.e. an ontology class hierarchy).",
+    + "concepts) that represent the *same domain*, e.g. diseases, and **connecting** them to form a "
+    + "single directed acyclic hierarchical graph (DAG) (i.e. an ontology class hierarchy).",
     author="David Geleta",
     author_email="davidgeleta@gmail.com",
     url="https://github.com/AstraZeneca/onto_merger",

@@ -1,20 +1,24 @@
 """Data class for Networkit graph."""
 
 import sys
-from typing import List, Dict
 from dataclasses import dataclass
-
-from pandas import DataFrame
+from typing import Dict, List
 
 import networkit as nk
 from networkit import Graph
+from pandas import DataFrame
+
+from onto_merger.data.constants import (
+    COLUMN_DEFAULT_ID,
+    COLUMN_SOURCE_ID,
+    COLUMN_TARGET_ID,
+)
+from onto_merger.logger.log import get_logger
 
 # from networkit.distance
 
 # from networkit import getPath
 
-from onto_merger.data.constants import COLUMN_SOURCE_ID, COLUMN_TARGET_ID, COLUMN_DEFAULT_ID
-from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)
 
@@ -35,12 +39,15 @@ class NetworkitGraph:
         logger.info(f"Producing node ID lookup maps..")
         self.node_id_to_index_map = NetworkitGraph._produce_node_id_to_index_map(node_ids=node_ids)
         self.node_index_to_id_map = NetworkitGraph._produce_node_index_to_id_map(
-            node_id_to_index_map=self.node_id_to_index_map)
+            node_id_to_index_map=self.node_id_to_index_map
+        )
         logger.info(f"Adding edges..")
         self.graph = self._create_networkit_graph(edges=edges, node_id_to_index=self.node_id_to_index_map)
         self.search_heuristic = [0 for _ in range(self.graph.upperNodeIdBound())]
-        logger.info(f"Hierarchy graph initialised with {self.graph.numberOfNodes():,d} nodes "
-                    + f"({len(self.root_nodes)} root) and {self.graph.numberOfEdges():,d} edges")
+        logger.info(
+            f"Hierarchy graph initialised with {self.graph.numberOfNodes():,d} nodes "
+            + f"({len(self.root_nodes)} root) and {self.graph.numberOfEdges():,d} edges"
+        )
 
     def get_path_for_node(self, node_id: str) -> List[str]:
         if node_id not in self.node_id_to_index_map:
@@ -53,8 +60,7 @@ class NetworkitGraph:
     def _get_path_for_node_index(self, node_index: int) -> List[int]:
         for root_node_id in self.root_nodes:
             root_node_index = self.node_id_to_index_map[root_node_id]
-            a_star = nk.distance.AStar(self.graph, self.search_heuristic,
-                                       node_index, root_node_index)
+            a_star = nk.distance.AStar(self.graph, self.search_heuristic, node_index, root_node_index)
             a_star.run()
             if len(a_star.getPath()) > 0:
                 return [node_index] + a_star.getPath() + [root_node_index]
@@ -75,15 +81,8 @@ class NetworkitGraph:
 
     @staticmethod
     def _produce_node_id_to_index_map(node_ids: List[str]) -> Dict[str, int]:
-        return {
-            node_id: node_ids.index(node_id)
-            for node_id in node_ids
-        }
+        return {node_id: node_ids.index(node_id) for node_id in node_ids}
 
     @staticmethod
     def _produce_node_index_to_id_map(node_id_to_index_map: Dict[str, int]) -> Dict[int, str]:
-        return {
-            node_index: node_id
-            for node_id, node_index in node_id_to_index_map.items()
-        }
-
+        return {node_index: node_id for node_id, node_index in node_id_to_index_map.items()}
