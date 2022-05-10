@@ -78,6 +78,8 @@ target/
 # exclude data from source control by default
 /data/*/output
 /data/*/output_static
+/tests/test_data/output
+/tests/test_data_invalid/output
 
 # Mac OS-specific storage files
 .DS_Store
