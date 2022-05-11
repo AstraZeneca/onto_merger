@@ -1,0 +1,17 @@
+{
+  "domain_node_type": "Disease",
+  "seed_ontology_name": "MONDO",
+  "mappings": {
+    "type_groups": {
+      "equivalence": [
+        "equivalent_to",
+        "merge"
+      ],
+      "database_reference": [
+        "database_cross_reference",
+        "xref"
+      ],
+      "label_match": []
+    }
+  }
+}

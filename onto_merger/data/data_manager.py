@@ -42,13 +42,14 @@ class DataManager:
     Note: in the future this can be extend to split between Pandas and Spark operations.
     """
 
-    def __init__(self, project_folder_path: str):
+    def __init__(self, project_folder_path: str, clear_output_directory: bool = True):
         """Initialises the DataManager class.
 
         :param project_folder_path: The project folder path.
         """
         self._project_folder_path = project_folder_path
-        self._clear_output_directory()
+        if clear_output_directory is True:
+            self._clear_output_directory()
         self._create_output_directory_structure()
 
     def load_alignment_config(self) -> AlignmentConfig:
