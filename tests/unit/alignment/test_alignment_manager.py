@@ -1,23 +1,19 @@
 """Tests for the AlignmentManager."""
-from typing import List
 
 import numpy as np
 import pandas as pd
-import pytest
 from pandas import DataFrame
 
 from onto_merger.alignment.alignment_manager import (
-    AlignmentManager,
     convert_alignment_steps_to_named_table,
     produce_source_alignment_priority_order,
 )
 from onto_merger.data.constants import (
     SCHEMA_ALIGNMENT_STEPS_TABLE,
     TABLE_ALIGNMENT_STEPS_REPORT,
-    TABLE_MERGES,
     TABLE_NODES,
 )
-from onto_merger.data.dataclasses import AlignmentStep, DataRepository, NamedTable
+from onto_merger.data.dataclasses import AlignmentStep, NamedTable
 from tests.fixtures import data_repo, source_alignment_priority_order
 
 

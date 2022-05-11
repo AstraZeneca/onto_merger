@@ -21,9 +21,6 @@ The JSON must contain all of the following properties:
 * ``domain_node_type``: the type of the domain nodes, e.g. *Disease*.
 * | ``seed_ontology_name``: the *seed* ontology name (i.e. the namespace part
   | of the corresponding node IDs.).
-* | ``required_full_hierarchies``: the list of ontologies that the API will try
-  | to integrate as much as possible. This must have at least one item:
-  | the seed ontology name.
 * ``mappings``: mapping grouping and directionality specification.
 
     * | ``type_groups``: groups the available mapping relations into three
@@ -36,14 +33,6 @@ The JSON must contain all of the following properties:
           | category that can be an empty list.
         * | ``label_match``: the weakest mapping relation category that can be
           | an empty list.
-
-    * | ``directionality``: groups the available mapping relations into two
-      | *direction categories* that  are handled differently during the
-      | alignment process; all two type groups must be present.
-
-        * ``uni``: can be an empty list.
-        * | ``symmetric``: must contain at least one mapping relation type
-          | (equivalence).
 
 
 

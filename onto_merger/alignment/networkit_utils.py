@@ -15,8 +15,6 @@ from onto_merger.data.constants import (
 )
 from onto_merger.logger.log import get_logger
 
-# from networkit.distance
-
 # from networkit import getPath
 
 
@@ -46,7 +44,7 @@ class NetworkitGraph:
         self.search_heuristic = [0 for _ in range(self.graph.upperNodeIdBound())]
         logger.info(
             f"Hierarchy graph initialised with {self.graph.numberOfNodes():,d} nodes "
-            + f"({len(self.root_nodes)} root) and {self.graph.numberOfEdges():,d} edges"
+            + f"({len(self.root_nodes)} possible root(s)) and {self.graph.numberOfEdges():,d} edges"
         )
 
     def get_path_for_node(self, node_id: str) -> List[str]:
@@ -62,8 +60,9 @@ class NetworkitGraph:
             root_node_index = self.node_id_to_index_map[root_node_id]
             a_star = nk.distance.AStar(self.graph, self.search_heuristic, node_index, root_node_index)
             a_star.run()
-            if len(a_star.getPath()) > 0:
-                return [node_index] + a_star.getPath() + [root_node_index]
+            path = a_star.getPath()
+            if path:
+                return [node_index] + path + [root_node_index]
         return []
 
     @staticmethod

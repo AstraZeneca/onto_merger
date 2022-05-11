@@ -71,18 +71,10 @@ def source_alignment_priority_order() -> List[str]:
     return [
         "MONDO",
         "MEDDRA",
-        "ICD10CM",
-        "MESH",
         "ORPHANET",
-        "OMIM",
-        "UMLS",
+        "MESH",
+        "ICD10CM",
         "EFO",
         "DOID",
-        "UK_BIOBANK",
-        "NCIT",
-        "BOWES_2012",
-        "CHEBI",
-        "SNOMED",
-        "MP",
-        "NCI",
+        "SNOMED"
     ]
