@@ -83,3 +83,13 @@ $ tox -e py
 **License**
 
 - [Apache 2.0 License](https://github.com/AstraZeneca/onto_merger/blob/main/LICENSE)
+
+--------------------------------------------------------------------------------
+
+**Credit**
+
+The **Onto Merger** logo is based on:
+
+- [Galguna Font](https://www.dafont.com/galguna.font)
+- [Noun Project Icons](https://thenounproject.com/)
+
