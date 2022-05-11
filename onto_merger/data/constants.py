@@ -26,6 +26,7 @@ TABLE_MERGES_AGGREGATED = "merges_aggregated"
 TABLE_MAPPINGS_UPDATED = "mappings_updated"
 TABLE_MAPPINGS_OBSOLETE_TO_CURRENT = "mappings_obsolete_to_current"
 TABLE_ALIGNMENT_STEPS_REPORT = "alignment_steps_report"
+TABLE_CONNECTIVITY_STEPS_REPORT = "connectivity_steps_report"
 OUTPUT_TABLES = [
     TABLE_NODES_UNMAPPED,
     TABLE_NODES_MERGED,
@@ -37,6 +38,7 @@ OUTPUT_TABLES = [
     TABLE_MAPPINGS_UPDATED,
     TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
     TABLE_ALIGNMENT_STEPS_REPORT,
+    TABLE_CONNECTIVITY_STEPS_REPORT
 ]
 
 # EDGE TABLE TYPES
@@ -101,6 +103,14 @@ SCHEMA_ALIGNMENT_STEPS_TABLE = [
     "count_mappings",
     "count_nodes_one_source_to_many_target",
     "count_merged_nodes",
+]
+SCHEMA_TABLE_CONNECTIVITY_STEPS_REPORT = [
+    "source_id",
+    "count_unmapped_node_ids",
+    "count_reachable_unmapped_nodes",
+    "count_available_edges",
+    "count_produced_edges",
+    "count_connected_nodes"
 ]
 
 # MAPPING_TYPE_GROUPS

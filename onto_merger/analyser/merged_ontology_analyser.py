@@ -8,7 +8,7 @@ from onto_merger.data.constants import (
     TABLE_NODES_CONNECTED_ONLY,
     TABLE_NODES_DANGLING,
     TABLE_NODES_MERGED,
-)
+    TABLE_CONNECTIVITY_STEPS_REPORT)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository, NamedTable
 from onto_merger.logger.log import get_logger
@@ -70,6 +70,7 @@ class MergedOntologyAnalyser:
                 ),
             ],
             "alignment_steps": self._data_repo.get(TABLE_ALIGNMENT_STEPS_REPORT).dataframe.to_html(index=False),
+            "connectivity_steps": self._data_repo.get(TABLE_CONNECTIVITY_STEPS_REPORT).dataframe.to_html(index=False),
         }
         return data_dic
 
@@ -122,6 +123,10 @@ _report_template: str = """
 <h2>Alignment steps</h2>
 
 {{ alignment_steps }}
+
+<h2>Connectivity steps</h2>
+
+{{ connectivity_steps }}
 
 <h2>Nodes</h2>
 
