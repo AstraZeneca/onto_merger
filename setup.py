@@ -10,7 +10,6 @@ install_requires = [
     "great_expectations==0.15.2",
     "jinja2==3.0.3",
     "jsonschema==4.4.0",
-    "wget==3.2",
     "networkx",
     "networkit==9.1.1",
     "ruamel.yaml==0.17.17",
