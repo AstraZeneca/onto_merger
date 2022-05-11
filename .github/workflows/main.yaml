@@ -30,6 +30,7 @@ jobs:
          pip install codecov
          pip install pytest
          pip install tox
+         pip install nbconvert
          pip install markupsafe==2.0.1 
          python setup.py install
       - name: Run code quality tests
