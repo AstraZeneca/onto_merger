@@ -3,7 +3,6 @@ import sys
 from typing import List, Optional, Tuple
 
 import pandas as pd
-from networkx import Graph
 from pandas import DataFrame
 
 from onto_merger.alignment import mapping_utils, networkx_utils
@@ -250,12 +249,11 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
         + f"({(len(reachable_unmapped_nodes) * 100) / len(unmapped_node_ids_for_namespace):.2f}%)"
     )
 
-    # connect
+    # connect each reachable node
     edges_for_namespace_nodes = []
-
     counter = 1
     for node_to_connect in reachable_unmapped_nodes:
-        progress_bar(count=counter, total=count_unmapped, status=f" Connecting {node_namespace} ")
+        _progress_bar(count=counter, total=count_unmapped, status=f" Connecting {node_namespace} ")
         counter += 1
         if node_to_connect not in merge_and_connectivity_map:
             edges_for_node = produce_hierarchy_path_for_unmapped_node(
@@ -290,17 +288,20 @@ def produce_hierarchy_path_for_unmapped_node(
     merge_and_connectivity_map_for_ns: dict,
     hierarchy_graph_for_ns: NetworkitGraph,
 ) -> List[Tuple[str, str]]:
-    # get paths paths with merged nodes
+    # get shortest path
     shortest_path = hierarchy_graph_for_ns.get_path_for_node(node_id=node_to_connect)
     if not shortest_path:
         return []
 
-    # terminating with merged node
+    # check if it contains any merged nodes, i.e. whether it can be used for integration
     merged_node_ids_in_path = [
         node_id for node_id in shortest_path if node_id in merge_and_connectivity_map_for_ns.keys()
     ]
     if not merged_node_ids_in_path:
         return []
+
+    # modify the path: removed redundant (no unmapped nodes), terminate it with a merged node
+    # and use the canonical ID for the terminus node
     index_of_first_merged_node = sorted([shortest_path.index(node_id) for node_id in merged_node_ids_in_path])[0]
     first_merged_node_canonical_id = merge_and_connectivity_map_for_ns[shortest_path[index_of_first_merged_node]]
     pruned_path = shortest_path[0:index_of_first_merged_node] + [first_merged_node_canonical_id]
@@ -324,10 +325,10 @@ def _convert_hierarchy_path_into_tuple_list(pruned_path: List[str]) -> List[Tupl
     ]
 
 
-def progress_bar(count, total, status=""):
+def _progress_bar(count, total, status=""):
     bar_len = 60
     filled_len = int(round(bar_len * count / float(total)))
-    percents = round(100.1 * count / float(total), 1)
+    percents = round(100.1 * count / float(total), 2)
     bar = "=" * filled_len + "-" * (bar_len - filled_len)
     sys.stdout = sys.__stdout__
     sys.stdout.write("[%s] %s%s ...%s\r" % (bar, percents, "%", status))
