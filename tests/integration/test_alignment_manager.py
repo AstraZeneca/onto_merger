@@ -37,8 +37,8 @@ def test_align_nodes(
         DIRECTORY_DOMAIN_ONTOLOGY
     }
     assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_DOMAIN_ONTOLOGY)) == []
-    assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_INTERMEDIATE)) \
-           == [DIRECTORY_DATA_TESTS, DIRECTORY_DROPPED_MAPPINGS]
+    assert set(os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_INTERMEDIATE))) \
+           == {DIRECTORY_DATA_TESTS, DIRECTORY_DROPPED_MAPPINGS}
     assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_INTERMEDIATE, DIRECTORY_DROPPED_MAPPINGS)) == []
 
     output_data_repo, source_alignment_order = AlignmentManager(
