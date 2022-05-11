@@ -32,17 +32,3 @@ def is_single_subgraph(graph: Graph) -> bool:
     else:
         [logger.debug(f"\tsub-graph: {sub} | nodes: {sub.nodes}") for sub in sub_graphs]
     return False
-
-
-def get_shortest_paths_for_node(node_id: str, graph: Graph) -> dict:
-    if node_id not in graph.nodes:
-        return {}
-    shortest_paths = nx.shortest_path(graph, source=node_id)
-    return shortest_paths
-
-
-def get_shortest_path_for_node(node_id: str, graph: Graph) -> dict:
-    if node_id not in graph.nodes:
-        return {}
-    shortest_paths = nx.single_source_shortest_path(graph, source=node_id)
-    return shortest_paths
