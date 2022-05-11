@@ -27,6 +27,7 @@ jobs:
           pip install --upgrade pip setuptools wheel
           pip install tox
           pip install --upgrade cython
+          pip install Cython 
       - name: Check manifest
         run: tox -e manifest
       - name: Check package metadata
@@ -52,6 +53,7 @@ jobs:
           pip install --upgrade pip setuptools wheel
           pip install tox
           pip install --upgrade cython
+          pip install Cython
           sudo apt-get install graphviz
       - name: Lint documentation
         run: tox -e doc8
@@ -67,6 +69,7 @@ jobs:
       - run: which python
       - name: Install general requirements
         run: |
+          pip install Cython
           pip install --upgrade cython
           pip install tox
       - name: Run test-suite
