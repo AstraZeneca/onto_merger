@@ -155,7 +155,7 @@ class DataManager:
 
     def get_log_file_path(self) -> str:
         """Produces the path for log file."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_LOGS, FILE_NAME_LOG)
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS, FILE_NAME_LOG)
 
     def _create_output_directory_structure(self):
         """Produces the empty directory structure for the output files.."""
@@ -163,7 +163,7 @@ class DataManager:
             self._get_profiled_report_directory_path(),
             self.get_data_tests_path(),
             self.get_dropped_mappings_path(),
-            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_LOGS),
+            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS),
             os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
         ]
         for directory_path in directory_paths:
