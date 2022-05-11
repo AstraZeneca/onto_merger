@@ -34,12 +34,6 @@ def produce_table_report(table: NamedTable) -> ProfileReport:
     return ProfileReport(
         df=table.dataframe,
         title=f"{table.name} Profiling Report",
-        correlations={
-            "cramers": {"calculate": False},
-            "pearson": {"calculate": False},
-            "spearman": {"calculate": False},
-            "kendall": {"calculate": False},
-            "phi_k": {"calculate": False},
-        },
+        minimal=True,
         n_freq_table_max=250,
     )
