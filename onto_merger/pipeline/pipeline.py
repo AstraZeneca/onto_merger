@@ -160,7 +160,7 @@ class Pipeline:
         """
         self.logger.info("Started connecting nodes...")
         self._data_repo.update(
-            table=hierarchy_utils.connect_nodes(
+            tables=hierarchy_utils.connect_nodes(
                 alignment_config=self._alignment_config,
                 source_alignment_order=self._source_alignment_order,
                 data_repo=self._data_repo,

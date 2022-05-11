@@ -33,6 +33,7 @@ def perform_evaluation_for_pipeline_run():
         "data_tests",
         "dropped_mappings",
         "alignment_steps_report.csv",
+        "connectivity_steps_report.csv",
         "edges_hierarchy_post.csv",
         "mappings_obsolete_to_current.csv",
         "mappings_updated.csv",

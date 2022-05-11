@@ -62,7 +62,7 @@ def produce_table_with_namespace_column_pair(table: DataFrame) -> DataFrame:
     :return: The same table if it is a node table, a new table with the appended
     column if it is an edge table.
     """
-    if COLUMN_SOURCE_ID not in list(table):
+    if COLUMN_TARGET_ID not in list(table):
         return table
     table_copy = table.copy()
     table_copy[COLUMN_SOURCE_TO_TARGET] = table_copy.apply(

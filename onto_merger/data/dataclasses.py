@@ -92,9 +92,9 @@ class DataRepository:
         return [self.get(table_name=table_name) for table_name in OUTPUT_TABLES if table_name in self.data]
 
     def update(
-        self,
-        table: Optional[NamedTable] = None,
-        tables: Optional[List[NamedTable]] = None,
+            self,
+            table: Optional[NamedTable] = None,
+            tables: Optional[List[NamedTable]] = None,
     ) -> None:
         """Updates (adds or overwrites) either a single table or a list
         of named tables in the repository dictionary.
@@ -143,17 +143,17 @@ class AlignmentStep:
     count_merged_nodes: int
 
     def __init__(
-        self,
-        mapping_type_group: str,
-        source_id: str,
-        step_counter: int,
-        count_unmapped_nodes: int,
+            self,
+            mapping_type_group: str,
+            source_id: str,
+            step_counter: int,
+            count_unmapped_nodes: int,
     ):
         """Initialises the AlignmentStep dataclass.
 
         :param mapping_type_group: The mapping type group used
         in the alignment step.
-        :param source_id: The ontology being aligned in the step.
+        :param source_id: The ontology being aligned in this step.
         :param step_counter: The number of the step.
         :param count_unmapped_nodes: The number of unmapped nodes at
         the start of the alignment step.
@@ -165,3 +165,33 @@ class AlignmentStep:
         self.count_mappings = 0
         self.count_nodes_one_source_to_many_target = 0
         self.count_merged_nodes = 0
+
+
+@dataclass
+class ConnectivityStep:
+    """Represents an hierarchy connectivity step metadata as a dataclass."""
+
+    source_id: str
+    count_unmapped_node_ids: int
+    count_reachable_unmapped_nodes: int
+    count_available_edges: int
+    count_produced_edges: int
+    count_connected_nodes: int
+
+    def __init__(
+            self,
+            source_id: str,
+            count_unmapped_node_ids: int
+    ):
+        """Initialises the ConnectivityStep dataclass.
+
+        :param source_id: The node that are being connected in this step.
+        :param count_unmapped_node_ids: The number of dangling and unmapped nodes
+        of the ontology at the start of the connectivity step.
+        """
+        self.source_id = source_id
+        self.count_unmapped_node_ids = count_unmapped_node_ids
+        self.count_reachable_unmapped_nodes = 0
+        self.count_available_edges = 0
+        self.count_produced_edges = 0
+        self.count_connected_nodes = 0

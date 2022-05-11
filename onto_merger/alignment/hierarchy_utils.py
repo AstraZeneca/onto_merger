@@ -1,3 +1,4 @@
+import dataclasses
 import itertools
 import sys
 from typing import List, Optional, Tuple
@@ -23,8 +24,9 @@ from onto_merger.data.constants import (
     TABLE_NODES_CONNECTED_ONLY,
     TABLE_NODES_DANGLING,
     TABLE_NODES_UNMAPPED,
-)
-from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable
+    TABLE_CONNECTIVITY_STEPS_REPORT,
+    SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE)
+from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable, ConnectivityStep
 from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)
@@ -32,7 +34,7 @@ logger = get_logger(__name__)
 
 def connect_nodes(
     alignment_config: AlignmentConfig, source_alignment_order: List[str], data_repo: DataRepository
-) -> NamedTable:
+) -> List[NamedTable]:
     """Runs the connectivity process to establish a hierarchy between the domain nodes.
 
     :param source_alignment_order: The source alignment order.
@@ -48,7 +50,7 @@ def connect_nodes(
     )
 
     # (2) connect unmapped nodes to the seed hierarchy
-    unmapped_node_hierarchy_df = produce_hierarchy_edges_for_unmapped_nodes(
+    unmapped_node_hierarchy_df, connectivity_steps = produce_hierarchy_edges_for_unmapped_nodes(
         unmapped_nodes=data_repo.get(TABLE_NODES_UNMAPPED).dataframe,
         merges=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
         source_alignment_order=source_alignment_order,
@@ -56,10 +58,15 @@ def connect_nodes(
     )
 
     # (3) return the merged hierarchy
-    return NamedTable(
-        name=TABLE_EDGES_HIERARCHY_POST,
-        dataframe=pd.concat([seed_hierarchy_df, unmapped_node_hierarchy_df]).drop_duplicates(keep="first"),
-    )
+    return [
+        NamedTable(
+            name=TABLE_EDGES_HIERARCHY_POST,
+            dataframe=pd.concat([seed_hierarchy_df, unmapped_node_hierarchy_df]).drop_duplicates(keep="first"),
+        ),
+        _convert_connectivity_steps_to_named_table(steps=connectivity_steps)
+    ]
+
+
 
 
 def produce_table_seed_ontology_hierarchy(
@@ -180,25 +187,28 @@ def filter_nodes_for_namespace(nodes: DataFrame, namespace: str) -> DataFrame:
 
 def produce_hierarchy_edges_for_unmapped_nodes(
     unmapped_nodes: DataFrame, merges: DataFrame, source_alignment_order: List[str], hierarchy_edges: DataFrame
-) -> DataFrame:
+) -> Tuple[DataFrame, List[ConnectivityStep]]:
     # contains all merges; iteratively extended with connected nodes (where the node will "merge" to itself)
     # this provides a single data structure to identify terminus nodes in hierarchy paths, i.e. where
     # the path can be terminated while establishing connectivity to the main hierarchy
     merge_and_connectivity_map = _produce_merge_map(merges=merges)
     connectivity_order = source_alignment_order[1:]
     edges_for_all_nodes = []
+    connectivity_steps = []
 
     for node_namespace in connectivity_order:
         # produce the hierarchy edges for the namespace node set
         (
             edges_for_namespace_nodes,
             merge_and_connectivity_map_for_ns,
+            connectivity_step
         ) = _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
             node_namespace=node_namespace,
             unmapped_nodes=unmapped_nodes,
             hierarchy_edges=hierarchy_edges,
             merge_and_connectivity_map=merge_and_connectivity_map,
         )
+        connectivity_steps.append(connectivity_step)
         if edges_for_namespace_nodes:
             # update result and processing data structures
             edges_for_all_nodes.extend(edges_for_namespace_nodes)
@@ -214,12 +224,12 @@ def produce_hierarchy_edges_for_unmapped_nodes(
         + f"{len(connected_nodes):,d} are now connected, "
         + f"via {len(new_hierarchy_edges):,d} hierarchy edges."
     )
-    return new_hierarchy_edges
+    return new_hierarchy_edges, connectivity_steps
 
 
 def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
     node_namespace: str, unmapped_nodes: DataFrame, hierarchy_edges: DataFrame, merge_and_connectivity_map: dict
-) -> [List[Tuple[str, str]], dict]:
+) -> [List[Tuple[str, str]], dict, ConnectivityStep]:
     merge_and_connectivity_map_for_ns = merge_and_connectivity_map.copy()
 
     # get the unmapped node IDs for the namespace
@@ -231,19 +241,23 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
         + f"({len(unmapped_node_ids_for_namespace):,d} unmapped, "
         + f"{(len(unmapped_node_ids_for_namespace) * 100) / len(unmapped_nodes):.2f}% of total) * * *"
     )
+    connectivity_step = ConnectivityStep(
+        source_id=node_namespace, count_unmapped_node_ids=len(unmapped_node_ids_for_namespace))
     if not unmapped_node_ids_for_namespace:
-        return []
+        return [], {}, connectivity_step
 
     # get edges for ns
     edges_for_ns = mapping_utils.get_mappings_for_namespace(namespace=node_namespace, edges=hierarchy_edges)
+    connectivity_step.count_available_edges = len(edges_for_ns)
     if edges_for_ns.empty:
-        return [], merge_and_connectivity_map_for_ns
+        return [], merge_and_connectivity_map_for_ns, connectivity_step
 
     # create the hierarchy graph for the namespace
     hierarchy_graph_for_ns = NetworkitGraph(edges=edges_for_ns)
     reachable_nodes = list(hierarchy_graph_for_ns.node_id_to_index_map.keys())
     reachable_unmapped_nodes = [node_id for node_id in unmapped_node_ids_for_namespace if node_id in reachable_nodes]
     count_unmapped = len(reachable_unmapped_nodes)
+    connectivity_step.count_reachable_unmapped_nodes = count_unmapped
     logger.info(
         f"Reachable unmapped nodes {len(reachable_unmapped_nodes):,d} "
         + f"({(len(reachable_unmapped_nodes) * 100) / len(unmapped_node_ids_for_namespace):.2f}%)"
@@ -273,13 +287,15 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
     connected_nodes = [
         node_id for node_id in unmapped_node_ids_for_namespace if node_id in merge_and_connectivity_map_for_ns
     ]
+    connectivity_step.count_connected_nodes = len(connected_nodes)
+    connectivity_step.count_produced_edges = len(edges_for_namespace_nodes)
     logger.info(
         f"Out of {len(unmapped_node_ids_for_namespace):,d} unmapped nodes of '{node_namespace}', "
         + f"{len(connected_nodes):,d} are now connected, "
         + f"via {len(edges_for_namespace_nodes):,d} hierarchy edges."
     )
 
-    return edges_for_namespace_nodes, merge_and_connectivity_map_for_ns
+    return edges_for_namespace_nodes, merge_and_connectivity_map_for_ns, connectivity_step
 
 
 def produce_hierarchy_path_for_unmapped_node(
@@ -333,3 +349,20 @@ def _progress_bar(count, total, status=""):
     sys.stdout = sys.__stdout__
     sys.stdout.write("[%s] %s%s ...%s\r" % (bar, percents, "%", status))
     sys.stdout.flush()
+
+
+def _convert_connectivity_steps_to_named_table(
+    steps: List[ConnectivityStep],
+) -> NamedTable:
+    """Converts the list of ConnectivityStep dataclasses to a named table.
+
+    :param steps: The list of ConnectivityStep dataclasses.
+    :return: The ConnectivityStep report dataframe wrapped as a named table.
+    """
+    return NamedTable(
+        TABLE_CONNECTIVITY_STEPS_REPORT,
+        pd.DataFrame(
+            [dataclasses.astuple(step) for step in steps],
+            columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
+        ),
+    )
