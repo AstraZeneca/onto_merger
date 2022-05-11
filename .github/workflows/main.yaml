@@ -53,8 +53,6 @@ jobs:
           sudo apt-get install graphviz
       - name: Lint documentation
         run: tox -e doc8
-      - name: Check documentation coverage
-        run: tox -e docstr-coverage
       - name: Check documentation build
         run: tox -e docs
   build:
