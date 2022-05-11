@@ -1,6 +1,6 @@
 from onto_merger.pipeline import Pipeline
 
-EXAMPLE_DATASET = "../data/bikg_2022-02-28-4.27.0_disease"
+EXAMPLE_DATASET = "../data/bikg_disease"
 
 
 def main():
