@@ -1,3 +1,27 @@
+[pypi-image]: https://badge.fury.io/py/onto_merger.svg
+[pypi-url]: https://pypi.python.org/pypi/onto_merger
+[size-image]: https://img.shields.io/github/repo-size/AstraZeneca/onto_merger.svg
+[size-url]: https://github.com/AstraZeneca/onto_merger/archive/main.zip
+[build-image]: https://github.com/AstraZeneca/onto_merger/workflows/CI/badge.svg
+[build-url]: https://github.com/AstraZeneca/onto_merger/actions?query=workflow%3ACI
+[docs-image]: https://readthedocs.org/projects/onto_merger/badge/?version=latest
+[docs-url]: https://onto_merger.readthedocs.io/en/latest/?badge=latest
+[coverage-image]: https://codecov.io/gh/AstraZeneca/onto_merger/branch/main/graph/badge.svg
+[coverage-url]: https://codecov.io/github/AstraZeneca/onto_merger?branch=main
+
+<p align="center">
+  <img width="90%" src="https://github.com/AZ-AI/onto_merger/blob/main/images/onto_merger_logo.jpg?sanitize=true" />
+</p>
+
+--------------------------------------------------------------------------------
+
+[![PyPI Version][pypi-image]][pypi-url]
+[![Docs Status][docs-image]][docs-url]
+[![Code Coverage][coverage-image]][coverage-url]
+[![Build Status][build-image]][build-url]
+[![Arxiv](https://img.shields.io/badge/ArXiv-2202.05240-orange.svg)]()
+
+**[Documentation](https://onto_merger.readthedocs.io)** | **[External Resources](https://onto_merger.readthedocs.io/en/latest/notes/resources.html)** | **[Datasets](https://onto_merger.readthedocs.io/en/latest/notes/introduction.html#datasets)** | **[Examples](https://github.com/AstraZeneca/onto_merger/tree/main/examples)** 
 
 --------------------------------------------------------------------------------
 
@@ -59,3 +83,13 @@ $ tox -e py
 **License**
 
 - [Apache 2.0 License](https://github.com/AstraZeneca/onto_merger/blob/main/LICENSE)
+
+--------------------------------------------------------------------------------
+
+**Credit**
+
+The **Onto Merger** logo is based on:
+
+- [Galguna Font](https://www.dafont.com/galguna.font)
+- [Noun Project Icons](https://thenounproject.com/)
+
