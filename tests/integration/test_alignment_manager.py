@@ -7,11 +7,12 @@ import pytest
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.data.constants import (
     DIRECTORY_DATA_TESTS,
+    DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
     DIRECTORY_REPORT,
     TABLE_ALIGNMENT_STEPS_REPORT,
     TABLE_MERGES,
-)
+    DIRECTORY_INTERMEDIATE)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable
 from tests.fixtures import (
@@ -31,11 +32,14 @@ def test_align_nodes(
 ):
     actual_outputs = set(os.listdir(TEST_FOLDER_OUTPUT_PATH))
     assert actual_outputs == {
-        DIRECTORY_DATA_TESTS,
         DIRECTORY_REPORT,
-        DIRECTORY_DROPPED_MAPPINGS,
+        DIRECTORY_INTERMEDIATE,
+        DIRECTORY_DOMAIN_ONTOLOGY
     }
-    assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_DROPPED_MAPPINGS)) == []
+    assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_DOMAIN_ONTOLOGY)) == []
+    assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_INTERMEDIATE)) \
+           == [DIRECTORY_DATA_TESTS, DIRECTORY_DROPPED_MAPPINGS]
+    assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_INTERMEDIATE, DIRECTORY_DROPPED_MAPPINGS)) == []
 
     output_data_repo, source_alignment_order = AlignmentManager(
         alignment_config=alignment_config,

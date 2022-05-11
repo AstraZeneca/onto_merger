@@ -14,6 +14,9 @@ from onto_merger.data.constants import (
     DIRECTORY_DROPPED_MAPPINGS,
     DIRECTORY_INPUT,
     DIRECTORY_OUTPUT,
+    DIRECTORY_INTERMEDIATE,
+    DIRECTORY_DOMAIN_ONTOLOGY,
+    DIRECTORY_LOGS,
     DIRECTORY_PROFILED_DATA,
     DIRECTORY_REPORT,
     FILE_NAME_LOG,
@@ -22,12 +25,13 @@ from onto_merger.data.constants import (
     SCHEMA_MERGE_TABLE,
     TABLE_EDGES_HIERARCHY,
     TABLE_MERGES,
-)
+    TABLE_NODES, TABLE_MAPPINGS, TABLE_MAPPINGS_UPDATED, TABLE_EDGES_HIERARCHY_POST, TABLE_MERGES_AGGREGATED)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
     AlignmentConfigMappingTypeGroups,
     NamedTable,
+    DataRepository
 )
 from onto_merger.logger.log import get_logger
 
@@ -135,11 +139,12 @@ class DataManager:
 
     def get_data_tests_path(self) -> str:
         """Produces the path for data test directory."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DATA_TESTS)
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DATA_TESTS)
 
     def get_dropped_mappings_path(self) -> str:
         """Produces the path for a dropped mapping."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DROPPED_MAPPINGS)
+        return os.path.join(
+            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DROPPED_MAPPINGS)
 
     def get_profiled_table_report_path(self, table_name: str, relative_path=False) -> str:
         """Produces the path for the Pandas profile report HTML."""
@@ -150,7 +155,7 @@ class DataManager:
 
     def get_log_file_path(self) -> str:
         """Produces the path for log file."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, FILE_NAME_LOG)
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS, FILE_NAME_LOG)
 
     def _create_output_directory_structure(self):
         """Produces the empty directory structure for the output files.."""
@@ -158,6 +163,8 @@ class DataManager:
             self._get_profiled_report_directory_path(),
             self.get_data_tests_path(),
             self.get_dropped_mappings_path(),
+            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS),
+            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
         ]
         for directory_path in directory_paths:
             Path(directory_path).mkdir(parents=True, exist_ok=True)
@@ -168,17 +175,41 @@ class DataManager:
         if os.path.exists(output_path):
             shutil.rmtree(output_path)
 
-    def save_table(self, table: NamedTable) -> None:
+    def save_table(self, table: NamedTable,
+                   process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}") -> None:
         """Saves a given Pandas dataframe as a CSV."""
         # only output tables are saved
-        file_path = self.get_table_path(process_directory=DIRECTORY_OUTPUT, table_name=table.name)
+        file_path = self.get_table_path(process_directory=process_directory, table_name=table.name)
         logger.info(f"Saving table '{f'{table.name}.csv'}' with {len(table.dataframe):,d} " + f"row(s) to {file_path}.")
         table.dataframe.to_csv(file_path, index=False)
 
-    def save_tables(self, tables: List[NamedTable]) -> None:
+    def save_tables(self, tables: List[NamedTable], process_directory: str = None) -> None:
         """Saves a list of named tables Pandas dataframe part as CSVs."""
         for table in tables:
-            self.save_table(table=table)
+            if not process_directory:
+                self.save_table(table=table)
+            else:
+                self.save_table(table=table, process_directory=process_directory)
+
+    def save_domain_ontology_tables(self, data_repo: DataRepository) -> None:
+        domain_ontology_directory_path = f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}"
+        # nodes unchanged
+        self.save_table(table=data_repo.get(TABLE_NODES), process_directory=domain_ontology_directory_path)
+        # mappings renamed
+        self.save_table(
+            table=NamedTable(name=TABLE_MAPPINGS, dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe),
+            process_directory=domain_ontology_directory_path
+        )
+        # merges
+        self.save_table(
+            table=NamedTable(name=TABLE_MERGES, dataframe=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe),
+            process_directory=domain_ontology_directory_path
+        )
+        # hierarchy
+        self.save_table(
+            table=NamedTable(name=TABLE_EDGES_HIERARCHY, dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe),
+            process_directory=domain_ontology_directory_path
+        )
 
     def save_merged_ontology_report(self, content) -> str:
         """Saves the analysis report HTML content."""
@@ -208,6 +239,11 @@ class DataManager:
                 ),
                 index=False,
             )
+
+    def move_data_docs_to_reports(self) -> None:
+        from_path = os.path.join(self.get_data_tests_path(), "uncommitted/data_docs")
+        to_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "data_docs")
+        shutil.copytree(from_path, to_path)
 
     @staticmethod
     def merge_tables_of_same_type(tables: List[NamedTable]) -> NamedTable:
