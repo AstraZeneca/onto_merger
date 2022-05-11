@@ -102,7 +102,7 @@ class Pipeline:
         )
 
         # profile input tables todo uncomment
-        # pandas_profiler.profile_tables(tables=self._data_repo.get_input_tables(), data_manager=self._data_manager)
+        pandas_profiler.profile_tables(tables=self._data_repo.get_input_tables(), data_manager=self._data_manager)
 
         # validate input tables todo uncomment
         # GERunner(

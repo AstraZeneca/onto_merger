@@ -302,9 +302,10 @@ def produce_hierarchy_path_for_unmapped_node(
     if not merged_node_ids_in_path:
         return []
     index_of_first_merged_node = sorted([shortest_path.index(node_id) for node_id in merged_node_ids_in_path])[0]
-    pruned_path = shortest_path[0:index_of_first_merged_node]
+    first_merged_node_canonical_id = merge_and_connectivity_map_for_ns[shortest_path[index_of_first_merged_node]]
+    pruned_path = shortest_path[0:index_of_first_merged_node] + [first_merged_node_canonical_id]
     unmapped_node_ids_in_path = [node_id for node_id in shortest_path if node_id in unmapped_node_ids]
-    permitted_node_ids_in_path = unmapped_node_ids_in_path + merged_node_ids_in_path
+    permitted_node_ids_in_path = unmapped_node_ids_in_path + merged_node_ids_in_path + [first_merged_node_canonical_id]
     final_path = [node_id for node_id in pruned_path if node_id in permitted_node_ids_in_path]
 
     # convert the path into a hierarchy edge tuple list
