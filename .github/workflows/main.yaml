@@ -26,6 +26,7 @@ jobs:
       - name: Run installation.
         run: |
          conda install -y scipy
+         conda install -c conda-forge networkit==9.1.1
          pip install --upgrade cython
          pip install codecov
          pip install pytest
