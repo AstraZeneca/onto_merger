@@ -3,14 +3,16 @@ i.e. ontology concepts, that represent the same domain, e.g. diseases, and conne
 them to form a single directed acyclic hierarchical graph (DAG), i.e. an ontology class hierarchy.
 
 Usage:
-    main.py -f FOLDER
+    main.py -f <FOLDER_PATH>
     main.py -f EXAMPLE_DATASET
     main.py -f EXAMPLE_DATASET_LIGHT
     main.py -h | --help
+    main.py -v
 
 Options:
   -h --help     Show this screen.
-  -f FOLDER     Specify the project folder where the inputs are provided and the outputs will be placed.
+  -f FOLDER     Specify the project folder where the inputs are provided and the outputs will be stored.
+  -v            Show the OntoMerger version.
 
 """
 
