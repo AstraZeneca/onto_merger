@@ -20,9 +20,16 @@ from onto_merger.data.dataclasses import DataRepository, NamedTable
 from tests.fixtures import data_repo
 
 
-@pytest.mark.usefixtures("data_repo")
-def test_get_mappings_internal_node_reassignment(data_repo: DataRepository):
-    actual = mapping_utils.get_mappings_internal_node_reassignment(mappings=data_repo.get(TABLE_MAPPINGS).dataframe)
+def test_get_mappings_internal_node_reassignment():
+    input_mappings = pd.DataFrame(
+        [
+            ("FOO:0000004", "MONDO:0000123", "equivalent_to", "MONDO"),
+            ("MONDO:0000004", "MONDO:0000123", "equivalent_to", "MONDO"),
+            ("MONDO:0000005", "MONDO:0000456", "equivalent_to", "MONDO"),
+        ],
+        columns=SCHEMA_MAPPING_TABLE,
+    )
+    actual = mapping_utils.get_mappings_internal_node_reassignment(mappings=input_mappings)
     data = [
         ("MONDO:0000004", "MONDO:0000123", "equivalent_to", "MONDO"),
         ("MONDO:0000005", "MONDO:0000456", "equivalent_to", "MONDO"),
@@ -32,14 +39,23 @@ def test_get_mappings_internal_node_reassignment(data_repo: DataRepository):
     assert np.array_equal(actual.values, expected.values) is True
 
 
-def test_get_mappings_obsolete_to_current_node_id(data_repo: DataRepository):
+def test_get_mappings_obsolete_to_current_node_id():
+    input_nodes_obsolete = pd.DataFrame(
+        ["MONDO:0000123", "MONDO:0000456"], columns=[COLUMN_DEFAULT_ID])
+    input_mappings = pd.DataFrame(
+        [
+            ("MONDO:0000004", "MONDO:0000123", "equivalent_to", "MONDO", "MONDO", "MONDO"),
+            ("MONDO:0000456", "MONDO:0000005",  "equivalent_to", "MONDO", "MONDO", "MONDO"),
+        ],
+        columns=(SCHEMA_MAPPING_TABLE + ["namespace_source_id", "namespace_target_id"]),
+    )
     actual = mapping_utils.get_mappings_obsolete_to_current_node_id(
-        nodes_obsolete=data_repo.get(TABLE_NODES_OBSOLETE).dataframe,
-        mappings=data_repo.get(TABLE_MAPPINGS).dataframe,
+        nodes_obsolete=input_nodes_obsolete,
+        mappings=input_mappings
     )
     data = [
         ("MONDO:0000123", "MONDO:0000004", "equivalent_to", "MONDO"),
-        ("MONDO:0000005", "MONDO:0000456", "equivalent_to", "MONDO"),
+        ("MONDO:0000456", "MONDO:0000005", "equivalent_to", "MONDO"),
     ]
     expected = pd.DataFrame(data, columns=SCHEMA_MAPPING_TABLE)
     assert isinstance(actual, DataFrame)

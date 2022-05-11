@@ -35,7 +35,8 @@ def get_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
         f"{get_namespace_column_name_for_column(COLUMN_SOURCE_ID)} == "
         + f"{get_namespace_column_name_for_column(COLUMN_TARGET_ID)}"
     )
-    mapping_subset = mappings.query(expr=query, inplace=False)[SCHEMA_MAPPING_TABLE]
+    mapping_subset = produce_table_with_namespace_column_for_node_ids(table=mappings)\
+        .query(expr=query, inplace=False)[SCHEMA_MAPPING_TABLE]
     logger.info(
         f"Found {len(mapping_subset)} 'internal_node_reassignment' mappings from total " + f"{len(mappings)} mappings."
     )
