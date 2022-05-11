@@ -205,6 +205,9 @@ class Pipeline:
         # save all outputs
         self._data_manager.save_tables(tables=self._data_repo.get_output_tables())
 
+        # save final tables to domain ontology folder
+        self._data_manager.save_domain_ontology_tables(data_repo=self._data_repo)
+
         self.logger.info("Finished finalising outputs.")
 
     def _validate_outputs(self) -> None:
@@ -213,10 +216,16 @@ class Pipeline:
         :return:
         """
         self.logger.info("Started validating produced data...")
+
+        # run data tests
         GERunner(
             alignment_config=self._alignment_config,
             ge_base_directory=self._data_manager.get_data_tests_path(),
         ).run_ge_tests(named_tables=self._data_repo.get_output_tables())
+
+        # move data docs to report folder
+        self._data_manager.move_data_docs_to_reports()
+
         self.logger.info("Finished validating produced data.")
 
     def _produce_report(self) -> None:
