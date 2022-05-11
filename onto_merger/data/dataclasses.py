@@ -32,21 +32,11 @@ class AlignmentConfigMappingTypeGroups:
 
 @dataclass_json
 @dataclass
-class AlignmentConfigMappingDirectionality:
-    """Represents the mapping directionality groups."""
-
-    uni: List[str]
-    symmetric: List[str]
-
-
-@dataclass_json
-@dataclass
 class AlignmentConfigBase:
     """Represents the base alignment process configuration."""
 
     domain_node_type: str
     seed_ontology_name: str
-    required_full_hierarchies: List[str]
 
 
 @dataclass
@@ -55,7 +45,6 @@ class AlignmentConfig:
 
     base_config: AlignmentConfigBase
     mapping_type_groups: AlignmentConfigMappingTypeGroups
-    mapping_directionality: AlignmentConfigMappingTypeGroups
     as_dict: dict
 
 

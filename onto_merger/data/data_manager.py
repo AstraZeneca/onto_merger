@@ -26,7 +26,6 @@ from onto_merger.data.constants import (
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
-    AlignmentConfigMappingDirectionality,
     AlignmentConfigMappingTypeGroups,
     NamedTable,
 )
@@ -82,7 +81,6 @@ class DataManager:
         alignment_config = AlignmentConfig(
             base_config=AlignmentConfigBase.from_dict(config_json),
             mapping_type_groups=AlignmentConfigMappingTypeGroups.from_dict(mapping_config["type_groups"]),
-            mapping_directionality=AlignmentConfigMappingDirectionality.from_dict(mapping_config["directionality"]),
             as_dict=config_json,
         )
         return alignment_config
