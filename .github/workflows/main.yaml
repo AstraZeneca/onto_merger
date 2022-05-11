@@ -26,6 +26,7 @@ jobs:
       - name: Run installation.
         run: |
          conda install -y scipy
+         pip install --upgrade cython
          pip install codecov
          pip install pytest
          pip install tox
