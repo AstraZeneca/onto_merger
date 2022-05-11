@@ -1,7 +1,6 @@
 """Tests for the Profiler class."""
 import os
 
-import pytest
 from pandas_profiling import ProfileReport
 
 from onto_merger.analyser import pandas_profiler
