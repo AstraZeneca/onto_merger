@@ -104,7 +104,7 @@ SCHEMA_ALIGNMENT_STEPS_TABLE = [
     "count_nodes_one_source_to_many_target",
     "count_merged_nodes",
 ]
-SCHEMA_TABLE_CONNECTIVITY_STEPS_REPORT = [
+SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE = [
     "source_id",
     "count_unmapped_node_ids",
     "count_reachable_unmapped_nodes",

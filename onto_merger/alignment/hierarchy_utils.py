@@ -25,7 +25,7 @@ from onto_merger.data.constants import (
     TABLE_NODES_DANGLING,
     TABLE_NODES_UNMAPPED,
     TABLE_CONNECTIVITY_STEPS_REPORT,
-    SCHEMA_TABLE_CONNECTIVITY_STEPS_REPORT)
+    SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE)
 from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable, ConnectivityStep
 from onto_merger.logger.log import get_logger
 
@@ -363,6 +363,6 @@ def _convert_connectivity_steps_to_named_table(
         TABLE_CONNECTIVITY_STEPS_REPORT,
         pd.DataFrame(
             [dataclasses.astuple(step) for step in steps],
-            columns=SCHEMA_TABLE_CONNECTIVITY_STEPS_REPORT,
+            columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
         ),
     )
