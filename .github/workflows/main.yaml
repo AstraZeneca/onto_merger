@@ -1,0 +1,52 @@
+name: CI
+
+on:
+
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.8.12
+      - uses: s-weigand/setup-conda@v1
+        with:
+          activate-conda: true
+          python-version: 3.8
+      - run: conda --version
+      - run: which python
+      - name: Run installation.
+        run: |
+         conda install -y scipy
+         conda install Cython
+         pip install codecov
+         pip install pytest
+         pip install tox
+         pip install nbconvert
+         pip install markupsafe==2.0.1 
+         python setup.py install
+      - name: Install main package
+        run: |
+          pip install -e .[test]
+      - name: Run test-suite
+        run: |
+          python -m pytest
+      - name: Generate coverage report
+        if: success()
+        run: |
+          pip install coverage
+          coverage run -m pytest
+          coverage xml
+      - name: Upload coverage report to codecov
+        uses: codecov/codecov-action@v1
+        if: success()
+        with:
+          file: coverage.xml
