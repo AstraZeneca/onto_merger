@@ -1,3 +1,5 @@
+"""Helper methods to use Pandas profiling."""
+
 from typing import List
 
 from pandas_profiling import ProfileReport
@@ -10,7 +12,7 @@ logger = get_logger(__name__)
 
 
 def profile_tables(tables: List[NamedTable], data_manager: DataManager) -> None:
-    """Runs the Pandas profiling process for a list of tables.
+    """Run the Pandas profiling process for a list of tables.
 
     :param tables: The tables to be profiled.
     :param data_manager: The data manager.
@@ -26,14 +28,11 @@ def profile_tables(tables: List[NamedTable], data_manager: DataManager) -> None:
 
 
 def produce_table_report(table: NamedTable) -> ProfileReport:
-    """Runs the Pandas profiling process for one named table.
+    """Run the Pandas profiling process for one named table.
 
     :param table: The named table to be profiled.
     :return:
     """
     return ProfileReport(
-        df=table.dataframe,
-        title=f"{table.name} Profiling Report",
-        minimal=True,
-        n_freq_table_max=250,
+        df=table.dataframe, title=f"{table.name} Profiling Report", minimal=True, n_freq_table_max=250,
     )

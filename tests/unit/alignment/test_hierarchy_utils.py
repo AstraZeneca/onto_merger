@@ -9,7 +9,8 @@ from onto_merger.analyser import get_namespace_column_name_for_column
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
-    SCHEMA_MERGE_TABLE)
+    SCHEMA_MERGE_TABLE,
+)
 from onto_merger.data.dataclasses import NamedTable
 
 
@@ -107,7 +108,7 @@ def test_get_hierarchy_edge_for_unmapped_node():
 
     # direct path
     expected_1 = [("FOO:001", "SNOMED:001")]
-    actual_1 = hierarchy_utils.produce_hierarchy_path_for_unmapped_node(
+    actual_1 = hierarchy_utils._produce_hierarchy_path_for_unmapped_node(
         node_to_connect="FOO:001",
         unmapped_node_ids=["FOO:001"],
         merge_and_connectivity_map_for_ns=merge_map,
@@ -120,7 +121,7 @@ def test_get_hierarchy_edge_for_unmapped_node():
 
     # path with other unmapped nodes
     expected_2 = [("FOO:001", "FOO:002"), ("FOO:002", "SNOMED:001")]
-    actual_2 = hierarchy_utils.produce_hierarchy_path_for_unmapped_node(
+    actual_2 = hierarchy_utils._produce_hierarchy_path_for_unmapped_node(
         node_to_connect="FOO:001",
         unmapped_node_ids=["FOO:001", "FOO:002"],
         merge_and_connectivity_map_for_ns=merge_map,
@@ -130,7 +131,7 @@ def test_get_hierarchy_edge_for_unmapped_node():
     assert actual_2 == expected_2
 
     # no path: no edges for input node ID
-    actual_3 = hierarchy_utils.produce_hierarchy_path_for_unmapped_node(
+    actual_3 = hierarchy_utils._produce_hierarchy_path_for_unmapped_node(
         node_to_connect="FOO:00345",
         unmapped_node_ids=["FOO:001", "FOO:002"],
         merge_and_connectivity_map_for_ns=merge_map,
@@ -140,7 +141,7 @@ def test_get_hierarchy_edge_for_unmapped_node():
     assert actual_3 == []
 
     # no path: no edges with merged nodes for input node ID
-    actual_4 = hierarchy_utils.produce_hierarchy_path_for_unmapped_node(
+    actual_4 = hierarchy_utils._produce_hierarchy_path_for_unmapped_node(
         node_to_connect="FOO:001",
         unmapped_node_ids=["FOO:001", "FOO:002"],
         merge_and_connectivity_map_for_ns=merge_map,

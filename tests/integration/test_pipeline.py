@@ -6,10 +6,12 @@ import pytest
 
 from onto_merger.data.constants import (
     DIRECTORY_DATA_TESTS,
+    DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
+    DIRECTORY_INTERMEDIATE,
     DIRECTORY_OUTPUT,
     DIRECTORY_REPORT,
-    DIRECTORY_INTERMEDIATE, DIRECTORY_DOMAIN_ONTOLOGY)
+)
 from onto_merger.pipeline import Pipeline
 from tests.fixtures import TEST_FOLDER_OUTPUT_PATH, TEST_FOLDER_PATH
 

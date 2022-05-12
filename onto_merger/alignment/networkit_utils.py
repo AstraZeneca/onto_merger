@@ -1,27 +1,20 @@
-"""Data class for Networkit graph."""
+"""Methods and data class for using the Networkit graph package."""
 
-import sys
-from dataclasses import dataclass
 from typing import Dict, List
 
 import networkit as nk
 from networkit import Graph
 from pandas import DataFrame
 
-from onto_merger.data.constants import (
-    COLUMN_DEFAULT_ID,
-    COLUMN_SOURCE_ID,
-    COLUMN_TARGET_ID,
-)
+from onto_merger.data.constants import COLUMN_SOURCE_ID, COLUMN_TARGET_ID
 from onto_merger.logger.log import get_logger
-
-# from networkit import getPath
-
 
 logger = get_logger(__name__)
 
 
 class NetworkitGraph:
+    """Data class for using a Networkit graph."""
+
     graph: Graph
     node_id_to_index_map: Dict[str, int]
     node_index_to_id_map: Dict[int, str]
@@ -29,17 +22,18 @@ class NetworkitGraph:
     search_heuristic: List[int]
 
     def __init__(self, edges: DataFrame):
+        """Initialise the Graph class."""
         logger.info(f"Started initialising hierarchy graph from {len(edges):,d} edges...")
         src_ids = edges[COLUMN_SOURCE_ID].tolist()
         trg_ids = edges[COLUMN_TARGET_ID].tolist()
         node_ids = list(set(src_ids + trg_ids))
         self.root_nodes = [node_id for node_id in node_ids if node_id not in src_ids]
-        logger.info(f"Producing node ID lookup maps..")
+        logger.info("Producing node ID lookup maps..")
         self.node_id_to_index_map = NetworkitGraph._produce_node_id_to_index_map(node_ids=node_ids)
         self.node_index_to_id_map = NetworkitGraph._produce_node_index_to_id_map(
             node_id_to_index_map=self.node_id_to_index_map
         )
-        logger.info(f"Adding edges..")
+        logger.info("Adding edges..")
         self.graph = self._create_networkit_graph(edges=edges, node_id_to_index=self.node_id_to_index_map)
         self.search_heuristic = [0 for _ in range(self.graph.upperNodeIdBound())]
         logger.info(
@@ -48,6 +42,11 @@ class NetworkitGraph:
         )
 
     def get_path_for_node(self, node_id: str) -> List[str]:
+        """Get the shortest path (to root) for a node.
+
+        :param node_id: The node ID.
+        :return: The shortest path.
+        """
         if node_id not in self.node_id_to_index_map:
             return []
         return [
@@ -67,7 +66,7 @@ class NetworkitGraph:
 
     @staticmethod
     def _create_networkit_graph(edges: DataFrame, node_id_to_index: dict) -> Graph:
-        """Produces a network x graph object from a hierarchy edge table.
+        """Produce a network x graph object from a hierarchy edge table.
 
         :param node_id_to_index:
         :param edges: The hierarchy edge table.

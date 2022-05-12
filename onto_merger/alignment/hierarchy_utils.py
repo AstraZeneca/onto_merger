@@ -1,3 +1,5 @@
+"""Methods to produce node hierarchy and analyse node connectivity status."""
+
 import dataclasses
 import itertools
 import sys
@@ -16,7 +18,9 @@ from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
+    SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
     SCHEMA_MERGE_TABLE,
+    TABLE_CONNECTIVITY_STEPS_REPORT,
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MERGES_AGGREGATED,
@@ -24,9 +28,13 @@ from onto_merger.data.constants import (
     TABLE_NODES_CONNECTED_ONLY,
     TABLE_NODES_DANGLING,
     TABLE_NODES_UNMAPPED,
-    TABLE_CONNECTIVITY_STEPS_REPORT,
-    SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE)
-from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable, ConnectivityStep
+)
+from onto_merger.data.dataclasses import (
+    AlignmentConfig,
+    ConnectivityStep,
+    DataRepository,
+    NamedTable,
+)
 from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)
@@ -35,7 +43,7 @@ logger = get_logger(__name__)
 def connect_nodes(
     alignment_config: AlignmentConfig, source_alignment_order: List[str], data_repo: DataRepository
 ) -> List[NamedTable]:
-    """Runs the connectivity process to establish a hierarchy between the domain nodes.
+    """Run the connectivity process to establish a hierarchy between the domain nodes.
 
     :param source_alignment_order: The source alignment order.
     :param alignment_config: The alignment process configuration dataclass.
@@ -50,7 +58,7 @@ def connect_nodes(
     )
 
     # (2) connect unmapped nodes to the seed hierarchy
-    unmapped_node_hierarchy_df, connectivity_steps = produce_hierarchy_edges_for_unmapped_nodes(
+    unmapped_node_hierarchy_df, connectivity_steps = _produce_hierarchy_edges_for_unmapped_nodes(
         unmapped_nodes=data_repo.get(TABLE_NODES_UNMAPPED).dataframe,
         merges=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
         source_alignment_order=source_alignment_order,
@@ -63,16 +71,14 @@ def connect_nodes(
             name=TABLE_EDGES_HIERARCHY_POST,
             dataframe=pd.concat([seed_hierarchy_df, unmapped_node_hierarchy_df]).drop_duplicates(keep="first"),
         ),
-        _convert_connectivity_steps_to_named_table(steps=connectivity_steps)
+        _convert_connectivity_steps_to_named_table(steps=connectivity_steps),
     ]
-
-
 
 
 def produce_table_seed_ontology_hierarchy(
     seed_ontology_name: str, nodes: DataFrame, hierarchy_edges: DataFrame
 ) -> Optional[DataFrame]:
-    """Produces the hierarchy edge table for the seed ontology nodes.
+    """Produce the hierarchy edge table for the seed ontology nodes.
 
     :param seed_ontology_name: The name of the seed ontology.
     :param nodes: The full set of domain nodes (including seed nodes).
@@ -81,12 +87,7 @@ def produce_table_seed_ontology_hierarchy(
     """
     # get hierarchy of the seed ontology, filter out any non seed nodes
     # (nodes only have the type 'correct' IDs, whereas the edges may contain other ones)
-    seed_node_list = list(
-        filter_nodes_for_namespace(
-            nodes=nodes,
-            namespace=seed_ontology_name,
-        )[COLUMN_DEFAULT_ID]
-    )
+    seed_node_list = list(filter_nodes_for_namespace(nodes=nodes, namespace=seed_ontology_name,)[COLUMN_DEFAULT_ID])
     seed_hierarchy_table = hierarchy_edges.query(
         f"{COLUMN_SOURCE_ID} in @node_ids & {COLUMN_TARGET_ID} in @node_ids",
         local_dict={"node_ids": seed_node_list},
@@ -103,8 +104,7 @@ def produce_table_seed_ontology_hierarchy(
 
 
 def produce_table_nodes_only_connected(hierarchy_edges: DataFrame, merges: DataFrame) -> NamedTable:
-    """Produces a table containing nodes that are not merged but connected (i.e. are
-    in an edge hierarchy).
+    """Produce a table containing nodes that are not merged but connected (i.e. are in an edge hierarchy).
 
     :param hierarchy_edges: The domain node hierarchy.
     :param merges: The domain node merges.
@@ -113,15 +113,13 @@ def produce_table_nodes_only_connected(hierarchy_edges: DataFrame, merges: DataF
     nodes_connected = produce_node_id_table_from_edge_table(edges=hierarchy_edges)
     merged_node_ids = produce_merged_node_id_list(merges=merges)
     nodes_only_connected = nodes_connected.query(
-        f"{COLUMN_DEFAULT_ID} not in @node_ids",
-        local_dict={"node_ids": merged_node_ids},
-        inplace=False,
+        f"{COLUMN_DEFAULT_ID} not in @node_ids", local_dict={"node_ids": merged_node_ids}, inplace=False,
     )
     return NamedTable(TABLE_NODES_CONNECTED_ONLY, nodes_only_connected)
 
 
 def produce_table_nodes_dangling(nodes: DataFrame, hierarchy_edges: DataFrame, merges: DataFrame) -> NamedTable:
-    """Produces a table containing nodes that are not merged or connected.
+    """Produce a table containing nodes that are not merged or connected.
 
     :param nodes: The set of domain nodes (including seed nodes).
     :param hierarchy_edges: The domain node hierarchy.
@@ -135,16 +133,13 @@ def produce_table_nodes_dangling(nodes: DataFrame, hierarchy_edges: DataFrame, m
     )
     connected_or_merged_node_ids = produce_merged_node_id_list(merges=merges) + connected_nodes_ids
     nodes_dangling = nodes.query(
-        f"{COLUMN_DEFAULT_ID} not in @node_ids",
-        local_dict={"node_ids": connected_or_merged_node_ids},
-        inplace=False,
+        f"{COLUMN_DEFAULT_ID} not in @node_ids", local_dict={"node_ids": connected_or_merged_node_ids}, inplace=False,
     )
     return NamedTable(TABLE_NODES_DANGLING, nodes_dangling)
 
 
 def produce_node_id_table_from_edge_table(edges: DataFrame) -> DataFrame:
-    """Produces a node ID table (i.e. a table containing node IDs only) from a
-    given edge set by aggregating the source and target node IDs.
+    """Produce a node ID table from a given edge set by aggregating the source and target node IDs.
 
     :param edges: The edge table.
     :return: The node table with unique node IDs.
@@ -159,7 +154,7 @@ def produce_node_id_table_from_edge_table(edges: DataFrame) -> DataFrame:
 
 
 def produce_merged_node_id_list(merges: DataFrame) -> List[str]:
-    """Produces a list of node IDs that are merged (the source node ID).
+    """Produce a list of node IDs that are merged (the source node ID).
 
     :param merges: The table of merges.
     :return: The merged node IDs as a list.
@@ -168,7 +163,7 @@ def produce_merged_node_id_list(merges: DataFrame) -> List[str]:
 
 
 def filter_nodes_for_namespace(nodes: DataFrame, namespace: str) -> DataFrame:
-    """Filters a given node dataframe for a namespace.
+    """Filter a given node dataframe for a namespace.
 
     :param nodes: The node table to be filtered.
     :param namespace: The ontology ID.
@@ -185,7 +180,7 @@ def filter_nodes_for_namespace(nodes: DataFrame, namespace: str) -> DataFrame:
     return nodes_for_namespace
 
 
-def produce_hierarchy_edges_for_unmapped_nodes(
+def _produce_hierarchy_edges_for_unmapped_nodes(
     unmapped_nodes: DataFrame, merges: DataFrame, source_alignment_order: List[str], hierarchy_edges: DataFrame
 ) -> Tuple[DataFrame, List[ConnectivityStep]]:
     # contains all merges; iteratively extended with connected nodes (where the node will "merge" to itself)
@@ -201,7 +196,7 @@ def produce_hierarchy_edges_for_unmapped_nodes(
         (
             edges_for_namespace_nodes,
             merge_and_connectivity_map_for_ns,
-            connectivity_step
+            connectivity_step,
         ) = _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
             node_namespace=node_namespace,
             unmapped_nodes=unmapped_nodes,
@@ -242,7 +237,8 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
         + f"{(len(unmapped_node_ids_for_namespace) * 100) / len(unmapped_nodes):.2f}% of total) * * *"
     )
     connectivity_step = ConnectivityStep(
-        source_id=node_namespace, count_unmapped_node_ids=len(unmapped_node_ids_for_namespace))
+        source_id=node_namespace, count_unmapped_node_ids=len(unmapped_node_ids_for_namespace)
+    )
     if not unmapped_node_ids_for_namespace:
         return [], {}, connectivity_step
 
@@ -270,7 +266,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
         _progress_bar(count=counter, total=count_unmapped, status=f" Connecting {node_namespace} ")
         counter += 1
         if node_to_connect not in merge_and_connectivity_map:
-            edges_for_node = produce_hierarchy_path_for_unmapped_node(
+            edges_for_node = _produce_hierarchy_path_for_unmapped_node(
                 node_to_connect=node_to_connect,
                 unmapped_node_ids=unmapped_node_ids_for_namespace,
                 merge_and_connectivity_map_for_ns=merge_and_connectivity_map_for_ns,
@@ -298,7 +294,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
     return edges_for_namespace_nodes, merge_and_connectivity_map_for_ns, connectivity_step
 
 
-def produce_hierarchy_path_for_unmapped_node(
+def _produce_hierarchy_path_for_unmapped_node(
     node_to_connect: str,
     unmapped_node_ids: List[str],
     merge_and_connectivity_map_for_ns: dict,
@@ -351,18 +347,13 @@ def _progress_bar(count, total, status=""):
     sys.stdout.flush()
 
 
-def _convert_connectivity_steps_to_named_table(
-    steps: List[ConnectivityStep],
-) -> NamedTable:
-    """Converts the list of ConnectivityStep dataclasses to a named table.
+def _convert_connectivity_steps_to_named_table(steps: List[ConnectivityStep],) -> NamedTable:
+    """Convert the list of ConnectivityStep dataclasses to a named table.
 
     :param steps: The list of ConnectivityStep dataclasses.
     :return: The ConnectivityStep report dataframe wrapped as a named table.
     """
     return NamedTable(
         TABLE_CONNECTIVITY_STEPS_REPORT,
-        pd.DataFrame(
-            [dataclasses.astuple(step) for step in steps],
-            columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
-        ),
+        pd.DataFrame([dataclasses.astuple(step) for step in steps], columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,),
     )

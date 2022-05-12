@@ -1,17 +1,31 @@
 """Prepare data sets: example, integration test"""
+import os
 from pathlib import Path
 from typing import List
-import os
 
 import pandas as pd
 from pandas import DataFrame
 
 from onto_merger.analyser import analysis_util
+from onto_merger.data.constants import (
+    COLUMN_DEFAULT_ID,
+    COLUMN_PROVENANCE,
+    COLUMN_RELATION,
+    COLUMN_SOURCE_ID,
+    COLUMN_TARGET_ID,
+    DIRECTORY_OUTPUT,
+    RDFS_SUBCLASS_OF,
+    TABLE_EDGES_HIERARCHY,
+    TABLE_EDGES_HIERARCHY_POST,
+    TABLE_MAPPINGS,
+    TABLE_MERGES_AGGREGATED,
+    TABLE_NODES,
+    TABLE_NODES_CONNECTED_ONLY,
+    TABLE_NODES_MERGED,
+    TABLE_NODES_OBSOLETE,
+)
 from onto_merger.data.data_manager import DataManager
-from onto_merger.data.dataclasses import NamedTable, DataRepository
-from onto_merger.data.constants import TABLE_NODES, COLUMN_DEFAULT_ID, COLUMN_SOURCE_ID, COLUMN_TARGET_ID, \
-    TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, COLUMN_RELATION, DIRECTORY_OUTPUT, TABLE_NODES_MERGED, \
-    TABLE_NODES_CONNECTED_ONLY, TABLE_MERGES_AGGREGATED, TABLE_EDGES_HIERARCHY_POST, COLUMN_PROVENANCE, RDFS_SUBCLASS_OF
+from onto_merger.data.dataclasses import DataRepository, NamedTable
 
 
 def prune_nodes_by_namespace(nodes_raw: DataFrame,

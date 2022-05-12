@@ -9,10 +9,11 @@ from onto_merger.data.constants import (
     DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
+    DIRECTORY_INTERMEDIATE,
     DIRECTORY_REPORT,
     TABLE_ALIGNMENT_STEPS_REPORT,
     TABLE_MERGES,
-    DIRECTORY_INTERMEDIATE)
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable
 from tests.fixtures import (

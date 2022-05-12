@@ -19,14 +19,14 @@ from onto_merger.logger.log import setup_logger
 
 
 class Pipeline:
-    """Data repository containing all input and processed DataFrames"""
+    """Data repository containing all input and processed DataFrames."""
 
     """The data repository that stores the input and output tables with their
      corresponding names (types)."""
     _data_repo: DataRepository = DataRepository()
 
     def __init__(self, project_folder_path: str) -> None:
-        """Initialises the Pipeline class.
+        """Initialise the Pipeline class.
 
         :param project_folder_path: The directory path where the project inputs are
         stored.
@@ -39,8 +39,7 @@ class Pipeline:
         self._source_alignment_order: List[str] = []
 
     def run_alignment_and_connection_process(self) -> None:
-        """Runs the alignment and connectivity process, validates inputs and outputs,
-        produces analysis.
+        """Run the alignment and connectivity process, validate inputs and outputs, produce analysis.
 
         :return:
         """
@@ -74,7 +73,7 @@ class Pipeline:
         self.logger.info("Finished running alignment and connection process for " + f"'{self._short_project_name}'")
 
     def _validate_alignment_config(self) -> None:
-        """Runs the alignment configuration JSON schema validator.
+        """Run the alignment configuration JSON schema validator.
 
         Raises an exception if the config is invalid.
 
@@ -87,7 +86,7 @@ class Pipeline:
         self.logger.info("Finished validating alignment config.")
 
     def _process_input_data(self) -> None:
-        """Loads, preprocess, profiles and validates the input data.
+        """Load, preprocess, profile and validate the input data.
 
         Raises an exception if the inputs are invalid (missing or fail data tests).
         Results (loaded tables) are stored in the data repository.
@@ -113,7 +112,7 @@ class Pipeline:
         self.logger.info("Finished processing input data.")
 
     def _align_nodes(self) -> None:
-        """Runs the alignment process.
+        """Run the alignment process.
 
         Results (merge table and alignment steps) are stored in the data repository.
 
@@ -122,17 +121,14 @@ class Pipeline:
         self.logger.info("Started aligning nodes...")
 
         alignment_results, source_alignment_order = AlignmentManager(
-            alignment_config=self._alignment_config,
-            data_repo=self._data_repo,
-            data_manager=self._data_manager,
+            alignment_config=self._alignment_config, data_repo=self._data_repo, data_manager=self._data_manager,
         ).align_nodes()
         self._data_repo.update(tables=alignment_results.get_output_tables())
         self._source_alignment_order.extend(source_alignment_order)
         self.logger.info("Finished aligning nodes...")
 
     def _aggregate_merges(self) -> None:
-        """Runs the merge aggregation process (merges targets become only canonical
-        IDs).
+        """Run the merge aggregation process (merges targets become only canonical IDs).
 
         Results (aggregated merges) are stored in the data repository.
 
@@ -140,19 +136,17 @@ class Pipeline:
         """
         self.logger.info("Started aggregating merges...")
         table_aggregated_merges = merge_utils.produce_named_table_aggregate_merges(
-            merges=self._data_repo.get(TABLE_MERGES).dataframe,
-            alignment_priority_order=self._source_alignment_order,
+            merges=self._data_repo.get(TABLE_MERGES).dataframe, alignment_priority_order=self._source_alignment_order,
         )
         table_merged_nodes = merge_utils.produce_named_table_merged_nodes(merges=table_aggregated_merges.dataframe)
         table_unmapped_nodes = mapping_utils.produce_named_table_unmapped_nodes(
-            nodes=self._data_repo.get(TABLE_NODES).dataframe,
-            merges=self._data_repo.get(TABLE_MERGES).dataframe,
+            nodes=self._data_repo.get(TABLE_NODES).dataframe, merges=self._data_repo.get(TABLE_MERGES).dataframe,
         )
         self._data_repo.update(tables=[table_aggregated_merges, table_merged_nodes, table_unmapped_nodes])
         self.logger.info("Finished aggregating merges.")
 
     def _connect_nodes(self) -> None:
-        """Runs the connectivity process to produce the domain ontology hierarchy.
+        """Run the connectivity process to produce the domain ontology hierarchy.
 
         Results (hierarchy edges) are stored in the data repository.
 
@@ -169,7 +163,7 @@ class Pipeline:
         self.logger.info("Finished connecting nodes.")
 
     def _finalise_outputs(self) -> None:
-        """Produces the final merged ontology and pre-processes tables for validation.
+        """Produce the final merged ontology and pre-processes tables for validation.
 
         Results (merged, unmapped, connected, danging nodes) are stored in the data
         repository.
@@ -211,7 +205,7 @@ class Pipeline:
         self.logger.info("Finished finalising outputs.")
 
     def _validate_outputs(self) -> None:
-        """Runs the output data validation process.
+        """Run the output data validation process.
 
         :return:
         """
@@ -219,8 +213,7 @@ class Pipeline:
 
         # run data tests
         GERunner(
-            alignment_config=self._alignment_config,
-            ge_base_directory=self._data_manager.get_data_tests_path(),
+            alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path(),
         ).run_ge_tests(named_tables=self._data_repo.get_output_tables())
 
         # move data docs to report folder
@@ -229,7 +222,7 @@ class Pipeline:
         self.logger.info("Finished validating produced data.")
 
     def _produce_report(self) -> None:
-        """Runs the alignment and connectivity evaluation process.
+        """Run the alignment and connectivity evaluation process.
 
         :return:
         """

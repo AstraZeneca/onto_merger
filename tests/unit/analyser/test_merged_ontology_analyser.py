@@ -5,12 +5,14 @@ import pandas as pd
 from onto_merger.analyser.merged_ontology_analyser import MergedOntologyAnalyser
 from onto_merger.data.constants import (
     SCHEMA_ALIGNMENT_STEPS_TABLE,
+    SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
     TABLE_ALIGNMENT_STEPS_REPORT,
+    TABLE_CONNECTIVITY_STEPS_REPORT,
     TABLE_NODES,
     TABLE_NODES_CONNECTED_ONLY,
     TABLE_NODES_DANGLING,
     TABLE_NODES_MERGED,
-    TABLE_CONNECTIVITY_STEPS_REPORT, SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE)
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository, NamedTable
 from tests.fixtures import data_manager, data_repo

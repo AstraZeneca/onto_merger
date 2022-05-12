@@ -1,3 +1,5 @@
+"""Validate the alignment configuration JSON schema."""
+
 import logging
 
 from jsonschema import Draft7Validator
@@ -10,7 +12,7 @@ logger = get_logger(__name__)
 
 def validate_alignment_configuration(alignment_config: dict) -> bool:
     """
-    Validates the alignment configuration JSON schema.
+    Validate the alignment configuration JSON schema.
 
     :param alignment_config: The configuration JSON as a dictionary.
     :return: True is valid, otherwise False.
@@ -19,11 +21,7 @@ def validate_alignment_configuration(alignment_config: dict) -> bool:
 
     # perform check
     schema_validation_errors = [
-        error
-        for error in sorted(
-            Draft7Validator(schema).iter_errors(alignment_config),
-            key=lambda e: e.path,
-        )
+        error for error in sorted(Draft7Validator(schema).iter_errors(alignment_config), key=lambda e: e.path,)
     ]
     check_passed = True if len(schema_validation_errors) == 0 else False
 

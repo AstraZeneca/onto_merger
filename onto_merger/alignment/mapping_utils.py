@@ -1,3 +1,5 @@
+"""Helper methods to work with mappings."""
+
 from typing import List
 
 import pandas as pd
@@ -25,8 +27,7 @@ logger = get_logger(__name__)
 
 
 def get_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
-    """Filters a mapping set so each remaining mapping is between nodes of the same
-    ontology.
+    """Filter a mapping set so each remaining mapping is between nodes of the same ontology.
 
     :param mappings: The input mapping set ot be filtered.
     :return: The internal code re-assigment mappings table.
@@ -35,8 +36,9 @@ def get_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
         f"{get_namespace_column_name_for_column(COLUMN_SOURCE_ID)} == "
         + f"{get_namespace_column_name_for_column(COLUMN_TARGET_ID)}"
     )
-    mapping_subset = produce_table_with_namespace_column_for_node_ids(table=mappings)\
-        .query(expr=query, inplace=False)[SCHEMA_MAPPING_TABLE]
+    mapping_subset = produce_table_with_namespace_column_for_node_ids(table=mappings).query(expr=query, inplace=False)[
+        SCHEMA_MAPPING_TABLE
+    ]
     logger.info(
         f"Found {len(mapping_subset)} 'internal_node_reassignment' mappings from total " + f"{len(mappings)} mappings."
     )
@@ -44,7 +46,9 @@ def get_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
 
 
 def get_mappings_obsolete_to_current_node_id(nodes_obsolete: DataFrame, mappings: DataFrame) -> DataFrame:
-    """Given a set of internal_node_reassignment mappings, ensures that the obsolete
+    """Return the internal node ID re-assingment mappings.
+
+    Given a set of internal_node_reassignment mappings, ensures that the obsolete
     (deprecated) node IDs are always in the source_id column, and the current node IDs
     are in the target_id column.
 
@@ -65,23 +69,17 @@ def get_mappings_obsolete_to_current_node_id(nodes_obsolete: DataFrame, mappings
 
     updated_src_id_column = f"updated_{COLUMN_SOURCE_ID}"
     df[updated_src_id_column] = df.apply(
-        lambda x: x[COLUMN_SOURCE_ID] if x[COLUMN_SOURCE_ID] in nodes_obsolete_ids else x[COLUMN_TARGET_ID],
-        axis=1,
+        lambda x: x[COLUMN_SOURCE_ID] if x[COLUMN_SOURCE_ID] in nodes_obsolete_ids else x[COLUMN_TARGET_ID], axis=1,
     )
 
     updated_trg_id_column = f"updated_{COLUMN_TARGET_ID}"
     df[updated_trg_id_column] = df.apply(
-        lambda x: x[COLUMN_SOURCE_ID] if x[COLUMN_TARGET_ID] in nodes_obsolete_ids else x[COLUMN_TARGET_ID],
-        axis=1,
+        lambda x: x[COLUMN_SOURCE_ID] if x[COLUMN_TARGET_ID] in nodes_obsolete_ids else x[COLUMN_TARGET_ID], axis=1,
     )
 
     df.drop(columns=[COLUMN_SOURCE_ID, COLUMN_TARGET_ID], inplace=True)
     df.rename(
-        columns={
-            updated_src_id_column: COLUMN_SOURCE_ID,
-            updated_trg_id_column: COLUMN_TARGET_ID,
-        },
-        inplace=True,
+        columns={updated_src_id_column: COLUMN_SOURCE_ID, updated_trg_id_column: COLUMN_TARGET_ID}, inplace=True,
     )
 
     df = df[SCHEMA_MAPPING_TABLE]
@@ -92,7 +90,7 @@ def get_mappings_obsolete_to_current_node_id(nodes_obsolete: DataFrame, mappings
 def get_mappings_with_updated_node_ids(
     mappings: DataFrame, mappings_obsolete_to_current_node_id: DataFrame
 ) -> DataFrame:
-    """Updates the obsolete node IDs in a mapping set.
+    """Update the obsolete node IDs in a mapping set.
 
     :param mappings: The set of mappings to be updated.
     :param mappings_obsolete_to_current_node_id: The obsolete to current node ID
@@ -110,8 +108,7 @@ def get_mappings_with_updated_node_ids(
 
 
 def add_comparison_column_for_reoriented_mappings(mappings: DataFrame):
-    """Produces a column from the source and target ID as an ordered list
-    so two mappings in with different orientation can be comapred.
+    """Produce a column from the source and target ID as an ordered list to compare mappings with different orientation.
 
     :param mappings: The input mapping set.
     :return: The mapping set appended with the comparison column.
@@ -126,9 +123,10 @@ def add_comparison_column_for_reoriented_mappings(mappings: DataFrame):
 
 
 def get_mappings_for_namespace(namespace: str, edges: DataFrame) -> DataFrame:
-    """Filters an input mapping set such that the output will only contain mapping
-    where either the source or the target node is from the specified ontology
-    (namespace).
+    """Filter a mapping set for a given namespace.
+
+    The result will only contain mapping where either the source or the target node
+    is from the specified ontology (namespace).
 
     :param namespace: The ontology namespace.
     :param edges: The input mapping set.
@@ -149,10 +147,11 @@ def get_mappings_for_namespace(namespace: str, edges: DataFrame) -> DataFrame:
 
 
 def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_or_many_to_one: bool) -> DataFrame:
-    """Filters a mapping set to return either the mapping subset that align one or
-    many source node to exactly one target node (stable set used for merges),
-    or the subset that align one source node to many target nodes (unstable set that
-    is dropped).
+    """Filter a mapping set according to multiplicity.
+
+    Return either the mapping subset that align one or many source node to exactly
+    one target node (stable set used for merges), or the subset that align one source
+    node to many target nodes (unstable set that is dropped).
 
     The mapping subsets are not pruned i.e. the filtering is based on multiplicity
     analysis of the source nodes.
@@ -179,15 +178,15 @@ def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_o
     else:
         source_ids_to_drop = list(df_one_to_one[COLUMN_SOURCE_ID])
     mapping_subset = mappings.query(
-        f"{COLUMN_SOURCE_ID} != @node_ids",
-        local_dict={"node_ids": source_ids_to_drop},
-        inplace=False,
+        f"{COLUMN_SOURCE_ID} != @node_ids", local_dict={"node_ids": source_ids_to_drop}, inplace=False,
     )[SCHEMA_MAPPING_TABLE]
     return mapping_subset
 
 
 def get_one_or_many_source_to_one_target_mappings(mappings: DataFrame) -> DataFrame:
-    """Filters a mapping set to return the mapping subset that align one or
+    """Return only one or many source to one target mappings.
+
+    Filter a mapping set to return the mapping subset that align one or
     many source node to exactly one target node (stable set used for merges).
 
     :param mappings: The input mapping set to be filtered.
@@ -201,7 +200,9 @@ def get_one_or_many_source_to_one_target_mappings(mappings: DataFrame) -> DataFr
 
 
 def get_one_source_to_many_target_mappings(mappings: DataFrame) -> DataFrame:
-    """Filters a mapping set to return the mapping subset that align one source
+    """Return only one source to many target mappings.
+
+    Filter a mapping set to return the mapping subset that align one source
      node to many target nodes (unstable set that is dropped)
 
     :param mappings: The input mapping set to be filtered.
@@ -215,14 +216,11 @@ def get_one_source_to_many_target_mappings(mappings: DataFrame) -> DataFrame:
 
 
 def update_mappings_with_current_node_ids(
-    mappings_internal_obsolete_to_current_node_id: DataFrame,
-    mappings: DataFrame,
+    mappings_internal_obsolete_to_current_node_id: DataFrame, mappings: DataFrame,
 ) -> DataFrame:
-    """Updates a mapping set where all node IDs are current using the
-    obsolete-to-current node ID mappings.
+    """Update a mapping set with current node IDs.
 
-    :param mappings_internal_obsolete_to_current_node_id: The obsolete-to-current node
-    ID mappings.
+    :param mappings_internal_obsolete_to_current_node_id: The obsolete-to-current node ID mappings.
     :param mappings: The input mapping set to be updated.
     :return: The updated mapping set.
     """
@@ -231,8 +229,7 @@ def update_mappings_with_current_node_ids(
     df = pd.merge(
         mappings,
         mappings_internal_obsolete_to_current_node_id[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]].rename(
-            columns={COLUMN_TARGET_ID: "new_src"},
-            inplace=False,
+            columns={COLUMN_TARGET_ID: "new_src"}, inplace=False,
         ),
         how="left",
         on=COLUMN_SOURCE_ID,
@@ -242,8 +239,7 @@ def update_mappings_with_current_node_ids(
     df = pd.merge(
         df,
         mappings_internal_obsolete_to_current_node_id[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]].rename(
-            columns={COLUMN_TARGET_ID: "new_trg", COLUMN_SOURCE_ID: COLUMN_TARGET_ID},
-            inplace=False,
+            columns={COLUMN_TARGET_ID: "new_trg", COLUMN_SOURCE_ID: COLUMN_TARGET_ID}, inplace=False,
         ),
         how="left",
         on=COLUMN_TARGET_ID,
@@ -253,8 +249,7 @@ def update_mappings_with_current_node_ids(
     df["trg"] = df["new_trg"].mask(pd.isnull, df[COLUMN_TARGET_ID])
     df.drop([COLUMN_SOURCE_ID, COLUMN_TARGET_ID], axis=1, inplace=True)
     df.rename(
-        columns={"src": COLUMN_SOURCE_ID, "trg": COLUMN_TARGET_ID},
-        inplace=True,
+        columns={"src": COLUMN_SOURCE_ID, "trg": COLUMN_TARGET_ID}, inplace=True,
     )
 
     df2 = df[SCHEMA_MAPPING_TABLE]
@@ -263,8 +258,7 @@ def update_mappings_with_current_node_ids(
 
 
 def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: DataFrame) -> DataFrame:
-    """Updates a mapping set by ensuring that the target node is always of the
-    specified ontology (namespace).
+    """Update a mapping so the target node is always of the specified ontology (namespace).
 
     The mapping set assumed to contain only mappings where either the source or the
     target node is from the specified namespace.
@@ -293,26 +287,21 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
     )
     df.drop([COLUMN_SOURCE_ID, COLUMN_TARGET_ID], axis=1, inplace=True)
     df.rename(
-        columns={
-            updated_src_id_column: COLUMN_SOURCE_ID,
-            updated_trg_id_column: COLUMN_TARGET_ID,
-        },
-        inplace=True,
+        columns={updated_src_id_column: COLUMN_SOURCE_ID, updated_trg_id_column: COLUMN_TARGET_ID}, inplace=True,
     )
     return df[SCHEMA_MAPPING_TABLE]
 
 
 def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
-    """Produces the dataframe of unmapped node IDs.
+    """Produce the dataframe of unmapped node IDs.
 
     :param nodes: The set of input nodes to be filtered.
     :param merges: The set of merges used to determine node mapped status.
     :return: The set of unmapped nodes.
     """
-    merges_updated = merges[[COLUMN_SOURCE_ID]].rename(
-        columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID},
-        inplace=False,
-    )[[COLUMN_DEFAULT_ID]]
+    merges_updated = merges[[COLUMN_SOURCE_ID]].rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID}, inplace=False,)[
+        [COLUMN_DEFAULT_ID]
+    ]
 
     df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merges_updated, merges_updated]).drop_duplicates(keep=False)
 
@@ -325,24 +314,17 @@ def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFra
 
 
 def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> NamedTable:
-    """Produces the named table of unmapped node IDs.
+    """Produce the named table of unmapped node IDs.
 
     :param nodes: The set of input nodes to be filtered.
     :param merges: The set of merges used to determine node mapped status.
     :return: The set of unmapped nodes.
     """
-    return NamedTable(
-        TABLE_NODES_UNMAPPED,
-        produce_table_unmapped_nodes(
-            nodes=nodes,
-            merges=merges,
-        ),
-    )
+    return NamedTable(TABLE_NODES_UNMAPPED, produce_table_unmapped_nodes(nodes=nodes, merges=merges,),)
 
 
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:
-    """Filters an input mapping set such that the output only contains permitted
-    mapping relations.
+    """Filter a mapping set for permitted mapping relations.
 
     :param permitted_mapping_relations: The list of permitted mapping relations.
     :param mappings: The input mapping set to be filtered.
@@ -358,10 +340,10 @@ def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], 
 
 
 def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: DataFrame) -> DataFrame:
-    """Produces a set of unique mappings by removing duplicates: mappings between the
-    same source and target node with mapping relations that are in the same type group.
+    """Produce a set of unique mappings by removing duplicates.
 
-    We assume that all input mappings are from the same type group/
+    Mappings between the same source and target node with mapping relations that are in the same type group.
+    We assume that all input mappings are from the same type group.
 
     :param mapping_type_group_name: The name of the mapping type group (e.g.
     equivalence) that will be used as the mapping relation for the deduplicated
@@ -381,8 +363,7 @@ def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: 
 
 
 def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataFrame:
-    """Filters a mapping set such that the source node IDs must belong to the specified
-    node ID list.
+    """Filter a mapping set such that the source node IDs must belong to the specified node ID list.
 
     :param nodes: The dataframe containing the permitted source node IDs.
     :param mappings: The input mapping set to be filtered.
@@ -390,9 +371,7 @@ def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataF
     """
     node_ids_to_keep = list(nodes[COLUMN_DEFAULT_ID])
     mapping_subset = mappings.query(
-        f"{COLUMN_SOURCE_ID} == @node_ids",
-        local_dict={"node_ids": node_ids_to_keep},
-        inplace=False,
+        f"{COLUMN_SOURCE_ID} == @node_ids", local_dict={"node_ids": node_ids_to_keep}, inplace=False,
     )[SCHEMA_MAPPING_TABLE]
     logger.info(
         f"Found {len(mapping_subset):,d} mappings (from total {len(mappings):,d}) " + f"for {len(nodes):,d} nodes."
@@ -401,8 +380,10 @@ def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataF
 
 
 def produce_self_merges_for_seed_nodes(seed_id: str, nodes: DataFrame, nodes_obsolete: DataFrame) -> NamedTable:
-    """Produces a set of (self) merges for the seed ontology where each source and
-    target node ID are the same. This is used for counting mapped nodes.
+    """Produce a set of (self) merges for the seed ontology.
+
+    In the result each source and target node ID are the same.
+    This is used for counting mapped nodes.
 
     :param seed_id: The seed ontology name.
     :param nodes: The set of all nodes.
@@ -412,20 +393,16 @@ def produce_self_merges_for_seed_nodes(seed_id: str, nodes: DataFrame, nodes_obs
     # get only seed nodes
     df = produce_table_with_namespace_column_for_node_ids(table=nodes)
     df.query(
-        f"{get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)} == '{seed_id}'",
-        inplace=True,
+        f"{get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)} == '{seed_id}'", inplace=True,
     )
     df.rename(
-        columns={COLUMN_DEFAULT_ID: COLUMN_SOURCE_ID},
-        inplace=True,
+        columns={COLUMN_DEFAULT_ID: COLUMN_SOURCE_ID}, inplace=True,
     )
 
     # filter out obsolete nodes
     nodes_obsolete_ids = list(nodes_obsolete[COLUMN_DEFAULT_ID])
     df.query(
-        f"{COLUMN_SOURCE_ID} != @node_ids",
-        local_dict={"node_ids": nodes_obsolete_ids},
-        inplace=True,
+        f"{COLUMN_SOURCE_ID} != @node_ids", local_dict={"node_ids": nodes_obsolete_ids}, inplace=True,
     )
     df = df[[COLUMN_SOURCE_ID]]
 

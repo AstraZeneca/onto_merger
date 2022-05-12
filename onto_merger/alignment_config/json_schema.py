@@ -1,11 +1,9 @@
+"""JSON schema definition for the alignment and connectivity process configuration file."""
+
 schema = {
     "name": "parser_config",
     "type": "object",
-    "required": [
-        "domain_node_type",
-        "seed_ontology_name",
-        "mappings",
-    ],
+    "required": ["domain_node_type", "seed_ontology_name", "mappings"],
     "additionalProperties": False,
     "properties": {
         "domain_node_type": {"type": "string"},
@@ -20,24 +18,12 @@ schema = {
                     "required": ["equivalence", "database_reference", "label_match"],
                     "additionalProperties": False,
                     "properties": {
-                        "equivalence": {
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {"type": "string"},
-                        },
-                        "database_reference": {
-                            "type": "array",
-                            "minItems": 0,
-                            "items": {"type": "string"},
-                        },
-                        "label_match": {
-                            "type": "array",
-                            "minItems": 0,
-                            "items": {"type": "string"},
-                        },
+                        "equivalence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                        "database_reference": {"type": "array", "minItems": 0, "items": {"type": "string"}},
+                        "label_match": {"type": "array", "minItems": 0, "items": {"type": "string"}},
                     },
                 }
-            }
-        }
-    }
+            },
+        },
+    },
 }
