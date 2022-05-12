@@ -1,5 +1,7 @@
 """Methods and data class for using the Networkit graph package."""
 
+# mypy: ignore-errors
+
 from typing import Dict, List
 
 import networkit as nk
