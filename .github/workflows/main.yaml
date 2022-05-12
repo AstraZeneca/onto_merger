@@ -33,6 +33,9 @@ jobs:
          pip install nbconvert
          pip install markupsafe==2.0.1 
          python setup.py install
+      - name: Run code quality tests
+        run: |
+          tox -e flake8
       - name: Install main package
         run: |
           pip install -e .[test]
