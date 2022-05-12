@@ -1,3 +1,5 @@
+"""Data classes and helper methods."""
+
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
@@ -15,7 +17,7 @@ from onto_merger.data.constants import (
 @dataclass_json
 @dataclass
 class AlignmentConfigMappingTypeGroups:
-    """Represent the mapping type groups."""
+    """Mapping type groups configuration."""
 
     equivalence: List[str]
     database_reference: List[str]
@@ -23,7 +25,7 @@ class AlignmentConfigMappingTypeGroups:
 
     @property
     def all_mapping_types(self) -> List[str]:
-        """Produces a single list containing all mapping relations.
+        """Produce a single list containing all mapping relations.
 
         :return: All mappings relations.
         """
@@ -33,7 +35,7 @@ class AlignmentConfigMappingTypeGroups:
 @dataclass_json
 @dataclass
 class AlignmentConfigBase:
-    """Represents the base alignment process configuration."""
+    """Base alignment process configuration."""
 
     domain_node_type: str
     seed_ontology_name: str
@@ -41,7 +43,7 @@ class AlignmentConfigBase:
 
 @dataclass
 class AlignmentConfig:
-    """Represents the alignment process configuration"""
+    """Alignment process configuration."""
 
     base_config: AlignmentConfigBase
     mapping_type_groups: AlignmentConfigMappingTypeGroups
@@ -50,23 +52,21 @@ class AlignmentConfig:
 
 @dataclass
 class NamedTable:
-    """Wraps a Pandas dataframe with its name (identifier) for convenient access
-    and serialisation."""
+    """Wrap a Pandas dataframe with its name (identifier) for convenient access and serialisation."""
 
     name: str
     dataframe: DataFrame
 
 
 class DataRepository:
-    """Stores named tables in a dictionary and provides access and update
-    convenience methods."""
+    """Store named tables in a dictionary and provides access and update convenience methods."""
 
     def __init__(self):
-        """Initialised the DataRepository dataclass."""
+        """Initialise the DataRepository dataclass."""
         self.data: Dict[str, NamedTable] = {}
 
     def get(self, table_name: str) -> NamedTable:
-        """Returns a named table for a given table identifier.
+        """Return a named table for a given table identifier.
 
         :param table_name: The table identifier.
         :return: The named table.
@@ -78,14 +78,14 @@ class DataRepository:
             return table
 
     def get_input_tables(self) -> List[NamedTable]:
-        """Returns the list of input named tables.
+        """Return the list of input named tables.
 
         :return: The list of input named tables.
         """
         return [self.get(table_name=table_name) for table_name in INPUT_TABLES if table_name in self.data]
 
     def get_output_tables(self) -> List[NamedTable]:
-        """Returns the list of output named tables.
+        """Return the list of output named tables.
 
         :return: The list of output named tables.
         """
@@ -96,8 +96,7 @@ class DataRepository:
             table: Optional[NamedTable] = None,
             tables: Optional[List[NamedTable]] = None,
     ) -> None:
-        """Updates (adds or overwrites) either a single table or a list
-        of named tables in the repository dictionary.
+        """Update (adds or overwrites) either a single table or a list of named tables in the repository dictionary.
 
         :param table: The single table to be updated in the
         repository dictionary.
@@ -113,8 +112,7 @@ class DataRepository:
             pass
 
     def get_repo_summary(self) -> DataFrame:
-        """Produces a summary table of the data repository content
-        (table names, counts and columns).
+        """Produce a summary table of the data repository content (table names, counts and columns).
 
         :return: The summary table as a dataframe.
         """
@@ -132,7 +130,7 @@ class DataRepository:
 
 @dataclass
 class AlignmentStep:
-    """Represents an alignment step metadata as a dataclass."""
+    """Represent an alignment step metadata as a dataclass."""
 
     mapping_type_group: str
     source_id: str
@@ -149,7 +147,7 @@ class AlignmentStep:
             step_counter: int,
             count_unmapped_nodes: int,
     ):
-        """Initialises the AlignmentStep dataclass.
+        """Initialise the AlignmentStep dataclass.
 
         :param mapping_type_group: The mapping type group used
         in the alignment step.
@@ -169,7 +167,7 @@ class AlignmentStep:
 
 @dataclass
 class ConnectivityStep:
-    """Represents an hierarchy connectivity step metadata as a dataclass."""
+    """Hierarchy connectivity step metadata."""
 
     source_id: str
     count_unmapped_node_ids: int
@@ -183,7 +181,7 @@ class ConnectivityStep:
             source_id: str,
             count_unmapped_node_ids: int
     ):
-        """Initialises the ConnectivityStep dataclass.
+        """Initialise the ConnectivityStep dataclass.
 
         :param source_id: The node that are being connected in this step.
         :param count_unmapped_node_ids: The number of dangling and unmapped nodes

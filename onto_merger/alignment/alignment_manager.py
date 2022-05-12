@@ -1,4 +1,4 @@
-"""Runs the alignment process."""
+"""Alignment process runner and helper methods."""
 
 import dataclasses
 from typing import List, Tuple
@@ -34,13 +34,15 @@ logger = get_logger(__name__)
 
 
 class AlignmentManager:
+    """Alignment process pipeline."""
+
     def __init__(
         self,
         alignment_config: AlignmentConfig,
         data_repo: DataRepository,
         data_manager: DataManager,
     ):
-        """Initialises the AlignmentManager class.
+        """Initialise the AlignmentManager class.
 
         :param alignment_config: The alignment process configuration dataclass.
         :param data_repo: The data repository that stores the input tables.
@@ -63,7 +65,7 @@ class AlignmentManager:
         )
 
     def align_nodes(self) -> Tuple[DataRepository, List[str]]:
-        """Runs the alignment pipeline.
+        """Run the alignment pipeline.
 
         Results are stored in the internal data repository.
 
@@ -105,8 +107,7 @@ class AlignmentManager:
         mapping_type_group_name: str,
         mapping_types: List[str],
     ) -> None:
-        """Runs the alignment for each source according to the priority order, for a
-        given mapping type group.
+        """Run the alignment for each source according to the priority order, for a given mapping type group.
 
         :param sources_to_align: The source alignment priority order list.
         :param mapping_type_group_name: The name of mapping type group.
@@ -138,7 +139,7 @@ class AlignmentManager:
         mapping_type_group_name: str,
         mapping_types: List[str],
     ) -> Tuple[NamedTable, AlignmentStep]:
-        """Performs an alignment step to a source.
+        """Perform an alignment step to a source.
 
         :param source_id: The source the unmapped nodes are aligned to.
         :param step_counter: The step number.
@@ -210,8 +211,7 @@ class AlignmentManager:
         return merge_table, alignment_step
 
     def _preprocess_mappings(self) -> None:
-        """Preprocess the mappings: internal code reassignments are computed and used to
-        update the full mapping set.
+        """Preprocess the mappings: internal code reassignments are computed and used to update the full mapping set.
 
         Results are stored in the internal data repository.
 
@@ -247,8 +247,7 @@ class AlignmentManager:
         logger.info("Finished pre-processing mappings.")
 
     def _create_initial_step(self, mapping_type_group_name: str) -> None:
-        """Produces and stores the initial set of merges (self merges for the seed
-        ontology) and the step meta data.
+        """Produce and store the initial set of merges (self merges for the seed ontology) and the step meta data.
 
         Results are stored in the internal data repository.
 
@@ -278,8 +277,7 @@ class AlignmentManager:
         )
 
     def _store_results_from_alignment_step(self, merges_for_source: NamedTable, alignment_step: AlignmentStep) -> None:
-        """Stores the results of an aligment step (merges and step meta data) in the
-        internal data repository.
+        """Store the results of an aligment step (merges and step meta data) in the internal data repository.
 
         :param merges_for_source: The merges produced during the alignemt step.
         :param alignment_step: The alignment step meta data.
@@ -294,7 +292,7 @@ class AlignmentManager:
 
 
 def produce_source_alignment_priority_order(seed_ontology_name: str, nodes: DataFrame) -> List[str]:
-    """Produces the alignment process source priority order.
+    """Produce the alignment process source priority order.
 
     The alignment order is produced by putting the seed ontology as first (this
     should have the most mappings and the desired hierarchy), and the rest of the
@@ -316,7 +314,7 @@ def produce_source_alignment_priority_order(seed_ontology_name: str, nodes: Data
 def convert_alignment_steps_to_named_table(
     alignment_steps: List[AlignmentStep],
 ) -> NamedTable:
-    """Converts the list of AlignmentStep dataclasses to a named table.
+    """Convert the list of AlignmentStep dataclasses to a named table.
 
     :param alignment_steps: The list of AlignmentStep dataclasses.
     :return: The AlignmentStep report dataframe wrapped as a named table.
