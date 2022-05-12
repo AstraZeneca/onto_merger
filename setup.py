@@ -5,7 +5,6 @@ from setuptools import find_packages, setup
 install_requires = [
     "pandas==1.3.5",
     "pandas-profiling==3.1.0",
-    "rdflib==6.1.1",
     "dataclasses-json==0.5.7",
     "great_expectations==0.15.2",
     "jinja2==3.0.3",
@@ -14,6 +13,7 @@ install_requires = [
     "networkit==9.1.1",
     "ruamel.yaml==0.17.17",
     "numpy==1.21.5",
+    "docopt==0.6.2"
 ]
 
 setup_requires = ["pytest-runner"]
