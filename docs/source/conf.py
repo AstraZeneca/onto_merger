@@ -35,6 +35,7 @@ project = "onto-merger"
 copyright = f"{datetime.datetime.now().year}, {author}"
 
 # version = onto_merger.__version__
+version = "latest"
 # release = onto_merger.__version__
 
 html_theme = "sphinx_rtd_theme"
@@ -49,7 +50,7 @@ html_theme_options = {
     "logo_only": True,
 }
 
-# html_logo = "_static/img/onto-merge.jpg" # todo
+html_logo = "../../images/onto_merger_logo.jpg"
 html_static_path = ["_static"]
 # html_context = {"css_files": ["_static/css/custom.css"]}
 # rst_context = {"onto_merger": onto_merger}
