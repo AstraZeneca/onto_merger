@@ -71,7 +71,7 @@ def connect_nodes(
             name=TABLE_EDGES_HIERARCHY_POST,
             dataframe=pd.concat([seed_hierarchy_df, unmapped_node_hierarchy_df]).drop_duplicates(keep="first"),
         ),
-        _convert_connectivity_steps_to_named_table(steps=connectivity_steps)
+        _convert_connectivity_steps_to_named_table(steps=connectivity_steps),
     ]
 
 
@@ -87,12 +87,7 @@ def produce_table_seed_ontology_hierarchy(
     """
     # get hierarchy of the seed ontology, filter out any non seed nodes
     # (nodes only have the type 'correct' IDs, whereas the edges may contain other ones)
-    seed_node_list = list(
-        filter_nodes_for_namespace(
-            nodes=nodes,
-            namespace=seed_ontology_name,
-        )[COLUMN_DEFAULT_ID]
-    )
+    seed_node_list = list(filter_nodes_for_namespace(nodes=nodes, namespace=seed_ontology_name,)[COLUMN_DEFAULT_ID])
     seed_hierarchy_table = hierarchy_edges.query(
         f"{COLUMN_SOURCE_ID} in @node_ids & {COLUMN_TARGET_ID} in @node_ids",
         local_dict={"node_ids": seed_node_list},
@@ -118,9 +113,7 @@ def produce_table_nodes_only_connected(hierarchy_edges: DataFrame, merges: DataF
     nodes_connected = produce_node_id_table_from_edge_table(edges=hierarchy_edges)
     merged_node_ids = produce_merged_node_id_list(merges=merges)
     nodes_only_connected = nodes_connected.query(
-        f"{COLUMN_DEFAULT_ID} not in @node_ids",
-        local_dict={"node_ids": merged_node_ids},
-        inplace=False,
+        f"{COLUMN_DEFAULT_ID} not in @node_ids", local_dict={"node_ids": merged_node_ids}, inplace=False,
     )
     return NamedTable(TABLE_NODES_CONNECTED_ONLY, nodes_only_connected)
 
@@ -140,9 +133,7 @@ def produce_table_nodes_dangling(nodes: DataFrame, hierarchy_edges: DataFrame, m
     )
     connected_or_merged_node_ids = produce_merged_node_id_list(merges=merges) + connected_nodes_ids
     nodes_dangling = nodes.query(
-        f"{COLUMN_DEFAULT_ID} not in @node_ids",
-        local_dict={"node_ids": connected_or_merged_node_ids},
-        inplace=False,
+        f"{COLUMN_DEFAULT_ID} not in @node_ids", local_dict={"node_ids": connected_or_merged_node_ids}, inplace=False,
     )
     return NamedTable(TABLE_NODES_DANGLING, nodes_dangling)
 
@@ -205,7 +196,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
         (
             edges_for_namespace_nodes,
             merge_and_connectivity_map_for_ns,
-            connectivity_step
+            connectivity_step,
         ) = _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
             node_namespace=node_namespace,
             unmapped_nodes=unmapped_nodes,
@@ -246,7 +237,8 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
         + f"{(len(unmapped_node_ids_for_namespace) * 100) / len(unmapped_nodes):.2f}% of total) * * *"
     )
     connectivity_step = ConnectivityStep(
-        source_id=node_namespace, count_unmapped_node_ids=len(unmapped_node_ids_for_namespace))
+        source_id=node_namespace, count_unmapped_node_ids=len(unmapped_node_ids_for_namespace)
+    )
     if not unmapped_node_ids_for_namespace:
         return [], {}, connectivity_step
 
@@ -355,9 +347,7 @@ def _progress_bar(count, total, status=""):
     sys.stdout.flush()
 
 
-def _convert_connectivity_steps_to_named_table(
-    steps: List[ConnectivityStep],
-) -> NamedTable:
+def _convert_connectivity_steps_to_named_table(steps: List[ConnectivityStep],) -> NamedTable:
     """Convert the list of ConnectivityStep dataclasses to a named table.
 
     :param steps: The list of ConnectivityStep dataclasses.
@@ -365,8 +355,5 @@ def _convert_connectivity_steps_to_named_table(
     """
     return NamedTable(
         TABLE_CONNECTIVITY_STEPS_REPORT,
-        pd.DataFrame(
-            [dataclasses.astuple(step) for step in steps],
-            columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
-        ),
+        pd.DataFrame([dataclasses.astuple(step) for step in steps], columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,),
     )

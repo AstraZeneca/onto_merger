@@ -34,8 +34,5 @@ def produce_table_report(table: NamedTable) -> ProfileReport:
     :return:
     """
     return ProfileReport(
-        df=table.dataframe,
-        title=f"{table.name} Profiling Report",
-        minimal=True,
-        n_freq_table_max=250,
+        df=table.dataframe, title=f"{table.name} Profiling Report", minimal=True, n_freq_table_max=250,
     )

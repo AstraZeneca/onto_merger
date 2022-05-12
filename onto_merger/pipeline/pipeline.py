@@ -121,9 +121,7 @@ class Pipeline:
         self.logger.info("Started aligning nodes...")
 
         alignment_results, source_alignment_order = AlignmentManager(
-            alignment_config=self._alignment_config,
-            data_repo=self._data_repo,
-            data_manager=self._data_manager,
+            alignment_config=self._alignment_config, data_repo=self._data_repo, data_manager=self._data_manager,
         ).align_nodes()
         self._data_repo.update(tables=alignment_results.get_output_tables())
         self._source_alignment_order.extend(source_alignment_order)
@@ -138,13 +136,11 @@ class Pipeline:
         """
         self.logger.info("Started aggregating merges...")
         table_aggregated_merges = merge_utils.produce_named_table_aggregate_merges(
-            merges=self._data_repo.get(TABLE_MERGES).dataframe,
-            alignment_priority_order=self._source_alignment_order,
+            merges=self._data_repo.get(TABLE_MERGES).dataframe, alignment_priority_order=self._source_alignment_order,
         )
         table_merged_nodes = merge_utils.produce_named_table_merged_nodes(merges=table_aggregated_merges.dataframe)
         table_unmapped_nodes = mapping_utils.produce_named_table_unmapped_nodes(
-            nodes=self._data_repo.get(TABLE_NODES).dataframe,
-            merges=self._data_repo.get(TABLE_MERGES).dataframe,
+            nodes=self._data_repo.get(TABLE_NODES).dataframe, merges=self._data_repo.get(TABLE_MERGES).dataframe,
         )
         self._data_repo.update(tables=[table_aggregated_merges, table_merged_nodes, table_unmapped_nodes])
         self.logger.info("Finished aggregating merges.")
@@ -217,8 +213,7 @@ class Pipeline:
 
         # run data tests
         GERunner(
-            alignment_config=self._alignment_config,
-            ge_base_directory=self._data_manager.get_data_tests_path(),
+            alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path(),
         ).run_ge_tests(named_tables=self._data_repo.get_output_tables())
 
         # move data docs to report folder

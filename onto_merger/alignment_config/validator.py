@@ -21,11 +21,7 @@ def validate_alignment_configuration(alignment_config: dict) -> bool:
 
     # perform check
     schema_validation_errors = [
-        error
-        for error in sorted(
-            Draft7Validator(schema).iter_errors(alignment_config),
-            key=lambda e: e.path,
-        )
+        error for error in sorted(Draft7Validator(schema).iter_errors(alignment_config), key=lambda e: e.path,)
     ]
     check_passed = True if len(schema_validation_errors) == 0 else False
 

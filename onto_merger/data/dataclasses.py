@@ -91,11 +91,7 @@ class DataRepository:
         """
         return [self.get(table_name=table_name) for table_name in OUTPUT_TABLES if table_name in self.data]
 
-    def update(
-            self,
-            table: Optional[NamedTable] = None,
-            tables: Optional[List[NamedTable]] = None,
-    ) -> None:
+    def update(self, table: Optional[NamedTable] = None, tables: Optional[List[NamedTable]] = None,) -> None:
         """Update (adds or overwrites) either a single table or a list of named tables in the repository dictionary.
 
         :param table: The single table to be updated in the
@@ -117,11 +113,7 @@ class DataRepository:
         :return: The summary table as a dataframe.
         """
         data = [
-            (
-                table_name,
-                f"{len(loaded_table.dataframe):,d}",
-                list(loaded_table.dataframe),
-            )
+            (table_name, f"{len(loaded_table.dataframe):,d}", list(loaded_table.dataframe),)
             for table_name, loaded_table in self.data.items()
         ]
         summary_df = pd.DataFrame(data, columns=SCHEMA_DATA_REPO_SUMMARY)
@@ -141,11 +133,7 @@ class AlignmentStep:
     count_merged_nodes: int
 
     def __init__(
-            self,
-            mapping_type_group: str,
-            source_id: str,
-            step_counter: int,
-            count_unmapped_nodes: int,
+        self, mapping_type_group: str, source_id: str, step_counter: int, count_unmapped_nodes: int,
     ):
         """Initialise the AlignmentStep dataclass.
 
@@ -176,11 +164,7 @@ class ConnectivityStep:
     count_produced_edges: int
     count_connected_nodes: int
 
-    def __init__(
-            self,
-            source_id: str,
-            count_unmapped_node_ids: int
-    ):
+    def __init__(self, source_id: str, count_unmapped_node_ids: int):
         """Initialise the ConnectivityStep dataclass.
 
         :param source_id: The node that are being connected in this step.

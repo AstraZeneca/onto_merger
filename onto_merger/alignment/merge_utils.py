@@ -50,8 +50,7 @@ def produce_named_table_aggregate_merges(merges: DataFrame, alignment_priority_o
     # canonical node according to the priority order
     merges_aggregated[COLUMN_TARGET_ID] = merges_aggregated.apply(
         lambda x: get_canonical_node_for_merge_cluster(
-            merge_cluster=x[COLUMN_SOURCE_ID],
-            alignment_priority_order=alignment_priority_order,
+            merge_cluster=x[COLUMN_SOURCE_ID], alignment_priority_order=alignment_priority_order,
         ),
         axis=1,
     )
@@ -111,7 +110,4 @@ def produce_named_table_merges_with_alignment_meta_data(
     df[COLUMN_SOURCE_ID_ALIGNED_TO] = source_id
     df[COLUMN_STEP_COUNTER] = step_counter
     df[COLUMN_MAPPING_TYPE_GROUP] = mapping_type
-    return NamedTable(
-        name=TABLE_MERGES,
-        dataframe=df[SCHEMA_MERGE_TABLE_WITH_META_DATA],
-    )
+    return NamedTable(name=TABLE_MERGES, dataframe=df[SCHEMA_MERGE_TABLE_WITH_META_DATA],)

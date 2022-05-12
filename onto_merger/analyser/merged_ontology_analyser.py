@@ -53,8 +53,8 @@ class MergedOntologyAnalyser:
                 self._produce_detail_report_data_for_node_category(
                     node_category="Input",
                     description="The set of input nodes that assume to belong "
-                                + "to the same domain that most likely contain"
-                                + "duplicated, connected and overlapping nodes.",
+                    + "to the same domain that most likely contain"
+                    + "duplicated, connected and overlapping nodes.",
                     node_table=self._data_repo.get(TABLE_NODES),
                 ),
                 self._produce_detail_report_data_for_node_category(
@@ -79,7 +79,7 @@ class MergedOntologyAnalyser:
         return data_dic
 
     def _produce_detail_report_data_for_node_category(
-            self, node_category: str, description: str, node_table: NamedTable
+        self, node_category: str, description: str, node_table: NamedTable
     ):
         """Produce a detailed report for each node category, to be displayed in the report HTML.
 

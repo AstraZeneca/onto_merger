@@ -113,10 +113,7 @@ class DataManager:
         :return: The input named tables.
         """
         return [
-            NamedTable(
-                table_name,
-                self.load_table(table_name=table_name, process_directory=DIRECTORY_INPUT),
-            )
+            NamedTable(table_name, self.load_table(table_name=table_name, process_directory=DIRECTORY_INPUT),)
             for table_name in INPUT_TABLES
         ]
 
@@ -136,12 +133,7 @@ class DataManager:
 
     def _get_profiled_report_directory_path(self) -> str:
         """Produce the path for the Pandas profile reports directory."""
-        return os.path.join(
-            self._project_folder_path,
-            DIRECTORY_OUTPUT,
-            DIRECTORY_REPORT,
-            DIRECTORY_PROFILED_DATA,
-        )
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_PROFILED_DATA,)
 
     def get_data_tests_path(self) -> str:
         """Produce the path for data test directory."""
@@ -150,7 +142,8 @@ class DataManager:
     def get_dropped_mappings_path(self) -> str:
         """Produce the path for a dropped mapping."""
         return os.path.join(
-            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DROPPED_MAPPINGS)
+            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DROPPED_MAPPINGS
+        )
 
     def get_profiled_table_report_path(self, table_name: str, relative_path=False) -> str:
         """Produce the path for the Pandas profile report HTML."""
@@ -162,7 +155,8 @@ class DataManager:
     def get_log_file_path(self) -> str:
         """Produce the path for log file."""
         return os.path.join(
-            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS, FILE_NAME_LOG)
+            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS, FILE_NAME_LOG
+        )
 
     def _create_output_directory_structure(self):
         """Produce the empty directory structure for the output files.."""
@@ -171,7 +165,7 @@ class DataManager:
             self.get_data_tests_path(),
             self.get_dropped_mappings_path(),
             os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS),
-            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
+            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY),
         ]
         for directory_path in directory_paths:
             Path(directory_path).mkdir(parents=True, exist_ok=True)
@@ -182,8 +176,9 @@ class DataManager:
         if os.path.exists(output_path):
             shutil.rmtree(output_path)
 
-    def save_table(self, table: NamedTable,
-                   process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}") -> None:
+    def save_table(
+        self, table: NamedTable, process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"
+    ) -> None:
         """Save a given Pandas dataframe as a CSV."""
         # only output tables are saved
         file_path = self.get_table_path(process_directory=process_directory, table_name=table.name)
@@ -210,17 +205,17 @@ class DataManager:
         # mappings renamed
         self.save_table(
             table=NamedTable(name=TABLE_MAPPINGS, dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe),
-            process_directory=domain_ontology_directory_path
+            process_directory=domain_ontology_directory_path,
         )
         # merges
         self.save_table(
             table=NamedTable(name=TABLE_MERGES, dataframe=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe),
-            process_directory=domain_ontology_directory_path
+            process_directory=domain_ontology_directory_path,
         )
         # hierarchy
         self.save_table(
             table=NamedTable(name=TABLE_EDGES_HIERARCHY, dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe),
-            process_directory=domain_ontology_directory_path
+            process_directory=domain_ontology_directory_path,
         )
 
     def save_merged_ontology_report(self, content) -> str:
@@ -246,8 +241,7 @@ class DataManager:
         if len(table) > 0:
             table.to_csv(
                 path_or_buf=os.path.join(
-                    self.get_dropped_mappings_path(),
-                    f"{mapping_type}_{str(step_count)}_{source_id}.csv",
+                    self.get_dropped_mappings_path(), f"{mapping_type}_{str(step_count)}_{source_id}.csv",
                 ),
                 index=False,
             )
@@ -266,8 +260,7 @@ class DataManager:
         :return:
         """
         return NamedTable(
-            tables[0].name,
-            pd.concat([table.dataframe for table in tables]).drop_duplicates(keep="first"),
+            tables[0].name, pd.concat([table.dataframe for table in tables]).drop_duplicates(keep="first"),
         )
 
     @staticmethod
@@ -278,7 +271,4 @@ class DataManager:
     @staticmethod
     def produce_empty_hierarchy_table() -> NamedTable:
         """Produce an empty hierarchy edge table."""
-        return NamedTable(
-            name=TABLE_EDGES_HIERARCHY,
-            dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
-        )
+        return NamedTable(name=TABLE_EDGES_HIERARCHY, dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),)

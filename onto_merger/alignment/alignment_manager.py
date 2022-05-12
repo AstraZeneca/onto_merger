@@ -37,10 +37,7 @@ class AlignmentManager:
     """Alignment process pipeline."""
 
     def __init__(
-        self,
-        alignment_config: AlignmentConfig,
-        data_repo: DataRepository,
-        data_manager: DataManager,
+        self, alignment_config: AlignmentConfig, data_repo: DataRepository, data_manager: DataManager,
     ):
         """Initialise the AlignmentManager class.
 
@@ -58,10 +55,7 @@ class AlignmentManager:
         # store produced data
         self._data_repo_output = DataRepository()
         self._data_repo_output.update(
-            tables=[
-                DataManager.produce_empty_merge_table(),
-                DataManager.produce_empty_hierarchy_table(),
-            ]
+            tables=[DataManager.produce_empty_merge_table(), DataManager.produce_empty_hierarchy_table()]
         )
 
     def align_nodes(self) -> Tuple[DataRepository, List[str]]:
@@ -102,10 +96,7 @@ class AlignmentManager:
         return self._data_repo_output, source_alignment_order
 
     def _align_sources(
-        self,
-        sources_to_align: List[str],
-        mapping_type_group_name: str,
-        mapping_types: List[str],
+        self, sources_to_align: List[str], mapping_type_group_name: str, mapping_types: List[str],
     ) -> None:
         """Run the alignment for each source according to the priority order, for a given mapping type group.
 
@@ -133,11 +124,7 @@ class AlignmentManager:
             self._store_results_from_alignment_step(merges_for_source=merges_for_source, alignment_step=alignment_step)
 
     def _align_nodes_to_source(
-        self,
-        source_id: str,
-        step_counter: int,
-        mapping_type_group_name: str,
-        mapping_types: List[str],
+        self, source_id: str, step_counter: int, mapping_type_group_name: str, mapping_types: List[str],
     ) -> Tuple[NamedTable, AlignmentStep]:
         """Perform an alignment step to a source.
 
@@ -154,8 +141,7 @@ class AlignmentManager:
 
         # (1) get mappings for NS
         mappings_for_ns = mapping_utils.get_mappings_for_namespace(
-            namespace=source_id,
-            edges=self._data_repo_output.get(TABLE_MAPPINGS_UPDATED).dataframe,
+            namespace=source_id, edges=self._data_repo_output.get(TABLE_MAPPINGS_UPDATED).dataframe,
         )
         alignment_step = AlignmentStep(
             mapping_type_group=mapping_type_group_name,
@@ -171,8 +157,7 @@ class AlignmentManager:
 
         # (3) orient mappings towards NS
         mapping_towards_ns = mapping_utils.orient_mappings_to_namespace(
-            required_target_id_namespace=source_id,
-            mappings=mappings_for_permitted_type,
+            required_target_id_namespace=source_id, mappings=mappings_for_permitted_type,
         )
 
         # (4) get 1..n : 1 mappings for unmapped nodes
@@ -180,8 +165,7 @@ class AlignmentManager:
             mapping_type_group_name=mapping_type_group_name, mappings=mapping_towards_ns
         )
         mappings_for_unmapped_nodes = mapping_utils.filter_mappings_for_node_set(
-            nodes=unmapped_nodes,
-            mappings=mappings_deduplicated,
+            nodes=unmapped_nodes, mappings=mappings_deduplicated,
         )
         mappings_one_or_many_source_to_one_target = mapping_utils.get_one_or_many_source_to_one_target_mappings(
             mappings=mappings_for_unmapped_nodes,
@@ -231,8 +215,7 @@ class AlignmentManager:
         )
         self._data_repo_output.update(
             table=NamedTable(
-                name=TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
-                dataframe=mappings_obsolete_to_current_node_id_merge_strength,
+                name=TABLE_MAPPINGS_OBSOLETE_TO_CURRENT, dataframe=mappings_obsolete_to_current_node_id_merge_strength,
             )
         )
 
@@ -311,9 +294,7 @@ def produce_source_alignment_priority_order(seed_ontology_name: str, nodes: Data
     return priority_order
 
 
-def convert_alignment_steps_to_named_table(
-    alignment_steps: List[AlignmentStep],
-) -> NamedTable:
+def convert_alignment_steps_to_named_table(alignment_steps: List[AlignmentStep],) -> NamedTable:
     """Convert the list of AlignmentStep dataclasses to a named table.
 
     :param alignment_steps: The list of AlignmentStep dataclasses.

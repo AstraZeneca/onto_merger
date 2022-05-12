@@ -28,10 +28,7 @@ from docopt import docopt
 from onto_merger.pipeline import Pipeline
 from onto_merger.version import __version__
 
-example_data_sets = {
-    "EXAMPLE_DATASET": "../data/bikg_disease",
-    "EXAMPLE_DATASET_LIGHT": "../tests/test_data"
-}
+example_data_sets = {"EXAMPLE_DATASET": "../data/bikg_disease", "EXAMPLE_DATASET_LIGHT": "../tests/test_data"}
 FOLDER_PATH_ARG = "-f"
 VERSION_ARG = "-v"
 
@@ -46,9 +43,9 @@ def main(project_folder_path: str) -> None:
 
 
 if __name__ == "__main__":
-    arguments = docopt(__doc__, version=f'OntoMerger v. {__version__}')
+    arguments = docopt(__doc__, version=f"OntoMerger v. {__version__}")
     if arguments[VERSION_ARG]:
-        print(f'OntoMerger v. {__version__}')
+        print(f"OntoMerger v. {__version__}")
     elif arguments[FOLDER_PATH_ARG]:
         if arguments[FOLDER_PATH_ARG] in example_data_sets:
             main(project_folder_path=example_data_sets[arguments[FOLDER_PATH_ARG]])

@@ -38,7 +38,7 @@ OUTPUT_TABLES = [
     TABLE_MAPPINGS_UPDATED,
     TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
     TABLE_ALIGNMENT_STEPS_REPORT,
-    TABLE_CONNECTIVITY_STEPS_REPORT
+    TABLE_CONNECTIVITY_STEPS_REPORT,
 ]
 
 # EDGE TABLE TYPES
@@ -110,7 +110,7 @@ SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE = [
     "count_reachable_unmapped_nodes",
     "count_available_edges",
     "count_produced_edges",
-    "count_connected_nodes"
+    "count_connected_nodes",
 ]
 
 # MAPPING_TYPE_GROUPS

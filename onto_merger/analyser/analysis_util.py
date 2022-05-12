@@ -74,9 +74,7 @@ def produce_table_with_namespace_column_pair(table: DataFrame) -> DataFrame:
     return table_copy
 
 
-def add_namespace_column_to_loaded_tables(
-    tables: List[NamedTable],
-) -> List[NamedTable]:
+def add_namespace_column_to_loaded_tables(tables: List[NamedTable],) -> List[NamedTable]:
     """Produce a list of named tables appended with namespace columns, and namespace pair column.
 
     :param tables: The list of named tables to be appended.
@@ -94,9 +92,7 @@ def add_namespace_column_to_loaded_tables(
     ]
 
 
-def produce_table_node_namespace_distribution(
-    node_table: DataFrame,
-) -> DataFrame:
+def produce_table_node_namespace_distribution(node_table: DataFrame,) -> DataFrame:
     """Produce a named table that shows the node ID namespaces distribution of the input table.
 
     :param node_table: A node table.

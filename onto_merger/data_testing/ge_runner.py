@@ -105,8 +105,7 @@ class GERunner:
 
             # get the expectations for the entity and add each to the suite
             expectation_configurations_for_entity = produce_expectations_for_table(
-                table_name=loaded_table.name,
-                alignment_config=self._alignment_config,
+                table_name=loaded_table.name, alignment_config=self._alignment_config,
             )
             for expectation_configuration in expectation_configurations_for_entity:
                 suite.add_expectation(expectation_configuration=expectation_configuration)
