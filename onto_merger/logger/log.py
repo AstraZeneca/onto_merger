@@ -20,7 +20,7 @@ def setup_logger(module_name: str, file_name: str, logger_name=APP_NAME, is_debu
     logger = logging.getLogger(logger_name)
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG if is_debug else logging.INFO)
-    logger.propagate = 0
+    logger.propagate = False
 
     formatter = logging.Formatter(
         fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

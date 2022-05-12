@@ -1,4 +1,7 @@
 """Prepare data sets: example, integration test"""
+
+# mypy: ignore-errors
+
 import os
 from pathlib import Path
 from typing import List
@@ -202,7 +205,7 @@ def produce_test_data_set(raw_path: str = "bikg_2022-02-28-4.27.0_disease",
 
     merges = pd.read_csv(os.path.abspath(
         f"{raw_path}/{DIRECTORY_OUTPUT}/{TABLE_MERGES_AGGREGATED}.csv"))
-    merge_map = {}
+    merge_map = dict()
     for _, row in merges.iterrows():
         if row[COLUMN_TARGET_ID] not in merge_map:
             merge_map[row[COLUMN_TARGET_ID]] = []

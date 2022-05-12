@@ -233,7 +233,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
 
 def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
     node_namespace: str, unmapped_nodes: DataFrame, hierarchy_edges: DataFrame, merge_and_connectivity_map: dict
-) -> [List[Tuple[str, str]], dict, ConnectivityStep]:
+) -> Tuple[List[Tuple[str, str]], dict, ConnectivityStep]:
     merge_and_connectivity_map_for_ns = merge_and_connectivity_map.copy()
 
     # get the unmapped node IDs for the namespace
