@@ -5,7 +5,6 @@ from setuptools import find_packages, setup
 install_requires = [
     "pandas==1.3.5",
     "pandas-profiling==3.1.0",
-    "rdflib==6.1.1",
     "dataclasses-json==0.5.7",
     "great_expectations==0.15.2",
     "jinja2==3.0.3",
