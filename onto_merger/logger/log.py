@@ -1,3 +1,5 @@
+"""Logger configuration."""
+
 import logging
 import sys
 from logging import Logger
@@ -7,11 +9,12 @@ APP_NAME = "OntoMerger"
 
 
 def setup_logger(module_name: str, file_name: str, logger_name=APP_NAME, is_debug=False) -> Logger:
-    """Produces and configures the project logger with the output stream,
-    formatting and log level.
+    """Produce and configure the project logger with the output stream, formatting and log level.
 
+    :param file_name: The log output file path.
+    :param module_name: The module name.
     :param logger_name: The project logger name.
-    :param is_debug:
+    :param is_debug: Set the logger level to debug or info.
     :return: The logger.
     """
     logger = logging.getLogger(logger_name)
@@ -36,7 +39,7 @@ def setup_logger(module_name: str, file_name: str, logger_name=APP_NAME, is_debu
 
 
 def get_logger(module_name) -> Any:
-    """Produces the project logger for a module.
+    """Produce the project logger for a module.
 
     :param module_name: The module name.
     :return: The logger.

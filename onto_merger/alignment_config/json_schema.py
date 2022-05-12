@@ -1,3 +1,5 @@
+"""JSON schema definition for the alignment and connectivity process configuration file."""
+
 schema = {
     "name": "parser_config",
     "type": "object",
