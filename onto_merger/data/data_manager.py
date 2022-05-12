@@ -11,12 +11,12 @@ from pandas import DataFrame
 from onto_merger.data.constants import (
     CONFIG_JSON,
     DIRECTORY_DATA_TESTS,
+    DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
     DIRECTORY_INPUT,
-    DIRECTORY_OUTPUT,
     DIRECTORY_INTERMEDIATE,
-    DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_LOGS,
+    DIRECTORY_OUTPUT,
     DIRECTORY_PROFILED_DATA,
     DIRECTORY_REPORT,
     FILE_NAME_LOG,
@@ -24,14 +24,19 @@ from onto_merger.data.constants import (
     SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MERGE_TABLE,
     TABLE_EDGES_HIERARCHY,
+    TABLE_EDGES_HIERARCHY_POST,
+    TABLE_MAPPINGS,
+    TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES,
-    TABLE_NODES, TABLE_MAPPINGS, TABLE_MAPPINGS_UPDATED, TABLE_EDGES_HIERARCHY_POST, TABLE_MERGES_AGGREGATED)
+    TABLE_MERGES_AGGREGATED,
+    TABLE_NODES,
+)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
     AlignmentConfigMappingTypeGroups,
+    DataRepository,
     NamedTable,
-    DataRepository
 )
 from onto_merger.logger.log import get_logger
 

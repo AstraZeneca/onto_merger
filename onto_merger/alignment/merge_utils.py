@@ -1,3 +1,5 @@
+"""Helper methods for producing the node merge table."""
+
 from typing import List, Optional
 
 import numpy as np
@@ -27,9 +29,10 @@ logger = get_logger(__name__)
 
 
 def produce_named_table_aggregate_merges(merges: DataFrame, alignment_priority_order: List[str]) -> NamedTable:
-    """Produces a named table with aggregated merges, i.e. merges where the target ID
-    is always the canonical ID for a given merge cluster (e.g. A -> B, B -> C becomes
-    A -> C and B -> C, where the priorirty order is C, B, A).
+    """Produce a named table with aggregated merges.
+
+    In aggregated merges the target ID is always the canonical ID for a given merge cluster
+    (e.g. A -> B, B -> C becomes A -> C and B -> C, where the priority order is C, B, A).
 
     :param merges: The set of input merges.
     :param alignment_priority_order: The alignment priority order that defines the
@@ -65,7 +68,7 @@ def produce_named_table_aggregate_merges(merges: DataFrame, alignment_priority_o
 def get_canonical_node_for_merge_cluster(
     merge_cluster: List[str], alignment_priority_order: List[str]
 ) -> Optional[str]:
-    """Returns the canonical node ID for a given merge cluster.
+    """Return the canonical node ID for a given merge cluster.
 
     :param merge_cluster: The merge cluster, i.e. nodes that form a merge chain.
     :param alignment_priority_order: The alignment priority order that defines the
@@ -80,7 +83,7 @@ def get_canonical_node_for_merge_cluster(
 
 
 def produce_named_table_merged_nodes(merges: DataFrame) -> NamedTable:
-    """Produces a named table by wrapping merge dataframe.
+    """Produce a named table by wrapping merge dataframe.
 
     :param merges: The merge dataframe.
     :return: The named table.
@@ -96,8 +99,7 @@ def produce_named_table_merged_nodes(merges: DataFrame) -> NamedTable:
 def produce_named_table_merges_with_alignment_meta_data(
     merges: DataFrame, source_id: str, step_counter: int, mapping_type: str
 ) -> NamedTable:
-    """Produces a named merge table with alignment meta data (step number, mapping
-    types used).
+    """Produce a named merge table with alignment meta data (step number, mapping types used).
 
     :param merges: The set of merges produced in the alignment step.
     :param source_id: The source ontology nodes are being merged onto.

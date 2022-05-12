@@ -1,3 +1,5 @@
+"""Helper methods for creating and configuring a GE data test context."""
+
 from typing import List
 
 from great_expectations.data_context import BaseDataContext
@@ -8,7 +10,7 @@ from great_expectations.data_context.types.base import (
 
 
 def produce_ge_context(ge_base_directory: str) -> BaseDataContext:
-    """Produces the GE context configured with the output directory path.
+    """Produce the GE context configured with the output directory path.
 
     :param ge_base_directory: The output directory for GE files.
     :return: The context.
@@ -22,7 +24,7 @@ def produce_ge_context(ge_base_directory: str) -> BaseDataContext:
 
 
 def produce_datasource_config_for_entity(entity_name: str, ge_base_directory: str) -> dict:
-    """Produces a datasource_config dictionary for a given table.
+    """Produce a datasource_config dictionary for a given table.
 
     :param entity_name: The name of the table that is being tested.
     :param ge_base_directory: The base directory of the GE data test outputs.
@@ -58,7 +60,7 @@ def produce_datasource_config_for_entity(entity_name: str, ge_base_directory: st
 def produce_validation_config_for_entity(
     entity_name: str,
 ) -> dict:
-    """Produces a validation_config dictionary for a given table.
+    """Produce a validation_config dictionary for a given table.
 
     :param entity_name: The name of the table that is being tested.
     :return: The validation_config dictionary.
@@ -75,7 +77,7 @@ def produce_validation_config_for_entity(
 
 
 def produce_check_point_config(checkpoint_name: str, validations: List[dict]) -> dict:
-    """Produces a validation check point config dictionary for a list of validations.
+    """Produce a validation check point config dictionary for a list of validations.
 
     :param checkpoint_name: The name of the validation checkpoint.
     :param validations: The list of validations.
@@ -91,7 +93,7 @@ def produce_check_point_config(checkpoint_name: str, validations: List[dict]) ->
 
 
 def produce_datasource_name_for_entity(entity_name: str) -> str:
-    """Produces a datasource ID for a given table name.
+    """Produce a datasource ID for a given table name.
 
     :param entity_name: The table name.
     :return: The datasource ID.
@@ -101,7 +103,7 @@ def produce_datasource_name_for_entity(entity_name: str) -> str:
 
 
 def produce_data_asset_name_for_entity(entity_name: str) -> str:
-    """Produces a data asset ID for a given table name.
+    """Produce a data asset ID for a given table name.
 
     :param entity_name: The table name.
     :return: The data asset ID.
@@ -111,7 +113,7 @@ def produce_data_asset_name_for_entity(entity_name: str) -> str:
 
 
 def produce_expectation_suite_name_for_entity(entity_name: str) -> str:
-    """Produces a expectation suite ID for a given table name.
+    """Produce a expectation suite ID for a given table name.
 
     :param entity_name: The table name.
     :return: The expectation suite ID.

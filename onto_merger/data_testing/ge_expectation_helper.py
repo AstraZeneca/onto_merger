@@ -1,3 +1,5 @@
+"""GE Expectation configuration helper methods."""
+
 from typing import List
 
 from great_expectations.core import ExpectationConfiguration
@@ -27,8 +29,7 @@ from onto_merger.data.dataclasses import AlignmentConfig
 def produce_expectations_for_table(
     table_name: str, alignment_config: AlignmentConfig
 ) -> List[ExpectationConfiguration]:
-    """Produces the  list of relevant ExpectationConfiguration-s for a given table
-    (node or edge).
+    """Produce the  list of relevant ExpectationConfiguration-s for a given table (node or edge).
 
     :param table_name: The table name.
     :param alignment_config: The alignment process configuration dataclass.
@@ -47,7 +48,7 @@ def produce_expectations_for_table(
 
 
 def produce_node_table_expectations() -> List[ExpectationConfiguration]:
-    """Produces the  list of relevant ExpectationConfiguration-s for a given node table.
+    """Produce the  list of relevant ExpectationConfiguration-s for a given node table.
 
     :return: The list of relevant ExpectationConfiguration-s.
     """
@@ -66,8 +67,7 @@ def produce_node_table_expectations() -> List[ExpectationConfiguration]:
 def produce_edge_table_expectations(
     main_edge_type: str, alignment_config: AlignmentConfig
 ) -> List[ExpectationConfiguration]:
-    """Produces the list of ExpectationConfiguration-s for an edge table according to
-    its type (mapping, merge, hierarchy).
+    """Produce the list of ExpectationConfiguration-s for an edge table (mapping, merge, hierarchy).
 
     :param main_edge_type: The edge table type (hierarchy, mapping, merge).
     :param alignment_config: The alignment process configuration dataclass.
@@ -91,7 +91,7 @@ def produce_edge_table_expectations(
 
 
 def get_column_set_for_edge_table(main_edge_type: str) -> List[str]:
-    """Returns the columns (table schema) for a given edge table.
+    """Return the column names (table schema) for a given edge table.
 
     :param main_edge_type: The edge table type (hierarchy, mapping, merge).
     :return: The list of columns for the given table.
@@ -116,7 +116,7 @@ def get_column_set_for_edge_table(main_edge_type: str) -> List[str]:
 
 
 def get_edge_types_for_edge_table(main_edge_type: str, alignment_config: AlignmentConfig) -> List[str]:
-    """Produces a list of edge types that are permitted in the given edge table.
+    """Produce a list of edge types that are permitted in the given edge table.
 
     Edge hierarchy table can only have 'rdfs:subClassOf' relation, whereas a mapping table
     can have different edge, i.e. mapping relation, types as specified in the
@@ -134,8 +134,7 @@ def get_edge_types_for_edge_table(main_edge_type: str, alignment_config: Alignme
 
 
 def produce_node_short_id_expectations(column_name: str, is_node_table: bool) -> List[ExpectationConfiguration]:
-    """Produces the list of ExpectationConfiguration-s for a column that represents
-    a node ID.
+    """Produce the list of ExpectationConfiguration-s for a column that represents a node ID.
 
     Node IDs occur in the node tables (where the ID must be unique), but also in edge
     tables (source_id, target_id, where the ID may be repeated).
@@ -161,8 +160,7 @@ def produce_node_short_id_expectations(column_name: str, is_node_table: bool) ->
 
 
 def produce_edge_relation_expectations(column_name: str, edge_types: List[str]) -> List[ExpectationConfiguration]:
-    """Produces the list of ExpectationConfiguration-s for a column that represents
-    an edge relation (type).
+    """Produce the list of ExpectationConfiguration-s for a column that represents an edge relation (type).
 
     :param column_name: The column contains the edge relation.
     :param edge_types: The list of permitted edge relation types.
@@ -182,9 +180,7 @@ def produce_edge_relation_expectations(column_name: str, edge_types: List[str]) 
 def produce_expectation_config_column_type_string(
     column_name: str,
 ) -> ExpectationConfiguration:
-    """Produces an ExpectationConfiguration for a given string column to check whether
-    the column only
-    has string type objects.
+    """Produce an ExpectationConfiguration for a given string column to check that it only has string type objects.
 
     :param column_name: The name of the column to be tested with this expectation.
     :return: The ExpectationConfiguration object.
@@ -199,8 +195,7 @@ def produce_expectation_config_column_type_string(
 def produce_expectation_config_column_values_to_not_be_null(
     column_name: str,
 ) -> ExpectationConfiguration:
-    """Produces an ExpectationConfiguration for a given column to check whether it
-    contains any null values.
+    """Produce an ExpectationConfiguration for a given column to check whether it contains any null values.
 
     :param column_name: The name of the column to be tested with this expectation.
     :return: The ExpectationConfiguration object.
@@ -215,8 +210,7 @@ def produce_expectation_config_column_values_to_not_be_null(
 def produce_expectation_config_column_values_to_be_unique(
     column_name: str,
 ) -> ExpectationConfiguration:
-    """Produces an ExpectationConfiguration to check whether a given column has
-    only unique values.
+    """Produce an ExpectationConfiguration to check whether a given column has only unique values.
 
     :param column_name: The name of the column to be tested with this expectation.
     :return: The ExpectationConfiguration object.
@@ -231,8 +225,7 @@ def produce_expectation_config_column_values_to_be_unique(
 def produce_expectation_config_column_value_lengths_to_be_between(
     column_name: str, min_value: int, max_value: int
 ) -> ExpectationConfiguration:
-    """Produces an ExpectationConfiguration where we expect column entries to be strings
-    with length between a spcific minimum value and a maximum value.
+    """Produce an ExpectationConfiguration where we expect column entries to be strings.
 
     :param column_name: The name of the table column to be tested with this expectation.
     :param min_value: The min length.
@@ -252,7 +245,7 @@ def produce_expectation_config_column_value_lengths_to_be_between(
 
 
 def produce_expectation_config_column_values_to_match_regex(column_name: str, regex: str) -> ExpectationConfiguration:
-    """Produces an ExpectationConfiguration for a given string column to match a regex.
+    """Produce an ExpectationConfiguration for a given string column to match a regex.
 
     :param regex: The regex to be matched.
     :param column_name: The name of the table column to be tested with this expectation.
@@ -268,8 +261,7 @@ def produce_expectation_config_column_values_to_match_regex(column_name: str, re
 def produce_expectation_config_expect_column_to_exist(
     column_name: str,
 ) -> ExpectationConfiguration:
-    """Produces an ExpectationConfiguration to check the existence a given column in a
-    table.
+    """Produce an ExpectationConfiguration to check the existence a given column in a table.
 
     :param column_name: The name of the table column to be tested with this expectation.
     :return: The ExpectationConfiguration object.
@@ -284,8 +276,7 @@ def produce_expectation_config_expect_column_to_exist(
 def produce_expectation_config_expect_column_values_to_be_in_set(
     column_name: str, value_set: List[str]
 ) -> ExpectationConfiguration:
-    """Produces an ExpectationConfiguration to check whether a given column has only
-    the specified values.
+    """Produce an ExpectationConfiguration to check whether a given column has only the specified values.
 
     :param value_set: The permitted values for the column.
     :param column_name: The name of the table column to be tested with this expectation.
@@ -301,8 +292,7 @@ def produce_expectation_config_expect_column_values_to_be_in_set(
 def produce_expectation_config_expect_table_columns_to_match_set(
     column_set: List[str],
 ) -> ExpectationConfiguration:
-    """Produces an ExpectationConfiguration to check whether a given table has only
-    the specified columns.
+    """Produce an ExpectationConfiguration to check whether a given table has only the specified columns.
 
     :param column_set: The permitted column names.
     :return: The ExpectationConfiguration object.

@@ -8,13 +8,14 @@ import pytest
 from pandas import DataFrame
 
 from onto_merger.data.constants import (
+    DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
     DIRECTORY_INPUT,
+    DIRECTORY_INTERMEDIATE,
+    DIRECTORY_LOGS,
     DIRECTORY_OUTPUT,
     DIRECTORY_PROFILED_DATA,
     DIRECTORY_REPORT,
-    DIRECTORY_LOGS,
-    DIRECTORY_DOMAIN_ONTOLOGY,
     FILE_NAME_LOG,
     SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MAPPING_TABLE,
@@ -22,7 +23,7 @@ from onto_merger.data.constants import (
     TABLE_EDGES_HIERARCHY,
     TABLE_MAPPINGS,
     TABLE_MERGES,
-    DIRECTORY_INTERMEDIATE)
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, NamedTable
 from tests.fixtures import TEST_FOLDER_OUTPUT_PATH, data_manager

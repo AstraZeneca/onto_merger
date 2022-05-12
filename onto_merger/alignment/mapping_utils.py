@@ -1,3 +1,5 @@
+"""Helper methods to work with mappings."""
+
 from typing import List
 
 import pandas as pd
@@ -25,8 +27,7 @@ logger = get_logger(__name__)
 
 
 def get_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
-    """Filters a mapping set so each remaining mapping is between nodes of the same
-    ontology.
+    """Filter a mapping set so each remaining mapping is between nodes of the same ontology.
 
     :param mappings: The input mapping set ot be filtered.
     :return: The internal code re-assigment mappings table.
@@ -44,7 +45,9 @@ def get_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
 
 
 def get_mappings_obsolete_to_current_node_id(nodes_obsolete: DataFrame, mappings: DataFrame) -> DataFrame:
-    """Given a set of internal_node_reassignment mappings, ensures that the obsolete
+    """Return the internal node ID re-assingment mappings.
+
+    Given a set of internal_node_reassignment mappings, ensures that the obsolete
     (deprecated) node IDs are always in the source_id column, and the current node IDs
     are in the target_id column.
 
@@ -92,7 +95,7 @@ def get_mappings_obsolete_to_current_node_id(nodes_obsolete: DataFrame, mappings
 def get_mappings_with_updated_node_ids(
     mappings: DataFrame, mappings_obsolete_to_current_node_id: DataFrame
 ) -> DataFrame:
-    """Updates the obsolete node IDs in a mapping set.
+    """Update the obsolete node IDs in a mapping set.
 
     :param mappings: The set of mappings to be updated.
     :param mappings_obsolete_to_current_node_id: The obsolete to current node ID
@@ -110,8 +113,7 @@ def get_mappings_with_updated_node_ids(
 
 
 def add_comparison_column_for_reoriented_mappings(mappings: DataFrame):
-    """Produces a column from the source and target ID as an ordered list
-    so two mappings in with different orientation can be comapred.
+    """Produce a column from the source and target ID as an ordered list to compare mappings with different orientation.
 
     :param mappings: The input mapping set.
     :return: The mapping set appended with the comparison column.
@@ -126,9 +128,10 @@ def add_comparison_column_for_reoriented_mappings(mappings: DataFrame):
 
 
 def get_mappings_for_namespace(namespace: str, edges: DataFrame) -> DataFrame:
-    """Filters an input mapping set such that the output will only contain mapping
-    where either the source or the target node is from the specified ontology
-    (namespace).
+    """Filter a mapping set for a given namespace.
+
+    The result will only contain mapping where either the source or the target node
+    is from the specified ontology (namespace).
 
     :param namespace: The ontology namespace.
     :param edges: The input mapping set.
@@ -149,10 +152,11 @@ def get_mappings_for_namespace(namespace: str, edges: DataFrame) -> DataFrame:
 
 
 def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_or_many_to_one: bool) -> DataFrame:
-    """Filters a mapping set to return either the mapping subset that align one or
-    many source node to exactly one target node (stable set used for merges),
-    or the subset that align one source node to many target nodes (unstable set that
-    is dropped).
+    """Filter a mapping set according to multiplicity.
+
+    Return either the mapping subset that align one or many source node to exactly
+    one target node (stable set used for merges), or the subset that align one source
+    node to many target nodes (unstable set that is dropped).
 
     The mapping subsets are not pruned i.e. the filtering is based on multiplicity
     analysis of the source nodes.
@@ -187,7 +191,9 @@ def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_o
 
 
 def get_one_or_many_source_to_one_target_mappings(mappings: DataFrame) -> DataFrame:
-    """Filters a mapping set to return the mapping subset that align one or
+    """Return only one or many source to one target mappings.
+
+    Filter a mapping set to return the mapping subset that align one or
     many source node to exactly one target node (stable set used for merges).
 
     :param mappings: The input mapping set to be filtered.
@@ -201,7 +207,9 @@ def get_one_or_many_source_to_one_target_mappings(mappings: DataFrame) -> DataFr
 
 
 def get_one_source_to_many_target_mappings(mappings: DataFrame) -> DataFrame:
-    """Filters a mapping set to return the mapping subset that align one source
+    """Return only one source to many target mappings.
+
+    Filter a mapping set to return the mapping subset that align one source
      node to many target nodes (unstable set that is dropped)
 
     :param mappings: The input mapping set to be filtered.
@@ -218,11 +226,9 @@ def update_mappings_with_current_node_ids(
     mappings_internal_obsolete_to_current_node_id: DataFrame,
     mappings: DataFrame,
 ) -> DataFrame:
-    """Updates a mapping set where all node IDs are current using the
-    obsolete-to-current node ID mappings.
+    """Update a mapping set with current node IDs.
 
-    :param mappings_internal_obsolete_to_current_node_id: The obsolete-to-current node
-    ID mappings.
+    :param mappings_internal_obsolete_to_current_node_id: The obsolete-to-current node ID mappings.
     :param mappings: The input mapping set to be updated.
     :return: The updated mapping set.
     """
@@ -263,8 +269,7 @@ def update_mappings_with_current_node_ids(
 
 
 def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: DataFrame) -> DataFrame:
-    """Updates a mapping set by ensuring that the target node is always of the
-    specified ontology (namespace).
+    """Update a mapping so the target node is always of the specified ontology (namespace).
 
     The mapping set assumed to contain only mappings where either the source or the
     target node is from the specified namespace.
@@ -303,7 +308,7 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
 
 
 def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
-    """Produces the dataframe of unmapped node IDs.
+    """Produce the dataframe of unmapped node IDs.
 
     :param nodes: The set of input nodes to be filtered.
     :param merges: The set of merges used to determine node mapped status.
@@ -325,7 +330,7 @@ def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFra
 
 
 def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> NamedTable:
-    """Produces the named table of unmapped node IDs.
+    """Produce the named table of unmapped node IDs.
 
     :param nodes: The set of input nodes to be filtered.
     :param merges: The set of merges used to determine node mapped status.
@@ -341,8 +346,7 @@ def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> N
 
 
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:
-    """Filters an input mapping set such that the output only contains permitted
-    mapping relations.
+    """Filter a mapping set for permitted mapping relations.
 
     :param permitted_mapping_relations: The list of permitted mapping relations.
     :param mappings: The input mapping set to be filtered.
@@ -358,10 +362,10 @@ def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], 
 
 
 def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: DataFrame) -> DataFrame:
-    """Produces a set of unique mappings by removing duplicates: mappings between the
-    same source and target node with mapping relations that are in the same type group.
+    """Produce a set of unique mappings by removing duplicates.
 
-    We assume that all input mappings are from the same type group/
+    Mappings between the same source and target node with mapping relations that are in the same type group.
+    We assume that all input mappings are from the same type group.
 
     :param mapping_type_group_name: The name of the mapping type group (e.g.
     equivalence) that will be used as the mapping relation for the deduplicated
@@ -381,8 +385,7 @@ def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: 
 
 
 def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataFrame:
-    """Filters a mapping set such that the source node IDs must belong to the specified
-    node ID list.
+    """Filter a mapping set such that the source node IDs must belong to the specified node ID list.
 
     :param nodes: The dataframe containing the permitted source node IDs.
     :param mappings: The input mapping set to be filtered.
@@ -401,8 +404,10 @@ def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataF
 
 
 def produce_self_merges_for_seed_nodes(seed_id: str, nodes: DataFrame, nodes_obsolete: DataFrame) -> NamedTable:
-    """Produces a set of (self) merges for the seed ontology where each source and
-    target node ID are the same. This is used for counting mapped nodes.
+    """Produce a set of (self) merges for the seed ontology.
+
+    In the result each source and target node ID are the same.
+    This is used for counting mapped nodes.
 
     :param seed_id: The seed ontology name.
     :param nodes: The set of all nodes.

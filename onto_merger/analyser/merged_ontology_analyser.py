@@ -1,14 +1,17 @@
+"""Analyse and report on the alignment and connectivity process."""
+
 from jinja2 import Template
 from pandas import DataFrame
 
 from onto_merger.analyser import analysis_util
 from onto_merger.data.constants import (
     TABLE_ALIGNMENT_STEPS_REPORT,
+    TABLE_CONNECTIVITY_STEPS_REPORT,
     TABLE_NODES,
     TABLE_NODES_CONNECTED_ONLY,
     TABLE_NODES_DANGLING,
     TABLE_NODES_MERGED,
-    TABLE_CONNECTIVITY_STEPS_REPORT)
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository, NamedTable
 from onto_merger.logger.log import get_logger
@@ -17,8 +20,10 @@ logger = get_logger(__name__)
 
 
 class MergedOntologyAnalyser:
+    """Analyse and report on the alignment and connectivity process."""
+
     def __init__(self, data_repo: DataRepository, data_manager: DataManager):
-        """Initialises the MergedOntologyAnalyser class.
+        """Initialise the MergedOntologyAnalyser class.
 
         :param data_repo: The data repository containing input and output data
         tables.
@@ -28,8 +33,7 @@ class MergedOntologyAnalyser:
         self._data_repo = data_repo
 
     def produce_report(self) -> str:
-        """Produces the merged ontology and alignment process analysis report
-        HTML.
+        """Produce the merged ontology and alignment process analysis report HTML.
 
         :return: The path of the HTML report.
         """
@@ -39,7 +43,7 @@ class MergedOntologyAnalyser:
         return self._data_manager.save_merged_ontology_report(content=report_content)
 
     def _evaluate_merged_ontology(self) -> dict:
-        """Produces a dictionary HTML table used to produce the HTML report.
+        """Produce a dictionary HTML table used to produce the HTML report.
 
         :return: The report data as a dictionary.
         """
@@ -49,8 +53,8 @@ class MergedOntologyAnalyser:
                 self._produce_detail_report_data_for_node_category(
                     node_category="Input",
                     description="The set of input nodes that assume to belong "
-                    + "to the same domain that most likely contain"
-                    + "duplicated, connected and overlapping nodes.",
+                                + "to the same domain that most likely contain"
+                                + "duplicated, connected and overlapping nodes.",
                     node_table=self._data_repo.get(TABLE_NODES),
                 ),
                 self._produce_detail_report_data_for_node_category(
@@ -75,10 +79,9 @@ class MergedOntologyAnalyser:
         return data_dic
 
     def _produce_detail_report_data_for_node_category(
-        self, node_category: str, description: str, node_table: NamedTable
+            self, node_category: str, description: str, node_table: NamedTable
     ):
-        """Produces a detailed report for each node category, to be displayed in the
-        report HTML.
+        """Produce a detailed report for each node category, to be displayed in the report HTML.
 
         :param node_category: The category name.
         :param description: Brief description of the node category.

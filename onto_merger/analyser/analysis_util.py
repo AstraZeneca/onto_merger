@@ -1,3 +1,5 @@
+"""Helper methods for data file processing and analysis."""
+
 from typing import List
 
 import pandas as pd
@@ -18,7 +20,7 @@ from onto_merger.data.dataclasses import NamedTable
 
 
 def get_namespace_column_name_for_column(node_id_column: str) -> str:
-    """Produces a column name for a given node ID column name.
+    """Produce a column name for a given node ID column name.
 
     :param node_id_column: The name of the node ID column.
     :return: The namespace column name.
@@ -27,7 +29,7 @@ def get_namespace_column_name_for_column(node_id_column: str) -> str:
 
 
 def get_namespace_for_node_id(node_id: str) -> str:
-    """Gets the namespace part of a node ID.
+    """Get the namespace part of a node ID.
 
     :param node_id: The node ID.
     :return: The node ID namespace.
@@ -36,7 +38,7 @@ def get_namespace_for_node_id(node_id: str) -> str:
 
 
 def produce_table_with_namespace_column_for_node_ids(table: DataFrame) -> DataFrame:
-    """Produces a table with a namespace column for all node ID columns.
+    """Produce a table with a namespace column for all node ID columns.
 
     In node tables there is only one node ID column. In edge tables
     (hierarchy, mappings, merges) there are always two node ID columns.
@@ -55,8 +57,7 @@ def produce_table_with_namespace_column_for_node_ids(table: DataFrame) -> DataFr
 
 
 def produce_table_with_namespace_column_pair(table: DataFrame) -> DataFrame:
-    """Produces a table with a single column representing the source and target
-    node ID namespace.
+    """Produce a table with a single column representing the source and target node ID namespace.
 
     :param table: The table to be appended.
     :return: The same table if it is a node table, a new table with the appended
@@ -76,8 +77,7 @@ def produce_table_with_namespace_column_pair(table: DataFrame) -> DataFrame:
 def add_namespace_column_to_loaded_tables(
     tables: List[NamedTable],
 ) -> List[NamedTable]:
-    """Produces a list of named tables where each table is appended with namespace
-    columns, and namespace pair column (if it is an edge table).
+    """Produce a list of named tables appended with namespace columns, and namespace pair column.
 
     :param tables: The list of named tables to be appended.
     :return: The list of named tables appended with namespace and namespace pair
@@ -97,8 +97,7 @@ def add_namespace_column_to_loaded_tables(
 def produce_table_node_namespace_distribution(
     node_table: DataFrame,
 ) -> DataFrame:
-    """Produces a named table that shows the node ID namespaces distribution of the
-    input table.
+    """Produce a named table that shows the node ID namespaces distribution of the input table.
 
     :param node_table: A node table.
     :return: The analysis table showing the node ID namespaces distribution of the

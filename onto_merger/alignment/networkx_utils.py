@@ -1,3 +1,5 @@
+"""Helper methods for using the Networkx graph package."""
+
 from typing import List
 
 import networkx as nx
@@ -11,7 +13,7 @@ logger = get_logger(__name__)
 
 
 def create_networkx_graph(edges: DataFrame) -> Graph:
-    """Produces a network x graph object from a hierarchy edge table.
+    """Produce a network x graph object from a hierarchy edge table.
 
     :param edges: The hierarchy edge table.
     :return: The network x graph.
@@ -21,7 +23,7 @@ def create_networkx_graph(edges: DataFrame) -> Graph:
 
 
 def is_single_subgraph(graph: Graph) -> bool:
-    """Determines if there is only one sub-graph in a given network x graph.
+    """Determine if there is only one sub-graph in a given network x graph.
 
     :param graph: The graph to check for sub-graph count.
     :return: True if there is only one sub-graph, otherwise False.
