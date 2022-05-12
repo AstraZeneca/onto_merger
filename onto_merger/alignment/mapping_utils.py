@@ -230,7 +230,6 @@ def update_mappings_with_current_node_ids(
     :param mappings: The input mapping set to be updated.
     :return: The updated mapping set.
     """
-
     # src
     df = pd.merge(
         mappings,
