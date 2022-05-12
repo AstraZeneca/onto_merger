@@ -113,7 +113,10 @@ class DataManager:
         :return: The input named tables.
         """
         return [
-            NamedTable(table_name, self.load_table(table_name=table_name, process_directory=DIRECTORY_INPUT),)
+            NamedTable(
+                table_name,
+                self.load_table(table_name=table_name, process_directory=DIRECTORY_INPUT),
+            )
             for table_name in INPUT_TABLES
         ]
 
@@ -133,7 +136,12 @@ class DataManager:
 
     def _get_profiled_report_directory_path(self) -> str:
         """Produce the path for the Pandas profile reports directory."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_PROFILED_DATA,)
+        return os.path.join(
+            self._project_folder_path,
+            DIRECTORY_OUTPUT,
+            DIRECTORY_REPORT,
+            DIRECTORY_PROFILED_DATA,
+        )
 
     def get_data_tests_path(self) -> str:
         """Produce the path for data test directory."""
@@ -241,7 +249,8 @@ class DataManager:
         if len(table) > 0:
             table.to_csv(
                 path_or_buf=os.path.join(
-                    self.get_dropped_mappings_path(), f"{mapping_type}_{str(step_count)}_{source_id}.csv",
+                    self.get_dropped_mappings_path(),
+                    f"{mapping_type}_{str(step_count)}_{source_id}.csv",
                 ),
                 index=False,
             )
@@ -260,7 +269,8 @@ class DataManager:
         :return:
         """
         return NamedTable(
-            tables[0].name, pd.concat([table.dataframe for table in tables]).drop_duplicates(keep="first"),
+            tables[0].name,
+            pd.concat([table.dataframe for table in tables]).drop_duplicates(keep="first"),
         )
 
     @staticmethod
@@ -271,4 +281,7 @@ class DataManager:
     @staticmethod
     def produce_empty_hierarchy_table() -> NamedTable:
         """Produce an empty hierarchy edge table."""
-        return NamedTable(name=TABLE_EDGES_HIERARCHY, dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),)
+        return NamedTable(
+            name=TABLE_EDGES_HIERARCHY,
+            dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
+        )

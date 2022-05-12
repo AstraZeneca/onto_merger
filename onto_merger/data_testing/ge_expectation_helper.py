@@ -174,7 +174,9 @@ def produce_edge_relation_expectations(column_name: str, edge_types: List[str]) 
     ]
 
 
-def produce_expectation_config_column_type_string(column_name: str,) -> ExpectationConfiguration:
+def produce_expectation_config_column_type_string(
+    column_name: str,
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration for a given string column to check that it only has string type objects.
 
     :param column_name: The name of the column to be tested with this expectation.
@@ -187,7 +189,9 @@ def produce_expectation_config_column_type_string(column_name: str,) -> Expectat
     )
 
 
-def produce_expectation_config_column_values_to_not_be_null(column_name: str,) -> ExpectationConfiguration:
+def produce_expectation_config_column_values_to_not_be_null(
+    column_name: str,
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration for a given column to check whether it contains any null values.
 
     :param column_name: The name of the column to be tested with this expectation.
@@ -200,14 +204,18 @@ def produce_expectation_config_column_values_to_not_be_null(column_name: str,) -
     )
 
 
-def produce_expectation_config_column_values_to_be_unique(column_name: str,) -> ExpectationConfiguration:
+def produce_expectation_config_column_values_to_be_unique(
+    column_name: str,
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration to check whether a given column has only unique values.
 
     :param column_name: The name of the column to be tested with this expectation.
     :return: The ExpectationConfiguration object.
     """
     return ExpectationConfiguration(
-        expectation_type="expect_column_values_to_be_unique", kwargs={"column": column_name, "mostly": 1.00}, meta=None,
+        expectation_type="expect_column_values_to_be_unique",
+        kwargs={"column": column_name, "mostly": 1.00},
+        meta=None,
     )
 
 
@@ -242,14 +250,18 @@ def produce_expectation_config_column_values_to_match_regex(column_name: str, re
     )
 
 
-def produce_expectation_config_expect_column_to_exist(column_name: str,) -> ExpectationConfiguration:
+def produce_expectation_config_expect_column_to_exist(
+    column_name: str,
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration to check the existence a given column in a table.
 
     :param column_name: The name of the table column to be tested with this expectation.
     :return: The ExpectationConfiguration object.
     """
     return ExpectationConfiguration(
-        expectation_type="expect_column_to_exist", kwargs={"column": column_name}, meta=None,
+        expectation_type="expect_column_to_exist",
+        kwargs={"column": column_name},
+        meta=None,
     )
 
 
@@ -269,7 +281,9 @@ def produce_expectation_config_expect_column_values_to_be_in_set(
     )
 
 
-def produce_expectation_config_expect_table_columns_to_match_set(column_set: List[str],) -> ExpectationConfiguration:
+def produce_expectation_config_expect_table_columns_to_match_set(
+    column_set: List[str],
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration to check whether a given table has only the specified columns.
 
     :param column_set: The permitted column names.

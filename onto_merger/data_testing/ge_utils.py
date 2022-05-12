@@ -57,7 +57,9 @@ def produce_datasource_config_for_entity(entity_name: str, ge_base_directory: st
     return datasource_config
 
 
-def produce_validation_config_for_entity(entity_name: str,) -> dict:
+def produce_validation_config_for_entity(
+    entity_name: str,
+) -> dict:
     """Produce a validation_config dictionary for a given table.
 
     :param entity_name: The name of the table that is being tested.

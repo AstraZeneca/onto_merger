@@ -69,17 +69,20 @@ def get_mappings_obsolete_to_current_node_id(nodes_obsolete: DataFrame, mappings
 
     updated_src_id_column = f"updated_{COLUMN_SOURCE_ID}"
     df[updated_src_id_column] = df.apply(
-        lambda x: x[COLUMN_SOURCE_ID] if x[COLUMN_SOURCE_ID] in nodes_obsolete_ids else x[COLUMN_TARGET_ID], axis=1,
+        lambda x: x[COLUMN_SOURCE_ID] if x[COLUMN_SOURCE_ID] in nodes_obsolete_ids else x[COLUMN_TARGET_ID],
+        axis=1,
     )
 
     updated_trg_id_column = f"updated_{COLUMN_TARGET_ID}"
     df[updated_trg_id_column] = df.apply(
-        lambda x: x[COLUMN_SOURCE_ID] if x[COLUMN_TARGET_ID] in nodes_obsolete_ids else x[COLUMN_TARGET_ID], axis=1,
+        lambda x: x[COLUMN_SOURCE_ID] if x[COLUMN_TARGET_ID] in nodes_obsolete_ids else x[COLUMN_TARGET_ID],
+        axis=1,
     )
 
     df.drop(columns=[COLUMN_SOURCE_ID, COLUMN_TARGET_ID], inplace=True)
     df.rename(
-        columns={updated_src_id_column: COLUMN_SOURCE_ID, updated_trg_id_column: COLUMN_TARGET_ID}, inplace=True,
+        columns={updated_src_id_column: COLUMN_SOURCE_ID, updated_trg_id_column: COLUMN_TARGET_ID},
+        inplace=True,
     )
 
     df = df[SCHEMA_MAPPING_TABLE]
@@ -178,7 +181,9 @@ def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_o
     else:
         source_ids_to_drop = list(df_one_to_one[COLUMN_SOURCE_ID])
     mapping_subset = mappings.query(
-        f"{COLUMN_SOURCE_ID} != @node_ids", local_dict={"node_ids": source_ids_to_drop}, inplace=False,
+        f"{COLUMN_SOURCE_ID} != @node_ids",
+        local_dict={"node_ids": source_ids_to_drop},
+        inplace=False,
     )[SCHEMA_MAPPING_TABLE]
     return mapping_subset
 
@@ -216,7 +221,8 @@ def get_one_source_to_many_target_mappings(mappings: DataFrame) -> DataFrame:
 
 
 def update_mappings_with_current_node_ids(
-    mappings_internal_obsolete_to_current_node_id: DataFrame, mappings: DataFrame,
+    mappings_internal_obsolete_to_current_node_id: DataFrame,
+    mappings: DataFrame,
 ) -> DataFrame:
     """Update a mapping set with current node IDs.
 
@@ -229,7 +235,8 @@ def update_mappings_with_current_node_ids(
     df = pd.merge(
         mappings,
         mappings_internal_obsolete_to_current_node_id[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]].rename(
-            columns={COLUMN_TARGET_ID: "new_src"}, inplace=False,
+            columns={COLUMN_TARGET_ID: "new_src"},
+            inplace=False,
         ),
         how="left",
         on=COLUMN_SOURCE_ID,
@@ -239,7 +246,8 @@ def update_mappings_with_current_node_ids(
     df = pd.merge(
         df,
         mappings_internal_obsolete_to_current_node_id[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]].rename(
-            columns={COLUMN_TARGET_ID: "new_trg", COLUMN_SOURCE_ID: COLUMN_TARGET_ID}, inplace=False,
+            columns={COLUMN_TARGET_ID: "new_trg", COLUMN_SOURCE_ID: COLUMN_TARGET_ID},
+            inplace=False,
         ),
         how="left",
         on=COLUMN_TARGET_ID,
@@ -249,7 +257,8 @@ def update_mappings_with_current_node_ids(
     df["trg"] = df["new_trg"].mask(pd.isnull, df[COLUMN_TARGET_ID])
     df.drop([COLUMN_SOURCE_ID, COLUMN_TARGET_ID], axis=1, inplace=True)
     df.rename(
-        columns={"src": COLUMN_SOURCE_ID, "trg": COLUMN_TARGET_ID}, inplace=True,
+        columns={"src": COLUMN_SOURCE_ID, "trg": COLUMN_TARGET_ID},
+        inplace=True,
     )
 
     df2 = df[SCHEMA_MAPPING_TABLE]
@@ -287,7 +296,8 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
     )
     df.drop([COLUMN_SOURCE_ID, COLUMN_TARGET_ID], axis=1, inplace=True)
     df.rename(
-        columns={updated_src_id_column: COLUMN_SOURCE_ID, updated_trg_id_column: COLUMN_TARGET_ID}, inplace=True,
+        columns={updated_src_id_column: COLUMN_SOURCE_ID, updated_trg_id_column: COLUMN_TARGET_ID},
+        inplace=True,
     )
     return df[SCHEMA_MAPPING_TABLE]
 
@@ -299,9 +309,10 @@ def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFra
     :param merges: The set of merges used to determine node mapped status.
     :return: The set of unmapped nodes.
     """
-    merges_updated = merges[[COLUMN_SOURCE_ID]].rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID}, inplace=False,)[
-        [COLUMN_DEFAULT_ID]
-    ]
+    merges_updated = merges[[COLUMN_SOURCE_ID]].rename(
+        columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID},
+        inplace=False,
+    )[[COLUMN_DEFAULT_ID]]
 
     df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merges_updated, merges_updated]).drop_duplicates(keep=False)
 
@@ -320,7 +331,13 @@ def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> N
     :param merges: The set of merges used to determine node mapped status.
     :return: The set of unmapped nodes.
     """
-    return NamedTable(TABLE_NODES_UNMAPPED, produce_table_unmapped_nodes(nodes=nodes, merges=merges,),)
+    return NamedTable(
+        TABLE_NODES_UNMAPPED,
+        produce_table_unmapped_nodes(
+            nodes=nodes,
+            merges=merges,
+        ),
+    )
 
 
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:
@@ -371,7 +388,9 @@ def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataF
     """
     node_ids_to_keep = list(nodes[COLUMN_DEFAULT_ID])
     mapping_subset = mappings.query(
-        f"{COLUMN_SOURCE_ID} == @node_ids", local_dict={"node_ids": node_ids_to_keep}, inplace=False,
+        f"{COLUMN_SOURCE_ID} == @node_ids",
+        local_dict={"node_ids": node_ids_to_keep},
+        inplace=False,
     )[SCHEMA_MAPPING_TABLE]
     logger.info(
         f"Found {len(mapping_subset):,d} mappings (from total {len(mappings):,d}) " + f"for {len(nodes):,d} nodes."
@@ -393,16 +412,20 @@ def produce_self_merges_for_seed_nodes(seed_id: str, nodes: DataFrame, nodes_obs
     # get only seed nodes
     df = produce_table_with_namespace_column_for_node_ids(table=nodes)
     df.query(
-        f"{get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)} == '{seed_id}'", inplace=True,
+        f"{get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)} == '{seed_id}'",
+        inplace=True,
     )
     df.rename(
-        columns={COLUMN_DEFAULT_ID: COLUMN_SOURCE_ID}, inplace=True,
+        columns={COLUMN_DEFAULT_ID: COLUMN_SOURCE_ID},
+        inplace=True,
     )
 
     # filter out obsolete nodes
     nodes_obsolete_ids = list(nodes_obsolete[COLUMN_DEFAULT_ID])
     df.query(
-        f"{COLUMN_SOURCE_ID} != @node_ids", local_dict={"node_ids": nodes_obsolete_ids}, inplace=True,
+        f"{COLUMN_SOURCE_ID} != @node_ids",
+        local_dict={"node_ids": nodes_obsolete_ids},
+        inplace=True,
     )
     df = df[[COLUMN_SOURCE_ID]]
 

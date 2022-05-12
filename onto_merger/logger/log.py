@@ -23,7 +23,8 @@ def setup_logger(module_name: str, file_name: str, logger_name=APP_NAME, is_debu
     logger.propagate = 0
 
     formatter = logging.Formatter(
-        fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S",
+        fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
     sh = logging.StreamHandler(sys.stdout)
