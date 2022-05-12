@@ -13,7 +13,7 @@ install_requires = [
     "networkit==9.1.1",
     "ruamel.yaml==0.17.17",
     "numpy==1.21.5",
-    "docopt==0.6.2"
+    "docopt==0.6.2",
 ]
 
 setup_requires = ["pytest-runner"]
