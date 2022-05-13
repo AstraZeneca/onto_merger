@@ -21,7 +21,7 @@
 [![Build Status][build-image]][build-url]
 [![Arxiv](https://img.shields.io/badge/ArXiv-2202.05240-orange.svg)]()
 
-**[Documentation](https://onto_merger.readthedocs.io)** | **[External Resources](https://onto_merger.readthedocs.io/en/latest/notes/resources.html)** | **[Datasets](https://onto_merger.readthedocs.io/en/latest/notes/introduction.html#datasets)** | **[Examples](https://github.com/AstraZeneca/onto_merger/tree/main/examples)** 
+**[Documentation](https://ontomerger.readthedocs.io)** | **[External Resources](https://ontomerger.readthedocs.io/en/latest/notes/resources.html)**
 
 --------------------------------------------------------------------------------
 

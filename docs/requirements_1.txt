@@ -10,3 +10,5 @@ nbsphinx
 nbsphinx_link
 jupyter-sphinx
 Cython
+markupsafe==2.0.1
+nbconvert

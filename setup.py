@@ -1,6 +1,7 @@
 """Setup the package."""
 
 import os
+
 from setuptools import find_packages, setup
 
 on_rtd = os.environ.get("READTHEDOCS") == "True"
