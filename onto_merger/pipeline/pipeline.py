@@ -108,8 +108,7 @@ class Pipeline:
 
         # validate input tables
         GERunner(
-            alignment_config=self._alignment_config,
-            ge_base_directory=self._data_manager.get_data_tests_path()
+            alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path()
         ).run_ge_tests(named_tables=self._data_repo.get_input_tables(), data_origin=DIRECTORY_INPUT)
 
         self.logger.info("Finished processing input data.")
@@ -142,7 +141,7 @@ class Pipeline:
         self.logger.info("Started aggregating merges...")
         table_aggregated_merges = merge_utils.produce_named_table_aggregate_merges(
             merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe[SCHEMA_MERGE_TABLE],
-            alignment_priority_order=self._source_alignment_order
+            alignment_priority_order=self._source_alignment_order,
         )
         table_merged_nodes = merge_utils.produce_named_table_merged_nodes(merges=table_aggregated_merges.dataframe)
         table_unmapped_nodes = mapping_utils.produce_named_table_unmapped_nodes(
@@ -210,9 +209,7 @@ class Pipeline:
 
         # save final tables to domain ontology folder
         domain_tables = self._data_manager.produce_domain_ontology_tables(data_repo=self._data_repo)
-        self._data_repo.update(
-            tables=domain_tables
-        )
+        self._data_repo.update(tables=domain_tables)
         self._data_manager.save_domain_ontology_tables(tables=domain_tables)
 
         self.logger.info("Finished finalising outputs.")
@@ -226,10 +223,12 @@ class Pipeline:
 
         # run data tests
         GERunner(
-            alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path(),
+            alignment_config=self._alignment_config,
+            ge_base_directory=self._data_manager.get_data_tests_path(),
         ).run_ge_tests(named_tables=self._data_repo.get_domain_tables(), data_origin=DIRECTORY_DOMAIN_ONTOLOGY)
         GERunner(
-            alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path(),
+            alignment_config=self._alignment_config,
+            ge_base_directory=self._data_manager.get_data_tests_path(),
         ).run_ge_tests(named_tables=self._data_repo.get_intermediate_tables(), data_origin=DIRECTORY_INTERMEDIATE)
 
         # move data docs to report folder
@@ -243,8 +242,9 @@ class Pipeline:
         :return:
         """
         # profile outputs
-        pandas_profiler.profile_tables(tables=self._data_repo.get_intermediate_tables(),
-                                       data_manager=self._data_manager)
+        pandas_profiler.profile_tables(
+            tables=self._data_repo.get_intermediate_tables(), data_manager=self._data_manager
+        )
 
         # produce HTML report
         report_path = MergedOntologyAnalyser(

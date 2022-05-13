@@ -220,11 +220,7 @@ class DataManager:
         """
         self.save_tables(
             tables=[
-                NamedTable(
-                    name=table.name.replace(DOMAIN_SUFFIX, ""),
-                    dataframe=table.dataframe
-                )
-                for table in tables
+                NamedTable(name=table.name.replace(DOMAIN_SUFFIX, ""), dataframe=table.dataframe) for table in tables
             ],
             process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}",
         )
@@ -248,23 +244,25 @@ class DataManager:
         return [
             NamedTable(
                 name=TABLE_NODES_DOMAIN,
-                dataframe=data_repo.get(TABLE_NODES).dataframe[SCHEMA_NODE_ID_LIST_TABLE]
-                .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False)
+                dataframe=data_repo.get(TABLE_NODES)
+                .dataframe[SCHEMA_NODE_ID_LIST_TABLE]
+                .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False),
             ),
             NamedTable(
                 name=TABLE_MAPPINGS_DOMAIN,
-                dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe[SCHEMA_MAPPING_TABLE]
-                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False)
+                dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)
+                .dataframe[SCHEMA_MAPPING_TABLE]
+                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
             ),
             NamedTable(
                 name=TABLE_MERGES_DOMAIN,
-                dataframe=table_merges
-                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False)
+                dataframe=table_merges.sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
             ),
             NamedTable(
                 name=TABLE_EDGES_HIERARCHY_DOMAIN,
-                dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
-                .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False)
+                dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST)
+                .dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
+                .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False),
             ),
         ]
 
@@ -318,8 +316,10 @@ class DataManager:
     @staticmethod
     def produce_empty_merge_table() -> NamedTable:
         """Produce an empty named merge table."""
-        return NamedTable(name=TABLE_MERGES_WITH_META_DATA,
-                          dataframe=pd.DataFrame([], columns=list(SCHEMA_MERGE_TABLE_WITH_META_DATA)))
+        return NamedTable(
+            name=TABLE_MERGES_WITH_META_DATA,
+            dataframe=pd.DataFrame([], columns=list(SCHEMA_MERGE_TABLE_WITH_META_DATA)),
+        )
 
     @staticmethod
     def produce_empty_hierarchy_table() -> NamedTable:
