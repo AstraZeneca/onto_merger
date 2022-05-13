@@ -122,10 +122,6 @@ def test_get_one_source_to_many_target_mappings():
     assert np.array_equal(actual.values, expected.values) is True
 
 
-def test_get_source_to_target_mappings_for_multiplicity():
-    pass
-
-
 def test_get_mappings_with_mapping_relations():
     # input
     input_mappings = pd.DataFrame(

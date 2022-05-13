@@ -23,7 +23,7 @@ from onto_merger.data.constants import (
     TABLE_EDGES_HIERARCHY,
     TABLE_MAPPINGS,
     TABLE_MERGES,
-)
+    SCHEMA_MERGE_TABLE_WITH_META_DATA, TABLE_MERGES_WITH_META_DATA)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, NamedTable
 from tests.fixtures import TEST_FOLDER_OUTPUT_PATH, data_manager
@@ -207,11 +207,11 @@ def test_merge_tables(loaded_table_mappings: NamedTable):
 
 
 def test_produce_empty_merge_table():
-    expected = pd.DataFrame([], columns=SCHEMA_MERGE_TABLE)
+    expected = pd.DataFrame([], columns=SCHEMA_MERGE_TABLE_WITH_META_DATA)
     actual = DataManager.produce_empty_merge_table()
     assert isinstance(actual, NamedTable)
     assert isinstance(actual.dataframe, DataFrame)
-    assert actual.name == TABLE_MERGES
+    assert actual.name == TABLE_MERGES_WITH_META_DATA
     assert np.array_equal(actual.dataframe.values, expected.values) is True
 
 

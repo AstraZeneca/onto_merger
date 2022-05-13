@@ -234,7 +234,7 @@ def update_mappings_with_current_node_ids(
     """
     # src
     df = pd.merge(
-        mappings[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]],
+        mappings[SCHEMA_MAPPING_TABLE],
         mappings_internal_obsolete_to_current_node_id[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]].rename(
             columns={COLUMN_TARGET_ID: "new_src"},
             inplace=False,
@@ -261,10 +261,7 @@ def update_mappings_with_current_node_ids(
         columns={"src": COLUMN_SOURCE_ID, "trg": COLUMN_TARGET_ID},
         inplace=True,
     )
-
-    df2 = df[SCHEMA_MAPPING_TABLE]
-
-    return df2
+    return df[SCHEMA_MAPPING_TABLE]
 
 
 def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: DataFrame) -> DataFrame:
@@ -279,7 +276,7 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
     """
     df = produce_table_with_namespace_column_for_node_ids(table=mappings)
     if len(df) == 0:
-        return df[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
+        return mappings
     updated_src_id_column = f"updated_{COLUMN_SOURCE_ID}"
     updated_trg_id_column = f"updated_{COLUMN_TARGET_ID}"
     df[updated_src_id_column] = df.apply(
@@ -299,7 +296,7 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
         columns={updated_src_id_column: COLUMN_SOURCE_ID, updated_trg_id_column: COLUMN_TARGET_ID},
         inplace=True,
     )
-    return df[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
+    return df[SCHEMA_MAPPING_TABLE]
 
 
 def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
@@ -347,7 +344,7 @@ def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], 
         f"Found {len(mapping_subset):,d} for relation(s) "
         + f"'{permitted_mapping_relations}' from {len(mappings):,d} mappings."
     )
-    return mapping_subset[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
+    return mapping_subset
 
 
 def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: DataFrame) -> DataFrame:

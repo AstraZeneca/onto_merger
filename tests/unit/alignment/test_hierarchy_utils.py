@@ -10,7 +10,7 @@ from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
     SCHEMA_MERGE_TABLE,
-)
+    SCHEMA_HIERARCHY_EDGE_TABLE)
 from onto_merger.data.dataclasses import NamedTable
 
 
@@ -18,11 +18,11 @@ from onto_merger.data.dataclasses import NamedTable
 def example_hierarchy_edges():
     return pd.DataFrame(
         [
-            ("MONDO:001", "MONDO:002"),
-            ("MONDO:002", "MONDO:003"),
-            ("FOO:001", "MONDO:002"),
+            ("MONDO:001", "MONDO:002", "sub", "MONDO"),
+            ("MONDO:002", "MONDO:003", "sub", "MONDO"),
+            ("FOO:001", "MONDO:002", "sub", "MONDO"),
         ],
-        columns=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
+        columns=SCHEMA_HIERARCHY_EDGE_TABLE,
     )
 
 
@@ -34,8 +34,9 @@ def test_produce_seed_ontology_hierarchy_table(example_hierarchy_edges):
         hierarchy_edges=example_hierarchy_edges,
     )
     expected = pd.DataFrame(
-        [("MONDO:001", "MONDO:002"), ("MONDO:002", "MONDO:003")],
-        columns=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
+        [("MONDO:001", "MONDO:002", "sub", "MONDO"),
+         ("MONDO:002", "MONDO:003", "sub", "MONDO")],
+        columns=SCHEMA_HIERARCHY_EDGE_TABLE,
     )
     assert isinstance(actual, DataFrame)
     assert np.array_equal(actual.values, expected.values) is True

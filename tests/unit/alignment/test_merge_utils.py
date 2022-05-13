@@ -14,7 +14,7 @@ from onto_merger.data.constants import (
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MERGES,
     TABLE_NODES_MERGED,
-)
+    TABLE_MERGES_WITH_META_DATA)
 from onto_merger.data.dataclasses import NamedTable
 
 
@@ -90,6 +90,6 @@ def test_produce_named_table_merges_with_alignment_meta_data(example_merges):
         mapping_type=mapping_type,
     )
     assert isinstance(actual, NamedTable)
-    assert actual.name == TABLE_MERGES
+    assert actual.name == TABLE_MERGES_WITH_META_DATA
     assert isinstance(actual.dataframe, DataFrame)
     assert np.array_equal(actual.dataframe.values, expected.values) is True
