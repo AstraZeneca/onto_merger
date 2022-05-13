@@ -138,11 +138,12 @@ class Pipeline:
         self.logger.info("Started aggregating merges...")
         table_aggregated_merges = merge_utils.produce_named_table_aggregate_merges(
             merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe[SCHEMA_MERGE_TABLE],
+            alignment_priority_order=self._source_alignment_order
         )
         table_merged_nodes = merge_utils.produce_named_table_merged_nodes(merges=table_aggregated_merges.dataframe)
         table_unmapped_nodes = mapping_utils.produce_named_table_unmapped_nodes(
             nodes=self._data_repo.get(TABLE_NODES).dataframe,
-            merges=self._data_repo.get(TABLE_MERGES).dataframe,
+            merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,
         )
         self._data_repo.update(tables=[table_aggregated_merges, table_merged_nodes, table_unmapped_nodes])
         self.logger.info("Finished aggregating merges.")

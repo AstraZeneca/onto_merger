@@ -147,7 +147,7 @@ class AlignmentManager:
         """
         unmapped_nodes = mapping_utils.produce_table_unmapped_nodes(
             nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
-            merges=self._data_repo_output.get(TABLE_MERGES).dataframe,
+            merges=self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA).dataframe,
         )
 
         # (1) get mappings for NS

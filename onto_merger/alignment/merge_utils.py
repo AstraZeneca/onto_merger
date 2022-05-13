@@ -44,6 +44,8 @@ def produce_named_table_aggregate_merges(merges: DataFrame, alignment_priority_o
     graph = networkx_utils.create_networkx_graph(edges=merges[SCHEMA_EDGE_SOURCE_TO_TARGET_IDS])
     sub_graphs = list(graph.subgraph(c) for c in connected_components(graph))
     clusters = [list(sub.nodes) for sub in sub_graphs]
+    print("\n\nHERE\n\n")
+    print(merges.head(10))
     merges_aggregated = pd.DataFrame([[i] for i in np.array(clusters)])
     merges_aggregated.columns = [COLUMN_SOURCE_ID]
 
@@ -112,7 +114,7 @@ def produce_named_table_merges_with_alignment_meta_data(
     df[COLUMN_STEP_COUNTER] = step_counter
     df[COLUMN_MAPPING_TYPE_GROUP] = mapping_type
     return NamedTable(
-        name=TABLE_MERGES,
+        name=TABLE_MERGES_WITH_META_DATA,
         dataframe=df[SCHEMA_MERGE_TABLE_WITH_META_DATA],
     )
 

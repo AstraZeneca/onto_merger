@@ -19,7 +19,7 @@ from onto_merger.data.constants import (
     SCHEMA_MAPPING_TABLE,
     TABLE_MERGES,
     TABLE_NODES_UNMAPPED,
-)
+    TABLE_MERGES_WITH_META_DATA)
 from onto_merger.data.dataclasses import NamedTable
 from onto_merger.logger.log import get_logger
 
@@ -186,7 +186,7 @@ def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_o
         f"{COLUMN_SOURCE_ID} != @node_ids",
         local_dict={"node_ids": source_ids_to_drop},
         inplace=False,
-    )[SCHEMA_MAPPING_TABLE]
+    )
     return mapping_subset
 
 
@@ -334,7 +334,6 @@ def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> N
     return NamedTable(TABLE_NODES_UNMAPPED, produce_table_unmapped_nodes(nodes=nodes, merges=merges))
 
 
-
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:
     """Filter a mapping set for permitted mapping relations.
 
@@ -386,7 +385,7 @@ def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataF
         f"{COLUMN_SOURCE_ID} == @node_ids",
         local_dict={"node_ids": node_ids_to_keep},
         inplace=False,
-    )[SCHEMA_MAPPING_TABLE]
+    )
     logger.info(
         f"Found {len(mapping_subset):,d} mappings (from total {len(mappings):,d}) " + f"for {len(nodes):,d} nodes."
     )
@@ -428,4 +427,4 @@ def produce_self_merges_for_seed_nodes(seed_id: str, nodes: DataFrame, nodes_obs
     df[COLUMN_TARGET_ID] = df[COLUMN_SOURCE_ID].apply(lambda x: x)
 
     logger.info(f"Produced {len(df):,d} self merges for seed source '{seed_id}'.")
-    return NamedTable(name=TABLE_MERGES, dataframe=df)
+    return NamedTable(name=TABLE_MERGES_WITH_META_DATA, dataframe=df)
