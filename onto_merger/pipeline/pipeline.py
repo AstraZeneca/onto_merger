@@ -11,7 +11,8 @@ from onto_merger.data.constants import (
     TABLE_MERGES,
     TABLE_MERGES_AGGREGATED,
     TABLE_NODES,
-    DIRECTORY_INPUT, DIRECTORY_INTERMEDIATE, TABLE_MERGES_WITH_META_DATA, SCHEMA_MERGE_TABLE, DIRECTORY_DOMAIN_ONTOLOGY)
+    DIRECTORY_INPUT, DIRECTORY_INTERMEDIATE, TABLE_MERGES_WITH_META_DATA, SCHEMA_MERGE_TABLE, DIRECTORY_DOMAIN_ONTOLOGY,
+    TABLE_EDGES_HIERARCHY_POST)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository
 from onto_merger.data_testing.ge_runner import GERunner
@@ -175,20 +176,22 @@ class Pipeline:
         """
         self.logger.info("Started finalising outputs...")
 
+        # todo fix TABLE_MERGES_WITH_META_DATA  vs TABLE_MERGES_AGGREGATED
+
         # compute: unmapped, dangling, only connected
         self._data_repo.update(
             tables=[
                 mapping_utils.produce_named_table_unmapped_nodes(
                     nodes=self._data_repo.get(TABLE_NODES).dataframe,
-                    merges=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
+                    merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,
                 ),
                 hierarchy_utils.produce_table_nodes_only_connected(
-                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY).dataframe,
+                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe,
                     merges=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
                 ),
                 hierarchy_utils.produce_table_nodes_dangling(
                     nodes=self._data_repo.get(TABLE_NODES).dataframe,
-                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY).dataframe,
+                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe,
                     merges=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
                 ),
             ]

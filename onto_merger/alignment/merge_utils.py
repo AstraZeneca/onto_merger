@@ -44,8 +44,6 @@ def produce_named_table_aggregate_merges(merges: DataFrame, alignment_priority_o
     graph = networkx_utils.create_networkx_graph(edges=merges[SCHEMA_EDGE_SOURCE_TO_TARGET_IDS])
     sub_graphs = list(graph.subgraph(c) for c in connected_components(graph))
     clusters = [list(sub.nodes) for sub in sub_graphs]
-    print("\n\nHERE\n\n")
-    print(merges.head(10))
     merges_aggregated = pd.DataFrame([[i] for i in np.array(clusters)])
     merges_aggregated.columns = [COLUMN_SOURCE_ID]
 
