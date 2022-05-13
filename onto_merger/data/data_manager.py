@@ -11,7 +11,8 @@ import pandas as pd
 from pandas import DataFrame
 
 from onto_merger.data.constants import (
-    CONFIG_JSON,
+    COLUMN_PROVENANCE,
+    COLUMN_RELATION,
     DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
@@ -21,17 +22,28 @@ from onto_merger.data.constants import (
     DIRECTORY_OUTPUT,
     DIRECTORY_PROFILED_DATA,
     DIRECTORY_REPORT,
+    DOMAIN_SUFFIX,
+    FILE_NAME_CONFIG_JSON,
     FILE_NAME_LOG,
-    INPUT_TABLES,
+    ONTO_MERGER,
+    RELATION_MERGE,
+    SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
     SCHEMA_HIERARCHY_EDGE_TABLE,
-    SCHEMA_MERGE_TABLE,
+    SCHEMA_MAPPING_TABLE,
+    SCHEMA_MERGE_TABLE_WITH_META_DATA,
+    SCHEMA_NODE_ID_LIST_TABLE,
     TABLE_EDGES_HIERARCHY,
+    TABLE_EDGES_HIERARCHY_DOMAIN,
     TABLE_EDGES_HIERARCHY_POST,
-    TABLE_MAPPINGS,
+    TABLE_MAPPINGS_DOMAIN,
     TABLE_MAPPINGS_UPDATED,
-    TABLE_MERGES,
     TABLE_MERGES_AGGREGATED,
+    TABLE_MERGES_DOMAIN,
+    TABLE_MERGES_WITH_META_DATA,
+    TABLE_NAME_TO_TABLE_SCHEMA_MAP,
     TABLE_NODES,
+    TABLE_NODES_DOMAIN,
+    TABLES_INPUT,
 )
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
@@ -73,7 +85,7 @@ class DataManager:
 
         :return: The JSON content as a dict.
         """
-        file_path = os.path.join(self._project_folder_path, DIRECTORY_INPUT, CONFIG_JSON)
+        file_path = os.path.join(self._project_folder_path, DIRECTORY_INPUT, FILE_NAME_CONFIG_JSON)
         with open(file_path) as json_file:
             config_json = json.load(json_file)
         logger.info(f"Loaded configuration JSON from '{file_path}'")
@@ -117,7 +129,7 @@ class DataManager:
                 table_name,
                 self.load_table(table_name=table_name, process_directory=DIRECTORY_INPUT),
             )
-            for table_name in INPUT_TABLES
+            for table_name in TABLES_INPUT
         ]
 
     @staticmethod
@@ -201,30 +213,60 @@ class DataManager:
             else:
                 self.save_table(table=table, process_directory=process_directory)
 
-    def save_domain_ontology_tables(self, data_repo: DataRepository) -> None:
+    def save_domain_ontology_tables(self, tables: List[NamedTable]) -> None:
         """Save the domain ontology files.
 
-        :param data_repo: The data repository containing the files.
         :return:
         """
-        domain_ontology_directory_path = f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}"
-        # nodes unchanged
-        self.save_table(table=data_repo.get(TABLE_NODES), process_directory=domain_ontology_directory_path)
-        # mappings renamed
-        self.save_table(
-            table=NamedTable(name=TABLE_MAPPINGS, dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe),
-            process_directory=domain_ontology_directory_path,
+        self.save_tables(
+            tables=[
+                NamedTable(
+                    name=table.name.replace(DOMAIN_SUFFIX, ""),
+                    dataframe=table.dataframe
+                )
+                for table in tables
+            ],
+            process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}",
         )
-        # merges
-        self.save_table(
-            table=NamedTable(name=TABLE_MERGES, dataframe=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe),
-            process_directory=domain_ontology_directory_path,
-        )
-        # hierarchy
-        self.save_table(
-            table=NamedTable(name=TABLE_EDGES_HIERARCHY, dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe),
-            process_directory=domain_ontology_directory_path,
-        )
+
+    @staticmethod
+    def produce_domain_ontology_tables(data_repo: DataRepository) -> List[NamedTable]:
+        """Produce the domain ontology files with minimal data.
+
+        Tables used in the pipeline may contain inferred column values, e.g. node ID
+         namespaces and process (alignment and connectivity) meta data.
+
+        :param data_repo: The data repository containing the files.
+        :return: The finalised (i.e. domain ontology) tables.
+        """
+        # finalise table
+        table_merges = data_repo.get(TABLE_MERGES_AGGREGATED).dataframe.copy()
+        table_merges[COLUMN_RELATION] = RELATION_MERGE
+        table_merges[COLUMN_PROVENANCE] = ONTO_MERGER
+        table_merges = table_merges[TABLE_NAME_TO_TABLE_SCHEMA_MAP[TABLE_MERGES_DOMAIN]]
+
+        return [
+            NamedTable(
+                name=TABLE_NODES_DOMAIN,
+                dataframe=data_repo.get(TABLE_NODES).dataframe[SCHEMA_NODE_ID_LIST_TABLE]
+                .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False)
+            ),
+            NamedTable(
+                name=TABLE_MAPPINGS_DOMAIN,
+                dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe[SCHEMA_MAPPING_TABLE]
+                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False)
+            ),
+            NamedTable(
+                name=TABLE_MERGES_DOMAIN,
+                dataframe=table_merges
+                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False)
+            ),
+            NamedTable(
+                name=TABLE_EDGES_HIERARCHY_DOMAIN,
+                dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
+                .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False)
+            ),
+        ]
 
     def save_merged_ontology_report(self, content) -> str:
         """Save the analysis report HTML content."""
@@ -276,7 +318,8 @@ class DataManager:
     @staticmethod
     def produce_empty_merge_table() -> NamedTable:
         """Produce an empty named merge table."""
-        return NamedTable(name=TABLE_MERGES, dataframe=pd.DataFrame([], columns=SCHEMA_MERGE_TABLE))
+        return NamedTable(name=TABLE_MERGES_WITH_META_DATA,
+                          dataframe=pd.DataFrame([], columns=list(SCHEMA_MERGE_TABLE_WITH_META_DATA)))
 
     @staticmethod
     def produce_empty_hierarchy_table() -> NamedTable:

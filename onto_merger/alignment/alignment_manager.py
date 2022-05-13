@@ -10,14 +10,19 @@ from onto_merger.alignment import mapping_utils, merge_utils
 from onto_merger.analyser import analysis_util
 from onto_merger.data.constants import (
     COLUMN_NAMESPACE,
+    COLUMN_PROVENANCE,
+    COLUMN_RELATION,
     MAPPING_TYPE_GROUP_EQV,
     MAPPING_TYPE_GROUP_XREF,
+    ONTO_MERGER,
+    RELATION_MERGE,
     SCHEMA_ALIGNMENT_STEPS_TABLE,
+    SCHEMA_HIERARCHY_EDGE_TABLE,
     TABLE_ALIGNMENT_STEPS_REPORT,
     TABLE_MAPPINGS,
     TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
     TABLE_MAPPINGS_UPDATED,
-    TABLE_MERGES,
+    TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
     TABLE_NODES_OBSOLETE,
 )
@@ -58,7 +63,7 @@ class AlignmentManager:
         # store produced data
         self._data_repo_output = DataRepository()
         self._data_repo_output.update(
-            tables=[DataManager.produce_empty_merge_table(), DataManager.produce_empty_hierarchy_table()]
+            table=DataManager.produce_empty_merge_table()
         )
 
     def align_nodes(self) -> Tuple[DataRepository, List[str]]:
@@ -146,7 +151,7 @@ class AlignmentManager:
         """
         unmapped_nodes = mapping_utils.produce_table_unmapped_nodes(
             nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
-            merges=self._data_repo_output.get(TABLE_MERGES).dataframe,
+            merges=self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA).dataframe,
         )
 
         # (1) get mappings for NS
@@ -156,7 +161,7 @@ class AlignmentManager:
         )
         alignment_step = AlignmentStep(
             mapping_type_group=mapping_type_group_name,
-            source_id=source_id,
+            source=source_id,
             step_counter=step_counter,
             count_unmapped_nodes=len(unmapped_nodes),
         )
@@ -226,10 +231,12 @@ class AlignmentManager:
             permitted_mapping_relations=self._alignment_config.mapping_type_groups.equivalence,
             mappings=mappings_obsolete_to_current_node_id,
         )
+        mappings_obsolete_to_current_node_id_merge_strength[COLUMN_RELATION] = RELATION_MERGE
+        mappings_obsolete_to_current_node_id_merge_strength[COLUMN_PROVENANCE] = ONTO_MERGER
         self._data_repo_output.update(
             table=NamedTable(
                 name=TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
-                dataframe=mappings_obsolete_to_current_node_id_merge_strength,
+                dataframe=mappings_obsolete_to_current_node_id_merge_strength[SCHEMA_HIERARCHY_EDGE_TABLE],
             )
         )
 
@@ -265,7 +272,7 @@ class AlignmentManager:
         self._alignment_steps.append(
             AlignmentStep(
                 mapping_type_group=mapping_type_group_name,
-                source_id="START",
+                source="START",
                 step_counter=0,
                 count_unmapped_nodes=(
                     len(self._data_repo_input.get(TABLE_NODES).dataframe) - len(self_merges_for_seed_nodes.dataframe)
@@ -283,7 +290,7 @@ class AlignmentManager:
         self._alignment_steps.append(alignment_step)
         self._data_repo_output.update(
             table=DataManager.merge_tables_of_same_type(
-                tables=[merges_for_source, self._data_repo_output.get(TABLE_MERGES)]
+                tables=[merges_for_source, self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA)]
             )
         )
 

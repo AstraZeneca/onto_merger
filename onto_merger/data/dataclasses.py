@@ -8,9 +8,10 @@ from dataclasses_json import dataclass_json
 from pandas import DataFrame
 
 from onto_merger.data.constants import (
-    INPUT_TABLES,
-    OUTPUT_TABLES,
     SCHEMA_DATA_REPO_SUMMARY,
+    TABLES_DOMAIN,
+    TABLES_INPUT,
+    TABLES_INTERMEDIATE,
 )
 
 
@@ -30,6 +31,13 @@ class AlignmentConfigMappingTypeGroups:
         :return: All mappings relations.
         """
         return self.equivalence + self.database_reference + self.label_match
+
+    def get_mapping_type_group_names(self) -> List[str]:
+        """Get the mapping type group name list.
+
+        :return: The mapping type group name list.
+        """
+        return [str(k) for k in self.__dict__.keys()]
 
 
 @dataclass_json
@@ -82,14 +90,21 @@ class DataRepository:
 
         :return: The list of input named tables.
         """
-        return [self.get(table_name=table_name) for table_name in INPUT_TABLES if table_name in self.data]
+        return [self.get(table_name=table_name) for table_name in TABLES_INPUT if table_name in self.data]
 
-    def get_output_tables(self) -> List[NamedTable]:
-        """Return the list of output named tables.
+    def get_intermediate_tables(self) -> List[NamedTable]:
+        """Return the list of intermediate named tables.
 
-        :return: The list of output named tables.
+        :return: The list of intermediate named tables.
         """
-        return [self.get(table_name=table_name) for table_name in OUTPUT_TABLES if table_name in self.data]
+        return [self.get(table_name=table_name) for table_name in TABLES_INTERMEDIATE if table_name in self.data]
+
+    def get_domain_tables(self) -> List[NamedTable]:
+        """Return the list of domain named tables.
+
+        :return: The list of domain named tables.
+        """
+        return [self.get(table_name=table_name) for table_name in TABLES_DOMAIN if table_name in self.data]
 
     def update(
         self,
@@ -133,7 +148,7 @@ class AlignmentStep:
     """Represent an alignment step metadata as a dataclass."""
 
     mapping_type_group: str
-    source_id: str
+    source: str
     step_counter: int
     count_unmapped_nodes: int
     count_mappings: int
@@ -141,23 +156,19 @@ class AlignmentStep:
     count_merged_nodes: int
 
     def __init__(
-        self,
-        mapping_type_group: str,
-        source_id: str,
-        step_counter: int,
-        count_unmapped_nodes: int,
+        self, mapping_type_group: str, source: str, step_counter: int, count_unmapped_nodes: int,
     ):
         """Initialise the AlignmentStep dataclass.
 
         :param mapping_type_group: The mapping type group used
         in the alignment step.
-        :param source_id: The ontology being aligned in this step.
+        :param source: The ontology being aligned in this step.
         :param step_counter: The number of the step.
         :param count_unmapped_nodes: The number of unmapped nodes at
         the start of the alignment step.
         """
         self.mapping_type_group = mapping_type_group
-        self.source_id = source_id
+        self.source = source
         self.step_counter = step_counter
         self.count_unmapped_nodes = count_unmapped_nodes
         self.count_mappings = 0
@@ -170,7 +181,7 @@ class ConnectivityStep:
     """Hierarchy connectivity step metadata."""
 
     source_id: str
-    count_unmapped_node_ids: int
+    count_unmapped_nodes: int
     count_reachable_unmapped_nodes: int
     count_available_edges: int
     count_produced_edges: int
@@ -184,7 +195,7 @@ class ConnectivityStep:
         of the ontology at the start of the connectivity step.
         """
         self.source_id = source_id
-        self.count_unmapped_node_ids = count_unmapped_node_ids
+        self.count_unmapped_nodes = count_unmapped_node_ids
         self.count_reachable_unmapped_nodes = 0
         self.count_available_edges = 0
         self.count_produced_edges = 0

@@ -7,9 +7,13 @@ from onto_merger.alignment_config.validator import validate_alignment_configurat
 from onto_merger.analyser import analysis_util, pandas_profiler
 from onto_merger.analyser.merged_ontology_analyser import MergedOntologyAnalyser
 from onto_merger.data.constants import (
-    TABLE_EDGES_HIERARCHY,
-    TABLE_MERGES,
+    DIRECTORY_DOMAIN_ONTOLOGY,
+    DIRECTORY_INPUT,
+    DIRECTORY_INTERMEDIATE,
+    SCHEMA_MERGE_TABLE,
+    TABLE_EDGES_HIERARCHY_POST,
     TABLE_MERGES_AGGREGATED,
+    TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
 )
 from onto_merger.data.data_manager import DataManager
@@ -51,17 +55,16 @@ class Pipeline:
         # (2) LOAD AND CHECK INPUT DATA
         self._process_input_data()
 
-        # (3) RUN ALIGNMENT >> merges
+        # (3) RUN ALIGNMENT
         self._align_nodes()
 
-        # (4) AGGREGATE MERGES >> merges updated
+        # (4) AGGREGATE MERGES
         self._aggregate_merges()
 
-        # (5) RUN CONNECTIVITY >> hierarchy edges
+        # (5) RUN CONNECTIVITY
         self._connect_nodes()
 
-        # (6) FINALISE OUTPUTS >> unmapped, dangling, only connected
-        # | add NS to all outputs
+        # (6) FINALISE OUTPUTS
         self._finalise_outputs()
 
         # (7) VALIDATE: output data
@@ -100,14 +103,14 @@ class Pipeline:
             tables=analysis_util.add_namespace_column_to_loaded_tables(tables=self._data_manager.load_input_tables())
         )
 
-        # profile input tables todo uncomment
+        # profile input tables
         pandas_profiler.profile_tables(tables=self._data_repo.get_input_tables(), data_manager=self._data_manager)
 
-        # validate input tables todo uncomment
-        # GERunner(
-        #     alignment_config=self._alignment_config,
-        #     ge_base_directory=self._data_manager.get_data_tests_path(),
-        # ).run_ge_tests(named_tables=self._data_repo.get_input_tables())
+        # validate input tables
+        GERunner(
+            alignment_config=self._alignment_config,
+            ge_base_directory=self._data_manager.get_data_tests_path()
+        ).run_ge_tests(named_tables=self._data_repo.get_input_tables(), data_origin=DIRECTORY_INPUT)
 
         self.logger.info("Finished processing input data.")
 
@@ -125,7 +128,7 @@ class Pipeline:
             data_repo=self._data_repo,
             data_manager=self._data_manager,
         ).align_nodes()
-        self._data_repo.update(tables=alignment_results.get_output_tables())
+        self._data_repo.update(tables=alignment_results.get_intermediate_tables())
         self._source_alignment_order.extend(source_alignment_order)
         self.logger.info("Finished aligning nodes...")
 
@@ -138,13 +141,13 @@ class Pipeline:
         """
         self.logger.info("Started aggregating merges...")
         table_aggregated_merges = merge_utils.produce_named_table_aggregate_merges(
-            merges=self._data_repo.get(TABLE_MERGES).dataframe,
-            alignment_priority_order=self._source_alignment_order,
+            merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe[SCHEMA_MERGE_TABLE],
+            alignment_priority_order=self._source_alignment_order
         )
         table_merged_nodes = merge_utils.produce_named_table_merged_nodes(merges=table_aggregated_merges.dataframe)
         table_unmapped_nodes = mapping_utils.produce_named_table_unmapped_nodes(
             nodes=self._data_repo.get(TABLE_NODES).dataframe,
-            merges=self._data_repo.get(TABLE_MERGES).dataframe,
+            merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,
         )
         self._data_repo.update(tables=[table_aggregated_merges, table_merged_nodes, table_unmapped_nodes])
         self.logger.info("Finished aggregating merges.")
@@ -176,20 +179,22 @@ class Pipeline:
         """
         self.logger.info("Started finalising outputs...")
 
+        # todo fix TABLE_MERGES_WITH_META_DATA  vs TABLE_MERGES_AGGREGATED
+
         # compute: unmapped, dangling, only connected
         self._data_repo.update(
             tables=[
                 mapping_utils.produce_named_table_unmapped_nodes(
                     nodes=self._data_repo.get(TABLE_NODES).dataframe,
-                    merges=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
+                    merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,
                 ),
                 hierarchy_utils.produce_table_nodes_only_connected(
-                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY).dataframe,
+                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe,
                     merges=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
                 ),
                 hierarchy_utils.produce_table_nodes_dangling(
                     nodes=self._data_repo.get(TABLE_NODES).dataframe,
-                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY).dataframe,
+                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe,
                     merges=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
                 ),
             ]
@@ -197,14 +202,18 @@ class Pipeline:
 
         #  add NS to all outputs
         self._data_repo.update(
-            tables=analysis_util.add_namespace_column_to_loaded_tables(tables=self._data_repo.get_output_tables())
+            tables=analysis_util.add_namespace_column_to_loaded_tables(tables=self._data_repo.get_intermediate_tables())
         )
 
         # save all outputs
-        self._data_manager.save_tables(tables=self._data_repo.get_output_tables())
+        self._data_manager.save_tables(tables=self._data_repo.get_intermediate_tables())
 
         # save final tables to domain ontology folder
-        self._data_manager.save_domain_ontology_tables(data_repo=self._data_repo)
+        domain_tables = self._data_manager.produce_domain_ontology_tables(data_repo=self._data_repo)
+        self._data_repo.update(
+            tables=domain_tables
+        )
+        self._data_manager.save_domain_ontology_tables(tables=domain_tables)
 
         self.logger.info("Finished finalising outputs.")
 
@@ -217,9 +226,11 @@ class Pipeline:
 
         # run data tests
         GERunner(
-            alignment_config=self._alignment_config,
-            ge_base_directory=self._data_manager.get_data_tests_path(),
-        ).run_ge_tests(named_tables=self._data_repo.get_output_tables())
+            alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path(),
+        ).run_ge_tests(named_tables=self._data_repo.get_domain_tables(), data_origin=DIRECTORY_DOMAIN_ONTOLOGY)
+        GERunner(
+            alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path(),
+        ).run_ge_tests(named_tables=self._data_repo.get_intermediate_tables(), data_origin=DIRECTORY_INTERMEDIATE)
 
         # move data docs to report folder
         self._data_manager.move_data_docs_to_reports()
@@ -232,7 +243,8 @@ class Pipeline:
         :return:
         """
         # profile outputs
-        pandas_profiler.profile_tables(tables=self._data_repo.get_output_tables(), data_manager=self._data_manager)
+        pandas_profiler.profile_tables(tables=self._data_repo.get_intermediate_tables(),
+                                       data_manager=self._data_manager)
 
         # produce HTML report
         report_path = MergedOntologyAnalyser(

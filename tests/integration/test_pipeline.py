@@ -39,7 +39,7 @@ def perform_evaluation_for_pipeline_run():
         "edges_hierarchy_post.csv",
         "mappings_obsolete_to_current.csv",
         "mappings_updated.csv",
-        "merges.csv",
+        "merges_with_meta_data.csv",
         "merges_aggregated.csv",
         "nodes_dangling.csv",
         "nodes_merged.csv",

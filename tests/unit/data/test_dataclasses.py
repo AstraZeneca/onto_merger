@@ -25,13 +25,13 @@ def test_alignment_step_dataclass():
 
     actual = AlignmentStep(
         mapping_type_group=mapping_type_group,
-        source_id=source_id,
+        source=source_id,
         step_counter=step_counter,
         count_unmapped_nodes=count_unmapped_nodes,
     )
 
     assert actual.mapping_type_group == mapping_type_group
-    assert actual.source_id == source_id
+    assert actual.source == source_id
     assert actual.step_counter == step_counter
     assert actual.count_unmapped_nodes == count_unmapped_nodes
     assert actual.count_mappings == 0
@@ -59,7 +59,7 @@ def test_alignment_config_mapping_type_groups_dataclass():
 def test_data_repository_dataclass():
     # empty
     data_repo = DataRepository()
-    assert data_repo.get_output_tables() == []
+    assert data_repo.get_intermediate_tables() == []
     assert data_repo.get_input_tables() == []
 
     # update table

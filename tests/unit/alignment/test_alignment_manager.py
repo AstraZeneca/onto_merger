@@ -28,13 +28,13 @@ def test_convert_alignment_steps_to_named_table():
     input_data = [
         AlignmentStep(
             mapping_type_group="eqv",
-            source_id="FOO",
+            source="FOO",
             step_counter=1,
             count_unmapped_nodes=100,
         ),
         AlignmentStep(
             mapping_type_group="eqv",
-            source_id="BAR",
+            source="BAR",
             step_counter=2,
             count_unmapped_nodes=90,
         ),

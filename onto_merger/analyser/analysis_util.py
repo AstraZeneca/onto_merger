@@ -50,9 +50,10 @@ def produce_table_with_namespace_column_for_node_ids(table: DataFrame) -> DataFr
     table_node_id_columns = sorted([col_name for col_name in NODE_ID_COLUMNS if col_name in list(table_copy)])
     for node_id_column in table_node_id_columns:
         namespace_column_name = get_namespace_column_name_for_column(node_id_column=node_id_column)
-        table_copy[namespace_column_name] = table_copy[node_id_column].apply(
-            lambda node_id: get_namespace_for_node_id(str(node_id))
-        )
+        if namespace_column_name not in list(table_copy):
+            table_copy[namespace_column_name] = table_copy[node_id_column].apply(
+                lambda node_id: get_namespace_for_node_id(str(node_id))
+            )
     return table_copy
 
 
@@ -64,6 +65,8 @@ def produce_table_with_namespace_column_pair(table: DataFrame) -> DataFrame:
     column if it is an edge table.
     """
     if COLUMN_TARGET_ID not in list(table):
+        return table
+    if COLUMN_SOURCE_TO_TARGET in list(table):
         return table
     table_copy = table.copy()
     table_copy[COLUMN_SOURCE_TO_TARGET] = table_copy.apply(

@@ -16,9 +16,14 @@ from onto_merger.analyser.analysis_util import (
 )
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
+    COLUMN_PROVENANCE,
+    COLUMN_RELATION,
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
+    ONTO_MERGER,
+    RELATION_RDFS_SUBCLASS_OF,
     SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
+    SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MERGE_TABLE,
     TABLE_CONNECTIVITY_STEPS_REPORT,
     TABLE_EDGES_HIERARCHY,
@@ -105,7 +110,7 @@ def produce_table_seed_ontology_hierarchy(
         logger.error("Error hierarchy is not a single DAG")
         return None
     else:
-        return seed_hierarchy_table
+        return seed_hierarchy_table[SCHEMA_HIERARCHY_EDGE_TABLE]
 
 
 def produce_table_nodes_only_connected(hierarchy_edges: DataFrame, merges: DataFrame) -> NamedTable:
@@ -222,7 +227,8 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
     connected_nodes = [
         node_id for node_id in unmapped_nodes[COLUMN_DEFAULT_ID].tolist() if node_id in merge_and_connectivity_map
     ]
-    new_hierarchy_edges = pd.DataFrame(edges_for_all_nodes, columns=SCHEMA_MERGE_TABLE)
+    new_hierarchy_edges = _produce_hierarchy_edge_table_from_edge_path_lists(edges_for_all_nodes=edges_for_all_nodes)
+
     logger.info(
         f"Out of {len(unmapped_nodes):,d} unmapped nodes, "
         + f"{len(connected_nodes):,d} are now connected, "
@@ -371,3 +377,11 @@ def _convert_connectivity_steps_to_named_table(
             columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
         ),
     )
+
+
+def _produce_hierarchy_edge_table_from_edge_path_lists(edges_for_all_nodes: List[Tuple[str, str]]) -> DataFrame:
+    new_hierarchy_edges = pd.DataFrame(edges_for_all_nodes, columns=list(SCHEMA_MERGE_TABLE))
+    new_hierarchy_edges[COLUMN_RELATION] = RELATION_RDFS_SUBCLASS_OF
+    new_hierarchy_edges[COLUMN_PROVENANCE] = ONTO_MERGER
+    new_hierarchy_edges = new_hierarchy_edges[SCHEMA_HIERARCHY_EDGE_TABLE]
+    return new_hierarchy_edges

@@ -12,9 +12,9 @@ from onto_merger.analyser.analysis_util import (
     produce_table_with_namespace_column_for_node_ids,
 )
 from onto_merger.data.constants import (
-    CONFIG_JSON,
     DIRECTORY_DATA_TESTS,
     DIRECTORY_OUTPUT,
+    FILE_NAME_CONFIG_JSON,
 )
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable
@@ -50,7 +50,7 @@ def data_manager() -> DataManager:
 @typing.no_type_check
 @pytest.fixture()
 def alignment_config() -> AlignmentConfig:
-    config_json = os.path.join(TEST_FOLDER_PATH, "input", CONFIG_JSON)
+    config_json = os.path.join(TEST_FOLDER_PATH, "input", FILE_NAME_CONFIG_JSON)
     with open(config_json) as json_file:
         config_json = json.load(json_file)
     yield DataManager.convert_config_json_to_dataclass(config_json=config_json)

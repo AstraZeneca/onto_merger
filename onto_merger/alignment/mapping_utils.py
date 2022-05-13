@@ -17,7 +17,7 @@ from onto_merger.data.constants import (
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
     SCHEMA_MAPPING_TABLE,
-    TABLE_MERGES,
+    TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_UNMAPPED,
 )
 from onto_merger.data.dataclasses import NamedTable
@@ -107,7 +107,9 @@ def get_mappings_with_updated_node_ids(
     #
     # # remap mapping set >> update_mappings_with_current_node_ids
 
-    return mappings
+    mappings_update = mappings.copy()
+
+    return mappings_update
 
 
 def add_comparison_column_for_reoriented_mappings(mappings: DataFrame):
@@ -184,7 +186,7 @@ def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_o
         f"{COLUMN_SOURCE_ID} != @node_ids",
         local_dict={"node_ids": source_ids_to_drop},
         inplace=False,
-    )[SCHEMA_MAPPING_TABLE]
+    )
     return mapping_subset
 
 
@@ -232,7 +234,7 @@ def update_mappings_with_current_node_ids(
     """
     # src
     df = pd.merge(
-        mappings,
+        mappings[SCHEMA_MAPPING_TABLE],
         mappings_internal_obsolete_to_current_node_id[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]].rename(
             columns={COLUMN_TARGET_ID: "new_src"},
             inplace=False,
@@ -259,10 +261,7 @@ def update_mappings_with_current_node_ids(
         columns={"src": COLUMN_SOURCE_ID, "trg": COLUMN_TARGET_ID},
         inplace=True,
     )
-
-    df2 = df[SCHEMA_MAPPING_TABLE]
-
-    return df2
+    return df[SCHEMA_MAPPING_TABLE]
 
 
 def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: DataFrame) -> DataFrame:
@@ -277,8 +276,7 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
     """
     df = produce_table_with_namespace_column_for_node_ids(table=mappings)
     if len(df) == 0:
-        return df[SCHEMA_MAPPING_TABLE]
-
+        return mappings
     updated_src_id_column = f"updated_{COLUMN_SOURCE_ID}"
     updated_trg_id_column = f"updated_{COLUMN_TARGET_ID}"
     df[updated_src_id_column] = df.apply(
@@ -330,13 +328,7 @@ def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> N
     :param merges: The set of merges used to determine node mapped status.
     :return: The set of unmapped nodes.
     """
-    return NamedTable(
-        TABLE_NODES_UNMAPPED,
-        produce_table_unmapped_nodes(
-            nodes=nodes,
-            merges=merges,
-        ),
-    )
+    return NamedTable(TABLE_NODES_UNMAPPED, produce_table_unmapped_nodes(nodes=nodes, merges=merges))
 
 
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:
@@ -390,7 +382,7 @@ def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataF
         f"{COLUMN_SOURCE_ID} == @node_ids",
         local_dict={"node_ids": node_ids_to_keep},
         inplace=False,
-    )[SCHEMA_MAPPING_TABLE]
+    )
     logger.info(
         f"Found {len(mapping_subset):,d} mappings (from total {len(mappings):,d}) " + f"for {len(nodes):,d} nodes."
     )
@@ -432,4 +424,4 @@ def produce_self_merges_for_seed_nodes(seed_id: str, nodes: DataFrame, nodes_obs
     df[COLUMN_TARGET_ID] = df[COLUMN_SOURCE_ID].apply(lambda x: x)
 
     logger.info(f"Produced {len(df):,d} self merges for seed source '{seed_id}'.")
-    return NamedTable(name=TABLE_MERGES, dataframe=df)
+    return NamedTable(name=TABLE_MERGES_WITH_META_DATA, dataframe=df)

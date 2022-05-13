@@ -17,7 +17,7 @@ from onto_merger.data.constants import (
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
     DIRECTORY_OUTPUT,
-    RDFS_SUBCLASS_OF,
+    RELATION_RDFS_SUBCLASS_OF,
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MAPPINGS,
@@ -200,7 +200,7 @@ def produce_test_data_set(raw_path: str = "bikg_2022-02-28-4.27.0_disease",
     # prune hierarchy edges such that it loads fast but still supports the connectivity process
     hierarchy_post = pd.read_csv(os.path.abspath(f"{raw_path}/{DIRECTORY_OUTPUT}/{TABLE_EDGES_HIERARCHY_POST}.csv")) \
         [[COLUMN_SOURCE_ID, COLUMN_TARGET_ID, COLUMN_RELATION, COLUMN_PROVENANCE]]
-    hierarchy_post[COLUMN_RELATION] = RDFS_SUBCLASS_OF
+    hierarchy_post[COLUMN_RELATION] = RELATION_RDFS_SUBCLASS_OF
     hierarchy_post[COLUMN_PROVENANCE] = "TEST_DATA"
 
     merges = pd.read_csv(os.path.abspath(
