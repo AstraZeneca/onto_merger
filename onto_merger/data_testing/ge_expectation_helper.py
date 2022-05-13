@@ -358,7 +358,6 @@ def produce_count_column_expectations(column_name: str,
     :param decreasing: If true the counts should be decreasing; otherwise it is False.
     :return: The list of relevant ExpectationConfiguration-s.
     """
-
     expectations = [
         produce_expectation_config_expect_column_to_exist(column_name=column_name),
         produce_expectation_config_column_values_to_not_be_null(column_name=column_name),
