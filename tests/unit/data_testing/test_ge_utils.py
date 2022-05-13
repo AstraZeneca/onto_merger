@@ -37,13 +37,13 @@ def test_produce_datasource_config_for_entity():
                 "class_name": "InferredAssetFilesystemDataConnector",
                 "base_directory": "foo",
                 "default_regex": {
-                    "group_names": ["bar_data_asset"],
+                    "group_names": ["INPUT_bar_data_asset"],
                     "pattern": "(.*)",
                 },
             },
         },
     }
-    actual = produce_datasource_config_for_entity(entity_name="bar", ge_base_directory="foo")
+    actual = produce_datasource_config_for_entity(entity_name="bar", ge_base_directory="foo", data_origin="INPUT")
     assert isinstance(actual, dict)
     assert actual == expected
 
@@ -53,11 +53,11 @@ def test_produce_validation_config_for_entity():
         "batch_request": {
             "datasource_name": "foo_datasource",
             "data_connector_name": "default_runtime_data_connector_name",
-            "data_asset_name": "foo_data_asset",
+            "data_asset_name": "OUTPUT_foo_data_asset",
         },
         "expectation_suite_name": "foo_table",
     }
-    actual = produce_validation_config_for_entity(entity_name="foo")
+    actual = produce_validation_config_for_entity(entity_name="foo", data_origin="OUTPUT")
     assert isinstance(actual, dict)
     assert actual == expected
 
@@ -81,9 +81,9 @@ def test_produce_datasource_name_for_entity():
 
 
 def test_produce_data_asset_name_for_entity():
-    actual = produce_data_asset_name_for_entity(entity_name="foo")
+    actual = produce_data_asset_name_for_entity(entity_name="foo", data_origin="bla")
     assert isinstance(actual, str)
-    assert actual == "foo_data_asset"
+    assert actual == "bla_foo_data_asset"
 
 
 def test_produce_expectation_suite_name_for_entity():

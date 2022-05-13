@@ -116,6 +116,8 @@ def get_column_set_for_edge_table(table_name: str) -> List[str]:
     :param table_name: The edge table type (hierarchy, mapping, merge).
     :return: The list of columns for the given table.
     """
+    if table_name not in TABLE_NAME_TO_TABLE_SCHEMA_MAP:
+        return []
     column_set = TABLE_NAME_TO_TABLE_SCHEMA_MAP[table_name]
     if not is_domain_table(table_name=table_name):
         column_set.extend(

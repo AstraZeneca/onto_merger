@@ -12,8 +12,7 @@ from onto_merger.data.constants import (
     DIRECTORY_INTERMEDIATE,
     DIRECTORY_REPORT,
     TABLE_ALIGNMENT_STEPS_REPORT,
-    TABLE_MERGES,
-)
+    TABLE_MERGES_WITH_META_DATA)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable
 from tests.fixtures import (
@@ -49,7 +48,7 @@ def test_align_nodes(
         data_manager=data_manager,
     ).align_nodes()
 
-    expected_output_named_tables = [TABLE_ALIGNMENT_STEPS_REPORT, TABLE_MERGES]
+    expected_output_named_tables = [TABLE_ALIGNMENT_STEPS_REPORT, TABLE_MERGES_WITH_META_DATA]
     for output_table_name in expected_output_named_tables:
         actual = output_data_repo.get(output_table_name)
         assert isinstance(actual, NamedTable)

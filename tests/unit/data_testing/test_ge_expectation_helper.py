@@ -10,9 +10,6 @@ from onto_merger.data.constants import (
     COLUMN_RELATION,
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
-    EDGE,
-    MAPPING,
-    MERGE,
     RELATION_RDFS_SUBCLASS_OF,
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_POST,
@@ -21,62 +18,9 @@ from onto_merger.data.constants import (
     TABLE_NODES,
     TABLE_NODES_OBSOLETE,
     TABLE_NODES_UNMAPPED,
-)
+    TABLE_MAPPINGS_DOMAIN, SCHEMA_HIERARCHY_EDGE_TABLE, COLUMN_SOURCE_TO_TARGET)
 from onto_merger.data_testing import ge_expectation_helper
 from tests.fixtures import alignment_config
-
-
-@pytest.fixture()
-def expected_node_table_expectations() -> List[dict]:
-    return [
-        {
-            "kwargs": {
-                "column_set": ["default_id", "namespace_default_id"],
-                "exact_match": True,
-            },
-            "meta": {},
-            "expectation_type": "expect_table_columns_to_match_set",
-        },
-        {
-            "kwargs": {"column": "default_id"},
-            "expectation_type": "expect_column_to_exist",
-            "meta": {},
-        },
-        {
-            "kwargs": {"column": "default_id", "type_": "object", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_be_of_type",
-            "meta": {},
-        },
-        {
-            "kwargs": {"column": "default_id", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_not_be_null",
-            "meta": {},
-        },
-        {
-            "kwargs": {
-                "column": "default_id",
-                "min_value": 3,
-                "max_value": 25,
-                "mostly": 1.0,
-            },
-            "expectation_type": "expect_column_value_lengths_to_be_between",
-            "meta": {},
-        },
-        {
-            "kwargs": {
-                "column": "default_id",
-                "regex": "^[A-Za-z][\\w]*:\\S+$",
-                "mostly": 1.0,
-            },
-            "expectation_type": "expect_column_values_to_match_regex",
-            "meta": {},
-        },
-        {
-            "kwargs": {"column": "default_id", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_be_unique",
-            "meta": {},
-        },
-    ]
 
 
 def expectation_list_type_check(actual: List[ExpectationConfiguration]):
@@ -84,13 +28,6 @@ def expectation_list_type_check(actual: List[ExpectationConfiguration]):
     assert len(actual) > 0
     for obj in actual:
         assert isinstance(obj, ExpectationConfiguration)
-
-
-def expectation_list_content_check(actual: List[ExpectationConfiguration], expected: List[dict]):
-    expectation_list_type_check(actual=actual)
-    assert len(actual) == len(expected)
-    for obj in actual:
-        assert obj.to_json_dict() in expected
 
 
 def test_produce_expectations_for_table(alignment_config):
@@ -115,128 +52,36 @@ def test_produce_expectations_for_table(alignment_config):
     assert actual_empty == []
 
 
-def test_produce_node_table_expectations(expected_node_table_expectations):
-    actual = ge_expectation_helper.produce_node_table_expectations()
-    expectation_list_content_check(actual=actual, expected=expected_node_table_expectations)
+def test_produce_node_table_expectations():
+    actual = ge_expectation_helper.produce_node_table_expectations(table_name=TABLE_NODES)
+    expectation_list_type_check(actual=actual)
+    assert len(actual) == 12
 
 
 def test_produce_edge_table_expectations(alignment_config):
-    expected_1 = [
-        {
-            "meta": {},
-            "kwargs": {"column": "source_id"},
-            "expectation_type": "expect_column_to_exist",
-        },
-        {
-            "meta": {},
-            "kwargs": {"column": "source_id", "type_": "object", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_be_of_type",
-        },
-        {
-            "meta": {},
-            "kwargs": {"column": "source_id", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_not_be_null",
-        },
-        {
-            "meta": {},
-            "kwargs": {
-                "column": "source_id",
-                "min_value": 3,
-                "max_value": 25,
-                "mostly": 1.0,
-            },
-            "expectation_type": "expect_column_value_lengths_to_be_between",
-        },
-        {
-            "meta": {},
-            "kwargs": {
-                "column": "source_id",
-                "regex": "^[A-Za-z][\\w]*:\\S+$",
-                "mostly": 1.0,
-            },
-            "expectation_type": "expect_column_values_to_match_regex",
-        },
-        {
-            "meta": {},
-            "kwargs": {"column": "target_id"},
-            "expectation_type": "expect_column_to_exist",
-        },
-        {
-            "meta": {},
-            "kwargs": {"column": "target_id", "type_": "object", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_be_of_type",
-        },
-        {
-            "meta": {},
-            "kwargs": {"column": "target_id", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_not_be_null",
-        },
-        {
-            "meta": {},
-            "kwargs": {
-                "column": "target_id",
-                "min_value": 3,
-                "max_value": 25,
-                "mostly": 1.0,
-            },
-            "expectation_type": "expect_column_value_lengths_to_be_between",
-        },
-        {
-            "meta": {},
-            "kwargs": {
-                "column": "target_id",
-                "regex": "^[A-Za-z][\\w]*:\\S+$",
-                "mostly": 1.0,
-            },
-            "expectation_type": "expect_column_values_to_match_regex",
-        },
-        {
-            "meta": {},
-            "kwargs": {
-                "column_set": [
-                    "source_id",
-                    "target_id",
-                    "namespace_source_id",
-                    "namespace_target_id",
-                ],
-                "exact_match": True,
-            },
-            "expectation_type": "expect_table_columns_to_match_set",
-        },
-    ]
-
-    actual_merge = ge_expectation_helper.produce_edge_table_expectations(
-        table_name=MERGE, alignment_config=alignment_config
+    actual = ge_expectation_helper.produce_edge_table_expectations(
+        table_name=TABLE_MERGES, alignment_config=alignment_config
     )
-    expectation_list_content_check(actual=actual_merge, expected=expected_1)
+    expectation_list_type_check(actual=actual)
+    assert len(actual) == 31
 
 
 def test_get_column_set_for_edge_table():
-    column_set_merges = [
-        COLUMN_SOURCE_ID,
-        COLUMN_TARGET_ID,
+    column_set = SCHEMA_HIERARCHY_EDGE_TABLE + [
         get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
         get_namespace_column_name_for_column(COLUMN_TARGET_ID),
-    ]
-    column_set_mappings = column_set_merges + [
-        COLUMN_RELATION,
-        COLUMN_PROVENANCE,
+        COLUMN_SOURCE_TO_TARGET
     ]
 
     # EDGE
-    actual_1 = ge_expectation_helper.get_column_set_for_edge_table(table_name=EDGE)
+    actual_1 = ge_expectation_helper.get_column_set_for_edge_table(table_name=TABLE_EDGES_HIERARCHY)
     assert isinstance(actual_1, List)
-    assert actual_1 == column_set_mappings
+    assert set(actual_1) == set(column_set)
 
-    # MAPPING
-    actual_2 = ge_expectation_helper.get_column_set_for_edge_table(table_name=MAPPING)
+    # DOMAIN
+    actual_2 = ge_expectation_helper.get_column_set_for_edge_table(table_name=TABLE_MAPPINGS_DOMAIN)
     assert isinstance(actual_2, List)
-    assert actual_2 == column_set_mappings
-
-    # MERGE
-    actual_3 = ge_expectation_helper.get_column_set_for_edge_table(table_name=MERGE)
-    assert isinstance(actual_3, List)
-    assert actual_3 == column_set_merges
+    assert set(actual_2) == set(SCHEMA_HIERARCHY_EDGE_TABLE)
 
     #
     actual_4 = ge_expectation_helper.get_column_set_for_edge_table(table_name="foo")
@@ -246,13 +91,13 @@ def test_get_column_set_for_edge_table():
 
 def test_get_edge_types_for_edge_table(alignment_config):
     actual_1 = ge_expectation_helper.get_relation_types_for_edge_table(
-        table_name=EDGE, alignment_config=alignment_config
+        table_name=TABLE_EDGES_HIERARCHY, alignment_config=alignment_config
     )
     assert isinstance(actual_1, List)
     assert actual_1 == [RELATION_RDFS_SUBCLASS_OF]
 
     actual_2 = ge_expectation_helper.get_relation_types_for_edge_table(
-        table_name=MAPPING, alignment_config=alignment_config
+        table_name=TABLE_MAPPINGS, alignment_config=alignment_config
     )
     assert isinstance(actual_2, List)
     assert len(actual_2) > 1
@@ -267,86 +112,24 @@ def test_get_edge_types_for_edge_table(alignment_config):
 
 def test_produce_node_short_id_expectations():
     # not in node table
-    expected_not_in_node_table = [
-        {
-            "kwargs": {"column": "foo"},
-            "expectation_type": "expect_column_to_exist",
-            "meta": {},
-        },
-        {
-            "kwargs": {"column": "foo", "type_": "object", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_be_of_type",
-            "meta": {},
-        },
-        {
-            "kwargs": {"column": "foo", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_not_be_null",
-            "meta": {},
-        },
-        {
-            "kwargs": {"column": "foo", "min_value": 3, "max_value": 25, "mostly": 1.0},
-            "expectation_type": "expect_column_value_lengths_to_be_between",
-            "meta": {},
-        },
-        {
-            "kwargs": {
-                "column": "foo",
-                "regex": "^[A-Za-z][\\w]*:\\S+$",
-                "mostly": 1.0,
-            },
-            "expectation_type": "expect_column_values_to_match_regex",
-            "meta": {},
-        },
-    ]
     actual_not_in_node_table = ge_expectation_helper.produce_node_short_id_expectations(
         column_name="foo", is_node_table=False
     )
-    expectation_list_content_check(actual=actual_not_in_node_table, expected=expected_not_in_node_table)
+    expectation_list_type_check(actual=actual_not_in_node_table)
+    assert len(actual_not_in_node_table) == 5
 
     # in node table
-    expected_in_node_table = expected_not_in_node_table + [
-        {
-            "kwargs": {"column": "foo", "mostly": 1.0},
-            "expectation_type": "expect_column_values_to_be_unique",
-            "meta": {},
-        }
-    ]
     actual_in_node_table = ge_expectation_helper.produce_node_short_id_expectations(
         column_name="foo", is_node_table=True
     )
-    expectation_list_content_check(actual=actual_in_node_table, expected=expected_in_node_table)
+    expectation_list_type_check(actual=actual_in_node_table)
+    assert len(actual_not_in_node_table) == 5
 
 
 def test_produce_edge_relation_expectations():
-    expected = [
-        {
-            "expectation_type": "expect_column_to_exist",
-            "meta": {},
-            "kwargs": {"column": "foo"},
-        },
-        {
-            "expectation_type": "expect_column_values_to_be_of_type",
-            "meta": {},
-            "kwargs": {"column": "foo", "type_": "object", "mostly": 1.0},
-        },
-        {
-            "expectation_type": "expect_column_values_to_not_be_null",
-            "meta": {},
-            "kwargs": {"column": "foo", "mostly": 1.0},
-        },
-        {
-            "expectation_type": "expect_column_values_to_be_in_set",
-            "meta": {},
-            "kwargs": {"column": "foo", "value_set": ["fizz", "bang"], "mostly": 1.0},
-        },
-        {
-            "expectation_type": "expect_column_value_lengths_to_be_between",
-            "meta": {},
-            "kwargs": {"column": "foo", "min_value": 3, "max_value": 30, "mostly": 1.0},
-        },
-    ]
     actual = ge_expectation_helper.produce_edge_relation_expectations(column_name="foo", edge_types=["fizz", "bang"])
-    expectation_list_content_check(actual=actual, expected=expected)
+    expectation_list_type_check(actual=actual)
+    assert len(actual) == 5
 
 
 def test_produce_expectation_config_column_type_string():
