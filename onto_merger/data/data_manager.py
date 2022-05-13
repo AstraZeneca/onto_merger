@@ -239,7 +239,6 @@ class DataManager:
         :param data_repo: The data repository containing the files.
         :return: The finalised (i.e. domain ontology) tables.
         """
-
         # finalise table
         table_merges = data_repo.get(TABLE_MERGES_AGGREGATED).dataframe.copy()
         table_merges[COLUMN_RELATION] = RELATION_MERGE

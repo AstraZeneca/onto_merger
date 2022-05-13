@@ -273,13 +273,12 @@ def produce_report_alignment_steps_expectations(alignment_config: AlignmentConfi
     :param alignment_config: The alignment process configuration dataclass.
     :return: The list of relevant ExpectationConfiguration-s.
     """
-
     # table shape and edge case column expectations
     expectations = [
         ExpectationConfiguration(
-           expectation_type="expect_table_columns_to_match_ordered_list",
-           kwargs={"column_list": SCHEMA_ALIGNMENT_STEPS_TABLE},
-           meta=None,
+            expectation_type="expect_table_columns_to_match_ordered_list",
+            kwargs={"column_list": SCHEMA_ALIGNMENT_STEPS_TABLE},
+            meta=None,
         ),
         produce_expectation_config_expect_column_values_to_be_in_set(
             column_name=COLUMN_MAPPING_TYPE_GROUP,
@@ -321,9 +320,9 @@ def produce_report_connectivity_steps_expectations(alignment_config: AlignmentCo
     # table shape and edge case column expectations
     expectations = [
         ExpectationConfiguration(
-           expectation_type="expect_table_columns_to_match_ordered_list",
-           kwargs={"column_list": SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE},
-           meta=None,
+            expectation_type="expect_table_columns_to_match_ordered_list",
+            kwargs={"column_list": SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE},
+            meta=None,
         ),
         # produce_expectation_config_expect_column_values_to_be_in_set(
         #    column_name=COLUMN_SOURCE,
