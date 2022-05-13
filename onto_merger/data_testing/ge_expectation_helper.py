@@ -37,7 +37,7 @@ from onto_merger.data.dataclasses import AlignmentConfig
 
 
 def produce_expectations_for_table(
-        table_name: str, alignment_config: AlignmentConfig
+    table_name: str, alignment_config: AlignmentConfig
 ) -> List[ExpectationConfiguration]:
     """Produce the  list of relevant ExpectationConfiguration-s for a given table (node or edge).
 
@@ -65,21 +65,19 @@ def produce_node_table_expectations(table_name: str) -> List[ExpectationConfigur
     column_set = list(TABLE_NAME_TO_TABLE_SCHEMA_MAP[table_name])
     if not is_domain_table(table_name=table_name):
         column_set.append(get_namespace_column_name_for_column(COLUMN_DEFAULT_ID))
-    expectations = [
-        produce_expectation_config_expect_table_columns_to_match_set(
-            column_set=column_set
-        )
-    ]
+    expectations = [produce_expectation_config_expect_table_columns_to_match_set(column_set=column_set)]
     expectations.extend(produce_node_short_id_expectations(column_name=COLUMN_DEFAULT_ID, is_node_table=True))
     if not is_domain_table(table_name=table_name):
-        expectations.extend(produce_node_namespace_expectations(
-            column_name=get_namespace_column_name_for_column(node_id_column=COLUMN_DEFAULT_ID))
+        expectations.extend(
+            produce_node_namespace_expectations(
+                column_name=get_namespace_column_name_for_column(node_id_column=COLUMN_DEFAULT_ID)
+            )
         )
     return expectations
 
 
 def produce_edge_table_expectations(
-        table_name: str, alignment_config: AlignmentConfig
+    table_name: str, alignment_config: AlignmentConfig
 ) -> List[ExpectationConfiguration]:
     """Produce the list of ExpectationConfiguration-s for an edge table (mapping, merge, hierarchy).
 
@@ -97,11 +95,14 @@ def produce_edge_table_expectations(
     for node_column in [COLUMN_SOURCE_ID, COLUMN_TARGET_ID]:
         if not is_domain_table(table_name=table_name):
             expectations.extend(produce_node_short_id_expectations(column_name=node_column, is_node_table=False))
-            expectations.extend(produce_node_namespace_expectations(
-                column_name=get_namespace_column_name_for_column(node_id_column=node_column))
+            expectations.extend(
+                produce_node_namespace_expectations(
+                    column_name=get_namespace_column_name_for_column(node_id_column=node_column)
+                )
             )
             expectations.extend(
-                produce_source_to_target_node_namespace_expectations(column_name=COLUMN_SOURCE_TO_TARGET))
+                produce_source_to_target_node_namespace_expectations(column_name=COLUMN_SOURCE_TO_TARGET)
+            )
     if is_domain_table(table_name=table_name):
         expectations.extend(produce_node_short_id_expectations(column_name=COLUMN_TARGET_ID, is_node_table=False))
         if table_name == TABLE_MERGES_DOMAIN:
@@ -115,8 +116,7 @@ def produce_edge_table_expectations(
         expectations.extend(
             produce_edge_relation_expectations(
                 column_name=COLUMN_RELATION,
-                edge_types=get_relation_types_for_edge_table(table_name=table_name,
-                                                             alignment_config=alignment_config),
+                edge_types=get_relation_types_for_edge_table(table_name=table_name, alignment_config=alignment_config),
             )
         )
     return expectations
@@ -136,7 +136,7 @@ def get_column_set_for_edge_table(table_name: str) -> List[str]:
             [
                 get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
                 get_namespace_column_name_for_column(COLUMN_TARGET_ID),
-                COLUMN_SOURCE_TO_TARGET
+                COLUMN_SOURCE_TO_TARGET,
             ]
         )
     return column_set
@@ -223,7 +223,8 @@ def produce_source_to_target_node_namespace_expectations(column_name: str) -> Li
             column_name=column_name, min_value=6, max_value=30
         ),
         produce_expectation_config_column_values_to_match_regex(
-            column_name=column_name, regex="^[A-Za-z][\\w]* to [A-Za-z][\\w]*$"),
+            column_name=column_name, regex="^[A-Za-z][\\w]* to [A-Za-z][\\w]*$"
+        ),
     ]
 
 
@@ -282,7 +283,7 @@ def produce_report_alignment_steps_expectations(alignment_config: AlignmentConfi
         ),
         produce_expectation_config_expect_column_values_to_be_in_set(
             column_name=COLUMN_MAPPING_TYPE_GROUP,
-            value_set=alignment_config.mapping_type_groups.get_mapping_type_group_names()
+            value_set=alignment_config.mapping_type_groups.get_mapping_type_group_names(),
         ),
         # produce_expectation_config_expect_column_values_to_be_in_set(
         #    column_name=COLUMN_SOURCE,
@@ -296,8 +297,10 @@ def produce_report_alignment_steps_expectations(alignment_config: AlignmentConfi
     )
 
     # add count columns with general settings
-    columns = list(set(list(SCHEMA_ALIGNMENT_STEPS_TABLE))
-                   - {COLUMN_MAPPING_TYPE_GROUP, COLUMN_COUNT_UNMAPPED_NODES, COLUMN_SOURCE})
+    columns = list(
+        set(list(SCHEMA_ALIGNMENT_STEPS_TABLE))
+        - {COLUMN_MAPPING_TYPE_GROUP, COLUMN_COUNT_UNMAPPED_NODES, COLUMN_SOURCE}
+    )
     for column_name in columns:
         expectations.extend(
             produce_count_column_expectations(
@@ -331,8 +334,7 @@ def produce_report_connectivity_steps_expectations(alignment_config: AlignmentCo
     ]
 
     # add count columns with general settings
-    columns = list(set(list(SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE))
-                   - {COLUMN_SOURCE})
+    columns = list(set(list(SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE)) - {COLUMN_SOURCE})
     for column_name in columns:
         expectations.extend(
             produce_count_column_expectations(
@@ -346,10 +348,9 @@ def produce_report_connectivity_steps_expectations(alignment_config: AlignmentCo
     return expectations
 
 
-def produce_count_column_expectations(column_name: str,
-                                      min_value: int,
-                                      max_value: Union[None, int],
-                                      decreasing: bool) -> List[ExpectationConfiguration]:
+def produce_count_column_expectations(
+    column_name: str, min_value: int, max_value: Union[None, int], decreasing: bool
+) -> List[ExpectationConfiguration]:
     """Produce the ExpectationConfiguration-s for a column containing counts.
 
     :param column_name: The column with count values.
@@ -370,7 +371,7 @@ def produce_count_column_expectations(column_name: str,
             expectation_type="expect_column_values_to_be_between",
             kwargs={"column": column_name, "min_value": min_value, "max_value": max_value, "mostly": 1.00},
             meta=None,
-        )
+        ),
     ]
     if decreasing is True:
         expectations.append(
@@ -384,7 +385,9 @@ def produce_count_column_expectations(column_name: str,
     return expectations
 
 
-def produce_expectation_config_column_type_string(column_name: str, ) -> ExpectationConfiguration:
+def produce_expectation_config_column_type_string(
+    column_name: str,
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration for a given string column to check that it only has string type objects.
 
     :param column_name: The name of the column to be tested with this expectation.
@@ -397,7 +400,9 @@ def produce_expectation_config_column_type_string(column_name: str, ) -> Expecta
     )
 
 
-def produce_expectation_config_column_values_to_not_be_null(column_name: str, ) -> ExpectationConfiguration:
+def produce_expectation_config_column_values_to_not_be_null(
+    column_name: str,
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration for a given column to check whether it contains any null values.
 
     :param column_name: The name of the column to be tested with this expectation.
@@ -410,7 +415,9 @@ def produce_expectation_config_column_values_to_not_be_null(column_name: str, ) 
     )
 
 
-def produce_expectation_config_column_values_to_be_unique(column_name: str, ) -> ExpectationConfiguration:
+def produce_expectation_config_column_values_to_be_unique(
+    column_name: str,
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration to check whether a given column has only unique values.
 
     :param column_name: The name of the column to be tested with this expectation.
@@ -424,7 +431,7 @@ def produce_expectation_config_column_values_to_be_unique(column_name: str, ) ->
 
 
 def produce_expectation_config_column_value_lengths_to_be_between(
-        column_name: str, min_value: int, max_value: int
+    column_name: str, min_value: int, max_value: int
 ) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration where we expect column entries to be strings.
 
@@ -454,7 +461,9 @@ def produce_expectation_config_column_values_to_match_regex(column_name: str, re
     )
 
 
-def produce_expectation_config_expect_column_to_exist(column_name: str, ) -> ExpectationConfiguration:
+def produce_expectation_config_expect_column_to_exist(
+    column_name: str,
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration to check the existence a given column in a table.
 
     :param column_name: The name of the table column to be tested with this expectation.
@@ -468,7 +477,7 @@ def produce_expectation_config_expect_column_to_exist(column_name: str, ) -> Exp
 
 
 def produce_expectation_config_expect_column_values_to_be_in_set(
-        column_name: str, value_set: List[str]
+    column_name: str, value_set: List[str]
 ) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration to check whether a given column has only the specified values.
 
@@ -483,7 +492,9 @@ def produce_expectation_config_expect_column_values_to_be_in_set(
     )
 
 
-def produce_expectation_config_expect_table_columns_to_match_set(column_set: List[str], ) -> ExpectationConfiguration:
+def produce_expectation_config_expect_table_columns_to_match_set(
+    column_set: List[str],
+) -> ExpectationConfiguration:
     """Produce an ExpectationConfiguration to check whether a given table has only the specified columns.
 
     :param column_set: The permitted column names.

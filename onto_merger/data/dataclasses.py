@@ -156,7 +156,11 @@ class AlignmentStep:
     count_merged_nodes: int
 
     def __init__(
-        self, mapping_type_group: str, source: str, step_counter: int, count_unmapped_nodes: int,
+        self,
+        mapping_type_group: str,
+        source: str,
+        step_counter: int,
+        count_unmapped_nodes: int,
     ):
         """Initialise the AlignmentStep dataclass.
 

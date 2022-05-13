@@ -140,8 +140,9 @@ class GERunner:
             self._ge_context.add_checkpoint(
                 **produce_check_point_config(
                     checkpoint_name=self.checkpoint_name,
-                    validations=[produce_validation_config_for_entity(entity_name=loaded_table.name,
-                                                                      data_origin=data_origin)],
+                    validations=[
+                        produce_validation_config_for_entity(entity_name=loaded_table.name, data_origin=data_origin)
+                    ],
                 )
             )
 

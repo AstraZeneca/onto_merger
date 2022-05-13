@@ -49,8 +49,9 @@ def produce_datasource_config_for_entity(entity_name: str, ge_base_directory: st
                 "class_name": "InferredAssetFilesystemDataConnector",
                 "base_directory": ge_base_directory,
                 "default_regex": {
-                    "group_names": [produce_data_asset_name_for_entity(entity_name=entity_name,
-                                                                       data_origin=data_origin)],
+                    "group_names": [
+                        produce_data_asset_name_for_entity(entity_name=entity_name, data_origin=data_origin)
+                    ],
                     "pattern": "(.*)",
                 },
             },
@@ -70,8 +71,7 @@ def produce_validation_config_for_entity(entity_name: str, data_origin: str) -> 
         "batch_request": {
             "datasource_name": produce_datasource_name_for_entity(entity_name=entity_name),
             "data_connector_name": "default_runtime_data_connector_name",
-            "data_asset_name": produce_data_asset_name_for_entity(entity_name=entity_name,
-                                                                  data_origin=data_origin),
+            "data_asset_name": produce_data_asset_name_for_entity(entity_name=entity_name, data_origin=data_origin),
         },
         "expectation_suite_name": produce_expectation_suite_name_for_entity(entity_name=entity_name),
     }

@@ -62,9 +62,7 @@ class AlignmentManager:
 
         # store produced data
         self._data_repo_output = DataRepository()
-        self._data_repo_output.update(
-            table=DataManager.produce_empty_merge_table()
-        )
+        self._data_repo_output.update(table=DataManager.produce_empty_merge_table())
 
     def align_nodes(self) -> Tuple[DataRepository, List[str]]:
         """Run the alignment pipeline.
