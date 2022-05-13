@@ -59,13 +59,7 @@ def produce_datasource_config_for_entity(entity_name: str, ge_base_directory: st
     return datasource_config
 
 
-<<<<<<< Updated upstream
-def produce_validation_config_for_entity(
-    entity_name: str,
-) -> dict:
-=======
 def produce_validation_config_for_entity(entity_name: str, data_origin: str) -> dict:
->>>>>>> Stashed changes
     """Produce a validation_config dictionary for a given table.
 
     :param data_origin: The origin of the tested data (INPUT|INTERMEDIATE|DOMAIN_ONTOLOGY).

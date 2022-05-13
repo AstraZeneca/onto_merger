@@ -111,11 +111,8 @@ def produce_named_table_merges_with_alignment_meta_data(
     df[COLUMN_SOURCE_ID_ALIGNED_TO] = source_id
     df[COLUMN_STEP_COUNTER] = step_counter
     df[COLUMN_MAPPING_TYPE_GROUP] = mapping_type
-<<<<<<< Updated upstream
     return NamedTable(
         name=TABLE_MERGES,
         dataframe=df[SCHEMA_MERGE_TABLE_WITH_META_DATA],
     )
-=======
-    return NamedTable(name=TABLE_MERGES_WITH_META_DATA, dataframe=df[SCHEMA_MERGE_TABLE_WITH_META_DATA],)
->>>>>>> Stashed changes
+

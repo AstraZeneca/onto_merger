@@ -115,16 +115,11 @@ class DataManager:
         :return: The input named tables.
         """
         return [
-<<<<<<< Updated upstream
             NamedTable(
                 table_name,
                 self.load_table(table_name=table_name, process_directory=DIRECTORY_INPUT),
             )
-            for table_name in INPUT_TABLES
-=======
-            NamedTable(table_name, self.load_table(table_name=table_name, process_directory=DIRECTORY_INPUT),)
             for table_name in TABLES_INPUT
->>>>>>> Stashed changes
         ]
 
     @staticmethod
@@ -313,12 +308,7 @@ class DataManager:
     @staticmethod
     def produce_empty_hierarchy_table() -> NamedTable:
         """Produce an empty hierarchy edge table."""
-<<<<<<< Updated upstream
         return NamedTable(
             name=TABLE_EDGES_HIERARCHY,
             dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
         )
-=======
-        return NamedTable(name=TABLE_EDGES_HIERARCHY,
-                          dataframe=pd.DataFrame([], columns=list(SCHEMA_HIERARCHY_EDGE_TABLE)),)
->>>>>>> Stashed changes

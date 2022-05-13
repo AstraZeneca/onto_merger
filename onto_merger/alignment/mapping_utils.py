@@ -183,15 +183,10 @@ def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_o
     else:
         source_ids_to_drop = list(df_one_to_one[COLUMN_SOURCE_ID])
     mapping_subset = mappings.query(
-<<<<<<< Updated upstream
         f"{COLUMN_SOURCE_ID} != @node_ids",
         local_dict={"node_ids": source_ids_to_drop},
         inplace=False,
     )[SCHEMA_MAPPING_TABLE]
-=======
-        f"{COLUMN_SOURCE_ID} != @node_ids", local_dict={"node_ids": source_ids_to_drop}, inplace=False,
-    )[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
->>>>>>> Stashed changes
     return mapping_subset
 
 
@@ -336,17 +331,8 @@ def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> N
     :param merges: The set of merges used to determine node mapped status.
     :return: The set of unmapped nodes.
     """
-<<<<<<< Updated upstream
-    return NamedTable(
-        TABLE_NODES_UNMAPPED,
-        produce_table_unmapped_nodes(
-            nodes=nodes,
-            merges=merges,
-        ),
-    )
-=======
     return NamedTable(TABLE_NODES_UNMAPPED, produce_table_unmapped_nodes(nodes=nodes, merges=merges))
->>>>>>> Stashed changes
+
 
 
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:
@@ -397,15 +383,10 @@ def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataF
     """
     node_ids_to_keep = list(nodes[COLUMN_DEFAULT_ID])
     mapping_subset = mappings.query(
-<<<<<<< Updated upstream
         f"{COLUMN_SOURCE_ID} == @node_ids",
         local_dict={"node_ids": node_ids_to_keep},
         inplace=False,
     )[SCHEMA_MAPPING_TABLE]
-=======
-        f"{COLUMN_SOURCE_ID} == @node_ids", local_dict={"node_ids": node_ids_to_keep}, inplace=False,
-    )[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
->>>>>>> Stashed changes
     logger.info(
         f"Found {len(mapping_subset):,d} mappings (from total {len(mappings):,d}) " + f"for {len(nodes):,d} nodes."
     )

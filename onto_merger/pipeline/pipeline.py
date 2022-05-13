@@ -137,12 +137,7 @@ class Pipeline:
         """
         self.logger.info("Started aggregating merges...")
         table_aggregated_merges = merge_utils.produce_named_table_aggregate_merges(
-<<<<<<< Updated upstream
-            merges=self._data_repo.get(TABLE_MERGES).dataframe,
-=======
             merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe[SCHEMA_MERGE_TABLE],
->>>>>>> Stashed changes
-            alignment_priority_order=self._source_alignment_order,
         )
         table_merged_nodes = merge_utils.produce_named_table_merged_nodes(merges=table_aggregated_merges.dataframe)
         table_unmapped_nodes = mapping_utils.produce_named_table_unmapped_nodes(
@@ -224,17 +219,11 @@ class Pipeline:
 
         # run data tests
         GERunner(
-<<<<<<< Updated upstream
-            alignment_config=self._alignment_config,
-            ge_base_directory=self._data_manager.get_data_tests_path(),
-        ).run_ge_tests(named_tables=self._data_repo.get_output_tables())
-=======
             alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path(),
         ).run_ge_tests(named_tables=self._data_repo.get_domain_tables(), data_origin=DIRECTORY_DOMAIN_ONTOLOGY)
         GERunner(
             alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path(),
         ).run_ge_tests(named_tables=self._data_repo.get_intermediate_tables(), data_origin=DIRECTORY_INTERMEDIATE)
->>>>>>> Stashed changes
 
         # move data docs to report folder
         self._data_manager.move_data_docs_to_reports()

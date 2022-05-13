@@ -232,11 +232,7 @@ class AlignmentManager:
         self._data_repo_output.update(
             table=NamedTable(
                 name=TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
-<<<<<<< Updated upstream
-                dataframe=mappings_obsolete_to_current_node_id_merge_strength,
-=======
                 dataframe=mappings_obsolete_to_current_node_id_merge_strength[SCHEMA_HIERARCHY_EDGE_TABLE],
->>>>>>> Stashed changes
             )
         )
 
