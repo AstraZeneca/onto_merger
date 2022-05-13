@@ -1,6 +1,9 @@
 """Setup the package."""
 
+import os
 from setuptools import find_packages, setup
+
+on_rtd = os.environ.get("READTHEDOCS") == "True"
 
 install_requires = [
     "pandas==1.3.5",
@@ -10,11 +13,13 @@ install_requires = [
     "jinja2==3.0.3",
     "jsonschema==4.4.0",
     "networkx",
-    "networkit==9.1.1",
     "ruamel.yaml==0.17.17",
     "numpy==1.21.5",
     "docopt==0.6.2",
 ]
+
+if not on_rtd:
+    install_requires.append("networkit==9.1.1")
 
 setup_requires = ["pytest-runner"]
 
