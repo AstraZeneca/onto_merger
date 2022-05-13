@@ -4,8 +4,8 @@
 [size-url]: https://github.com/AstraZeneca/onto_merger/archive/main.zip
 [build-image]: https://github.com/AstraZeneca/onto_merger/workflows/CI/badge.svg
 [build-url]: https://github.com/AstraZeneca/onto_merger/actions?query=workflow%3ACI
-[docs-image]: https://readthedocs.org/projects/onto_merger/badge/?version=latest
-[docs-url]: https://onto_merger.readthedocs.io/en/latest/?badge=latest
+[docs-image]: https://readthedocs.org/projects/ontomerger/badge/?version=latest
+[docs-url]: https://ontomerger.readthedocs.io/en/latest/?badge=latest
 [coverage-image]: https://codecov.io/gh/AstraZeneca/onto_merger/branch/main/graph/badge.svg
 [coverage-url]: https://codecov.io/github/AstraZeneca/onto_merger?branch=main
 
@@ -92,4 +92,3 @@ The **Onto Merger** logo is based on:
 
 - [Galguna Font](https://www.dafont.com/galguna.font)
 - [Noun Project Icons](https://thenounproject.com/)
-
