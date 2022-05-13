@@ -17,7 +17,6 @@ from onto_merger.data.constants import (
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
     SCHEMA_MAPPING_TABLE,
-    TABLE_MERGES,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_UNMAPPED,
 )
@@ -110,7 +109,7 @@ def get_mappings_with_updated_node_ids(
 
     mappings_update = mappings.copy()
 
-    return mappings
+    return mappings_update
 
 
 def add_comparison_column_for_reoriented_mappings(mappings: DataFrame):

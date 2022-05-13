@@ -33,7 +33,12 @@ class AlignmentConfigMappingTypeGroups:
         return self.equivalence + self.database_reference + self.label_match
 
     def get_mapping_type_group_names(self) -> List[str]:
+        """Get the mapping type group name list.
+
+        :return: The mapping type group name list.
+        """
         return [str(k) for k in self.__dict__.keys()]
+
 
 @dataclass_json
 @dataclass

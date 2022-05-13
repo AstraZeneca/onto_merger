@@ -18,7 +18,6 @@ from onto_merger.data.constants import (
     COLUMN_TARGET_ID,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
-    TABLE_MERGES,
     TABLE_MERGES_AGGREGATED,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_MERGED,
@@ -116,4 +115,3 @@ def produce_named_table_merges_with_alignment_meta_data(
         name=TABLE_MERGES_WITH_META_DATA,
         dataframe=df[SCHEMA_MERGE_TABLE_WITH_META_DATA],
     )
-

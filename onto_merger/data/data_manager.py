@@ -35,10 +35,8 @@ from onto_merger.data.constants import (
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_DOMAIN,
     TABLE_EDGES_HIERARCHY_POST,
-    TABLE_MAPPINGS,
     TABLE_MAPPINGS_DOMAIN,
     TABLE_MAPPINGS_UPDATED,
-    TABLE_MERGES,
     TABLE_MERGES_AGGREGATED,
     TABLE_MERGES_DOMAIN,
     TABLE_MERGES_WITH_META_DATA,
@@ -235,8 +233,8 @@ class DataManager:
     def produce_domain_ontology_tables(data_repo: DataRepository) -> List[NamedTable]:
         """Produce the domain ontology files with minimal data.
 
-        Tables used in the pipeline may contain inferred column values, e.g. node ID namespaces
-        and process (alignment and connectivity) meta data.
+        Tables used in the pipeline may contain inferred column values, e.g. node ID
+         namespaces and process (alignment and connectivity) meta data.
 
         :param data_repo: The data repository containing the files.
         :return: The finalised (i.e. domain ontology) tables.
@@ -249,19 +247,26 @@ class DataManager:
         table_merges = table_merges[TABLE_NAME_TO_TABLE_SCHEMA_MAP[TABLE_MERGES_DOMAIN]]
 
         return [
-            NamedTable(name=TABLE_NODES_DOMAIN,
-                       dataframe=data_repo.get(TABLE_NODES).dataframe[SCHEMA_NODE_ID_LIST_TABLE]
-                       .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False)),
-            NamedTable(name=TABLE_MAPPINGS_DOMAIN,
-                       dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe[SCHEMA_MAPPING_TABLE]
-                       .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False)),
-            NamedTable(name=TABLE_MERGES_DOMAIN,
-                       dataframe=table_merges
-                       .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False)),
+            NamedTable(
+                name=TABLE_NODES_DOMAIN,
+                dataframe=data_repo.get(TABLE_NODES).dataframe[SCHEMA_NODE_ID_LIST_TABLE]
+                .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False)
+            ),
+            NamedTable(
+                name=TABLE_MAPPINGS_DOMAIN,
+                dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe[SCHEMA_MAPPING_TABLE]
+                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False)
+            ),
+            NamedTable(
+                name=TABLE_MERGES_DOMAIN,
+                dataframe=table_merges
+                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False)
+            ),
             NamedTable(
                 name=TABLE_EDGES_HIERARCHY_DOMAIN,
                 dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
-                    .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False)),
+                .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False)
+            ),
         ]
 
     def save_merged_ontology_report(self, content) -> str:
