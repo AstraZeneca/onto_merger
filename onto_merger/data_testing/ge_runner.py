@@ -46,9 +46,10 @@ class GERunner:
         self._ge_base_directory = ge_base_directory
         self._ge_context = produce_ge_context(ge_base_directory=self._ge_base_directory)
 
-    def run_ge_tests(self, named_tables: List[NamedTable]) -> None:
+    def run_ge_tests(self, named_tables: List[NamedTable], data_origin: str) -> None:
         """Run data tests for a list of named tables.
 
+        :param data_origin: The origin of the tested data (INPUT|INTERMEDIATE|DOMAIN_ONTOLOGY).
         :param named_tables: The list of named tables.
         :return:
         """
@@ -61,14 +62,14 @@ class GERunner:
 
         # for table, i.e. nodes edges and mappings
         # add to the GE context: the data source, expectation suite and the expectations
-        self._configure_ge_context_data_sources(loaded_tables=named_tables)
+        self._configure_ge_context_data_sources(loaded_tables=named_tables, data_origin=data_origin)
 
         # configure expectations suites with expectations (data tests)
         self._configure_ge_expectation_suites_for_entity(loaded_tables=named_tables)
 
         # create a checkpoint with validations (each validation links exp suite to a
         # datasource) run tests (via checkpoint)
-        self._run_validations(loaded_tables=named_tables)
+        self._run_validations(loaded_tables=named_tables, data_origin=data_origin)
 
         # produce the data docs
         self._ge_context.build_data_docs()
@@ -77,15 +78,16 @@ class GERunner:
         logger.info("Finished running Great Expectations data tests.")
         enable_print()
 
-    def _configure_ge_context_data_sources(self, loaded_tables: List[NamedTable]) -> None:
+    def _configure_ge_context_data_sources(self, loaded_tables: List[NamedTable], data_origin: str) -> None:
         """Update the data test context with the tables that are being tested.
 
-        :param loaded_tables:
+        :param data_origin: The origin of the tested data (INPUT|INTERMEDIATE|DOMAIN_ONTOLOGY).
+        :param loaded_tables: The list of named tables.
         :return:
         """
         for loaded_table in loaded_tables:
             datasource_config = produce_datasource_config_for_entity(
-                entity_name=loaded_table.name, ge_base_directory=self._ge_base_directory
+                entity_name=loaded_table.name, ge_base_directory=self._ge_base_directory, data_origin=data_origin
             )
             # add the data source
             self._ge_context.add_datasource(**datasource_config)
@@ -126,9 +128,10 @@ class GERunner:
         )
         return suite
 
-    def _run_validations(self, loaded_tables: List[NamedTable]) -> None:
+    def _run_validations(self, loaded_tables: List[NamedTable], data_origin: str) -> None:
         """Run the data tests for a list of tables.
 
+        :param data_origin: The origin of the tested data (INPUT|INTERMEDIATE|DOMAIN_ONTOLOGY).
         :param loaded_tables: The list of tables being tested.
         :return:
         """
@@ -137,7 +140,8 @@ class GERunner:
             self._ge_context.add_checkpoint(
                 **produce_check_point_config(
                     checkpoint_name=self.checkpoint_name,
-                    validations=[produce_validation_config_for_entity(entity_name=loaded_table.name)],
+                    validations=[produce_validation_config_for_entity(entity_name=loaded_table.name,
+                                                                      data_origin=data_origin)],
                 )
             )
 

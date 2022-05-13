@@ -107,6 +107,8 @@ def get_mappings_with_updated_node_ids(
     #
     # # remap mapping set >> update_mappings_with_current_node_ids
 
+    mappings_update = mappings.copy()
+
     return mappings
 
 
@@ -181,10 +183,15 @@ def get_source_to_target_mappings_for_multiplicity(mappings: DataFrame, is_one_o
     else:
         source_ids_to_drop = list(df_one_to_one[COLUMN_SOURCE_ID])
     mapping_subset = mappings.query(
+<<<<<<< Updated upstream
         f"{COLUMN_SOURCE_ID} != @node_ids",
         local_dict={"node_ids": source_ids_to_drop},
         inplace=False,
     )[SCHEMA_MAPPING_TABLE]
+=======
+        f"{COLUMN_SOURCE_ID} != @node_ids", local_dict={"node_ids": source_ids_to_drop}, inplace=False,
+    )[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
+>>>>>>> Stashed changes
     return mapping_subset
 
 
@@ -232,7 +239,7 @@ def update_mappings_with_current_node_ids(
     """
     # src
     df = pd.merge(
-        mappings,
+        mappings[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]],
         mappings_internal_obsolete_to_current_node_id[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]].rename(
             columns={COLUMN_TARGET_ID: "new_src"},
             inplace=False,
@@ -277,8 +284,7 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
     """
     df = produce_table_with_namespace_column_for_node_ids(table=mappings)
     if len(df) == 0:
-        return df[SCHEMA_MAPPING_TABLE]
-
+        return df[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
     updated_src_id_column = f"updated_{COLUMN_SOURCE_ID}"
     updated_trg_id_column = f"updated_{COLUMN_TARGET_ID}"
     df[updated_src_id_column] = df.apply(
@@ -298,7 +304,7 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
         columns={updated_src_id_column: COLUMN_SOURCE_ID, updated_trg_id_column: COLUMN_TARGET_ID},
         inplace=True,
     )
-    return df[SCHEMA_MAPPING_TABLE]
+    return df[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
 
 
 def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
@@ -330,6 +336,7 @@ def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> N
     :param merges: The set of merges used to determine node mapped status.
     :return: The set of unmapped nodes.
     """
+<<<<<<< Updated upstream
     return NamedTable(
         TABLE_NODES_UNMAPPED,
         produce_table_unmapped_nodes(
@@ -337,6 +344,9 @@ def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> N
             merges=merges,
         ),
     )
+=======
+    return NamedTable(TABLE_NODES_UNMAPPED, produce_table_unmapped_nodes(nodes=nodes, merges=merges))
+>>>>>>> Stashed changes
 
 
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:
@@ -352,7 +362,7 @@ def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], 
         f"Found {len(mapping_subset):,d} for relation(s) "
         + f"'{permitted_mapping_relations}' from {len(mappings):,d} mappings."
     )
-    return mapping_subset
+    return mapping_subset[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
 
 
 def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: DataFrame) -> DataFrame:
@@ -387,10 +397,15 @@ def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataF
     """
     node_ids_to_keep = list(nodes[COLUMN_DEFAULT_ID])
     mapping_subset = mappings.query(
+<<<<<<< Updated upstream
         f"{COLUMN_SOURCE_ID} == @node_ids",
         local_dict={"node_ids": node_ids_to_keep},
         inplace=False,
     )[SCHEMA_MAPPING_TABLE]
+=======
+        f"{COLUMN_SOURCE_ID} == @node_ids", local_dict={"node_ids": node_ids_to_keep}, inplace=False,
+    )[[COLUMN_SOURCE_ID, COLUMN_TARGET_ID]]
+>>>>>>> Stashed changes
     logger.info(
         f"Found {len(mapping_subset):,d} mappings (from total {len(mappings):,d}) " + f"for {len(nodes):,d} nodes."
     )

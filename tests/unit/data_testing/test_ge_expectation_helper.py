@@ -13,7 +13,7 @@ from onto_merger.data.constants import (
     EDGE,
     MAPPING,
     MERGE,
-    RDFS_SUBCLASS_OF,
+    RELATION_RDFS_SUBCLASS_OF,
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MAPPINGS,
@@ -206,7 +206,7 @@ def test_produce_edge_table_expectations(alignment_config):
     ]
 
     actual_merge = ge_expectation_helper.produce_edge_table_expectations(
-        main_edge_type=MERGE, alignment_config=alignment_config
+        table_name=MERGE, alignment_config=alignment_config
     )
     expectation_list_content_check(actual=actual_merge, expected=expected_1)
 
@@ -224,43 +224,43 @@ def test_get_column_set_for_edge_table():
     ]
 
     # EDGE
-    actual_1 = ge_expectation_helper.get_column_set_for_edge_table(main_edge_type=EDGE)
+    actual_1 = ge_expectation_helper.get_column_set_for_edge_table(table_name=EDGE)
     assert isinstance(actual_1, List)
     assert actual_1 == column_set_mappings
 
     # MAPPING
-    actual_2 = ge_expectation_helper.get_column_set_for_edge_table(main_edge_type=MAPPING)
+    actual_2 = ge_expectation_helper.get_column_set_for_edge_table(table_name=MAPPING)
     assert isinstance(actual_2, List)
     assert actual_2 == column_set_mappings
 
     # MERGE
-    actual_3 = ge_expectation_helper.get_column_set_for_edge_table(main_edge_type=MERGE)
+    actual_3 = ge_expectation_helper.get_column_set_for_edge_table(table_name=MERGE)
     assert isinstance(actual_3, List)
     assert actual_3 == column_set_merges
 
     #
-    actual_4 = ge_expectation_helper.get_column_set_for_edge_table(main_edge_type="foo")
+    actual_4 = ge_expectation_helper.get_column_set_for_edge_table(table_name="foo")
     assert isinstance(actual_4, List)
     assert actual_4 == []
 
 
 def test_get_edge_types_for_edge_table(alignment_config):
-    actual_1 = ge_expectation_helper.get_edge_types_for_edge_table(
-        main_edge_type=EDGE, alignment_config=alignment_config
+    actual_1 = ge_expectation_helper.get_relation_types_for_edge_table(
+        table_name=EDGE, alignment_config=alignment_config
     )
     assert isinstance(actual_1, List)
-    assert actual_1 == [RDFS_SUBCLASS_OF]
+    assert actual_1 == [RELATION_RDFS_SUBCLASS_OF]
 
-    actual_2 = ge_expectation_helper.get_edge_types_for_edge_table(
-        main_edge_type=MAPPING, alignment_config=alignment_config
+    actual_2 = ge_expectation_helper.get_relation_types_for_edge_table(
+        table_name=MAPPING, alignment_config=alignment_config
     )
     assert isinstance(actual_2, List)
     assert len(actual_2) > 1
     for obj in actual_2:
         assert isinstance(obj, str)
 
-    actual_3 = ge_expectation_helper.get_edge_types_for_edge_table(
-        main_edge_type="FOO", alignment_config=alignment_config
+    actual_3 = ge_expectation_helper.get_relation_types_for_edge_table(
+        table_name="FOO", alignment_config=alignment_config
     )
     assert actual_3 == []
 
