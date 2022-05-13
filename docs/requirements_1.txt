@@ -5,6 +5,7 @@ sphinx_rtd_theme
 sphinx-autodoc-typehints
 sphinx-automodapi
 pandas
+mock
 six
 nbsphinx
 nbsphinx_link

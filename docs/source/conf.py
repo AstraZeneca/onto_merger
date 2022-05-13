@@ -4,6 +4,7 @@ import datetime
 import doctest
 import os
 import sys
+import mock
 
 import sphinx_rtd_theme
 
@@ -59,6 +60,9 @@ html_static_path = ["_static"]
 
 add_module_names = False
 
+MOCK_MODULES = ['networkit']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock() 
 
 def setup(app):
     """Set up the app."""
