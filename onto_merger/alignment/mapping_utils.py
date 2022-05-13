@@ -18,8 +18,9 @@ from onto_merger.data.constants import (
     COLUMN_TARGET_ID,
     SCHEMA_MAPPING_TABLE,
     TABLE_MERGES,
+    TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_UNMAPPED,
-    TABLE_MERGES_WITH_META_DATA)
+)
 from onto_merger.data.dataclasses import NamedTable
 from onto_merger.logger.log import get_logger
 

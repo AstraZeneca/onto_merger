@@ -16,9 +16,14 @@ from onto_merger.analyser.analysis_util import (
 )
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
+    COLUMN_PROVENANCE,
+    COLUMN_RELATION,
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
+    ONTO_MERGER,
+    RELATION_RDFS_SUBCLASS_OF,
     SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
+    SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MERGE_TABLE,
     TABLE_CONNECTIVITY_STEPS_REPORT,
     TABLE_EDGES_HIERARCHY,
@@ -28,7 +33,7 @@ from onto_merger.data.constants import (
     TABLE_NODES_CONNECTED_ONLY,
     TABLE_NODES_DANGLING,
     TABLE_NODES_UNMAPPED,
-    RELATION_RDFS_SUBCLASS_OF, ONTO_MERGER, COLUMN_RELATION, COLUMN_PROVENANCE, SCHEMA_HIERARCHY_EDGE_TABLE)
+)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     ConnectivityStep,

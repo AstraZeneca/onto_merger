@@ -13,8 +13,9 @@ from onto_merger.data.constants import (
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MERGES,
+    TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_MERGED,
-    TABLE_MERGES_WITH_META_DATA)
+)
 from onto_merger.data.dataclasses import NamedTable
 
 

@@ -6,21 +6,33 @@ from great_expectations.core import ExpectationConfiguration
 
 from onto_merger.analyser.analysis_util import get_namespace_column_name_for_column
 from onto_merger.data.constants import (
+    COLUMN_COUNT_UNMAPPED_NODES,
     COLUMN_DEFAULT_ID,
+    COLUMN_MAPPING_TYPE_GROUP,
+    COLUMN_PROVENANCE,
     COLUMN_RELATION,
+    COLUMN_SOURCE,
     COLUMN_SOURCE_ID,
     COLUMN_SOURCE_TO_TARGET,
     COLUMN_TARGET_ID,
+    DOMAIN_SUFFIX,
+    ONTO_MERGER,
+    RELATION_MERGE,
     RELATION_RDFS_SUBCLASS_OF,
+    SCHEMA_ALIGNMENT_STEPS_TABLE,
+    SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
+    TABLE_ALIGNMENT_STEPS_REPORT,
+    TABLE_CONNECTIVITY_STEPS_REPORT,
+    TABLE_EDGES_HIERARCHY_DOMAIN,
+    TABLE_MAPPINGS_DOMAIN,
+    TABLE_MERGES_DOMAIN,
+    TABLE_NAME_TO_TABLE_SCHEMA_MAP,
     TABLES_EDGE,
+    TABLES_EDGE_HIERARCHY,
     TABLES_MAPPING,
-    TABLES_MERGE,
+    TABLES_MERGE_INTERMEDIATE,
     TABLES_NODE,
-    TABLE_NAME_TO_TABLE_SCHEMA_MAP, RELATION_MERGE, TABLES_EDGE_HIERARCHY, TABLE_ALIGNMENT_STEPS_REPORT,
-    TABLE_CONNECTIVITY_STEPS_REPORT, SCHEMA_ALIGNMENT_STEPS_TABLE, COLUMN_MAPPING_TYPE_GROUP,
-    COLUMN_COUNT_UNMAPPED_NODES, COLUMN_SOURCE, SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE, DOMAIN_SUFFIX,
-    TABLE_MERGES_DOMAIN, TABLE_MAPPINGS_DOMAIN, TABLE_EDGES_HIERARCHY_DOMAIN, COLUMN_PROVENANCE, ONTO_MERGER,
-    TABLES_MERGE_INTERMEDIATE)
+)
 from onto_merger.data.dataclasses import AlignmentConfig
 
 
@@ -234,6 +246,12 @@ def produce_edge_relation_expectations(column_name: str, edge_types: List[str]) 
 
 
 def produce_prov_expectations(column_name: str, value_set: List[str]) -> List[ExpectationConfiguration]:
+    """Produce the ExpectationConfiguration-s for the provenance column.
+
+    :param column_name: The column that contains the provenance.
+    :param value_set: The expected prov values.
+    :return: The list of relevant ExpectationConfiguration-s.
+    """
     expectations = [
         produce_expectation_config_expect_column_to_exist(column_name=column_name),
         produce_expectation_config_column_type_string(column_name=column_name),
@@ -250,6 +268,11 @@ def produce_prov_expectations(column_name: str, value_set: List[str]) -> List[Ex
 
 
 def produce_report_alignment_steps_expectations(alignment_config: AlignmentConfig) -> List[ExpectationConfiguration]:
+    """Produce the ExpectationConfiguration-s for the report table.
+
+    :param alignment_config: The alignment process configuration dataclass.
+    :return: The list of relevant ExpectationConfiguration-s.
+    """
 
     # table shape and edge case column expectations
     expectations = [
@@ -290,6 +313,11 @@ def produce_report_alignment_steps_expectations(alignment_config: AlignmentConfi
 
 
 def produce_report_connectivity_steps_expectations(alignment_config: AlignmentConfig) -> List[ExpectationConfiguration]:
+    """Produce the ExpectationConfiguration-s for the report table.
+
+    :param alignment_config: The alignment process configuration dataclass.
+    :return: The list of relevant ExpectationConfiguration-s.
+    """
     # table shape and edge case column expectations
     expectations = [
         ExpectationConfiguration(
@@ -323,6 +351,15 @@ def produce_count_column_expectations(column_name: str,
                                       min_value: int,
                                       max_value: Union[None, int],
                                       decreasing: bool) -> List[ExpectationConfiguration]:
+    """Produce the ExpectationConfiguration-s for a column containing counts.
+
+    :param column_name: The column with count values.
+    :param min_value: The count minimum value.
+    :param max_value: The count maximum value, if None it is not checked.
+    :param decreasing: If true the counts should be decreasing; otherwise it is False.
+    :return: The list of relevant ExpectationConfiguration-s.
+    """
+
     expectations = [
         produce_expectation_config_expect_column_to_exist(column_name=column_name),
         produce_expectation_config_column_values_to_not_be_null(column_name=column_name),
@@ -462,4 +499,9 @@ def produce_expectation_config_expect_table_columns_to_match_set(column_set: Lis
 
 
 def is_domain_table(table_name: str) -> bool:
+    """Check if the table is one of the final domain ontology parts.
+
+    :param table_name: The name of the table.
+    :return: True if it is a domain table, otherwise False.
+    """
     return DOMAIN_SUFFIX in table_name

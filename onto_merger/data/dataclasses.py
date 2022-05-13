@@ -8,10 +8,11 @@ from dataclasses_json import dataclass_json
 from pandas import DataFrame
 
 from onto_merger.data.constants import (
+    SCHEMA_DATA_REPO_SUMMARY,
+    TABLES_DOMAIN,
     TABLES_INPUT,
     TABLES_INTERMEDIATE,
-    SCHEMA_DATA_REPO_SUMMARY,
-    TABLES_DOMAIN)
+)
 
 
 @dataclass_json

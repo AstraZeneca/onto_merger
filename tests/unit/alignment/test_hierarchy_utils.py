@@ -9,8 +9,9 @@ from onto_merger.analyser import get_namespace_column_name_for_column
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
+    SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MERGE_TABLE,
-    SCHEMA_HIERARCHY_EDGE_TABLE)
+)
 from onto_merger.data.dataclasses import NamedTable
 
 

@@ -12,9 +12,9 @@ from onto_merger.analyser.analysis_util import (
     produce_table_with_namespace_column_for_node_ids,
 )
 from onto_merger.data.constants import (
-    FILE_NAME_CONFIG_JSON,
     DIRECTORY_DATA_TESTS,
     DIRECTORY_OUTPUT,
+    FILE_NAME_CONFIG_JSON,
 )
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable

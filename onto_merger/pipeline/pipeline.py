@@ -7,12 +7,15 @@ from onto_merger.alignment_config.validator import validate_alignment_configurat
 from onto_merger.analyser import analysis_util, pandas_profiler
 from onto_merger.analyser.merged_ontology_analyser import MergedOntologyAnalyser
 from onto_merger.data.constants import (
-    TABLE_EDGES_HIERARCHY,
-    TABLE_MERGES,
+    DIRECTORY_DOMAIN_ONTOLOGY,
+    DIRECTORY_INPUT,
+    DIRECTORY_INTERMEDIATE,
+    SCHEMA_MERGE_TABLE,
+    TABLE_EDGES_HIERARCHY_POST,
     TABLE_MERGES_AGGREGATED,
+    TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
-    DIRECTORY_INPUT, DIRECTORY_INTERMEDIATE, TABLE_MERGES_WITH_META_DATA, SCHEMA_MERGE_TABLE, DIRECTORY_DOMAIN_ONTOLOGY,
-    TABLE_EDGES_HIERARCHY_POST)
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository
 from onto_merger.data_testing.ge_runner import GERunner
@@ -240,7 +243,8 @@ class Pipeline:
         :return:
         """
         # profile outputs
-        pandas_profiler.profile_tables(tables=self._data_repo.get_intermediate_tables(), data_manager=self._data_manager)
+        pandas_profiler.profile_tables(tables=self._data_repo.get_intermediate_tables(),
+                                       data_manager=self._data_manager)
 
         # produce HTML report
         report_path = MergedOntologyAnalyser(

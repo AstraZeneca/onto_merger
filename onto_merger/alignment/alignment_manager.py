@@ -10,18 +10,23 @@ from onto_merger.alignment import mapping_utils, merge_utils
 from onto_merger.analyser import analysis_util
 from onto_merger.data.constants import (
     COLUMN_NAMESPACE,
+    COLUMN_PROVENANCE,
+    COLUMN_RELATION,
     MAPPING_TYPE_GROUP_EQV,
     MAPPING_TYPE_GROUP_XREF,
+    ONTO_MERGER,
+    RELATION_MERGE,
     SCHEMA_ALIGNMENT_STEPS_TABLE,
+    SCHEMA_HIERARCHY_EDGE_TABLE,
     TABLE_ALIGNMENT_STEPS_REPORT,
     TABLE_MAPPINGS,
     TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
     TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES,
+    TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
     TABLE_NODES_OBSOLETE,
-    TABLE_MERGES_WITH_META_DATA, RELATION_MERGE, ONTO_MERGER, COLUMN_RELATION, COLUMN_PROVENANCE,
-    SCHEMA_HIERARCHY_EDGE_TABLE)
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import (
     AlignmentConfig,

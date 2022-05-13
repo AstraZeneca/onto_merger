@@ -20,8 +20,9 @@ from onto_merger.data.constants import (
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MERGES,
     TABLE_MERGES_AGGREGATED,
+    TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_MERGED,
-    TABLE_MERGES_WITH_META_DATA)
+)
 from onto_merger.data.dataclasses import NamedTable
 from onto_merger.logger.log import get_logger
 

@@ -20,10 +20,12 @@ from onto_merger.data.constants import (
     SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MAPPING_TABLE,
     SCHEMA_MERGE_TABLE,
+    SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_EDGES_HIERARCHY,
     TABLE_MAPPINGS,
     TABLE_MERGES,
-    SCHEMA_MERGE_TABLE_WITH_META_DATA, TABLE_MERGES_WITH_META_DATA)
+    TABLE_MERGES_WITH_META_DATA,
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, NamedTable
 from tests.fixtures import TEST_FOLDER_OUTPUT_PATH, data_manager
