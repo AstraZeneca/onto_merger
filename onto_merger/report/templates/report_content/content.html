@@ -1,0 +1,21 @@
+<div class="content">
+    <div class="container">
+        {% if overview_data %}
+            {% with dataset=overview_data %}
+                {% include 'templates/section_content/content-overview.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if input_data %}
+            {% with dataset=input_data %}
+                {% include 'templates/section_content/content-dataset.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if output_data %}
+            {% with dataset=output_data %}
+                {% include 'templates/section_content/content-dataset.html' %}
+            {% endwith %}
+            {% include 'templates/section_content/content-alignment.html' %}
+            {% include 'templates/section_content/content-connectivity.html' %}
+        {% endif %}
+    </div>
+</div>

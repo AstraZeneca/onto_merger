@@ -1,0 +1,31 @@
+<a class="anchor-pos" id="top"></a>
+<nav class="navbar navbar-default navbar-fixed-top nav-onto-merger">
+    <div class="container-fluid">
+        <div class="navbar-header bg-light">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#top">
+                <img alt="Logo" src="templates/images/onto_merger_logo.jpg" class="onto-merger-logo">
+            </a>
+            <a class="navbar-brand anchor navbar-title-onto-merger" href="#top">{{ title }}</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse navbar-onto-merger">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a class="navbar-link" href="#Overview">Overview</a></li>
+                <li><a class="navbar-link" href="#Input">Input</a></li>
+                {% if output_data %}
+                    <li><a class="navbar-link" href="#Output">Output</a></li>
+                    <li><a class="navbar-link" href="#Alignment">Alignment</a></li>
+                    <li><a class="navbar-link" href="#Connectivity">Connectivity</a></li>
+                {% endif %}
+                <li><a class="navbar-link" href="https://ontomerger.readthedocs.io/en/latest/">OntoMerger</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+

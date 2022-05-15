@@ -1,0 +1,47 @@
+body {
+    padding-top: 60px;
+}
+
+.nav-onto-merger {
+    height: 70px;
+}
+
+.navbar-onto-merger {
+    padding-top: 10px;
+}
+
+.navbar-title-onto-merger {
+    padding-top: 25px;
+}
+
+/*.nav-link.active {*/
+/*    background-color: #004fa5;*/
+/*}*/
+
+.onto-merger-logo {
+    max-height: 40px;
+}
+
+.page-header {
+    border-bottom: none;
+    margin-bottom: 1px;
+}
+
+.page-header img {
+    float: left;
+    width: 40px;
+    height: 40px;
+    background: #555;
+}
+
+.section-items {
+    border: 1px solid lightgray;
+    padding: 10px;
+    padding-top: 15px;
+    padding-bottom: 5px;
+}
+
+.footer-text {
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
