@@ -7,6 +7,7 @@ df = pd.DataFrame([
     dict(Task="Job C", Start='2009-02-20', Finish='2009-05-30')
 ])
 
-fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task")
+fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task", width=700)
 fig.update_yaxes(autorange="reversed")
-fig.write_html("plotly_gant_processing.html")
+
+fig.write_image("plotly_gant_processing.svg")

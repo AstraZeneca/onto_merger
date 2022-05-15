@@ -62,7 +62,7 @@ data_overview = {
 
     },
     "processing": {
-
+        "gant_img": "plotly_gant_processing.svg"
     },
     "validation": {
 
