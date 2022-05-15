@@ -2,6 +2,13 @@ body {
     padding-top: 60px;
 }
 
+a.anchor-pos {
+    display: block;
+    position: relative;
+    top: -100px;
+    visibility: hidden;
+}
+
 .nav-onto-merger {
     height: 70px;
 }
