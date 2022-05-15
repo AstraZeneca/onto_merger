@@ -9,6 +9,22 @@ a.anchor-pos {
     visibility: hidden;
 }
 
+span.badge.bg-primary.node {
+    background-color: cornflowerblue;
+}
+span.badge.bg-primary.node_obsolete {
+    background-color: dodgerblue;
+}
+span.badge.bg-primary.mapping {
+    background-color: dimgray;
+}
+span.badge.bg-primary.edge {
+    background-color: darkgreen;
+}
+span.badge.bg-primary.label {
+    border-radius: 0.25em;
+}
+
 .nav-onto-merger {
     height: 70px;
 }
@@ -46,6 +62,16 @@ a.anchor-pos {
     padding: 10px;
     padding-top: 15px;
     padding-bottom: 5px;
+}
+
+.table-hover.third_party_data {
+    margin: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+div.text.about {
+    margin: 10px;
 }
 
 .footer-text {

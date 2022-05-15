@@ -1,0 +1,24 @@
+<table class="table table-hover third_party_data">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Table type</b></td>
+            <td style="width:30%"><b>Table name</b></td>
+            <td style="width:50%"><b>Report</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if table_data['rows'] | length > 0 %}
+      {% for row in table_data['rows'] %}
+        <tr>
+            <td><span class="badge bg-primary {{ row['type'] }}">{{ row['type'] }}</span></td>
+            <td><code>{{ row['name'] }}</code></td>
+            <td><a href="{{ row['link'] }}" target="_blank">Link</a></td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="3">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

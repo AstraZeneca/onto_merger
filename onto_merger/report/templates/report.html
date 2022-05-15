@@ -13,7 +13,9 @@
 <body>
     {% include 'templates/report_content/navigation.html' %}
     {% include 'templates/report_content/content.html' %}
-    {% include 'templates/report_content/footer.html' %}
+    {% with date_time=date %}
+        {% include 'templates/report_content/footer.html' %}
+    {% endwith %}
     {% include 'templates/report_content/javascript.html' %}
 </body>
 </html>

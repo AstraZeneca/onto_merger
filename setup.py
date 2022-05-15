@@ -14,6 +14,7 @@ install_requires = [
     "ruamel.yaml==0.17.17",
     "numpy==1.21.5",
     "docopt==0.6.2",
+    "plotly-express==0.4.1",
 ]
 
 setup_requires = ["pytest-runner"]

@@ -1,10 +1,6 @@
-<div class="row-header">
-    <a class="anchor-pos" id="{{ dataset['title'] }}"></a>
-    <div class="page-header">
-        <img src="templates/images/icon_{{ dataset['title'] }}.png">
-        <h1>&ensp;{{ dataset['title'] }}</h1>
-    </div>
-</div>
+{% with title=dataset['title'], logo=dataset['logo'] %}
+    {% include 'templates/section_content/section-header.html' %}
+{% endwith %}
 <div class="section-items">
     <ul class="nav nav-tabs">
         <li class="nav-item">

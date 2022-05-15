@@ -9,13 +9,23 @@
             {% with dataset=input_data %}
                 {% include 'templates/section_content/content-dataset.html' %}
             {% endwith %}
-        {% endif %}
-        {% if output_data %}
-            {% with dataset=output_data %}
-                {% include 'templates/section_content/content-dataset.html' %}
+            {% if output_data %}
+                {% with dataset=output_data %}
+                    {% include 'templates/section_content/content-dataset.html' %}
+                {% endwith %}
+                {% with dataset=alignment_data %}
+                    {% include 'templates/section_content/content-alignment.html' %}
+                {% endwith %}
+                {% with dataset=connectivity_data %}
+                    {% include 'templates/section_content/content-connectivity.html' %}
+                {% endwith %}
+            {% endif %}
+            {% with dataset=data_profiling %}
+                {% include 'templates/section_content/content-data-processing-third-party.html' %}
             {% endwith %}
-            {% include 'templates/section_content/content-alignment.html' %}
-            {% include 'templates/section_content/content-connectivity.html' %}
+            {% with dataset=data_tests %}
+                {% include 'templates/section_content/content-data-processing-third-party.html' %}
+            {% endwith %}
         {% endif %}
     </div>
 </div>
