@@ -1,12 +1,12 @@
 <div class="col-sm-6">
     <p class="h4 table-title">Statistics</p>
-    {% with rows=sub_section_data['summary_table'] %}
+    {% with rows=subsection_data['summary_table'] %}
         {% include 'templates/data_content/table_summary_two_col.html' %}
     {% endwith %}
 </div>
 <div class="col-sm-6">
-    <p class="h4 table-title">{{ sub_section_data['description']['title'] }}</p>
-    {% with description=sub_section_data['description']['text'] %}
+    <p class="h4 table-title">{{ subsection_data['description']['title'] }}</p>
+    {% with description=subsection_data['description']['text'] %}
         {% include 'templates/data_content/table_description.html' %}
     {% endwith %}
 </div>

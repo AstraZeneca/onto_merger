@@ -1,0 +1,39 @@
+{% with title=dataset['title'], logo=dataset['logo'] %}
+    {% include 'templates/section_content/section-header.html' %}
+{% endwith %}
+<div class="section-items">
+    <div class="row spacing">
+        <ul class="nav nav-tabs">
+        {% for subsection in dataset['subsections'] %}
+            {% if dataset['subsections'].index(subsection) == 0 %}
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab"
+                       href="#{{ subsection['link_title'] }}_{{ dataset['link_title'] }}">{{ subsection['title'] }}</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link " data-bs-toggle="tab"
+                       href="#{{ subsection['link_title'] }}_{{ dataset['link_title'] }}">{{ subsection['title'] }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+        <div id="myTabContent_{{ dataset['link_title'] }}" class="tab-content">
+        {% for subsection in dataset['subsections'] %}
+            {% if dataset['subsections'].index(subsection) == 0 %}
+                <div class="tab-pane active" id="{{ subsection['link_title'] }}_{{ dataset['link_title'] }}">
+                {% with subsection_data=subsection['dataset'], template=subsection['template'] %}
+                    {% set path = 'templates/' + template %}{% include path %}
+                {% endwith %}
+                </div>
+            {% else %}
+                <div class="tab-pane " id="{{ subsection['link_title'] }}_{{ dataset['link_title'] }}">
+                {% with subsection_data=subsection['dataset'], template=subsection['template'] %}
+                    {% set path = 'templates/' + template %}{% include path %}
+                {% endwith %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+</div>

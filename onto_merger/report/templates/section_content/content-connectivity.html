@@ -14,7 +14,7 @@
             </ul>
             <div id="myTabContent_{{ dataset['link_title'] }}" class="tab-content">
                 <div class="tab-pane col-sm-12 active" id="summary_{{ dataset['link_title'] }}">
-                    {% with sub_section_data=dataset['summary'] %}
+                    {% with subsection_data=dataset['summary'] %}
                         {% include 'templates/subsection_content/section-summary.html' %}
                     {% endwith %}
                 </div>

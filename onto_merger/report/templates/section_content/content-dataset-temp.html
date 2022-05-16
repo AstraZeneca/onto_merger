@@ -2,20 +2,7 @@
     {% include 'templates/section_content/section-header.html' %}
 {% endwith %}
 <div class="section-items">
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active selected" data-bs-toggle="tab" href="#home">Nodes</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#home">Nodes (Obsolete)</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Mappings</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Hierarchy edges</a>
-        </li>
-    </ul>
+
 
     <h3>Nodes</h3>
     <ul class="nav nav-tabs">
@@ -30,7 +17,7 @@
         </li>
     </ul>
 
-    <h4>Namespace</h4>
+    <h4>Namespace and mapping coverage </h4>
     {% with
         rows=dataset['nodes_ns']['rows'],
         title=dataset['nodes_ns']['title']

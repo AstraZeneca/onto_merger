@@ -214,69 +214,59 @@ data_input = {
     "title": "Input",
     "link_title": "input",
     "logo": "icon_input.png",
-    "summary": {
-        "description": {
-            "title": "About",
-            "text": "...",
+    "subsections": [
+        {
+            "title": "Summary",
+            "link_title": "summary",
+            "dataset": {
+                "description": {
+                    "title": "About",
+                    "text": "...",
+                },
+                "summary_table": [
+                    {"metric": "Number of tests run", "values": "123"},
+                ],
+            },
+            "template": "subsection_content/section-summary.html"
         },
-        "summary_table": [
-            {"metric": "Number of tests run", "values": "123"},
-        ],
-    },
-    "nodes": {
-        "title": "Nodes",
-    },
-    "nodes_obsolete": {
-        "title": "Nodes (obsolete)",
-    },
-    "mappings": {
-        "title": "Mappings",
-    },
-    "edges_hierarchy": {
-        "title": "Hierarchy edges",
-    },
-    # "nodes_ns": {
-    #     "title": "Namespace",
-    #     "rows": data_table_node_ns_freq
-    # },
-    # "nodes_coverage_mappings": {
-    #     "title": "Namespace",
-    #     "rows": data_table_node_mapping_coverage
-    # },
-    # "nodes_coverage_edges": {
-    #     "title": "Namespace",
-    #     "rows": data_table_node_mapping_coverage
-    # },
-    # "mappings_ns": {
-    #     "title": "Source to Target Namespace",
-    #     "rows": data_table_mapping_ns_freq
-    # }
+        {"title": "Nodes", "link_title": "nodes", "dataset": "",
+         "template": "subsection_content/dataset-nodes.html"},
+        {"title": "Nodes (Obsolete)", "link_title": "nodes_obsolete", "dataset": "",
+         "template": "subsection_content/dataset-nodes.html"},
+        {"title": "Mappings", "link_title": "mappings", "dataset": "",
+         "template": "subsection_content/dataset-mappings.html"},
+        {"title": "Hierarchy edges", "link_title": "edges_hierarchy", "dataset": "",
+         "template": "subsection_content/dataset-edges-hierarchy.html"},
+    ],
 }
 data_output = {
     "title": "Output",
     "link_title": "output",
     "logo": "icon_output.png",
-    "summary": {
-        "description": {
-            "title": "About",
-            "text": "...",
+    "subsections": [
+        {
+            "title": "Summary",
+            "link_title": "summary",
+            "dataset": {
+                "description": {
+                    "title": "About",
+                    "text": "...",
+                },
+                "summary_table": [
+                    {"metric": "Number of tests run", "values": "123"},
+                ],
+            },
+            "template": "subsection_content/section-summary.html"
         },
-        "summary_table": [
-            {"metric": "Number of tests run", "values": "123"},
-        ],
-    },
-    "nodes": {
-        "title": "Nodes",
-    },
-    "nodes_obsolete": {
-        "title": "Nodes (obsolete)",
-    },
-    "mappings": {
-        "title": "Mappings",
-    },
-    "edges_hierarchy": {
-        "title": "Hierarchy edges",
-    },
+        {"title": "Nodes", "link_title": "nodes", "dataset": "",
+         "template": "subsection_content/dataset-nodes.html"},
+        {"title": "Nodes (Obsolete)", "link_title": "nodes_obsolete", "dataset": "",
+         "template": "subsection_content/dataset-nodes.html"},
+        {"title": "Mappings", "link_title": "mappings", "dataset": "",
+         "template": "subsection_content/dataset-mappings.html"},
+        {"title": "Hierarchy edges", "link_title": "edges_hierarchy", "dataset": "",
+         "template": "subsection_content/dataset-edges-hierarchy.html"},
+    ],
 }
 data_alignment = {
     "title": "Alignment",
@@ -336,38 +326,67 @@ data_profiling = {
     "title": "Data Profiling",
     "link_title": "data_profiling",
     "logo": "icon_data_profiling.png",
-    "attribution": "",
-    "summary": {
-        "description": {
-            "title": "About",
-            "text": "The data profiling process ... Pandas Profiling is a bla... more on this in RDT.",
+    "subsections": [
+        {
+            "title": "Summary",
+            "link_title": "summary",
+            "dataset": {
+                "description": {
+                    "title": "About",
+                    "text": "The data testing process ... Pandas Profiling is a bla... ... more on this in RDT.",
+                },
+                "summary_table": [
+                    {"metric": "Time taken", "values": "1 min 23 seconds"},
+                    {"metric": "Profiled tables", "values": "18"},
+                    {"metric": "Pandas profiling version", "values": "1.2.3"},
+                ],
+            },
+            "template": "subsection_content/section-summary.html"
         },
-        "summary_table": [
-            {"metric": "Time taken", "values": "1 min 23 seconds"},
-            {"metric": "Profiled tables", "values": "18"},
-            {"metric": "Pandas profiling version", "values": "1.2.3"},
-        ],
-    },
-    "tables": tables_data_profiling
+        {"title": "Data: Input", "link_title": "data_input",
+         "dataset": tables_data_profiling["input"],
+         "template": "data_content/table_third_party_data.html"},
+        {"title": "Data: Intermediate", "link_title": "data_intermediate",
+         "dataset": tables_data_profiling["intermediate"],
+         "template": "data_content/table_third_party_data.html"},
+        {"title": "Data: Output", "link_title": "data_output",
+         "dataset": tables_data_profiling["output"],
+         "template": "data_content/table_third_party_data.html"},
+    ],
 }
 data_tests = {
     "title": "Data Tests",
     "link_title": "data_tests",
     "logo": "icon_data_tests.png",
-    "summary": {
-        "description": {
-            "title": "About",
-            "text": "The data testing process ... GE is a bla... ... more on this in RDT.",
+    "subsections": [
+        {
+            "title": "Summary",
+            "link_title": "summary",
+            "dataset": {
+                "description": {
+                    "title": "About",
+                    "text": "The data testing process ... GE is a bla... ... more on this in RDT.",
+                },
+                "summary_table": [
+                    {"metric": "Time taken", "values": "2 min 23 seconds"},
+                    {"metric": "Number of tables tested", "values": "18"},
+                    {"metric": "Number of tests run", "values": "123"},
+                    {"metric": "Number of failed tests (input data)", "values": "0"},
+                    {"metric": "Number of failed tests (intermediate data)", "values": "0"},
+                    {"metric": "Number of failed tests (output data)", "values": "0"},
+                    {"metric": "GE version", "values": "1.2.3"},
+                ],
+            },
+            "template": "subsection_content/section-summary.html"
         },
-        "summary_table": [
-            {"metric": "Time taken", "values": "2 min 23 seconds"},
-            {"metric": "Number of tables tested", "values": "18"},
-            {"metric": "Number of tests run", "values": "123"},
-            {"metric": "Number of failed tests (input data)", "values": "0"},
-            {"metric": "Number of failed tests (intermediate data)", "values": "0"},
-            {"metric": "Number of failed tests (output data)", "values": "0"},
-            {"metric": "GE version", "values": "1.2.3"},
-        ],
-    },
-    "tables": tables_data_profiling
+        {"title": "Data: Input", "link_title": "data_input",
+         "dataset": tables_data_profiling["input"],
+         "template": "data_content/table_third_party_data.html"},
+        {"title": "Data: Intermediate", "link_title": "data_intermediate",
+         "dataset": tables_data_profiling["intermediate"],
+         "template": "data_content/table_third_party_data.html"},
+        {"title": "Data: Output", "link_title": "data_output",
+         "dataset": tables_data_profiling["output"],
+         "template": "data_content/table_third_party_data.html"},
+    ],
 }

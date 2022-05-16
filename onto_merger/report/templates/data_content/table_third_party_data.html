@@ -9,8 +9,8 @@
         </tr>
     </thead>
     <tbody>
-    {% if table_data | length > 0 %}
-      {% for row in table_data %}
+    {% if subsection_data | length > 0 %}
+      {% for row in subsection_data %}
         <tr>
             <td><span class="badge bg-primary {{ row['type'] }}">{{ row['type'] }}</span></td>
             <td><code>{{ row['name'] }}</code></td>
