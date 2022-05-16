@@ -294,6 +294,30 @@ data_overview = {
              "gant_img": "plotly_gant_processing.svg"
          },
          "template": "subsection_content/overview-pipeline.html"},
+        {"title": "Configuration", "link_title": "configuration",
+         "dataset": {
+             "about": "The config JSON ...",
+             "config_json":
+"""
+{
+    "domain_node_type": "Disease",
+    "seed_ontology_name": "MONDO",
+    "mappings": {
+     "type_groups": {
+         "equivalence": [
+             "equivalent_to",
+             "merge"
+         ],
+         "database_reference": [
+             "database_cross_reference",
+             "xref"
+         ],
+         "label_match": []
+     }
+}
+"""
+         },
+         "template": "subsection_content/overview-configuration.html"},
         {"title": "Validation", "link_title": "validation", "dataset": {},
          "template": "subsection_content/overview-validation.html"},
     ],
