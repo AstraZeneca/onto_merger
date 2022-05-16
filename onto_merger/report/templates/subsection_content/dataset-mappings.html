@@ -1,9 +1,20 @@
-<div class="overview summary">
-    <h4>Mapping analysis</h4>
-    {% with rows=subsection_data['table_analysis'] %}
-        {% include 'templates/data_content/table_mapping_analysis.html' %}
-    {% endwith %}
-    {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
-        {% include 'templates/subsection_content/table-description-accordion.html' %}
-    {% endwith %}
+<div class="three-parts">
+    <div class="col-sm-6">
+     <h4>Mapping analysis</h4>
+        {% with rows=subsection_data['table_analysis'] %}
+            {% include 'templates/data_content/table_mapping_analysis.html' %}
+        {% endwith %}
+    </div>
+    <div class="col-sm-6 three-parts-top-row">
+    <h4>Chart</h4>
+        <div>
+            <img class="img-responsive center-img"
+                 src="plotly_gant_processing.svg" alt="foo">
+        </div>
+    </div>
+    <div class="col-sm-12 three-parts-bottom">
+        {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
+            {% include 'templates/subsection_content/table-description-accordion.html' %}
+        {% endwith %}
+    </div>
 </div>

@@ -160,6 +160,12 @@ tables_data_profiling = {
         },
     ],
 }
+runtime_table = [
+    {"metric": "Loading", "values": "2 sec"},
+    {"metric": "Loading", "values": "2 sec"},
+    {"metric": "Loading", "values": "2 sec"},
+    {"metric": "Loading", "values": "2 sec"}
+]
 
 # STATIC #
 data_table_node_summary_description = [
@@ -291,7 +297,8 @@ data_overview = {
              "start_date_time": "???",
              "end_date_time": "???",
              "total_runtime": "1 hour 23 minutes",
-             "gant_img": "plotly_gant_processing.svg"
+             "gant_img": "plotly_gant_processing.svg",
+             "runtime_table": runtime_table
          },
          "template": "subsection_content/overview-pipeline.html"},
         {"title": "Configuration", "link_title": "configuration",
@@ -464,6 +471,15 @@ data_alignment = {
              "unique_id": "data_table_alignment_steps_description",
          },
          "template": "subsection_content/alignment-details.html"},
+        {"title": "Processing", "link_title": "pipeline",
+         "dataset": {
+             "start_date_time": "???",
+             "end_date_time": "???",
+             "total_runtime": "1 hour 23 minutes",
+             "gant_img": "plotly_gant_processing.svg",
+             "runtime_table": runtime_table
+         },
+         "template": "subsection_content/overview-pipeline.html"},
     ],
 }
 data_connectivity = {
@@ -503,6 +519,15 @@ data_connectivity = {
              "unique_id": "data_table_connectivity_steps_description",
          },
          "template": "subsection_content/connectivity-details.html"},
+        {"title": "Processing", "link_title": "pipeline",
+         "dataset": {
+             "start_date_time": "???",
+             "end_date_time": "???",
+             "total_runtime": "1 hour 23 minutes",
+             "gant_img": "plotly_gant_processing.svg",
+             "runtime_table": runtime_table
+         },
+         "template": "subsection_content/overview-pipeline.html"},
     ],
 }
 data_profiling = {

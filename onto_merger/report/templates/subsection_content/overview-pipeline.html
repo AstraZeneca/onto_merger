@@ -1,12 +1,21 @@
 <div class="overview summary">
-    <h4>Pipeline runtime summary</h4>
-    <div class="text about" style="padding-top: 20px">
-        <p>The pipeline started running at {{ subsection_data['start_date_time'] }},
-            and finished at {{ subsection_data['end_date_time'] }}.
-            The total runtime was {{ subsection_data['total_runtime'] }}.</p>
+    <div class="col-sm-6">
+        <h4>Runtime Gantt chart</h4>
+        <div>
+            <img class="img-responsive center-img"
+                 src="{{ subsection_data['gant_img'] }}" alt="foo">
+        </div>
     </div>
-    <div>
-        <img class="img-responsive center-img"
-             src="{{ subsection_data['gant_img'] }}" alt="foo">
+    <div class="col-sm-6">
+        <h4>Summary</h4>
+        <div class="text about" style="padding-top: 5px">
+            <p>The pipeline started running at {{ subsection_data['start_date_time'] }},
+                and finished at {{ subsection_data['end_date_time'] }}.
+                The total runtime was {{ subsection_data['total_runtime'] }}.</p>
+        </div>
+        <p class="h4 table-title">Main steps</p>
+        {% with rows=subsection_data['runtime_table'] %}
+            {% include 'templates/data_content/table_summary_two_col.html' %}
+        {% endwith %}
     </div>
 </div>

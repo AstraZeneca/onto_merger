@@ -6,7 +6,7 @@
     <meta name="description" content="Alignment and connectivity report">
     <meta name="generator" content="OntoMerger vlatest" />
     <meta name="url" content="https://github.com/AstraZeneca/onto_merger">
-    <meta name="date" content="2022/05/16 17:55:30">
+    <meta name="date" content="2022/05/16 18:50:55">
     <title>OntoMerger Report</title>
     <style>
     /*!
@@ -114,6 +114,19 @@ div.overview.summary {
 
 div.text.about {
     margin: 10px;
+}
+
+div.three-parts {
+    padding-top: 10px;
+}
+
+div.three-parts-bottom {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+div.three-parts-top-row {
+    padding-bottom: 5px;
 }
 
 .footer-text {
@@ -389,15 +402,56 @@ div.text.about {
                 <div class="tab-pane " id="pipeline_overview">
                 
                     <div class="overview summary">
-    <h4>Pipeline runtime summary</h4>
-    <div class="text about" style="padding-top: 20px">
-        <p>The pipeline started running at ???,
-            and finished at ???.
-            The total runtime was 1 hour 23 minutes.</p>
+    <div class="col-sm-6">
+        <h4>Runtime Gantt chart</h4>
+        <div>
+            <img class="img-responsive center-img"
+                 src="plotly_gant_processing.svg" alt="foo">
+        </div>
     </div>
-    <div>
-        <img class="img-responsive center-img"
-             src="plotly_gant_processing.svg" alt="foo">
+    <div class="col-sm-6">
+        <h4>Summary</h4>
+        <div class="text about" style="padding-top: 5px">
+            <p>The pipeline started running at ???,
+                and finished at ???.
+                The total runtime was 1 hour 23 minutes.</p>
+        </div>
+        <p class="h4 table-title">Main steps</p>
+        
+            <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+        
     </div>
 </div>
                 
@@ -408,14 +462,11 @@ div.text.about {
                 <div class="tab-pane " id="configuration_overview">
                 
                     <div class="overview summary">
-
-</div>
-
-<div class="col-sm-6">
-    <p class="h4">JSON</p>
-    <pre>
-        <code>
-            
+    <div class="col-sm-6">
+        <p class="h4">JSON</p>
+        <pre>
+            <code>
+                
 {
     "domain_node_type": "Disease",
     "seed_ontology_name": "MONDO",
@@ -433,12 +484,13 @@ div.text.about {
      }
 }
 
-        </code>
-    </pre>
-</div>
-<div class="col-sm-6">
-    <p class="h4">About</p>
-    The config JSON ...
+            </code>
+        </pre>
+    </div>
+    <div class="col-sm-6">
+        <p class="h4">About</p>
+        The config JSON ...
+    </div>
 </div>
                 
                 </div>
@@ -778,15 +830,16 @@ div.text.about {
             
                 <div class="tab-pane " id="mappings_input">
                 
-                    <div class="overview summary">
-    <h4>Mapping analysis</h4>
-    
-        <table class="table table-hover table-striped">
+                    <div class="three-parts">
+    <div class="col-sm-6">
+     <h4>Mapping analysis</h4>
+        
+            <table class="table table-hover table-striped">
     <thead>
         <tr>
-            <td style="width:20%"><b>Mapped nodes</b></td>
-            <td style="width:20%"><b>Count</b></td>
-            <td style="width:20%"><b>Frequency</b></td>
+            <td style="width:30%"><b>Mapped nodes</b></td>
+            <td style="width:15%"><b>Count</b></td>
+            <td style="width:15%"><b>Frequency</b></td>
             <td style="width:20%"><b>Types</b></td>
             <td style="width:20%"><b>Provenances</b></td>
         </tr>
@@ -821,9 +874,18 @@ div.text.about {
     
     </tbody>
 </table>
-    
-    
-        <div class="accordion" id="accordionExample_input_data_table_mapping_analysis_description">
+        
+    </div>
+    <div class="col-sm-6 three-parts-top-row">
+    <h4>Chart</h4>
+        <div>
+            <img class="img-responsive center-img"
+                 src="plotly_gant_processing.svg" alt="foo">
+        </div>
+    </div>
+    <div class="col-sm-12 three-parts-bottom">
+        
+            <div class="accordion" id="accordionExample_input_data_table_mapping_analysis_description">
   <div class="accordion-item">
     <h5 class="accordion-header" id="headingOne_input_data_table_mapping_analysis_description">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -878,7 +940,8 @@ div.text.about {
     </div>
   </div>
 </div>
-    
+        
+    </div>
 </div>
                 
                 </div>
@@ -1305,15 +1368,16 @@ div.text.about {
             
                 <div class="tab-pane " id="mappings_output">
                 
-                    <div class="overview summary">
-    <h4>Mapping analysis</h4>
-    
-        <table class="table table-hover table-striped">
+                    <div class="three-parts">
+    <div class="col-sm-6">
+     <h4>Mapping analysis</h4>
+        
+            <table class="table table-hover table-striped">
     <thead>
         <tr>
-            <td style="width:20%"><b>Mapped nodes</b></td>
-            <td style="width:20%"><b>Count</b></td>
-            <td style="width:20%"><b>Frequency</b></td>
+            <td style="width:30%"><b>Mapped nodes</b></td>
+            <td style="width:15%"><b>Count</b></td>
+            <td style="width:15%"><b>Frequency</b></td>
             <td style="width:20%"><b>Types</b></td>
             <td style="width:20%"><b>Provenances</b></td>
         </tr>
@@ -1348,9 +1412,18 @@ div.text.about {
     
     </tbody>
 </table>
-    
-    
-        <div class="accordion" id="accordionExample_output_data_table_mapping_analysis_description">
+        
+    </div>
+    <div class="col-sm-6 three-parts-top-row">
+    <h4>Chart</h4>
+        <div>
+            <img class="img-responsive center-img"
+                 src="plotly_gant_processing.svg" alt="foo">
+        </div>
+    </div>
+    <div class="col-sm-12 three-parts-bottom">
+        
+            <div class="accordion" id="accordionExample_output_data_table_mapping_analysis_description">
   <div class="accordion-item">
     <h5 class="accordion-header" id="headingOne_output_data_table_mapping_analysis_description">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -1405,7 +1478,8 @@ div.text.about {
     </div>
   </div>
 </div>
-    
+        
+    </div>
 </div>
                 
                 </div>
@@ -1533,6 +1607,13 @@ div.text.about {
                 <li class="nav-item">
                     <a class="nav-link " data-bs-toggle="tab"
                        href="#details_alignment">Details</a>
+                </li>
+            
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link " data-bs-toggle="tab"
+                       href="#pipeline_alignment">Processing</a>
                 </li>
             
         
@@ -1756,6 +1837,66 @@ div.text.about {
                 </div>
             
         
+            
+                <div class="tab-pane " id="pipeline_alignment">
+                
+                    <div class="overview summary">
+    <div class="col-sm-6">
+        <h4>Runtime Gantt chart</h4>
+        <div>
+            <img class="img-responsive center-img"
+                 src="plotly_gant_processing.svg" alt="foo">
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <h4>Summary</h4>
+        <div class="text about" style="padding-top: 5px">
+            <p>The pipeline started running at ???,
+                and finished at ???.
+                The total runtime was 1 hour 23 minutes.</p>
+        </div>
+        <p class="h4 table-title">Main steps</p>
+        
+            <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+        
+    </div>
+</div>
+                
+                </div>
+            
+        
         </div>
     </div>
 </div>
@@ -1785,6 +1926,13 @@ div.text.about {
                 <li class="nav-item">
                     <a class="nav-link " data-bs-toggle="tab"
                        href="#details_connectivity">Details</a>
+                </li>
+            
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link " data-bs-toggle="tab"
+                       href="#pipeline_connectivity">Processing</a>
                 </li>
             
         
@@ -2003,6 +2151,66 @@ div.text.about {
   </div>
 </div>
     
+</div>
+                
+                </div>
+            
+        
+            
+                <div class="tab-pane " id="pipeline_connectivity">
+                
+                    <div class="overview summary">
+    <div class="col-sm-6">
+        <h4>Runtime Gantt chart</h4>
+        <div>
+            <img class="img-responsive center-img"
+                 src="plotly_gant_processing.svg" alt="foo">
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <h4>Summary</h4>
+        <div class="text about" style="padding-top: 5px">
+            <p>The pipeline started running at ???,
+                and finished at ???.
+                The total runtime was 1 hour 23 minutes.</p>
+        </div>
+        <p class="h4 table-title">Main steps</p>
+        
+            <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Loading</td>
+          <td>2 sec</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+        
+    </div>
 </div>
                 
                 </div>
@@ -2665,7 +2873,7 @@ div.text.about {
             <p class="text-muted text-center">
                 Report generated by
                 <a href="https://github.com/AstraZeneca/onto_merger" target="_blank">OntoMerger</a>
-                at 2022/05/16 17:55:30.
+                at 2022/05/16 18:50:55.
             </p>
         </div>
     </div>

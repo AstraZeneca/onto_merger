@@ -93,6 +93,19 @@ div.text.about {
     margin: 10px;
 }
 
+div.three-parts {
+    padding-top: 10px;
+}
+
+div.three-parts-bottom {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+div.three-parts-top-row {
+    padding-bottom: 5px;
+}
+
 .footer-text {
     padding-top: 25px;
     padding-bottom: 25px;
