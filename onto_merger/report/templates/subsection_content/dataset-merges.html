@@ -1,9 +1,0 @@
-<div class="overview summary">
-    <h4>Merge analysis</h4>
-    {% with rows=subsection_data['table_analysis'] %}
-        {% include 'templates/data_content/table_merge_analysis.html' %}
-    {% endwith %}
-    {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
-        {% include 'templates/subsection_content/table-description-accordion.html' %}
-    {% endwith %}
-</div>
