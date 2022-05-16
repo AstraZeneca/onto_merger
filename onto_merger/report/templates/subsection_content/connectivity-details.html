@@ -1,10 +1,10 @@
 <div class="overview summary">
 <h4>Connectivity step details</h4>
-{% with table_data=sub_section_data['steps_table'] %}
-    {% include 'templates/data_content/table_steps_connectivity.html' %}
-{% endwith %}
-<h5>Table description</h5>
-{% with rows=sub_section_data['description_table'] %}
-    {% include 'templates/data_content/table_column_description.html' %}
-{% endwith %}
+    {% with table_data=subsection_data['steps_table'] %}
+        {% include 'templates/data_content/table_steps_connectivity.html' %}
+    {% endwith %}
+    <h5>Table description</h5>
+    {% with rows=subsection_data['description_table'] %}
+        {% include 'templates/data_content/table_column_description.html' %}
+    {% endwith %}
 </div>

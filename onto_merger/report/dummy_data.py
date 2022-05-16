@@ -196,19 +196,27 @@ data_overview = {
     "title": "Overview",
     "link_title": "overview",
     "logo": "icon_overview.png",
-    "summary": {
-        "node_summary": data_table_node_summary,
-        "node_summary_description": data_table_node_summary_description,
-    },
-    "processing": {
-        "start_date_time": "???",
-        "end_date_time": "???",
-        "total_runtime": "1 hour 23 minutes",
-        "gant_img": "plotly_gant_processing.svg"
-    },
-    "validation": {
-
-    },
+    "subsections": [
+        {
+            "title": "Summary",
+            "link_title": "summary",
+            "dataset": {
+                "node_summary": data_table_node_summary,
+                "node_summary_description": data_table_node_summary_description,
+            },
+            "template": "subsection_content/overview-summary.html"
+        },
+        {"title": "Pipeline", "link_title": "pipeline",
+         "dataset": {
+             "start_date_time": "???",
+             "end_date_time": "???",
+             "total_runtime": "1 hour 23 minutes",
+             "gant_img": "plotly_gant_processing.svg"
+         },
+         "template": "subsection_content/overview-pipeline.html"},
+        {"title": "Validation", "link_title": "validation", "dataset": {},
+         "template": "subsection_content/overview-validation.html"},
+    ],
 }
 data_input = {
     "title": "Input",
@@ -272,55 +280,77 @@ data_alignment = {
     "title": "Alignment",
     "link_title": "alignment",
     "logo": "icon_deduplication.png",
-    "summary": {
-        "description": {
-            "title": "About",
-            "text": '''
+    "subsections": [
+        {
+            "title": "Summary",
+            "link_title": "summary",
+            "dataset": {
+                "description": {
+                    "title": "About",
+                    "text": '''
             <p>The <b>alignment process</b> ... bla ... more on this in RDT.</p>
             <p>The <b>alignment process</b> ... bla ... more on this in RDT.</p>
             ''',
+                },
+                "summary_table": [
+                    {"metric": "Number of steps", "values": "24"},
+                    {"metric": "Number of sources", "values": "12"},
+                    {"metric": "Mapping type groups used", "values": "2"},
+                    {"metric": "Input nodes", "values": "99,000"},
+                    {"metric": "Unmapped nodes", "values": "50,000"},
+                    {"metric": "Unmapped nodes (%)", "values": "51.00%"},
+                    {"metric": "Merged nodes", "values": "49,000"},
+                    {"metric": "Merged nodes (%)", "values": "49.00%"},
+                    {"metric": "Merges", "values": "49,000"},
+                ],
+            },
+            "template": "subsection_content/section-summary.html"
         },
-        "summary_table": [
-            {"metric": "Number of steps", "values": "24"},
-            {"metric": "Number of sources", "values": "12"},
-            {"metric": "Mapping type groups used", "values": "2"},
-            {"metric": "Input nodes", "values": "99,000"},
-            {"metric": "Unmapped nodes", "values": "50,000"},
-            {"metric": "Unmapped nodes (%)", "values": "51.00%"},
-            {"metric": "Merged nodes", "values": "49,000"},
-            {"metric": "Merged nodes (%)", "values": "49.00%"},
-            {"metric": "Merges", "values": "49,000"},
-        ],
-    },
-    "details": {
-        "steps_table": table_steps_alignment,
-        "description_table": data_table_alignment_steps_description,
-    },
+        {"title": "Details", "link_title": "details",
+         "dataset": {
+             "steps_table": table_steps_alignment,
+             "description_table": data_table_alignment_steps_description,
+         },
+         "template": "subsection_content/alignment-details.html"},
+    ],
 }
 data_connectivity = {
     "title": "Connectivity",
     "link_title": "connectivity",
     "logo": "icon_connectivity.png",
-    "summary": {
-        "description": {
-            "title": "About",
-            "text": "The connectivity process ... bla ... more on this in RDT.",
+    "subsections": [
+        {
+            "title": "Summary",
+            "link_title": "summary",
+            "dataset": {
+                "description": {
+                    "title": "About",
+                    "text": '''
+        <p>The <b>connectivity process</b> ... bla ... more on this in RDT.</p>
+        <p>The <b>process</b> ... bla ... more on this in RDT.</p>
+        ''',
+                },
+                "summary_table": [
+                    {"metric": "Number of steps", "values": "24"},
+                    {"metric": "Number of sources", "values": "12"},
+                    {"metric": "Mapping type groups used", "values": "2"},
+                    {"metric": "Input nodes", "values": "99,000"},
+                    {"metric": "Unmapped nodes", "values": "50,000"},
+                    {"metric": "Unmapped nodes (%)", "values": "51.00%"},
+                    {"metric": "Merged nodes", "values": "49,000"},
+                    {"metric": "Merged nodes (%)", "values": "49.00%"},
+                    {"metric": "Merges", "values": "49,000"},
+                ],
+            },
+            "template": "subsection_content/section-summary.html"
         },
-        "summary_table": [
-            {"metric": "Number of steps", "values": "11"},
-            {"metric": "Number of sources", "values": "11"},
-            {"metric": "Input nodes", "values": "99,000"},
-            {"metric": "Connected nodes", "values": "50,000"},
-            {"metric": "Connected nodes (%)", "values": "51.00%"},
-            {"metric": "Dangling nodes", "values": "49,000"},
-            {"metric": "Dangling nodes (%)", "values": "49.00%"},
-            {"metric": "Hierarchy edges", "values": "49,000"},
-        ],
-    },
-    "details": {
-        "steps_table": table_steps_connectivity,
-        "description_table": data_table_connectivity_steps_description,
-    },
+        {"title": "Details", "link_title": "details",
+         "dataset": {
+             "steps_table": table_steps_alignment,
+             "description_table": data_table_connectivity_steps_description,
+         },
+         "template": "subsection_content/connectivity-details.html"},
+    ],
 }
 data_profiling = {
     "title": "Data Profiling",

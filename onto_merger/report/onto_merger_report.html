@@ -6,7 +6,7 @@
     <meta name="description" content="Alignment and connectivity report">
     <meta name="generator" content="OntoMerger vlatest" />
     <meta name="url" content="https://github.com/AstraZeneca/onto_merger">
-    <meta name="date" content="2022/05/16 14:18:22">
+    <meta name="date" content="2022/05/16 14:35:17">
     <title>OntoMerger Report</title>
     <style>
     /*!
@@ -160,7 +160,178 @@ div.text.about {
 
     <div class="content">
     <div class="container">
+        
+            
+                
+    <div class="row-header">
+    <a class="anchor-pos" id="Overview"></a>
+    <div class="page-header">
+        <img src="templates/images/icon_overview.png">
+        <h1>&ensp;Overview</h1>
+    </div>
+</div>
 
+<div class="section-items">
+    <div class="row spacing">
+        <ul class="nav nav-tabs">
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab"
+                       href="#summary_overview">Summary</a>
+                </li>
+            
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link " data-bs-toggle="tab"
+                       href="#pipeline_overview">Pipeline</a>
+                </li>
+            
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link " data-bs-toggle="tab"
+                       href="#validation_overview">Validation</a>
+                </li>
+            
+        
+        </ul>
+        <div id="myTabContent_overview" class="tab-content">
+        
+            
+                <div class="tab-pane active" id="summary_overview">
+                
+                    <div class="overview summary">
+<h4>Node alignment & connectivity summary</h4>
+
+    <table class="freq table table-hover summary">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Node Origin</b></td>
+            <td style="width:20%"><b>Input</b></td>
+            <td style="width:20%"><b>Merged</b></td>
+            <td style="width:20%"><b>Only connected</b></td>
+            <td style="width:20%"><b>Dangling</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        
+            <tr class="first-row">
+              <td style="color: #23527c; font-weight: normal">MONDO</td>
+              <td style="color: #23527c; font-weight: normal">22,123 (19.80%)</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+        
+      
+        
+            <tr>
+              <td>MEDDRA</td>
+              <td>67,999 (58.65%)</td>
+              <td>10.00%</td>
+              <td>54.30%</td>
+              <td>34.34%</td>
+            </tr>
+        
+      
+        
+            <tr>
+              <td>ORPHANET</td>
+              <td>9,123 (8.19%)</td>
+              <td>23.00%</td>
+              <td>11.34%</td>
+              <td>12.34%</td>
+            </tr>
+        
+      
+    
+    </tbody>
+</table>
+
+<h5>Table description</h5>
+
+    <table class="table table-hover summary">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Column</b></td>
+            <td style="width:80%"><b>Description</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-style: italic;">Node Origin</td>
+          <td>The ontology (or namespace) the node originates from.</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Input</td>
+          <td>Nodes that assume to belong to the same domain that most likely contain duplicated, connected and overlapping nodes.</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Merged</td>
+          <td>Nodes that are mapped and merged onto other nodes.</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Only connected</td>
+          <td>Nodes that are not merged onto other nodes, but are connected to the hierarchy.</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Dangling</td>
+          <td>Nodes that are not neither merged nor connected.</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+
+</div>
+                
+                </div>
+            
+        
+            
+                <div class="tab-pane " id="pipeline_overview">
+                
+                    <div class="overview summary">
+    <h4>Pipeline runtime summary</h4>
+    <div class="text about" style="padding-top: 20px">
+        <p>The pipeline started running at ???,
+            and finished at ???.
+            The total runtime was 1 hour 23 minutes.</p>
+    </div>
+    <div>
+        <img class="img-responsive center-img"
+             src="plotly_gant_processing.svg" alt="foo">
+    </div>
+</div>
+                
+                </div>
+            
+        
+            
+                <div class="tab-pane " id="validation_overview">
+                
+                    <div class="overview summary">
+    <h4>Data and configuration validation runtime summary</h4>
+</div>
+                
+                </div>
+            
+        
+        </div>
+    </div>
+</div>
+            
+        
         
             
                 
@@ -425,6 +596,478 @@ div.text.about {
                 <div class="tab-pane " id="edges_hierarchy_output">
                 
                     
+                
+                </div>
+            
+        
+        </div>
+    </div>
+</div>
+                
+                
+                    
+    <div class="row-header">
+    <a class="anchor-pos" id="Alignment"></a>
+    <div class="page-header">
+        <img src="templates/images/icon_deduplication.png">
+        <h1>&ensp;Alignment</h1>
+    </div>
+</div>
+
+<div class="section-items">
+    <div class="row spacing">
+        <ul class="nav nav-tabs">
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab"
+                       href="#summary_alignment">Summary</a>
+                </li>
+            
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link " data-bs-toggle="tab"
+                       href="#details_alignment">Details</a>
+                </li>
+            
+        
+        </ul>
+        <div id="myTabContent_alignment" class="tab-content">
+        
+            
+                <div class="tab-pane active" id="summary_alignment">
+                
+                    <div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Number of steps</td>
+          <td>24</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of sources</td>
+          <td>12</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Mapping type groups used</td>
+          <td>2</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Input nodes</td>
+          <td>99,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Unmapped nodes</td>
+          <td>50,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Unmapped nodes (%)</td>
+          <td>51.00%</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merged nodes</td>
+          <td>49,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merged nodes (%)</td>
+          <td>49.00%</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merges</td>
+          <td>49,000</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:100%"></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+            <p>The <b>alignment process</b> ... bla ... more on this in RDT.</p>
+            <p>The <b>alignment process</b> ... bla ... more on this in RDT.</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+    
+</div>
+                
+                </div>
+            
+        
+            
+                <div class="tab-pane " id="details_alignment">
+                
+                    <div class="overview summary">
+    <h4>Alignment step details</h4>
+    
+        <table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:10%"><b>Step</b></td>
+            <td style="width:15%"><b>Mapping type</b></td>
+            <td style="width:15%"><b>Source</b></td>
+            <td style="width:15%"><b>Unmapped</b></td>
+            <td style="width:15%"><b>Merged</b></td>
+            <td style="width:15%"><b>Mappings</b></td>
+            <td style="width:15%"><b>Dropped</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td>115,934</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+        </tr>
+      
+        <tr>
+            <td>1</td>
+            <td>equivalence</td>
+            <td>MONDO</td>
+            <td>94,022</td>
+            <td>20,871</td>
+            <td>20,871</td>
+            <td>0</td>
+        </tr>
+      
+        <tr>
+            <td>2</td>
+            <td>equivalence</td>
+            <td>MEDDRA</td>
+            <td>73,151</td>
+            <td>5,000</td>
+            <td>6,000</td>
+            <td>1,000</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+    <h5>Table description</h5>
+    
+        <table class="table table-hover summary">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Column</b></td>
+            <td style="width:80%"><b>Description</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-style: italic;">Step</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Mapping type</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Source</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Unmapped</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Merged</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Mappings</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Dropped</td>
+          <td></td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+</div>
+                
+                </div>
+            
+        
+        </div>
+    </div>
+</div>
+                
+                
+                    
+    <div class="row-header">
+    <a class="anchor-pos" id="Connectivity"></a>
+    <div class="page-header">
+        <img src="templates/images/icon_connectivity.png">
+        <h1>&ensp;Connectivity</h1>
+    </div>
+</div>
+
+<div class="section-items">
+    <div class="row spacing">
+        <ul class="nav nav-tabs">
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab"
+                       href="#summary_connectivity">Summary</a>
+                </li>
+            
+        
+            
+                <li class="nav-item">
+                    <a class="nav-link " data-bs-toggle="tab"
+                       href="#details_connectivity">Details</a>
+                </li>
+            
+        
+        </ul>
+        <div id="myTabContent_connectivity" class="tab-content">
+        
+            
+                <div class="tab-pane active" id="summary_connectivity">
+                
+                    <div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Number of steps</td>
+          <td>24</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of sources</td>
+          <td>12</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Mapping type groups used</td>
+          <td>2</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Input nodes</td>
+          <td>99,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Unmapped nodes</td>
+          <td>50,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Unmapped nodes (%)</td>
+          <td>51.00%</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merged nodes</td>
+          <td>49,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merged nodes (%)</td>
+          <td>49.00%</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merges</td>
+          <td>49,000</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:100%"></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+        <p>The <b>connectivity process</b> ... bla ... more on this in RDT.</p>
+        <p>The <b>process</b> ... bla ... more on this in RDT.</p>
+        </td>
+        </tr>
+    </tbody>
+</table>
+    
+</div>
+                
+                </div>
+            
+        
+            
+                <div class="tab-pane " id="details_connectivity">
+                
+                    <div class="overview summary">
+<h4>Connectivity step details</h4>
+    
+        <table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:10%"><b>Step</b></td>
+            <td style="width:15%"><b>Source</b></td>
+            <td style="width:15%"><b>Unmapped</b></td>
+            <td style="width:15%"><b>Reachable</b></td>
+            <td style="width:15%"><b>Connected</b></td>
+            <td style="width:15%"><b>Edges (available)</b></td>
+            <td style="width:15%"><b>Edges (produced)</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+            <td>0</td>
+            <td></td>
+            <td>115,934</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+      
+        <tr>
+            <td>1</td>
+            <td>MONDO</td>
+            <td>94,022</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+      
+        <tr>
+            <td>2</td>
+            <td>MEDDRA</td>
+            <td>73,151</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+    <h5>Table description</h5>
+    
+        <table class="table table-hover summary">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Column</b></td>
+            <td style="width:80%"><b>Description</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-style: italic;">Step</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Source</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Unmapped</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Reachable</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Connected</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Edges (available)</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Edges (produced)</td>
+          <td></td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+</div>
                 
                 </div>
             
@@ -1086,7 +1729,7 @@ div.text.about {
             <p class="text-muted text-center">
                 Report generated by
                 <a href="https://github.com/AstraZeneca/onto_merger" target="_blank">OntoMerger</a>
-                at 2022/05/16 14:18:22.
+                at 2022/05/16 14:35:17.
             </p>
         </div>
     </div>
