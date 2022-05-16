@@ -70,6 +70,12 @@ span.badge.bg-primary.label {
     margin-bottom: 10px;
 }
 
+
+div.overview.summary {
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
 div.text.about {
     margin: 10px;
 }

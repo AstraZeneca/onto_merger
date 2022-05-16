@@ -8,7 +8,7 @@
                 <a class="nav-link active" data-bs-toggle="tab" href="#summary_{{ dataset['link_title'] }}">Summary</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#processing_{{ dataset['link_title'] }}">Processing</a>
+                <a class="nav-link" data-bs-toggle="tab" href="#processing_{{ dataset['link_title'] }}">Pipeline</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#validation_{{ dataset['link_title'] }}">Validation</a>
@@ -17,15 +17,17 @@
         <div id="myTabContent_{{ dataset['link_title'] }}" class="tab-content">
             <div class="tab-pane active" id="summary_{{ dataset['link_title'] }}">
                 {% with sub_section_data=dataset['summary'] %}
+                    {% include 'templates/subsection_content/overview-summary.html' %}
                 {% endwith %}
             </div>
             <div class="tab-pane " id="processing_{{ dataset['link_title'] }}">
                 {% with sub_section_data=dataset['processing'] %}
-                    <img class="img-responsive center-img" src="{{ sub_section_data['gant_img'] }}" alt="foo">
+                    {% include 'templates/subsection_content/overview-pipeline.html' %}
                 {% endwith %}
             </div>
             <div class="tab-pane " id="validation_{{ dataset['link_title'] }}">
                 {% with sub_section_data=dataset['validation'] %}
+                    {% include 'templates/subsection_content/overview-validation.html' %}
                 {% endwith %}
             </div>
         </div>

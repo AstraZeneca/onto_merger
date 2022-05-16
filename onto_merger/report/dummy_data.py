@@ -1,4 +1,9 @@
 
+data_table_node_summary = [
+    {"ns": "MONDO", "input": "22,123 (19.80%)", "merged": "", "only_connected": "", "dangling": ""},
+    {"ns": "MEDDRA", "input": "67,999 (58.65%)", "merged": "10.00%", "only_connected": "54.30%", "dangling": "34.34%"},
+    {"ns": "ORPHANET", "input": "9,123 (8.19%)", "merged": "23.00%", "only_connected": "11.34%", "dangling": "12.34%"},
+]
 data_table_node_ns_freq = [
     {"ns": "MONDO", "count": "22,123", "freq": "20.00%"},
     {"ns": "MONDO", "count": "22,123", "freq": "20.00%"},
@@ -27,8 +32,6 @@ data_table_node_mapping_coverage = [
      },
 ]
 
-
-
 data_profiling_input = [
     {
         "type": "node",
@@ -52,6 +55,22 @@ data_profiling_input = [
     },
 ]
 
+### STATIC ###
+
+data_table_node_summary_description = [
+    {"column": "Node Origin",
+     "description": "The ontology (or namespace) the node originates from."},
+    {"column": "Input",
+     "description": "Nodes that assume to belong to the same domain that most likely "
+                    + "contain duplicated, connected and overlapping nodes."},
+    {"column": "Merged",
+     "description": "Nodes that are mapped and merged onto other nodes."},
+    {"column": "Only connected",
+     "description": "Nodes that are not merged onto other nodes, but are connected to the hierarchy."},
+    {"column": "Dangling",
+     "description": "Nodes that are not neither merged nor connected."},
+]
+
 # # # SECTIONS # # #
 
 data_overview = {
@@ -59,9 +78,13 @@ data_overview = {
     "link_title": "overview",
     "logo": "icon_overview.png",
     "summary": {
-
+        "node_summary": data_table_node_summary,
+        "node_summary_description": data_table_node_summary_description,
     },
     "processing": {
+        "start_date_time": "???",
+        "end_date_time": "???",
+        "total_runtime": "1 hour 23 minutes",
         "gant_img": "plotly_gant_processing.svg"
     },
     "validation": {
