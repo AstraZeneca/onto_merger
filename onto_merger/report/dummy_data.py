@@ -166,6 +166,23 @@ runtime_table = [
     {"metric": "Loading", "values": "2 sec"},
     {"metric": "Loading", "values": "2 sec"}
 ]
+config_json_str = \
+"""{
+    "domain_node_type": "Disease",
+    "seed_ontology_name": "MONDO",
+    "mappings": {
+     "type_groups": {
+         "equivalence": [
+             "equivalent_to",
+             "merge"
+         ],
+         "database_reference": [
+             "database_cross_reference",
+             "xref"
+         ],
+         "label_match": []
+     }
+}"""
 
 # STATIC #
 data_table_node_summary_description = [
@@ -309,25 +326,7 @@ data_overview = {
         {"title": "Configuration", "link_title": "configuration",
          "dataset": {
              "about": "The config JSON ...",
-             "config_json":
-"""
-{
-    "domain_node_type": "Disease",
-    "seed_ontology_name": "MONDO",
-    "mappings": {
-     "type_groups": {
-         "equivalence": [
-             "equivalent_to",
-             "merge"
-         ],
-         "database_reference": [
-             "database_cross_reference",
-             "xref"
-         ],
-         "label_match": []
-     }
-}
-"""
+             "config_json": config_json_str
          },
          "template": "subsection_content/overview-configuration.html"},
         {"title": "Validation", "link_title": "validation", "dataset": {},
