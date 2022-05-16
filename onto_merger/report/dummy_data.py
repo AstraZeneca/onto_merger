@@ -280,8 +280,8 @@ data_overview = {
             "title": "Summary",
             "link_title": "summary",
             "dataset": {
-                "node_summary": data_table_node_summary,
-                "node_summary_description": data_table_node_summary_description,
+                "table_analysis": data_table_node_summary,
+                "table_description": data_table_node_summary_description,
                 "unique_id": "data_table_node_summary_description",
             },
             "template": "subsection_content/overview-summary.html"
@@ -323,7 +323,7 @@ data_input = {
          "dataset": {
              "table_analysis": data_table_node_analysis,
              "table_description": data_table_node_analysis_description,
-            "unique_id": "input_data_table_node_analysis_description",
+             "unique_id": "input_data_table_node_analysis_description",
              "is_obsolete": False,
          },
          "template": "subsection_content/dataset-nodes.html"},
@@ -331,7 +331,7 @@ data_input = {
          "dataset": {
              "table_analysis": data_table_node_obs_ns_freq,
              "table_description": data_table_node_analysis_description,
-            "unique_id": "input_data_table_node_obs_analysis_description",
+             "unique_id": "input_data_table_node_obs_analysis_description",
              "is_obsolete": True,
          },
          "template": "subsection_content/dataset-nodes.html"},
@@ -339,14 +339,14 @@ data_input = {
          "dataset": {
              "table_analysis": data_table_mapping_analysis,
              "table_description": data_table_mapping_analysis_description,
-            "unique_id": "input_data_table_mapping_analysis_description",
+             "unique_id": "input_data_table_mapping_analysis_description",
          },
          "template": "subsection_content/dataset-mappings.html"},
         {"title": "Hierarchy edges", "link_title": "edges_hierarchy",
          "dataset": {
              "table_analysis": data_table_edge_analysis,
              "table_description": data_table_edge_hierarchy_analysis_description,
-             "unique_id": "output_data_table_edge_hierarchy_analysis_description",
+             "unique_id": "input_data_table_edge_hierarchy_analysis_description",
          },
          "template": "subsection_content/dataset-edges-hierarchy.html"},
     ],
@@ -355,7 +355,7 @@ data_output = {
     "title": "Output",
     "link_title": "output",
     "logo": "icon_output.png",
-        "subsections": [
+    "subsections": [
         {
             "title": "Summary",
             "link_title": "summary",
@@ -376,7 +376,7 @@ data_output = {
          "dataset": {
              "table_analysis": data_table_node_analysis,
              "table_description": data_table_node_analysis_description,
-            "unique_id": "output_data_table_node_analysis_description",
+             "unique_id": "output_data_table_node_analysis_description",
              "is_obsolete": False,
          },
          "template": "subsection_content/dataset-nodes.html"},
@@ -384,21 +384,21 @@ data_output = {
          "dataset": {
              "table_analysis": data_table_merge_analysis,
              "table_description": data_table_merge_analysis_description,
-            "unique_id": "output_data_table_merge_analysis_description",
+             "unique_id": "output_data_table_merge_analysis_description",
          },
          "template": "subsection_content/dataset-merges.html"},
         {"title": "Mappings", "link_title": "mappings",
          "dataset": {
              "table_analysis": data_table_mapping_analysis,
              "table_description": data_table_mapping_analysis_description,
-            "unique_id": "output_data_table_mapping_analysis_description",
+             "unique_id": "output_data_table_mapping_analysis_description",
          },
          "template": "subsection_content/dataset-mappings.html"},
         {"title": "Hierarchy edges", "link_title": "edges_hierarchy",
          "dataset": {
              "table_analysis": data_table_edge_analysis,
              "table_description": data_table_edge_hierarchy_analysis_description,
-            "unique_id": "output_data_table_edge_hierarchy_analysis_description",
+             "unique_id": "output_data_table_edge_hierarchy_analysis_description",
          },
          "template": "subsection_content/dataset-edges-hierarchy.html"},
     ],
@@ -436,8 +436,8 @@ data_alignment = {
         {"title": "Details", "link_title": "details",
          "dataset": {
              "steps_table": table_steps_alignment,
-             "description_table": data_table_alignment_steps_description,
-            "unique_id": "data_table_alignment_steps_description",
+             "table_description": data_table_alignment_steps_description,
+             "unique_id": "data_table_alignment_steps_description",
          },
          "template": "subsection_content/alignment-details.html"},
     ],
@@ -475,8 +475,8 @@ data_connectivity = {
         {"title": "Details", "link_title": "details",
          "dataset": {
              "steps_table": table_steps_alignment,
-             "description_table": data_table_connectivity_steps_description,
-            "unique_id": "data_table_connectivity_steps_description",
+             "table_description": data_table_connectivity_steps_description,
+             "unique_id": "data_table_connectivity_steps_description",
          },
          "template": "subsection_content/connectivity-details.html"},
     ],
