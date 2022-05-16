@@ -1,0 +1,21 @@
+<div class="three-parts">
+    <div class="col-sm-6">
+     <h4>{{ subsection_data['analysed_entity'] }} analysis</h4>
+        {% with rows=subsection_data['table_analysis'], template=subsection_data['analysis_table_template'] %}
+            {% set path = 'templates/' + template %}{% include path %}
+        {% endwith %}
+    </div>
+    <div class="col-sm-6 three-parts-top-row">
+    <h4>Chart</h4>
+        <div>
+            <img class="img-responsive center-img"
+                 src="{{ subsection_data['analysis_fig_path'] }}"
+                 alt="{{ subsection_data['analysis_fig_alt_text'] }}">
+        </div>
+    </div>
+    <div class="col-sm-12 three-parts-bottom">
+        {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
+            {% include 'templates/subsection_content/table-description-accordion.html' %}
+        {% endwith %}
+    </div>
+</div>
