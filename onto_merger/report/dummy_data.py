@@ -5,14 +5,26 @@ data_table_node_summary = [
     {"ns": "ORPHANET", "input": "9,123 (8.19%)", "merged": "23.00%", "only_connected": "11.34%", "dangling": "12.34%"},
 ]
 data_table_node_ns_freq = [
-    {"ns": "MONDO", "count": "22,123", "freq": "20.00%"},
-    {"ns": "MONDO", "count": "22,123", "freq": "20.00%"},
-    {"ns": "MONDO", "count": "22,123", "freq": "20.00%"},
+    {"ns": "MONDO", "count": 22000, "freq": "20.00%", "coverage_mapping": "20.00%",
+     "coverage_edge_hierarchy": "100.00%"},
+    {"ns": "MEDDRA", "count": 22000, "freq": "45.32%", "coverage_mapping": "10.00%",
+     "coverage_edge_hierarchy": "100.00%"},
+    {"ns": "ORPHANET", "count": 22000, "freq": "12.00%", "coverage_mapping": "5.00%",
+     "coverage_edge_hierarchy": "100.00%"},
 ]
-data_table_mapping_ns_freq = [
-    {"ns": "MONDO to MONDO", "count": "22,123", "freq": "20.00%"},
-    {"ns": "MONDO to MONDO", "count": "22,123", "freq": "20.00%"},
-    {"ns": "MONDO to MONDO", "count": "22,123", "freq": "20.00%"},
+data_table_node_obs_ns_freq = [
+    {"ns": "MONDO", "count": 22000, "freq": "1.00%", "coverage_mapping": "95.55%", "coverage_edge_hierarchy": "0%"},
+]
+data_table_mapping_analysis = [
+    {"node_nss": "{ MONDO }", "count": "22,123", "freq": "20.00%", "types": "{ eqv, xref }", "provs": "{ MONDO }"},
+    {"node_nss": "{ MEDDRA, MONDO }", "count": "22,123", "freq": "20.00%", "types": "{ eqv, xref }",
+     "provs": "{ MONDO }"},
+    {"node_nss": "{ DOID, MONDO }", "count": "22,123", "freq": "20.00%", "types": "{ eqv, xref }",
+     "provs": "{ MONDO }"},
+]
+data_table_edge_analysis = [
+    {"sub_to_sup": "MONDO to MONDO", "count": "22,123", "freq": "20.00%", "provs": "MONDO"},
+    {"sub_to_sup": "MEDDRA to MEDDRA", "count": "77,123", "freq": "65.00%", "provs": "MONDO"},
 ]
 data_table_node_mapping_coverage = [
     {"ns": "MONDO to MONDO",
@@ -158,6 +170,40 @@ data_table_node_summary_description = [
     {"column": "Dangling",
      "description": "Nodes that are not neither merged nor connected."},
 ]
+data_table_node_analysis_description = [
+    {"column": "Origin",
+     "description": "..."},
+    {"column": "Count",
+     "description": "..."},
+    {"column": "Frequency",
+     "description": "..."},
+    {"column": "Mapping coverage",
+     "description": "..."},
+    {"column": "Hierarchy coverage",
+     "description": "..."},
+]
+data_table_mapping_analysis_description = [
+    {"column": "Mapped nodes",
+     "description": "..."},
+    {"column": "Count",
+     "description": "..."},
+    {"column": "Frequency",
+     "description": "..."},
+    {"column": "Types",
+     "description": "..."},
+    {"column": "Provenances",
+     "description": "..."},
+]
+data_table_edge_hierarchy_analysis_description = [
+    {"column": "Sub to Super",
+     "description": "..."},
+    {"column": "Count",
+     "description": "..."},
+    {"column": "Frequency",
+     "description": "..."},
+    {"column": "Provenance",
+     "description": "..."},
+]
 data_table_alignment_steps_description = [
     {"column": "Step",
      "description": ""},
@@ -190,6 +236,8 @@ data_table_connectivity_steps_description = [
     {"column": "Edges (produced)",
      "description": ""},
 ]
+
+# SUBSECTION #
 
 # SECTIONS #
 data_overview = {
@@ -232,18 +280,38 @@ data_input = {
                     "text": "...",
                 },
                 "summary_table": [
-                    {"metric": "Number of tests run", "values": "123"},
+                    {"metric": "Number of ", "values": "123"},
+                    {"metric": "Number of ", "values": "123"},
+                    {"metric": "Number of ", "values": "123"},
                 ],
             },
             "template": "subsection_content/section-summary.html"
         },
-        {"title": "Nodes", "link_title": "nodes", "dataset": "",
+        {"title": "Nodes", "link_title": "nodes",
+         "dataset": {
+             "table_analysis": data_table_node_ns_freq,
+             "table_description": data_table_node_analysis_description,
+             "is_obsolete": False,
+         },
          "template": "subsection_content/dataset-nodes.html"},
-        {"title": "Nodes (Obsolete)", "link_title": "nodes_obsolete", "dataset": "",
+        {"title": "Nodes (Obsolete)", "link_title": "nodes_obsolete",
+         "dataset": {
+             "table_analysis": data_table_node_obs_ns_freq,
+             "table_description": data_table_node_analysis_description,
+             "is_obsolete": True,
+         },
          "template": "subsection_content/dataset-nodes.html"},
-        {"title": "Mappings", "link_title": "mappings", "dataset": "",
+        {"title": "Mappings", "link_title": "mappings",
+         "dataset": {
+             "table_analysis": data_table_mapping_analysis,
+             "table_description": data_table_mapping_analysis_description,
+         },
          "template": "subsection_content/dataset-mappings.html"},
-        {"title": "Hierarchy edges", "link_title": "edges_hierarchy", "dataset": "",
+        {"title": "Hierarchy edges", "link_title": "edges_hierarchy",
+         "dataset": {
+             "table_analysis": data_table_edge_analysis,
+             "table_description": data_table_edge_hierarchy_analysis_description,
+         },
          "template": "subsection_content/dataset-edges-hierarchy.html"},
     ],
 }
@@ -261,7 +329,9 @@ data_output = {
                     "text": "...",
                 },
                 "summary_table": [
-                    {"metric": "Number of tests run", "values": "123"},
+                    {"metric": "Number of ", "values": "123"},
+                    {"metric": "Number of ", "values": "123"},
+                    {"metric": "Number of ", "values": "123"},
                 ],
             },
             "template": "subsection_content/section-summary.html"

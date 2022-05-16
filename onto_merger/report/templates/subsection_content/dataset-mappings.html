@@ -1,0 +1,10 @@
+<div class="overview summary">
+<h4>Mapping analysis</h4>
+{% with rows=subsection_data['table_analysis'] %}
+    {% include 'templates/data_content/table_mapping_analysis.html' %}
+{% endwith %}
+<h5>Table description</h5>
+{% with rows=subsection_data['table_description'] %}
+    {% include 'templates/data_content/table_column_description.html' %}
+{% endwith %}
+</div>
