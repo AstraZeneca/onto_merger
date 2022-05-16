@@ -1,0 +1,18 @@
+<div class="overview summary">
+    <div class="col-sm-6">
+        <div>
+            <img class="img-responsive center-img"
+                 src="{{ subsection_data['gant_img'] }}" alt="foo">
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <p class="h4 table-title">Summary</p>
+        {% with rows=subsection_data['runtime_summary_table'] %}
+            {% include 'templates/data_content/table_summary_two_col.html' %}
+        {% endwith %}
+        <p class="h4 table-title">Step duration</p>
+        {% with rows=subsection_data['runtime_table'] %}
+            {% include 'templates/data_content/table_summary_two_col.html' %}
+        {% endwith %}
+    </div>
+</div>

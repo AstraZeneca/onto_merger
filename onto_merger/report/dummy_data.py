@@ -298,9 +298,14 @@ data_overview = {
              "end_date_time": "???",
              "total_runtime": "1 hour 23 minutes",
              "gant_img": "plotly_gant_processing.svg",
-             "runtime_table": runtime_table
+             "runtime_table": runtime_table,
+             "runtime_summary_table": [
+                 {"metric": "START", "values": "2022.01.01 10:00:05"},
+                 {"metric": "END", "values": "2022.01.01 11:00:05"},
+                 {"metric": "RUNTIME", "values": "1:00:05"},
+             ]
          },
-         "template": "subsection_content/overview-pipeline.html"},
+         "template": "subsection_content/subsection-runtime.html"},
         {"title": "Configuration", "link_title": "configuration",
          "dataset": {
              "about": "The config JSON ...",
@@ -477,9 +482,14 @@ data_alignment = {
              "end_date_time": "???",
              "total_runtime": "1 hour 23 minutes",
              "gant_img": "plotly_gant_processing.svg",
-             "runtime_table": runtime_table
+             "runtime_table": runtime_table,
+             "runtime_summary_table": [
+                 {"metric": "START", "values": "2022.01.01 10:00:05"},
+                 {"metric": "END", "values": "2022.01.01 11:00:05"},
+                 {"metric": "RUNTIME", "values": "1:00:05"},
+             ]
          },
-         "template": "subsection_content/overview-pipeline.html"},
+         "template": "subsection_content/subsection-runtime.html"},
     ],
 }
 data_connectivity = {
@@ -525,9 +535,14 @@ data_connectivity = {
              "end_date_time": "???",
              "total_runtime": "1 hour 23 minutes",
              "gant_img": "plotly_gant_processing.svg",
-             "runtime_table": runtime_table
+             "runtime_table": runtime_table,
+             "runtime_summary_table": [
+                 {"metric": "START", "values": "2022.01.01 10:00:05"},
+                 {"metric": "END", "values": "2022.01.01 11:00:05"},
+                 {"metric": "RUNTIME", "values": "1:00:05"},
+             ]
          },
-         "template": "subsection_content/overview-pipeline.html"},
+         "template": "subsection_content/subsection-runtime.html"},
     ],
 }
 data_profiling = {

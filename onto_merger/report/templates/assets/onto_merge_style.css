@@ -85,10 +85,14 @@ p.h4.table-title {
 }
 
 div.overview.summary {
+    padding-top: 10px;
     margin-top: 20px;
     margin-left: 20px;
 }
 
+div.col-sm-6 {
+    margin-top: 20px;
+}
 div.text.about {
     margin: 10px;
 }
