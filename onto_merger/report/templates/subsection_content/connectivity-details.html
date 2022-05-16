@@ -1,10 +1,9 @@
 <div class="overview summary">
-<h4>Connectivity step details</h4>
+    <h4>Connectivity step details</h4>
     {% with table_data=subsection_data['steps_table'] %}
         {% include 'templates/data_content/table_steps_connectivity.html' %}
     {% endwith %}
-    <h5>Table description</h5>
-    {% with rows=subsection_data['description_table'] %}
-        {% include 'templates/data_content/table_column_description.html' %}
+    {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
+        {% include 'templates/subsection_content/table-description-accordion.html' %}
     {% endwith %}
 </div>

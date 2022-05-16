@@ -1,0 +1,18 @@
+<div class="accordion" id="accordionExample_{{ unique_id }}">
+  <div class="accordion-item">
+    <h5 class="accordion-header" id="headingOne_{{ unique_id }}">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseOne_{{ unique_id }}" aria-expanded="false" aria-controls="collapseOne{{ unique_id }}">
+        Table description
+      </button>
+    </h5>
+    <div id="collapseOne_{{ unique_id }}" class="accordion-collapse collapse"
+         aria-labelledby="headingOne_{{ unique_id }}" data-bs-parent="#accordionExample_{{ unique_id }}" style="">
+      <div class="accordion-body">
+        {% with rows=rows %}
+            {% include 'templates/data_content/table_column_description.html' %}
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,7 +6,7 @@
 </div>
 <div class="col-sm-6">
     <p class="h4 table-title">{{ subsection_data['description']['title'] }}</p>
-    {% with description=subsection_data['description']['text'] %}
+    {% with description=subsection_data['description']['text'], unique_id=subsection_data['unique_id'] %}
         {% include 'templates/data_content/table_description.html' %}
     {% endwith %}
 </div>

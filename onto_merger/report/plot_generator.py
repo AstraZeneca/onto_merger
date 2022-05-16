@@ -28,4 +28,16 @@ def produce_vertical_bar_chart():
     fig.write_image("plotly_vertical_bar.svg")
 
 
-produce_vertical_bar_chart()
+def produce_edge_heat_map():
+    df = px.data.medals_wide(indexed=True)
+    print(df.head(10))
+    print(list(df))
+    print(list(df.index))
+    fig = px.imshow(df)
+    fig.write_image("plotly_heat_map.svg")
+    # fig.show()
+
+
+# produce_vertical_bar_chart()
+
+produce_edge_heat_map()

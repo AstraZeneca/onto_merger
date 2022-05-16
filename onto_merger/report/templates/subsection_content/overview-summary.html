@@ -3,8 +3,7 @@
 {% with rows=subsection_data['node_summary'] %}
     {% include 'templates/data_content/table_overview_node_summary.html' %}
 {% endwith %}
-<h5>Table description</h5>
-{% with rows=subsection_data['node_summary_description'] %}
-    {% include 'templates/data_content/table_column_description.html' %}
+{% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
+    {% include 'templates/subsection_content/table-description-accordion.html' %}
 {% endwith %}
 </div>
