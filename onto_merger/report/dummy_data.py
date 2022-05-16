@@ -4,7 +4,7 @@ data_table_node_summary = [
     {"ns": "MEDDRA", "input": "67,999 (58.65%)", "merged": "10.00%", "only_connected": "54.30%", "dangling": "34.34%"},
     {"ns": "ORPHANET", "input": "9,123 (8.19%)", "merged": "23.00%", "only_connected": "11.34%", "dangling": "12.34%"},
 ]
-data_table_node_ns_freq = [
+data_table_node_analysis = [
     {"ns": "MONDO", "count": 22000, "freq": "20.00%", "coverage_mapping": "20.00%",
      "coverage_edge_hierarchy": "100.00%"},
     {"ns": "MEDDRA", "count": 22000, "freq": "45.32%", "coverage_mapping": "10.00%",
@@ -25,6 +25,11 @@ data_table_mapping_analysis = [
 data_table_edge_analysis = [
     {"sub_to_sup": "MONDO to MONDO", "count": "22,123", "freq": "20.00%", "provs": "MONDO"},
     {"sub_to_sup": "MEDDRA to MEDDRA", "count": "77,123", "freq": "65.00%", "provs": "MONDO"},
+]
+data_table_merge_analysis = [
+    {"canonical_ns": "MONDO", "merged_ns": "MEDDRA", "count": "22,123", "freq": "45.00%"},
+    {"canonical_ns": "MONDO", "merged_ns": "DOID", "count": "2,123", "freq": "10.00%"},
+    {"canonical_ns": "MONDO", "merged_ns": "MESH", "count": "4,123", "freq": "23.00%"},
 ]
 data_table_node_mapping_coverage = [
     {"ns": "MONDO to MONDO",
@@ -194,6 +199,16 @@ data_table_mapping_analysis_description = [
     {"column": "Provenances",
      "description": "..."},
 ]
+data_table_merge_analysis_description = [
+    {"column": "Canonical",
+     "description": "..."},
+    {"column": "Merged",
+     "description": "..."},
+    {"column": "Count",
+     "description": "..."},
+    {"column": "Frequency",
+     "description": "..."},
+]
 data_table_edge_hierarchy_analysis_description = [
     {"column": "Sub to Super",
      "description": "..."},
@@ -289,7 +304,7 @@ data_input = {
         },
         {"title": "Nodes", "link_title": "nodes",
          "dataset": {
-             "table_analysis": data_table_node_ns_freq,
+             "table_analysis": data_table_node_analysis,
              "table_description": data_table_node_analysis_description,
              "is_obsolete": False,
          },
@@ -319,7 +334,7 @@ data_output = {
     "title": "Output",
     "link_title": "output",
     "logo": "icon_output.png",
-    "subsections": [
+        "subsections": [
         {
             "title": "Summary",
             "link_title": "summary",
@@ -336,13 +351,30 @@ data_output = {
             },
             "template": "subsection_content/section-summary.html"
         },
-        {"title": "Nodes", "link_title": "nodes", "dataset": "",
+        {"title": "Nodes", "link_title": "nodes",
+         "dataset": {
+             "table_analysis": data_table_node_analysis,
+             "table_description": data_table_node_analysis_description,
+             "is_obsolete": False,
+         },
          "template": "subsection_content/dataset-nodes.html"},
-        {"title": "Nodes (Obsolete)", "link_title": "nodes_obsolete", "dataset": "",
-         "template": "subsection_content/dataset-nodes.html"},
-        {"title": "Mappings", "link_title": "mappings", "dataset": "",
+        {"title": "Merges", "link_title": "merges",
+         "dataset": {
+             "table_analysis": data_table_merge_analysis,
+             "table_description": data_table_merge_analysis_description,
+         },
+         "template": "subsection_content/dataset-merges.html"},
+        {"title": "Mappings", "link_title": "mappings",
+         "dataset": {
+             "table_analysis": data_table_mapping_analysis,
+             "table_description": data_table_mapping_analysis_description,
+         },
          "template": "subsection_content/dataset-mappings.html"},
-        {"title": "Hierarchy edges", "link_title": "edges_hierarchy", "dataset": "",
+        {"title": "Hierarchy edges", "link_title": "edges_hierarchy",
+         "dataset": {
+             "table_analysis": data_table_edge_analysis,
+             "table_description": data_table_edge_hierarchy_analysis_description,
+         },
          "template": "subsection_content/dataset-edges-hierarchy.html"},
     ],
 }

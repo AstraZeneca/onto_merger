@@ -6,7 +6,7 @@
     <meta name="description" content="Alignment and connectivity report">
     <meta name="generator" content="OntoMerger vlatest" />
     <meta name="url" content="https://github.com/AstraZeneca/onto_merger">
-    <meta name="date" content="2022/05/16 15:27:29">
+    <meta name="date" content="2022/05/16 15:39:34">
     <title>OntoMerger Report</title>
     <style>
     /*!
@@ -822,7 +822,7 @@ div.text.about {
             
                 <li class="nav-item">
                     <a class="nav-link " data-bs-toggle="tab"
-                       href="#nodes_obsolete_output">Nodes (Obsolete)</a>
+                       href="#merges_output">Merges</a>
                 </li>
             
         
@@ -905,7 +905,7 @@ div.text.about {
                 
                     <div class="overview summary">
 
-    <h4>Obsolete node analysis</h4>
+    <h4>Node analysis</h4>
 
 
     <table class="table table-hover table-striped">
@@ -920,9 +920,31 @@ div.text.about {
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="5">No values found.</td>
+          <td>MONDO</td>
+          <td>22000</td>
+          <td>20.00%</td>
+          <td>20.00%</td>
+          <td>100.00%</td>
         </tr>
+      
+        <tr>
+          <td>MEDDRA</td>
+          <td>22000</td>
+          <td>45.32%</td>
+          <td>10.00%</td>
+          <td>100.00%</td>
+        </tr>
+      
+        <tr>
+          <td>ORPHANET</td>
+          <td>22000</td>
+          <td>12.00%</td>
+          <td>5.00%</td>
+          <td>100.00%</td>
+        </tr>
+      
     
     </tbody>
 </table>
@@ -938,9 +960,32 @@ div.text.about {
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="2">No values found.</td>
+          <td style="font-style: italic;">Origin</td>
+          <td>...</td>
         </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Count</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Frequency</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Mapping coverage</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Hierarchy coverage</td>
+          <td>...</td>
+        </tr>
+      
     
     </tbody>
 </table>
@@ -951,28 +996,44 @@ div.text.about {
             
         
             
-                <div class="tab-pane " id="nodes_obsolete_output">
+                <div class="tab-pane " id="merges_output">
                 
                     <div class="overview summary">
-
-    <h4>Obsolete node analysis</h4>
-
+<h4>Merge analysis</h4>
 
     <table class="table table-hover table-striped">
     <thead>
         <tr>
-            <td style="width:20%"><b>Origin</b></td>
+            <td style="width:20%"><b>Canonical</b></td>
+            <td style="width:20%"><b>Merged </b></td>
             <td style="width:20%"><b>Count</b></td>
             <td style="width:20%"><b>Frequency</b></td>
-            <td style="width:20%"><b>Mapping coverage</b></td>
-            <td style="width:20%"><b>Hierarchy coverage</b></td>
         </tr>
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="5">No values found.</td>
+          <td>MONDO</td>
+          <td>MEDDRA</td>
+          <td>22,123</td>
+          <td>45.00%</td>
         </tr>
+      
+        <tr>
+          <td>MONDO</td>
+          <td>DOID</td>
+          <td>2,123</td>
+          <td>10.00%</td>
+        </tr>
+      
+        <tr>
+          <td>MONDO</td>
+          <td>MESH</td>
+          <td>4,123</td>
+          <td>23.00%</td>
+        </tr>
+      
     
     </tbody>
 </table>
@@ -988,9 +1049,27 @@ div.text.about {
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="2">No values found.</td>
+          <td style="font-style: italic;">Canonical</td>
+          <td>...</td>
         </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Merged</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Count</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Frequency</td>
+          <td>...</td>
+        </tr>
+      
     
     </tbody>
 </table>
@@ -1018,9 +1097,31 @@ div.text.about {
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="5">No values found.</td>
+          <td>{ MONDO }</td>
+          <td>22,123</td>
+          <td>20.00%</td>
+          <td>{ eqv, xref }</td>
+          <td>{ MONDO }</td>
         </tr>
+      
+        <tr>
+          <td>{ MEDDRA, MONDO }</td>
+          <td>22,123</td>
+          <td>20.00%</td>
+          <td>{ eqv, xref }</td>
+          <td>{ MONDO }</td>
+        </tr>
+      
+        <tr>
+          <td>{ DOID, MONDO }</td>
+          <td>22,123</td>
+          <td>20.00%</td>
+          <td>{ eqv, xref }</td>
+          <td>{ MONDO }</td>
+        </tr>
+      
     
     </tbody>
 </table>
@@ -1036,9 +1137,32 @@ div.text.about {
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="2">No values found.</td>
+          <td style="font-style: italic;">Mapped nodes</td>
+          <td>...</td>
         </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Count</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Frequency</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Types</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Provenances</td>
+          <td>...</td>
+        </tr>
+      
     
     </tbody>
 </table>
@@ -1065,9 +1189,21 @@ div.text.about {
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="4">No values found.</td>
+          <td>MONDO to MONDO</td>
+          <td>22,123</td>
+          <td>20.00%</td>
+          <td>MONDO</td>
         </tr>
+      
+        <tr>
+          <td>MEDDRA to MEDDRA</td>
+          <td>77,123</td>
+          <td>65.00%</td>
+          <td>MONDO</td>
+        </tr>
+      
     
     </tbody>
 </table>
@@ -1083,9 +1219,27 @@ div.text.about {
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="2">No values found.</td>
+          <td style="font-style: italic;">Sub to Super</td>
+          <td>...</td>
         </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Count</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Frequency</td>
+          <td>...</td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Provenance</td>
+          <td>...</td>
+        </tr>
+      
     
     </tbody>
 </table>
@@ -2224,7 +2378,7 @@ div.text.about {
             <p class="text-muted text-center">
                 Report generated by
                 <a href="https://github.com/AstraZeneca/onto_merger" target="_blank">OntoMerger</a>
-                at 2022/05/16 15:27:29.
+                at 2022/05/16 15:39:34.
             </p>
         </div>
     </div>
