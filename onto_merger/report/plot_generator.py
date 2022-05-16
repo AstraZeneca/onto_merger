@@ -11,15 +11,16 @@ def produce_gantt_chart(file_path: str, data: List[dict]):
         dict(Task="Job B", Start='2009-03-05', Finish='2009-04-15', Duration='10s'),
         dict(Task="Job C", Start='2009-02-20', Finish='2009-05-30', Duration='10s')
     ])
-    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task", text='Duration', width=700)
+    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task", text='Duration', width=700,
+                 labels={'Task': ''},)
     fig.update_layout({
         "plot_bgcolor": "#fff",
         'showlegend': False,
         'margin': {
-            "l": 5,  # left
+            "l": 0,  # left
             "r": 5,  # right
             "t": 5,  # top
-            "b": 5,  # bottom
+            "b": 25,  # bottom
         }
     }).update_yaxes(autorange="reversed")
     fig.write_image(f"{file_path}.svg")
