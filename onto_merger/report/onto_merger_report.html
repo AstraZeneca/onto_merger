@@ -6,7 +6,7 @@
     <meta name="description" content="Alignment and connectivity report">
     <meta name="generator" content="OntoMerger vlatest" />
     <meta name="url" content="https://github.com/AstraZeneca/onto_merger">
-    <meta name="date" content="2022/05/16 01:14:18">
+    <meta name="date" content="2022/05/16 13:03:25">
     <title>OntoMerger Report</title>
     <style>
     /*!
@@ -87,12 +87,25 @@ span.badge.bg-primary.label {
     padding-bottom: 5px;
 }
 
+.row.spacing{
+    padding: 0.25em 1em;
+}
+
+.tab-pane {
+    padding-left: 5px;
+}
+
 .table-hover.third_party_data {
     margin: 20px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
+p.h4.table-title {
+    padding-top: 10px;
+    padding-bottom: 0px;
+    margin-bottom: 0;
+}
 
 div.overview.summary {
     margin-top: 20px;
@@ -159,22 +172,23 @@ div.text.about {
 </div>
 
 <div class="section-items">
-    <div class="bs-component">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#summary_overview">Summary</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#processing_overview">Pipeline</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#validation_overview">Validation</a>
-            </li>
-        </ul>
-        <div id="myTabContent_overview" class="tab-content">
-            <div class="tab-pane active" id="summary_overview">
-                
-                    <div class="overview summary">
+    <div class="row spacing">
+        <div class="bs-component">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#summary_overview">Summary</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#processing_overview">Pipeline</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#validation_overview">Validation</a>
+                </li>
+            </ul>
+            <div id="myTabContent_overview" class="tab-content">
+                <div class="tab-pane active" id="summary_overview">
+                    
+                        <div class="overview summary">
 <h4>Node alignment & connectivity summary</h4>
 
     <table class="freq table table-hover summary">
@@ -226,7 +240,7 @@ div.text.about {
 
 <h5>Table description</h5>
 
-    <table class="freq table table-hover summary">
+    <table class="table table-hover summary">
     <thead>
         <tr>
             <td style="width:20%"><b>Column</b></td>
@@ -266,11 +280,11 @@ div.text.about {
 </table>
 
 </div>
-                
-            </div>
-            <div class="tab-pane " id="processing_overview">
-                
-                    <div class="overview summary">
+                    
+                </div>
+                <div class="tab-pane " id="processing_overview">
+                    
+                        <div class="overview summary">
     <h4>Pipeline runtime summary</h4>
     <div class="text about" style="padding-top: 20px">
         <p>The pipeline started running at ???,
@@ -282,14 +296,15 @@ div.text.about {
              src="plotly_gant_processing.svg" alt="foo">
     </div>
 </div>
-                
-            </div>
-            <div class="tab-pane " id="validation_overview">
-                
-                    <div class="overview summary">
+                    
+                </div>
+                <div class="tab-pane " id="validation_overview">
+                    
+                        <div class="overview summary">
     <h4>Data and configuration validation runtime summary</h4>
 </div>
-                
+                    
+                </div>
             </div>
         </div>
     </div>
@@ -308,179 +323,92 @@ div.text.about {
 </div>
 
 <div class="section-items">
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active selected" data-bs-toggle="tab" href="#home">Nodes</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#home">Nodes (Obsolete)</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Mappings</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Hierarchy edges</a>
-        </li>
-    </ul>
-
-    <h3>Nodes</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#home">Mapping Coverage</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Edge Coverage</a>
-        </li>
-    </ul>
-
-    <h4>Namespace</h4>
+    <div class="row spacing">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#summary_input">Summary</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#nodes_input">Nodes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#nodes_obs_input">Nodes (Obsolete)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#mappings_input">Mappings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab"
+                   href="#edges_input">Hierarchy edges</a>
+            </li>
+        </ul>
+        <div id="myTabContent_input" class="tab-content">
+            <div class="tab-pane active" id="summary_input">
+                
+                    <div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
     
-        <table class="table table-hover table-striped">
+        <table class="table table-condensed">
     <thead>
         <tr>
-            <td style="width:60%"><b>Namespace</b></td>
-            <td style="width:20%"><b>Count</b></td>
-            <td style="width:20%"><b>Frequency (%)</b></td>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
         </tr>
     </thead>
     <tbody>
     
       
         <tr>
-          <td>MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
+          <td style="font-weight: bold;">Number of tests run</td>
+          <td>123</td>
         </tr>
       
     
     </tbody>
 </table>
     
-
-    <h4>Mapping Coverage</h4>
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
     
-        <table class="freq table table-hover table-striped">
+        <table class="table table-condensed">
     <thead>
         <tr>
-            <td style="width:40%"><b>Namespace</b></td>
-            <td style="width:10%"><b>Total</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
-            <td style="width:10%"><b>Covered</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
-            <td style="width:10%"><b>Uncovered</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
+            <td style="width:100%"></td>
         </tr>
     </thead>
     <tbody>
-    
-      
         <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-          <td>2,123</td>
-          <td>20.00%</td>
-          <td>9,,123</td>
-          <td>20.00%</td>
+            <td>...</td>
         </tr>
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-          <td>2,123</td>
-          <td>20.00%</td>
-          <td>9,,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-          <td>2,123</td>
-          <td>20.00%</td>
-          <td>9,,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-    
     </tbody>
 </table>
     
-
-    <h3>Nodes (Obsolete)</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-    </ul>
-
-    <h3>Mappings</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Type</a>
-        </li>
-    </ul>
-    
-        <table class="table table-hover table-striped">
-    <thead>
-        <tr>
-            <td style="width:60%"><b>Source to Target Namespace</b></td>
-            <td style="width:20%"><b>Count</b></td>
-            <td style="width:20%"><b>Frequency (%)</b></td>
-        </tr>
-    </thead>
-    <tbody>
-    
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-    
-    </tbody>
-</table>
-    
-
-    <h3>Hierarchy edges</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-    </ul>
+</div>
+                
+            </div>
+            <div class="tab-pane " id="nodes_input">
+                
+                    
+                
+            </div>
+            <div class="tab-pane " id="nodes_obs_input">
+                
+                    
+                
+            </div>
+            <div class="tab-pane " id="mappings_input">
+                
+                    
+                
+            </div>
+            <div class="tab-pane " id="edges_input">
+                
+                    
+                
+            </div>
+        </div>
+    </div>
 </div>
             
             
@@ -495,179 +423,92 @@ div.text.about {
 </div>
 
 <div class="section-items">
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active selected" data-bs-toggle="tab" href="#home">Nodes</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#home">Nodes (Obsolete)</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Mappings</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Hierarchy edges</a>
-        </li>
-    </ul>
-
-    <h3>Nodes</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#home">Mapping Coverage</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Edge Coverage</a>
-        </li>
-    </ul>
-
-    <h4>Namespace</h4>
+    <div class="row spacing">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#summary_output">Summary</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#nodes_output">Nodes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#nodes_obs_output">Nodes (Obsolete)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#mappings_output">Mappings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab"
+                   href="#edges_output">Hierarchy edges</a>
+            </li>
+        </ul>
+        <div id="myTabContent_output" class="tab-content">
+            <div class="tab-pane active" id="summary_output">
+                
+                    <div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
     
-        <table class="table table-hover table-striped">
+        <table class="table table-condensed">
     <thead>
         <tr>
-            <td style="width:60%"><b>Namespace</b></td>
-            <td style="width:20%"><b>Count</b></td>
-            <td style="width:20%"><b>Frequency (%)</b></td>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
         </tr>
     </thead>
     <tbody>
     
       
         <tr>
-          <td>MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
+          <td style="font-weight: bold;">Number of tests run</td>
+          <td>123</td>
         </tr>
       
     
     </tbody>
 </table>
     
-
-    <h4>Mapping Coverage</h4>
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
     
-        <table class="freq table table-hover table-striped">
+        <table class="table table-condensed">
     <thead>
         <tr>
-            <td style="width:40%"><b>Namespace</b></td>
-            <td style="width:10%"><b>Total</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
-            <td style="width:10%"><b>Covered</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
-            <td style="width:10%"><b>Uncovered</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
+            <td style="width:100%"></td>
         </tr>
     </thead>
     <tbody>
-    
-      
         <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-          <td>2,123</td>
-          <td>20.00%</td>
-          <td>9,,123</td>
-          <td>20.00%</td>
+            <td>...</td>
         </tr>
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-          <td>2,123</td>
-          <td>20.00%</td>
-          <td>9,,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-          <td>2,123</td>
-          <td>20.00%</td>
-          <td>9,,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-    
     </tbody>
 </table>
     
-
-    <h3>Nodes (Obsolete)</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-    </ul>
-
-    <h3>Mappings</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Type</a>
-        </li>
-    </ul>
-    
-        <table class="table table-hover table-striped">
-    <thead>
-        <tr>
-            <td style="width:60%"><b>Source to Target Namespace</b></td>
-            <td style="width:20%"><b>Count</b></td>
-            <td style="width:20%"><b>Frequency (%)</b></td>
-        </tr>
-    </thead>
-    <tbody>
-    
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO to MONDO</td>
-          <td>22,123</td>
-          <td>20.00%</td>
-        </tr>
-      
-    
-    </tbody>
-</table>
-    
-
-    <h3>Hierarchy edges</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-    </ul>
+</div>
+                
+            </div>
+            <div class="tab-pane " id="nodes_output">
+                
+                    
+                
+            </div>
+            <div class="tab-pane " id="nodes_obs_output">
+                
+                    
+                
+            </div>
+            <div class="tab-pane " id="mappings_output">
+                
+                    
+                
+            </div>
+            <div class="tab-pane " id="edges_output">
+                
+                    
+                
+            </div>
+        </div>
+    </div>
 </div>
                 
                 
@@ -681,6 +522,215 @@ div.text.about {
 </div>
 
 <div class="section-items">
+    <div class="row spacing">
+        <div class="bs-component">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#summary_alignment">Summary</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#details_alignment">Details</a>
+                </li>
+            </ul>
+            <div id="myTabContent_alignment" class="tab-content">
+                <div class="tab-pane col-sm-12 active" id="summary_alignment">
+                    
+                        <div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Number of steps</td>
+          <td>24</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of sources</td>
+          <td>12</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Mapping type groups used</td>
+          <td>2</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Input nodes</td>
+          <td>99,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Unmapped nodes</td>
+          <td>50,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Unmapped nodes (%)</td>
+          <td>51.00%</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merged nodes</td>
+          <td>49,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merged nodes (%)</td>
+          <td>49.00%</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Merges</td>
+          <td>49,000</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:100%"></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+            <p>The <b>alignment process</b> ... bla ... more on this in RDT.</p>
+            <p>The <b>alignment process</b> ... bla ... more on this in RDT.</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+    
+</div>
+                    
+                </div>
+                <div class="tab-pane col-sm-12" id="details_alignment">
+                    
+                        <div class="overview summary">
+<h4>Alignment step details</h4>
+
+    <table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:10%"><b>Step</b></td>
+            <td style="width:15%"><b>Mapping type</b></td>
+            <td style="width:15%"><b>Source</b></td>
+            <td style="width:15%"><b>Unmapped</b></td>
+            <td style="width:15%"><b>Merged</b></td>
+            <td style="width:15%"><b>Mappings</b></td>
+            <td style="width:15%"><b>Dropped</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td>115,934</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+        </tr>
+      
+        <tr>
+            <td>1</td>
+            <td>equivalence</td>
+            <td>MONDO</td>
+            <td>94,022</td>
+            <td>20,871</td>
+            <td>20,871</td>
+            <td>0</td>
+        </tr>
+      
+        <tr>
+            <td>2</td>
+            <td>equivalence</td>
+            <td>MEDDRA</td>
+            <td>73,151</td>
+            <td>5,000</td>
+            <td>6,000</td>
+            <td>1,000</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+
+<h5>Table description</h5>
+
+    <table class="table table-hover summary">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Column</b></td>
+            <td style="width:80%"><b>Description</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-style: italic;">Step</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Mapping type</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Source</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Unmapped</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Merged</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Mappings</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Dropped</td>
+          <td></td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+
+</div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
                 
                 
@@ -694,6 +744,197 @@ div.text.about {
 </div>
 
 <div class="section-items">
+    <div class="row spacing">
+        <div class="bs-component">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#summary_connectivity">Summary</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#details_connectivity">Details</a>
+                </li>
+            </ul>
+            <div id="myTabContent_connectivity" class="tab-content">
+                <div class="tab-pane col-sm-12 active" id="summary_connectivity">
+                    
+                        <div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Number of steps</td>
+          <td>11</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of sources</td>
+          <td>11</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Input nodes</td>
+          <td>99,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Connected nodes</td>
+          <td>50,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Connected nodes (%)</td>
+          <td>51.00%</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Dangling nodes</td>
+          <td>49,000</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Dangling nodes (%)</td>
+          <td>49.00%</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Hierarchy edges</td>
+          <td>49,000</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:100%"></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>The connectivity process ... bla ... more on this in RDT.</td>
+        </tr>
+    </tbody>
+</table>
+    
+</div>
+                    
+                </div>
+                <div class="tab-pane col-sm-12 " id="details_connectivity">
+                    
+                        <div class="overview summary">
+<h4>Connectivity step details</h4>
+
+    <table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:10%"><b>Step</b></td>
+            <td style="width:15%"><b>Source</b></td>
+            <td style="width:15%"><b>Unmapped</b></td>
+            <td style="width:15%"><b>Reachable</b></td>
+            <td style="width:15%"><b>Connected</b></td>
+            <td style="width:15%"><b>Edges (available)</b></td>
+            <td style="width:15%"><b>Edges (produced)</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+            <td>1</td>
+            <td>MEDDRA</td>
+            <td>66,594</td>
+            <td>20,871</td>
+            <td>10,000</td>
+            <td>55,000</td>
+            <td>12,000</td>
+        </tr>
+      
+        <tr>
+            <td>2</td>
+            <td>ORPHANET</td>
+            <td>6,594</td>
+            <td>2,871</td>
+            <td>1,000</td>
+            <td>5,000</td>
+            <td>2,000</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+
+<h5>Table description</h5>
+
+    <table class="table table-hover summary">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Column</b></td>
+            <td style="width:80%"><b>Description</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-style: italic;">Step</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Source</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Unmapped</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Reachable</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Connected</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Edges (available)</td>
+          <td></td>
+        </tr>
+      
+        <tr>
+          <td style="font-style: italic;">Edges (produced)</td>
+          <td></td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+
+</div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
                 
             
@@ -708,32 +949,98 @@ div.text.about {
 </div>
 
 <div class="section-items">
-    
-        <div class="text about">
-    <p>Pandas Profiling is a bla...</p>
-</div>
-    
-    <div class="bs-component">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#input_data_profiling">Input</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#intermediate_data_profiling">Intermediate</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#output_data_profiling">Output</a>
-            </li>
-        </ul>
-        <div id="myTabContent_data_profiling" class="tab-content">
-            <div class="tab-pane active" id="input_data_profiling">
+    <div class="row spacing">
+        <div class="bs-component">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab"
+                       href="#summary_data_profiling">Summary</a>
+                </li>
                 
-                    <table class="table table-hover third_party_data">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab"
+                           href="#input_data_profiling">Data: Input</a>
+                    </li>
+                
+                
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab"
+                           href="#intermediate_data_profiling">Data: Intermediate</a>
+                    </li>
+                
+                
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab"
+                           href="#output_data_profiling">Data: Output</a>
+                    </li>
+                
+            </ul>
+            <div id="myTabContent_data_profiling_data" class="tab-content">
+                <div class="tab-pane col-sm-12 active" id="summary_data_profiling">
+                    
+                        <div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Time taken</td>
+          <td>1 min 23 seconds</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Profiled tables</td>
+          <td>18</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Pandas profiling version</td>
+          <td>1.2.3</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
+    
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:100%"></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>The data profiling process ... Pandas Profiling is a bla... more on this in RDT.</td>
+        </tr>
+    </tbody>
+</table>
+    
+</div>
+                    
+                </div>
+                
+                    <div class="tab-pane col-sm-12 " id="input_data_profiling">
+                        
+                            <table class="table table-hover third_party_data">
     <thead>
         <tr>
             <td style="width:20%"><b>Table type</b></td>
-            <td style="width:30%"><b>Table name</b></td>
-            <td style="width:50%"><b>Report</b></td>
+            <td style="width:20%"><b>Table name</b></td>
+            <td style="width:20%"><b>Rows</b></td>
+            <td style="width:20%"><b>File size</b></td>
+            <td style="width:20%"><b>Report</b></td>
         </tr>
     </thead>
     <tbody>
@@ -741,85 +1048,189 @@ div.text.about {
       
         <tr>
             <td><span class="badge bg-primary node">node</span></td>
-            <td><code>nodes_merged</code></td>
-            <td><a href="http://localhost:63342/onto_merger/tests/test_data/output/report/data_profile_reports/nodes_merged_report.html" target="_blank">Link</a></td>
+            <td><code>nodes.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
       
         <tr>
-            <td><span class="badge bg-primary node_obsolete">node_obsolete</span></td>
-            <td><code>node_obsolete</code></td>
-            <td><a href="http://localhost:63342/onto_merger/tests/test_data/output/report/data_profile_reports/nodes_merged_report.html" target="_blank">Link</a></td>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>node_obsolete.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
       
         <tr>
             <td><span class="badge bg-primary mapping">mapping</span></td>
-            <td><code>mapping</code></td>
-            <td><a href="http://localhost:63342/onto_merger/tests/test_data/output/report/data_profile_reports/nodes_merged_report.html" target="_blank">Link</a></td>
+            <td><code>mappings.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
       
         <tr>
             <td><span class="badge bg-primary edge">edge</span></td>
-            <td><code>edge</code></td>
-            <td><a href="http://localhost:63342/onto_merger/tests/test_data/output/report/data_profile_reports/nodes_merged_report.html" target="_blank">Link</a></td>
+            <td><code>edges_hierarchy.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
       
     
     </tbody>
 </table>
+                        
+                    </div>
                 
-            </div>
-            <div class="tab-pane " id="intermediate_data_profiling">
                 
-                    <table class="table table-hover third_party_data">
+                    <div class="tab-pane col-sm-12 " id="intermediate_data_profiling">
+                        
+                            <table class="table table-hover third_party_data">
     <thead>
         <tr>
             <td style="width:20%"><b>Table type</b></td>
-            <td style="width:30%"><b>Table name</b></td>
-            <td style="width:50%"><b>Report</b></td>
+            <td style="width:20%"><b>Table name</b></td>
+            <td style="width:20%"><b>Rows</b></td>
+            <td style="width:20%"><b>File size</b></td>
+            <td style="width:20%"><b>Report</b></td>
         </tr>
     </thead>
     <tbody>
     
       
         <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_dangling.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>node_merged.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>node_only_connected.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>node_unmapped.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
             <td><span class="badge bg-primary mapping">mapping</span></td>
-            <td><code>mapping</code></td>
-            <td><a href="http://localhost:63342/onto_merger/tests/test_data/output/report/data_profile_reports/nodes_merged_report.html" target="_blank">Link</a></td>
+            <td><code>mappings_updated.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>mappings_obsolete_to_current.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>merges_with_meta_data.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>merges_aggregated.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary edge">edge</span></td>
+            <td><code>edges_hierarchy_post.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
       
     
     </tbody>
 </table>
+                        
+                    </div>
                 
-            </div>
-            <div class="tab-pane " id="output_data_profiling">
                 
-                    <table class="table table-hover third_party_data">
+                    <div class="tab-pane col-sm-12 " id="output_data_profiling">
+                        
+                            <table class="table table-hover third_party_data">
     <thead>
         <tr>
             <td style="width:20%"><b>Table type</b></td>
-            <td style="width:30%"><b>Table name</b></td>
-            <td style="width:50%"><b>Report</b></td>
+            <td style="width:20%"><b>Table name</b></td>
+            <td style="width:20%"><b>Rows</b></td>
+            <td style="width:20%"><b>File size</b></td>
+            <td style="width:20%"><b>Report</b></td>
         </tr>
     </thead>
     <tbody>
     
       
         <tr>
-            <td><span class="badge bg-primary node_obsolete">node_obsolete</span></td>
-            <td><code>node_obsolete</code></td>
-            <td><a href="http://localhost:63342/onto_merger/tests/test_data/output/report/data_profile_reports/nodes_merged_report.html" target="_blank">Link</a></td>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
       
         <tr>
             <td><span class="badge bg-primary mapping">mapping</span></td>
-            <td><code>mapping</code></td>
-            <td><a href="http://localhost:63342/onto_merger/tests/test_data/output/report/data_profile_reports/nodes_merged_report.html" target="_blank">Link</a></td>
+            <td><code>merges.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>mappings.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary edge">edge</span></td>
+            <td><code>edges_hierarchy.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
       
     
     </tbody>
 </table>
+                        
+                    </div>
                 
             </div>
         </div>
@@ -837,82 +1248,308 @@ div.text.about {
 </div>
 
 <div class="section-items">
+    <div class="row spacing">
+        <div class="bs-component">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab"
+                       href="#summary_data_tests">Summary</a>
+                </li>
+                
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab"
+                           href="#input_data_tests">Data: Input</a>
+                    </li>
+                
+                
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab"
+                           href="#intermediate_data_tests">Data: Intermediate</a>
+                    </li>
+                
+                
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab"
+                           href="#output_data_tests">Data: Output</a>
+                    </li>
+                
+            </ul>
+            <div id="myTabContent_data_tests_data" class="tab-content">
+                <div class="tab-pane col-sm-12 active" id="summary_data_tests">
+                    
+                        <div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
     
-        <div class="text about">
-    <p>GE is a bla...</p>
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td style="font-weight: bold;">Time taken</td>
+          <td>2 min 23 seconds</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of tables tested</td>
+          <td>18</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of tests run</td>
+          <td>123</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of failed tests (input data)</td>
+          <td>0</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of failed tests (intermediate data)</td>
+          <td>0</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of failed tests (output data)</td>
+          <td>0</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">GE version</td>
+          <td>1.2.3</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+    
 </div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
     
-    <div class="bs-component">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#input_data_tests">Input</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#intermediate_data_tests">Intermediate</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#output_data_tests">Output</a>
-            </li>
-        </ul>
-        <div id="myTabContent_data_tests" class="tab-content">
-            <div class="tab-pane active" id="input_data_tests">
+        <table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:100%"></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>The data testing process ... GE is a bla... ... more on this in RDT.</td>
+        </tr>
+    </tbody>
+</table>
+    
+</div>
+                    
+                </div>
                 
-                    <table class="table table-hover third_party_data">
+                    <div class="tab-pane col-sm-12 " id="input_data_tests">
+                        
+                            <table class="table table-hover third_party_data">
     <thead>
         <tr>
             <td style="width:20%"><b>Table type</b></td>
-            <td style="width:30%"><b>Table name</b></td>
-            <td style="width:50%"><b>Report</b></td>
+            <td style="width:20%"><b>Table name</b></td>
+            <td style="width:20%"><b>Rows</b></td>
+            <td style="width:20%"><b>File size</b></td>
+            <td style="width:20%"><b>Report</b></td>
         </tr>
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="3">No values found.</td>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>node_obsolete.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>mappings.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary edge">edge</span></td>
+            <td><code>edges_hierarchy.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
     
     </tbody>
 </table>
+                        
+                    </div>
                 
-            </div>
-            <div class="tab-pane " id="intermediate_data_tests">
                 
-                    <table class="table table-hover third_party_data">
+                    <div class="tab-pane col-sm-12 " id="intermediate_data_tests">
+                        
+                            <table class="table table-hover third_party_data">
     <thead>
         <tr>
             <td style="width:20%"><b>Table type</b></td>
-            <td style="width:30%"><b>Table name</b></td>
-            <td style="width:50%"><b>Report</b></td>
+            <td style="width:20%"><b>Table name</b></td>
+            <td style="width:20%"><b>Rows</b></td>
+            <td style="width:20%"><b>File size</b></td>
+            <td style="width:20%"><b>Report</b></td>
         </tr>
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="3">No values found.</td>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_dangling.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>node_merged.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>node_only_connected.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>node_unmapped.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>mappings_updated.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>mappings_obsolete_to_current.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>merges_with_meta_data.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>merges_aggregated.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary edge">edge</span></td>
+            <td><code>edges_hierarchy_post.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
     
     </tbody>
 </table>
+                        
+                    </div>
                 
-            </div>
-            <div class="tab-pane " id="output_data_tests">
                 
-                    <table class="table table-hover third_party_data">
+                    <div class="tab-pane col-sm-12 " id="output_data_tests">
+                        
+                            <table class="table table-hover third_party_data">
     <thead>
         <tr>
             <td style="width:20%"><b>Table type</b></td>
-            <td style="width:30%"><b>Table name</b></td>
-            <td style="width:50%"><b>Report</b></td>
+            <td style="width:20%"><b>Table name</b></td>
+            <td style="width:20%"><b>Rows</b></td>
+            <td style="width:20%"><b>File size</b></td>
+            <td style="width:20%"><b>Report</b></td>
         </tr>
     </thead>
     <tbody>
     
+      
         <tr>
-            <td colspan="3">No values found.</td>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
         </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>merges.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>mappings.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary edge">edge</span></td>
+            <td><code>edges_hierarchy.csv</code></td>
+            <td></td>
+            <td></td>
+            <td><a href="http://" target="_blank">Link</a></td>
+        </tr>
+      
     
     </tbody>
 </table>
+                        
+                    </div>
                 
             </div>
         </div>
@@ -929,7 +1566,7 @@ div.text.about {
             <p class="text-muted text-center">
                 Report generated by
                 <a href="https://github.com/AstraZeneca/onto_merger" target="_blank">OntoMerger</a>
-                at 2022/05/16 01:14:18.
+                at 2022/05/16 13:03:25.
             </p>
         </div>
     </div>

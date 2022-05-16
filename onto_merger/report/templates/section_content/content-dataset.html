@@ -2,77 +2,51 @@
     {% include 'templates/section_content/section-header.html' %}
 {% endwith %}
 <div class="section-items">
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active selected" data-bs-toggle="tab" href="#home">Nodes</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#home">Nodes (Obsolete)</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Mappings</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Hierarchy edges</a>
-        </li>
-    </ul>
-
-    <h3>Nodes</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#home">Mapping Coverage</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#profile">Edge Coverage</a>
-        </li>
-    </ul>
-
-    <h4>Namespace</h4>
-    {% with
-        rows=dataset['nodes_ns']['rows'],
-        title=dataset['nodes_ns']['title']
-    %}
-        {% include 'templates/data_content/table_frequency.html' %}
-    {% endwith %}
-
-    <h4>Mapping Coverage</h4>
-    {% with
-        rows=dataset['nodes_coverage_mappings']['rows'],
-        title=dataset['nodes_coverage_mappings']['title']
-    %}
-        {% include 'templates/data_content/table_node_coverage_by_edge.html' %}
-    {% endwith %}
-
-    <h3>Nodes (Obsolete)</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-    </ul>
-
-    <h3>Mappings</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Type</a>
-        </li>
-    </ul>
-    {% with
-        rows=dataset['mappings_ns']['rows'],
-        title=dataset['mappings_ns']['title']
-    %}
-        {% include 'templates/data_content/table_frequency.html' %}
-    {% endwith %}
-
-    <h3>Hierarchy edges</h3>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home">Namespace</a>
-        </li>
-    </ul>
+    <div class="row spacing">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#summary_{{ dataset['link_title'] }}">Summary</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#nodes_{{ dataset['link_title'] }}">Nodes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#nodes_obs_{{ dataset['link_title'] }}">Nodes (Obsolete)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#mappings_{{ dataset['link_title'] }}">Mappings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab"
+                   href="#edges_{{ dataset['link_title'] }}">Hierarchy edges</a>
+            </li>
+        </ul>
+        <div id="myTabContent_{{ dataset['link_title'] }}" class="tab-content">
+            <div class="tab-pane active" id="summary_{{ dataset['link_title'] }}">
+                {% with sub_section_data=dataset['summary'] %}
+                    {% include 'templates/subsection_content/section-summary.html' %}
+                {% endwith %}
+            </div>
+            <div class="tab-pane " id="nodes_{{ dataset['link_title'] }}">
+                {% with sub_section_data=dataset['nodes'] %}
+                    {% include 'templates/subsection_content/dataset-nodes.html' %}
+                {% endwith %}
+            </div>
+            <div class="tab-pane " id="nodes_obs_{{ dataset['link_title'] }}">
+                {% with sub_section_data=dataset['nodes_obsolete'] %}
+                    {% include 'templates/subsection_content/dataset-nodes.html' %}
+                {% endwith %}
+            </div>
+            <div class="tab-pane " id="mappings_{{ dataset['link_title'] }}">
+                {% with sub_section_data=dataset['mappings'] %}
+                    {% include 'templates/subsection_content/dataset-mappings.html' %}
+                {% endwith %}
+            </div>
+            <div class="tab-pane " id="edges_{{ dataset['link_title'] }}">
+                {% with sub_section_data=dataset['edges_hierarchy'] %}
+                    {% include 'templates/subsection_content/dataset-edges-hierarchy.html' %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
 </div>

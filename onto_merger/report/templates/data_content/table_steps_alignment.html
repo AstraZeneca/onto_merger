@@ -1,0 +1,32 @@
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:10%"><b>Step</b></td>
+            <td style="width:15%"><b>Mapping type</b></td>
+            <td style="width:15%"><b>Source</b></td>
+            <td style="width:15%"><b>Unmapped</b></td>
+            <td style="width:15%"><b>Merged</b></td>
+            <td style="width:15%"><b>Mappings</b></td>
+            <td style="width:15%"><b>Dropped</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if table_data | length > 0 %}
+      {% for row in table_data %}
+        <tr>
+            <td>{{ row['step'] }}</td>
+            <td>{{ row['mapping_type_group'] }}</td>
+            <td>{{ row['source'] }}</td>
+            <td>{{ row['count_unmapped_nodes'] }}</td>
+            <td>{{ row['count_merged_nodes'] }}</td>
+            <td>{{ row['count_mappings'] }}</td>
+            <td>{{ row['count_nodes_one_source_to_many_target'] }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="7">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

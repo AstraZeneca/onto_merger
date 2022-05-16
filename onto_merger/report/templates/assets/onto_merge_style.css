@@ -64,12 +64,25 @@ span.badge.bg-primary.label {
     padding-bottom: 5px;
 }
 
+.row.spacing{
+    padding: 0.25em 1em;
+}
+
+.tab-pane {
+    padding-left: 5px;
+}
+
 .table-hover.third_party_data {
     margin: 20px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
+p.h4.table-title {
+    padding-top: 10px;
+    padding-bottom: 0px;
+    margin-bottom: 0;
+}
 
 div.overview.summary {
     margin-top: 20px;

@@ -17,8 +17,8 @@ data = {
     "output_data": data_output,
     "alignment_data": data_alignment,
     "connectivity_data": data_connectivity,
-    "data_tests": data_tests,
     "data_profiling": data_profiling,
+    "data_tests": data_tests,
 }
 
 # load and render template

@@ -1,0 +1,32 @@
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:10%"><b>Step</b></td>
+            <td style="width:15%"><b>Source</b></td>
+            <td style="width:15%"><b>Unmapped</b></td>
+            <td style="width:15%"><b>Reachable</b></td>
+            <td style="width:15%"><b>Connected</b></td>
+            <td style="width:15%"><b>Edges (available)</b></td>
+            <td style="width:15%"><b>Edges (produced)</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if table_data | length > 0 %}
+      {% for row in table_data %}
+        <tr>
+            <td>{{ row['step'] }}</td>
+            <td>{{ row['source'] }}</td>
+            <td>{{ row['count_unmapped_nodes'] }}</td>
+            <td>{{ row['count_reachable_unmapped_nodes'] }}</td>
+            <td>{{ row['count_connected_nodes'] }}</td>
+            <td>{{ row['count_available_edges'] }}</td>
+            <td>{{ row['count_produced_edges'] }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="7">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

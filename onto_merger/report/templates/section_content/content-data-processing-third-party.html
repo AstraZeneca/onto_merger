@@ -2,36 +2,59 @@
     {% include 'templates/section_content/section-header.html' %}
 {% endwith %}
 <div class="section-items">
-    {% with attribution=dataset['attribution'] %}
-        {% include 'templates/data_content/about_third_party_data.html' %}
-    {% endwith %}
-    <div class="bs-component">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#input_{{ dataset['link_title'] }}">Input</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#intermediate_{{ dataset['link_title'] }}">Intermediate</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#output_{{ dataset['link_title'] }}">Output</a>
-            </li>
-        </ul>
-        <div id="myTabContent_{{ dataset['link_title'] }}" class="tab-content">
-            <div class="tab-pane active" id="input_{{ dataset['link_title'] }}">
-                {% with table_data=dataset['tables']['input'] %}
-                    {% include 'templates/data_content/table_third_party_data.html' %}
-                {% endwith %}
-            </div>
-            <div class="tab-pane " id="intermediate_{{ dataset['link_title'] }}">
-                {% with table_data=dataset['tables']['intermediate'] %}
-                    {% include 'templates/data_content/table_third_party_data.html' %}
-                {% endwith %}
-            </div>
-            <div class="tab-pane " id="output_{{ dataset['link_title'] }}">
-                {% with table_data=dataset['tables']['output'] %}
-                    {% include 'templates/data_content/table_third_party_data.html' %}
-                {% endwith %}
+    <div class="row spacing">
+        <div class="bs-component">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab"
+                       href="#summary_{{ dataset['link_title'] }}">Summary</a>
+                </li>
+                {% if  dataset['tables']['input'] %}
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab"
+                           href="#input_{{ dataset['link_title'] }}">Data: Input</a>
+                    </li>
+                {% endif %}
+                {% if  dataset['tables']['intermediate'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab"
+                           href="#intermediate_{{ dataset['link_title'] }}">Data: Intermediate</a>
+                    </li>
+                {% endif %}
+                {% if  dataset['tables']['output'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab"
+                           href="#output_{{ dataset['link_title'] }}">Data: Output</a>
+                    </li>
+                {% endif %}
+            </ul>
+            <div id="myTabContent_{{ dataset['link_title'] }}_data" class="tab-content">
+                <div class="tab-pane col-sm-12 active" id="summary_{{ dataset['link_title'] }}">
+                    {% with sub_section_data=dataset['summary'] %}
+                        {% include 'templates/subsection_content/section-summary.html' %}
+                    {% endwith %}
+                </div>
+                {% if dataset['tables']['input'] %}
+                    <div class="tab-pane col-sm-12 " id="input_{{ dataset['link_title'] }}">
+                        {% with table_data=dataset['tables']['input'] %}
+                            {% include 'templates/data_content/table_third_party_data.html' %}
+                        {% endwith %}
+                    </div>
+                {% endif %}
+                {% if dataset['tables']['intermediate'] %}
+                    <div class="tab-pane col-sm-12 " id="intermediate_{{ dataset['link_title'] }}">
+                        {% with table_data=dataset['tables']['intermediate'] %}
+                            {% include 'templates/data_content/table_third_party_data.html' %}
+                        {% endwith %}
+                    </div>
+                {% endif %}
+                {% if dataset['tables']['output'] %}
+                    <div class="tab-pane col-sm-12 " id="output_{{ dataset['link_title'] }}">
+                        {% with table_data=dataset['tables']['output'] %}
+                            {% include 'templates/data_content/table_third_party_data.html' %}
+                        {% endwith %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
