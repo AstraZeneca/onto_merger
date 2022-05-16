@@ -375,7 +375,7 @@ data_input = {
          "dataset": {
              "analysed_entity": "Mappings",
              "analysis_table_template": "data_content/table_mapping_analysis.html",
-             "analysis_fig_path": "plotly_gant_processing.svg",
+             "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_mapping_analysis,
              "table_description": data_table_mapping_analysis_description,
@@ -386,7 +386,7 @@ data_input = {
          "dataset": {
              "analysed_entity": "Hierarchy edges",
              "analysis_table_template": "data_content/table_edge_analysis.html",
-             "analysis_fig_path": "plotly_gant_processing.svg",
+             "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_edge_analysis,
              "table_description": data_table_edge_hierarchy_analysis_description,
@@ -428,7 +428,7 @@ data_output = {
          "dataset": {
              "analysed_entity": "Merges",
              "analysis_table_template": "data_content/table_merge_analysis.html",
-             "analysis_fig_path": "plotly_gant_processing.svg",
+             "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_merge_analysis,
              "table_description": data_table_merge_analysis_description,
@@ -439,7 +439,7 @@ data_output = {
          "dataset": {
              "analysed_entity": "Mappings",
              "analysis_table_template": "data_content/table_mapping_analysis.html",
-             "analysis_fig_path": "plotly_gant_processing.svg",
+             "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_mapping_analysis,
              "table_description": data_table_mapping_analysis_description,
@@ -450,7 +450,7 @@ data_output = {
          "dataset": {
              "analysed_entity": "Hierarchy edges",
              "analysis_table_template": "data_content/table_edge_analysis.html",
-             "analysis_fig_path": "plotly_gant_processing.svg",
+             "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_edge_analysis,
              "table_description": data_table_edge_hierarchy_analysis_description,

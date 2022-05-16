@@ -28,16 +28,20 @@ def produce_vertical_bar_chart():
     fig.write_image("plotly_vertical_bar.svg")
 
 
-def produce_edge_heat_map():
-    df = px.data.medals_wide(indexed=True)
-    print(df.head(10))
-    print(list(df))
-    print(list(df.index))
-    fig = px.imshow(df)
+def prod_heat_map():
+    idx = ['MONDO', 'MEDDRA', 'MESH', 'DOID']
+    cols = ['MONDO', 'MEDDRA', 'MESH', 'DOID']
+    df = pd.DataFrame([[100, 20, 30, 40],
+                       [50, 100, 8, 15],
+                       [25, 14, 100, 8],
+                       [7, 14, 21, 100]],
+                      columns=cols, index=idx)
+    fig = px.imshow(df, text_auto=True, color_continuous_scale="blues").update_xaxes(side="top")
     fig.write_image("plotly_heat_map.svg")
-    # fig.show()
+
 
 
 # produce_vertical_bar_chart()
 
-produce_edge_heat_map()
+# produce_edge_heat_map()
+prod_heat_map()
