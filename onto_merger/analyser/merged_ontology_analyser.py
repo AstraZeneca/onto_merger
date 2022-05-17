@@ -38,7 +38,7 @@ class MergedOntologyAnalyser:
         :return: The path of the HTML report.
         """
         # render report with evaluation data
-        report_content = Template(_report_template).render(self._evaluate_merged_ontology())
+        # report_content = Template(_report_template).render(self._evaluate_merged_ontology())
         # save report
         return self._data_manager.save_merged_ontology_report(content=report_content)
 
@@ -53,8 +53,8 @@ class MergedOntologyAnalyser:
                 self._produce_detail_report_data_for_node_category(
                     node_category="Input",
                     description="The set of input nodes that assume to belong "
-                    + "to the same domain that most likely contain"
-                    + "duplicated, connected and overlapping nodes.",
+                                + "to the same domain that most likely contain"
+                                + "duplicated, connected and overlapping nodes.",
                     node_table=self._data_repo.get(TABLE_NODES),
                 ),
                 self._produce_detail_report_data_for_node_category(
@@ -79,7 +79,7 @@ class MergedOntologyAnalyser:
         return data_dic
 
     def _produce_detail_report_data_for_node_category(
-        self, node_category: str, description: str, node_table: NamedTable
+            self, node_category: str, description: str, node_table: NamedTable
     ):
         """Produce a detailed report for each node category, to be displayed in the report HTML.
 
@@ -109,50 +109,3 @@ class MergedOntologyAnalyser:
             table_count,
             diff_ratio,
         )
-
-
-"""The HTML report template string."""
-_report_template: str = """
-<!DOCTYPE html>
-<html>
-<head>
-<title>Onto-merger report</title>
-</head>
-<body>
-
-<h1>Onto-merger report</h1>
-
-
-<h2>Alignment steps</h2>
-
-{{ alignment_steps }}
-
-<h2>Connectivity steps</h2>
-
-{{ connectivity_steps }}
-
-<h2>Nodes</h2>
-
-{% for node_category in node_categories %}
-
-<hr>
-
-<h3>Nodes: {{ node_category[0] }}</h3>
-
-<ul>
-  <li><b>Description:</b> {{  node_category[1] }}</li>
-  <li><b>Size:</b> {{  node_category[2] }}</li>
-  {% if node_category[3] is not none %}
-  <li><a href="{{  node_category[4] }}">Profiling report</a></li>
-  <li><b>Namespace distribution:<br><br>{{  node_category[3] }}<br></b></li>
-  {% else %}
-  {% endif %}
-</ul>
-
-{% endfor %}
-
-<hr>
-
-</body>
-</html>
-"""
