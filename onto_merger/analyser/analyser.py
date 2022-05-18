@@ -680,13 +680,13 @@ def _produce_and_node_status_analyses(
         total_count=input_count,
         section_dataset_name=SECTION_OVERVIEW,
         data_manager=data_manager,
-        showlegend=True
+        is_one_bar=False
     )
 
 
 def _process_node_status_table(
         data: List[list], total_count: int, section_dataset_name: str,
-        data_manager: DataManager, showlegend: bool = False,
+        data_manager: DataManager, is_one_bar: bool = True,
 ) -> None:
     node_status_table = pd.DataFrame(data, columns=["category", "count", "status_no_freq"])
     node_status_table = _add_ratio_to_node_status_table(
@@ -705,7 +705,7 @@ def _process_node_status_table(
             analysed_table_name="node",
             analysis_table_suffix="status",
         ),
-        showlegend=showlegend,
+        is_one_bar=is_one_bar,
     )
 
 
@@ -884,11 +884,11 @@ def _produce_overview_analysis(data_manager: DataManager) -> None:
 # MAIN #
 def produce_report_data(data_manager: DataManager) -> None:
     logger.info(f"Started producing report analysis...")
-    # _produce_input_dataset_analysis(data_manager=data_manager)
-    # _produce_output_dataset_analysis(data_manager=data_manager)
-    # _produce_alignment_process_analysis(data_manager=data_manager)
-    # _produce_connectivity_process_analysis(data_manager=data_manager)
-    # _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
+    _produce_input_dataset_analysis(data_manager=data_manager)
+    _produce_output_dataset_analysis(data_manager=data_manager)
+    _produce_alignment_process_analysis(data_manager=data_manager)
+    _produce_connectivity_process_analysis(data_manager=data_manager)
+    _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
     _produce_overview_analysis(data_manager=data_manager)
     logger.info(f"Finished producing report analysis.")
 

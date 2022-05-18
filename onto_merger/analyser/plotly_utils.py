@@ -50,8 +50,18 @@ def produce_nodes_ns_freq_chart(
 def produce_node_status_stacked_bar_chart(
         analysis_table: DataFrame,
         file_path: str,
-        showlegend: bool
+        is_one_bar: bool,
 ):
+    if is_one_bar is True:
+        showlegend_and_axes = False
+        width = 700
+        height = 50
+    else:
+        showlegend_and_axes = True
+        width = 700
+        height = 300
+
+    # adjust setting for 1 vs multiple bars
     px.bar(
         analysis_table,
         y="category",
@@ -59,14 +69,13 @@ def produce_node_status_stacked_bar_chart(
         text="status",
         color="status_no_freq",
         orientation='h',
-        # width=1150,
-        width=700,
-        # height=0,
+        width=width,
+        height=height,
         labels={'ratio': 'Input nodes'},
     ) \
         .update_layout({
         "plot_bgcolor": _COLOR_WHITE,
-        'showlegend': showlegend,
+        'showlegend': showlegend_and_axes,
         'margin': {
             "l": 35,  # left
             "r": 0,  # right
@@ -76,9 +85,9 @@ def produce_node_status_stacked_bar_chart(
     }) \
         .update_yaxes(autorange="reversed") \
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
+        .update_xaxes(visible=showlegend_and_axes) \
+        .update_yaxes(visible=showlegend_and_axes) \
         .write_image(_get_figure_filepath(file_path=file_path))
-        # .update_xaxes(visible=False) \
-        # .update_yaxes(visible=False) \
 
 
 def produce_merged_nss_stacked_bar_chart(
