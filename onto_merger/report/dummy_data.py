@@ -1,3 +1,5 @@
+from onto_merger.report.data.table_descriptions import *
+
 # DUMMY DATA #
 data_table_node_summary = [
     {"ns": "MONDO", "input": "22,123 (19.80%)", "merged": "", "only_connected": "", "dangling": ""},
@@ -184,98 +186,6 @@ config_json_str = \
      }
 }"""
 
-# STATIC #
-data_table_node_summary_description = [
-    {"column": "Node Origin",
-     "description": "The ontology (or namespace) the node originates from."},
-    {"column": "Input",
-     "description": "Nodes that assume to belong to the same domain that most likely "
-                    + "contain duplicated, connected and overlapping nodes."},
-    {"column": "Merged",
-     "description": "Nodes that are mapped and merged onto other nodes."},
-    {"column": "Only connected",
-     "description": "Nodes that are not merged onto other nodes, but are connected to the hierarchy."},
-    {"column": "Dangling",
-     "description": "Nodes that are not neither merged nor connected."},
-]
-data_table_node_analysis_description = [
-    {"column": "Origin",
-     "description": "..."},
-    {"column": "Count",
-     "description": "..."},
-    {"column": "Frequency",
-     "description": "..."},
-    {"column": "Mapping coverage",
-     "description": "..."},
-    {"column": "Hierarchy coverage",
-     "description": "..."},
-]
-data_table_mapping_analysis_description = [
-    {"column": "Mapped nodes",
-     "description": "..."},
-    {"column": "Count",
-     "description": "..."},
-    {"column": "Frequency",
-     "description": "..."},
-    {"column": "Types",
-     "description": "..."},
-    {"column": "Provenances",
-     "description": "..."},
-]
-data_table_merge_analysis_description = [
-    {"column": "Canonical",
-     "description": "..."},
-    {"column": "Merged",
-     "description": "..."},
-    {"column": "Count",
-     "description": "..."},
-    {"column": "Frequency",
-     "description": "..."},
-]
-data_table_edge_hierarchy_analysis_description = [
-    {"column": "Sub to Super",
-     "description": "..."},
-    {"column": "Count",
-     "description": "..."},
-    {"column": "Frequency",
-     "description": "..."},
-    {"column": "Provenance",
-     "description": "..."},
-]
-data_table_alignment_steps_description = [
-    {"column": "Step",
-     "description": ""},
-    {"column": "Mapping type",
-     "description": ""},
-    {"column": "Source",
-     "description": ""},
-    {"column": "Unmapped",
-     "description": ""},
-    {"column": "Merged",
-     "description": ""},
-    {"column": "Mappings",
-     "description": ""},
-    {"column": "Dropped",
-     "description": ""},
-]
-data_table_connectivity_steps_description = [
-    {"column": "Step",
-     "description": ""},
-    {"column": "Source",
-     "description": ""},
-    {"column": "Unmapped",
-     "description": ""},
-    {"column": "Reachable",
-     "description": ""},
-    {"column": "Connected",
-     "description": ""},
-    {"column": "Edges (available)",
-     "description": ""},
-    {"column": "Edges (produced)",
-     "description": ""},
-]
-
-# SUBSECTION #
 
 # SECTIONS #
 data_overview = {
@@ -304,7 +214,7 @@ data_overview = {
             "link_title": "summary",
             "dataset": {
                 "table_analysis": data_table_node_summary,
-                "table_description": data_table_node_summary_description,
+                "table_description": table_description_node_summary,
                 "unique_id": "data_table_node_summary_description",
             },
             "template": "subsection_content/overview-summary.html"
@@ -357,7 +267,7 @@ data_input = {
         {"title": "Nodes", "link_title": "nodes",
          "dataset": {
              "table_analysis": data_table_node_analysis,
-             "table_description": data_table_node_analysis_description,
+             "table_description": table_description_node_analysis,
              "unique_id": "input_data_table_node_analysis_description",
              "is_obsolete": False,
          },
@@ -365,7 +275,7 @@ data_input = {
         {"title": "Nodes (Obsolete)", "link_title": "nodes_obsolete",
          "dataset": {
              "table_analysis": data_table_node_obs_ns_freq,
-             "table_description": data_table_node_analysis_description,
+             "table_description": table_description_node_analysis,
              "unique_id": "input_data_table_node_obs_analysis_description",
              "is_obsolete": True,
          },
@@ -377,7 +287,7 @@ data_input = {
              "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_mapping_analysis,
-             "table_description": data_table_mapping_analysis_description,
+             "table_description": table_description_mapping_analysis,
              "unique_id": "input_data_table_mapping_analysis_description",
          },
          "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"},
@@ -388,7 +298,7 @@ data_input = {
              "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_edge_analysis,
-             "table_description": data_table_edge_hierarchy_analysis_description,
+             "table_description": table_description_edge_hierarchy_analysis,
              "unique_id": "input_data_table_edge_hierarchy_analysis_description",
          },
          "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"},
@@ -418,7 +328,7 @@ data_output = {
         {"title": "Nodes", "link_title": "nodes",
          "dataset": {
              "table_analysis": data_table_node_analysis,
-             "table_description": data_table_node_analysis_description,
+             "table_description": table_description_node_analysis,
              "unique_id": "output_data_table_node_analysis_description",
              "is_obsolete": False,
          },
@@ -430,7 +340,7 @@ data_output = {
              "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_merge_analysis,
-             "table_description": data_table_merge_analysis_description,
+             "table_description": table_description_merge_analysis,
              "unique_id": "output_data_table_merge_analysis_description",
          },
          "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"},
@@ -441,7 +351,7 @@ data_output = {
              "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_mapping_analysis,
-             "table_description": data_table_mapping_analysis_description,
+             "table_description": table_description_mapping_analysis,
              "unique_id": "input_data_table_mapping_analysis_description",
          },
          "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"},
@@ -452,7 +362,7 @@ data_output = {
              "analysis_fig_path": "plotly_heat_map.svg",
              "analysis_fig_alt_text": "foo",
              "table_analysis": data_table_edge_analysis,
-             "table_description": data_table_edge_hierarchy_analysis_description,
+             "table_description": table_description_edge_hierarchy_analysis,
              "unique_id": "input_data_table_edge_hierarchy_analysis_description",
          },
          "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"},
@@ -491,7 +401,7 @@ data_alignment = {
         {"title": "Details", "link_title": "details",
          "dataset": {
              "steps_table": table_steps_alignment,
-             "table_description": data_table_alignment_steps_description,
+             "table_description": table_description_alignment_steps,
              "unique_id": "data_table_alignment_steps_description",
          },
          "template": "subsection_content/alignment-details.html"},
@@ -544,7 +454,7 @@ data_connectivity = {
         {"title": "Details", "link_title": "details",
          "dataset": {
              "steps_table": table_steps_alignment,
-             "table_description": data_table_connectivity_steps_description,
+             "table_description": table_description_connectivity_steps,
              "unique_id": "data_table_connectivity_steps_description",
          },
          "template": "subsection_content/connectivity-details.html"},

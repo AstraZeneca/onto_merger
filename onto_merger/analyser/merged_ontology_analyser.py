@@ -38,7 +38,7 @@ class MergedOntologyAnalyser:
         :return: The path of the HTML report.
         """
         # render report with evaluation data
-        # report_content = Template(_report_template).render(self._evaluate_merged_ontology())
+        report_content = Template("").render(self._evaluate_merged_ontology())
         # save report
         return self._data_manager.save_merged_ontology_report(content=report_content)
 
@@ -48,33 +48,6 @@ class MergedOntologyAnalyser:
         :return: The report data as a dictionary.
         """
         data_dic = {
-            # "summary_table": self._produce_summary_table().to_html(index=False)
-            "node_categories": [
-                self._produce_detail_report_data_for_node_category(
-                    node_category="Input",
-                    description="The set of input nodes that assume to belong "
-                                + "to the same domain that most likely contain"
-                                + "duplicated, connected and overlapping nodes.",
-                    node_table=self._data_repo.get(TABLE_NODES),
-                ),
-                self._produce_detail_report_data_for_node_category(
-                    node_category="Merged",
-                    description="Nodes that are mapped and merged onto other nodes.",
-                    node_table=self._data_repo.get(TABLE_NODES_MERGED),
-                ),
-                self._produce_detail_report_data_for_node_category(
-                    node_category="Only connected",
-                    description="Nodes that are not merged onto other nodes, but are " + "connected to the hierarchy.",
-                    node_table=self._data_repo.get(TABLE_NODES_CONNECTED_ONLY),
-                ),
-                self._produce_detail_report_data_for_node_category(
-                    node_category="Dangling",
-                    description="Nodes that are not merged or connected.",
-                    node_table=self._data_repo.get(TABLE_NODES_DANGLING),
-                ),
-            ],
-            "alignment_steps": self._data_repo.get(TABLE_ALIGNMENT_STEPS_REPORT).dataframe.to_html(index=False),
-            "connectivity_steps": self._data_repo.get(TABLE_CONNECTIVITY_STEPS_REPORT).dataframe.to_html(index=False),
         }
         return data_dic
 

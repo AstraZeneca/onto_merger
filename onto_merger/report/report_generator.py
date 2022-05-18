@@ -6,11 +6,12 @@ from jinja2 import Environment, FileSystemLoader
 
 # todo remove
 from onto_merger.report.dummy_data import *
+from onto_merger.version import __version__
 
 # data
 data = {
     "date": f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')}",
-    "version": "latest",
+    "version": __version__,
     "title": "Report",
     "overview_data": data_overview,
     "input_data": data_input,
@@ -32,5 +33,3 @@ report_content = template.render(data)
 file_path = "onto_merger_report.html"
 with open(file_path, "w") as f:
     f.write(report_content)
-
-

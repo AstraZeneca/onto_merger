@@ -52,6 +52,23 @@ def produce_vertical_bar_chart_stacked():
     fig.write_image("plotly_vertical_bar_stacked.svg")
 
 
+def produce_vertical_bar_chart_node_ns():
+    df = pd.DataFrame([
+        ["MEDDRA", 123455, 0.80],
+        ["MONDO", 22000, 0.19],
+        ["EFO", 2342, 0.20],
+    ], columns=["namespace", "namespace_count"])
+    fig = px.bar(
+        df,
+        x="namespace_count",
+        y="namespace",
+        text="namespace_count",
+        labels={'namespace': 'Namespace', 'namespace_count': 'Count'}
+    )
+    fig.update_layout(plot_bgcolor="#fff", showlegend=False).update_yaxes(autorange="reversed")
+    fig.write_image("plotly_vertical_bar_node_ns.svg")
+
+
 def produce_vertical_bar_chart():
     df = pd.DataFrame([
         [1, 0],
@@ -122,6 +139,50 @@ def produce_horizontal_bar_chart_node_types():
     fig.write_image("plotly_horizontal_bar_chart_node_types.svg")
 
 
+def produce_horizontal_bar_chart_merged_ns():
+    print("produce_horizontal_bar_chart_merged_ns")
+    df = pd.DataFrame([
+        ["ORPHANET", "MONDO", 8585, 38.31391975721873],
+        ["MESH", "MONDO", 7827, 34.93104833311019],
+        ["EFO", "MONDO", 2500, 11.157227652073013],
+        ["MESH", "FOO", 7827, 34.93104833311019],
+        ["EFO", "FOO", 2500, 11.157227652073013],
+        ["EFO", "BAR2", 2500, 11.157227652073013],
+        ["EFO", "BAR1", 2500, 11.157227652073013],
+        ["EFO", "BAR3", 2500, 11.157227652073013],
+    ], columns=["merged", "canonical", "count", "freq"])
+
+    # ["step", "ratio", "status"]
+
+    fig = px.bar(df,
+                 y="canonical",
+                 x="count",
+                 text="merged",
+                 color="merged",
+                 orientation='h',
+                 width=700,
+                 labels={
+                     'canonical': 'Canonical',
+                     'merged': 'Merged'
+                 },
+                 )
+    fig.update_layout({
+        # "plot_bgcolor": "#fff",
+        'margin': {
+            "l": 5,  # left
+            "r": 5,  # right
+            "t": 5,  # top
+            "b": 5,  # bottom
+        },
+        'yaxis': {
+            'autorange': 'reversed'
+        }
+    }).update_traces(textposition='inside',
+                     textfont_size=14,
+                     textfont_color="white")
+    fig.write_image("plotly_horizontal_bar_chart_node_merges.svg")
+
+
 def prod_heatmap(data: DataFrame, file_path: str):
     data2 = data.copy()
     print(data2)
@@ -136,6 +197,7 @@ def prod_heatmap(data: DataFrame, file_path: str):
     fig.write_image(file_path)
     # .update_xaxes(title_font=dict(size=18, family='Courier', color='crimson'))
 
+
 # produce_gantt_chart(file_path="plotly_gant_processing", data=[])
 # produce_vertical_bar_chart_stacked()
 # produce_vertical_bar_chart()
@@ -143,3 +205,5 @@ def prod_heatmap(data: DataFrame, file_path: str):
 # produce_edge_heat_map()
 # produce_horizontal_bar_chart_node_types()
 # prod_heat_map()
+# produce_horizontal_bar_chart_merged_ns()
+produce_vertical_bar_chart_node_ns()

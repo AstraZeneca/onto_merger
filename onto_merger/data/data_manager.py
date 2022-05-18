@@ -44,7 +44,7 @@ from onto_merger.data.constants import (
     TABLE_NODES,
     TABLE_NODES_DOMAIN,
     TABLES_INPUT,
-)
+    TABLES_OUTPUT, TABLES_INTERMEDIATE)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
@@ -132,6 +132,48 @@ class DataManager:
             for table_name in TABLES_INPUT
         ]
 
+    def load_output_tables(self) -> List[NamedTable]:
+        """Load the output csv-s into named tables.
+
+        :return: The output named tables.
+        """
+        return [
+            NamedTable(
+                table_name,
+                self.load_table(table_name=table_name,
+                                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}"),
+            )
+            for table_name in TABLES_OUTPUT
+        ]
+
+    def load_intermediate_tables(self) -> List[NamedTable]:
+        """Load the intermediate csv-s into named tables.
+
+        :return: The intermediate named tables.
+        """
+        return [
+            NamedTable(
+                table_name,
+                self.load_table(table_name=table_name,
+                                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"),
+            )
+            for table_name in TABLES_INTERMEDIATE
+        ]
+
+    def load_analysis_report_table_as_dict(self, section_name: str, table_name: str) -> dict:
+        return self.load_analysis_report_table(section_name=section_name, table_name=table_name).to_dict()
+
+    def load_analysis_report_table_data_stats(self, section_name: str, replace_col_name: str, table_name: str) -> dict:
+        return self.load_analysis_report_table(
+            section_name=section_name,
+            table_name=table_name
+        ).rename(columns={replace_col_name: "link"}, inplace=True).to_dict()
+
+    def load_analysis_report_table(self, section_name: str, table_name: str) -> DataFrame:
+        file_name = f"{section_name}/{table_name}"
+        file_path = os.path.join(self.get_analysis_folder_path(), file_name, ".csv")
+        return pd.read_csv(file_path)
+
     @staticmethod
     def get_absolute_path(path: str) -> str:
         """Return the absolute path for a path."""
@@ -159,6 +201,9 @@ class DataManager:
         """Produce the path for data test directory."""
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DATA_TESTS)
 
+    def get_domain_ontology_path(self) -> str:
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
+
     def get_dropped_mappings_path(self) -> str:
         """Produce the path for a dropped mapping."""
         return os.path.join(
@@ -169,7 +214,7 @@ class DataManager:
         """Produce the path for the Pandas profile report HTML."""
         table_html = f"{table_name}_report.html"
         if relative_path is True:
-            return os.path.join(DIRECTORY_PROFILED_DATA, table_html)
+            return os.path.join(DIRECTORY_OUTPUT, DIRECTORY_PROFILED_DATA, table_html)
         return os.path.join(self._get_profiled_report_directory_path(), table_html)
 
     def get_log_file_path(self) -> str:
@@ -185,7 +230,7 @@ class DataManager:
             self.get_data_tests_path(),
             self.get_dropped_mappings_path(),
             os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS),
-            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY),
+            self.get_domain_ontology_folder_path(),
         ]
         for directory_path in directory_paths:
             Path(directory_path).mkdir(parents=True, exist_ok=True)
@@ -197,7 +242,7 @@ class DataManager:
             shutil.rmtree(output_path)
 
     def save_table(
-        self, table: NamedTable, process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"
+            self, table: NamedTable, process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"
     ) -> None:
         """Save a given Pandas dataframe as a CSV."""
         # only output tables are saved
@@ -245,14 +290,14 @@ class DataManager:
             NamedTable(
                 name=TABLE_NODES_DOMAIN,
                 dataframe=data_repo.get(TABLE_NODES)
-                .dataframe[SCHEMA_NODE_ID_LIST_TABLE]
-                .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False),
+                    .dataframe[SCHEMA_NODE_ID_LIST_TABLE]
+                    .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False),
             ),
             NamedTable(
                 name=TABLE_MAPPINGS_DOMAIN,
                 dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)
-                .dataframe[SCHEMA_MAPPING_TABLE]
-                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
+                    .dataframe[SCHEMA_MAPPING_TABLE]
+                    .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
             ),
             NamedTable(
                 name=TABLE_MERGES_DOMAIN,
@@ -261,8 +306,8 @@ class DataManager:
             NamedTable(
                 name=TABLE_EDGES_HIERARCHY_DOMAIN,
                 dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST)
-                .dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
-                .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False),
+                    .dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
+                    .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False),
             ),
         ]
 
@@ -328,3 +373,27 @@ class DataManager:
             name=TABLE_EDGES_HIERARCHY,
             dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
         )
+
+    def get_project_folder_path(self) -> str:
+        return str(self._project_folder_path)
+
+    def get_input_folder_path(self) -> str:
+        return os.path.join(self._project_folder_path, DIRECTORY_INPUT)
+
+    def get_domain_ontology_folder_path(self) -> str:
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
+
+    def get_intermediate_folder_path(self) -> str:
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE)
+
+    def get_ge_data_docs_folder_path(self):
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "data_docs")
+
+    def get_ge_data_docs_validations_folder_path(self):
+        return os.path.join(self.get_ge_data_docs_folder_path(), "local_site/validations")
+
+    def get_output_report_folder_path(self):
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
+
+    def get_analysis_folder_path(self):
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, "analysis")
