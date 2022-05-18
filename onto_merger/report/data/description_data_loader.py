@@ -1,14 +1,9 @@
 """Table descriptions explaining columns of tables presented in the report."""
 
-from onto_merger.report.data.constants import (
-    SECTION_INPUT,
-    SECTION_OUTPUT,
-    SECTION_OVERVIEW,
-    SECTION_ALIGNMENT,
-    SECTION_CONNECTIVITY,
-    SECTION_DATA_PROFILING,
-    SECTION_DATA_TESTS,
-)
+
+
+import pandas as pd
+from pandas import DataFrame
 
 # COLUMN DESCRIPTIONS #
 table_description_node_summary = [
@@ -101,49 +96,12 @@ table_description_connectivity_steps = [
      "description": ""},
 ]
 
-# SUMMARY SUBSECTION DESCRIPTIONS #
-section_summary_description_overview = """..."""
-section_summary_description_input = """..."""
-section_summary_description_output = """..."""
-section_summary_description_alignment = """..."""
-section_summary_description_connectivity = """..."""
-section_summary_description_data_profiling = """..."""
-section_summary_description_data_test = """..."""
+p = "/Users/kmnb265/Documents/GitHub/onto_merger/onto_merger/report/data/table_column_descriptions"
 
-
-# LOADERS #
-def load_section_summary_description_data(section_name: str) -> str:
-    if section_name == SECTION_OVERVIEW:
-        return section_summary_description_overview
-    if section_name == SECTION_INPUT:
-        return section_summary_description_input
-    if section_name == SECTION_OUTPUT:
-        return section_summary_description_output
-    if section_name == SECTION_ALIGNMENT:
-        return section_summary_description_alignment
-    if section_name == SECTION_CONNECTIVITY:
-        return section_summary_description_connectivity
-    if section_name == SECTION_DATA_PROFILING:
-        return section_summary_description_data_profiling
-    if section_name == SECTION_DATA_TESTS:
-        return section_summary_description_data_test
-    return "..."
-
-
-def load_table_description_data(table_name: str) -> str:
-    # todo
-    # if table_name == SECTION_OVERVIEW:
-    #     return table_section_summary_description_overview
-    # if table_name == SECTION_INPUT:
-    #     return table_section_summary_description_input
-    # if table_name == SECTION_OUTPUT:
-    #     return table_section_summary_description_output
-    # if table_name == SECTION_ALIGNMENT:
-    #     return table_section_summary_description_alignment
-    # if table_name == SECTION_CONNECTIVITY:
-    #     return table_section_summary_description_connectivity
-    # if table_name == SECTION_DATA_PROFILING:
-    #     return table_section_summary_description_data_profiling
-    # if table_name == SECTION_DATA_TESTS:
-    #     return table_section_summary_description_data_test
-    return "..."
+pd.DataFrame(table_description_node_summary).to_csv(f"{p}/node_summary.csv", index=False)
+pd.DataFrame(table_description_node_analysis).to_csv(f"{p}/node_analysis.csv", index=False)
+pd.DataFrame(table_description_mapping_analysis).to_csv(f"{p}/mapping_analysis.csv", index=False)
+pd.DataFrame(table_description_merge_analysis).to_csv(f"{p}/merge_analysis.csv", index=False)
+pd.DataFrame(table_description_edge_hierarchy_analysis).to_csv(f"{p}/edge_hierarchy_analysis.csv", index=False)
+pd.DataFrame(table_description_alignment_steps).to_csv(f"{p}/alignment_steps.csv", index=False)
+pd.DataFrame(table_description_connectivity_steps).to_csv(f"{p}/connectivity_steps.csv", index=False)

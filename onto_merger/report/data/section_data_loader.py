@@ -1,9 +1,9 @@
 """Loads data for report sections."""
 from typing import List
+from datetime import datetime
 
 from data.constants import DIRECTORY_INTERMEDIATE, DIRECTORY_INPUT, DIRECTORY_OUTPUT
 from onto_merger.data.data_manager import DataManager
-from onto_merger.report.report_generator import load_section_summary_description_data, load_table_description_data
 from onto_merger.report.data.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
 from onto_merger.analyser.constants import TABLE_SECTION_SUMMARY, TABLE_NODE_ANALYSIS, TABLE_NODE_OBSOLETE_ANALYSIS, \
@@ -11,115 +11,132 @@ from onto_merger.analyser.constants import TABLE_SECTION_SUMMARY, TABLE_NODE_ANA
 
 # todo
 from onto_merger.report.dummy_data import *
+from onto_merger.version import __version__
+
+
+# REPORT #
+def load_report_data(data_manager: DataManager) -> dict:
+    return {
+        "date": f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')}",
+        "version": __version__,
+        "title": "Report",
+        "overview_data": _load_overview_section_data(data_manager=data_manager),
+        "input_data": _load_input_section_data(data_manager=data_manager),
+        "output_data": _load_output_section_data(data_manager=data_manager),
+        "alignment_data": _load_alignment_section_data(data_alignment),
+        "connectivity_data": _load_connectivity_section_data(data_manager=data_manager),
+        "data_profiling": _load_data_profiling_section_data(data_manager=data_manager),
+        "data_tests": _load_data_testing_section_data(data_manager=data_manager),
+    }
 
 
 # SECTIONS #
-def produce_section(title: str, section_name: str, subsections: List[dict]) -> dict:
+def _produce_section(title: str, section_name: str, subsections: List[dict]) -> dict:
     return {
         "title": title,
         "link_title": section_name,
-        "logo": get_section_icon_file_name(section_name=section_name),
+        "logo": _get_section_icon_file_name(section_name=section_name),
         "subsections": subsections
     }
 
 
-def load_input_section_data(data_manager: DataManager) -> dict:
+def _load_input_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_INPUT
-    return produce_section(
+    return _produce_section(
         title="Input",
         section_name=section_name,
         subsections=[
-            produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=False),
-            produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=True),
-            produce_mappings_subsection(section_name=section_name, data_manager=data_manager),
-            produce_edges_hierarchy_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=False),
+            _produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=True),
+            _produce_mappings_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_edges_hierarchy_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
 
 
-def load_output_section_data(data_manager: DataManager) -> dict:
+def _load_output_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_OUTPUT
-    return produce_section(
+    return _produce_section(
         title="Output",
         section_name=section_name,
         subsections=[
-            produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=False),
-            produce_merges_subsection(section_name=section_name, data_manager=data_manager),
-            produce_mappings_subsection(section_name=section_name, data_manager=data_manager),
-            produce_edges_hierarchy_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=False),
+            _produce_merges_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_mappings_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_edges_hierarchy_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
 
 
-def load_overview_section_data(data_manager: DataManager) -> dict:
+def _load_overview_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_OVERVIEW
-    return produce_section(
+    return _produce_section(
         title="Overview",
         section_name=section_name,
         subsections=[
-            produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            produce_overview_summary_subsection(section_name=section_name, data_manager=data_manager),
-            produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
-            produce_overview_config_subsection(section_name=section_name, data_manager=data_manager),
-            produce_overview_validation_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_config_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_validation_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
 
 
-def load_alignment_section_data(data_manager: DataManager) -> dict:
+def _load_alignment_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_ALIGNMENT
-    return produce_section(
+    return _produce_section(
         title="Alignment",
         section_name=section_name,
         subsections=[
-            produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
-            produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
 
 
-def load_connectivity_section_data(data_manager: DataManager) -> dict:
+def _load_connectivity_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_CONNECTIVITY
-    return produce_section(
+    return _produce_section(
         title="Connectivity",
         section_name=section_name,
         subsections=[
-            produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
-            produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
 
 
-def load_data_profiling_section_data(data_manager: DataManager) -> dict:
+def _load_data_profiling_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_DATA_PROFILING
-    subsections = [produce_section_summary_subsection(section_name=section_name, data_manager=data_manager)]
+    subsections = [_produce_section_summary_subsection(section_name=section_name, data_manager=data_manager)]
     subsections.extend(
-        produce_data_file_subsections(
+        _produce_data_file_subsections(
             section_name=section_name,
             data_manager=data_manager
         )
     )
-    return produce_section(
+    return _produce_section(
         title="Data Profiling",
         section_name=section_name,
         subsections=subsections
     )
 
 
-def load_data_testing_section_data(data_manager: DataManager) -> dict:
+def _load_data_testing_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_DATA_TESTS
-    subsections = [produce_section_summary_subsection(section_name=section_name, data_manager=data_manager)]
+    subsections = [_produce_section_summary_subsection(section_name=section_name, data_manager=data_manager)]
     subsections.extend(
-        produce_data_file_subsections(
+        _produce_data_file_subsections(
             section_name=section_name,
             data_manager=data_manager
         )
     )
-    return produce_section(
+    return _produce_section(
         title="Data Tests",
         section_name=section_name,
         subsections=subsections
@@ -127,12 +144,12 @@ def load_data_testing_section_data(data_manager: DataManager) -> dict:
 
 
 # SUBSECTIONS #
-def produce_section_summary_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_section_summary_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Summary",
         "link_title": section_name,
         "dataset": {
-            "description": load_section_summary_description_data(section_name=section_name),
+            "description": _load_section_summary_description_data(section_name=section_name),
             "summary_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name=TABLE_SECTION_SUMMARY
@@ -142,7 +159,7 @@ def produce_section_summary_subsection(section_name: str, data_manager: DataMana
     }
 
 
-def produce_nodes_subsection(section_name: str, data_manager: DataManager, is_obsolete: bool) -> dict:
+def _produce_nodes_subsection(section_name: str, data_manager: DataManager, is_obsolete: bool) -> dict:
     table_name = TABLE_NODE_ANALYSIS if is_obsolete is False else TABLE_NODE_OBSOLETE_ANALYSIS
     return {
         "title": "Nodes" if is_obsolete is False else "Nodes (Obsolete)",
@@ -152,16 +169,16 @@ def produce_nodes_subsection(section_name: str, data_manager: DataManager, is_ob
                 section_name=section_name,
                 table_name=table_name
             ),
-            "table_description": load_table_description_data(table_name=table_name),
-            "unique_id": get_unique_id_for_description_table(section_name=section_name,
-                                                             table_name=table_name),
+            "table_description": _load_table_description_data(table_name=table_name),
+            "unique_id": _get_unique_id_for_description_table(section_name=section_name,
+                                                              table_name=table_name),
             "is_obsolete": is_obsolete,
         },
         "template": "subsection_content/dataset-nodes.html"
     }
 
 
-def produce_mappings_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_mappings_subsection(section_name: str, data_manager: DataManager) -> dict:
     table_name = TABLE_MAPPING_ANALYSIS
     return {
         "title": "Mappings",
@@ -175,15 +192,15 @@ def produce_mappings_subsection(section_name: str, data_manager: DataManager) ->
                 section_name=section_name,
                 table_name=table_name
             ),
-            "table_description": load_table_description_data(table_name=table_name),
-            "unique_id": get_unique_id_for_description_table(section_name=section_name,
-                                                             table_name=table_name),
+            "table_description": _load_table_description_data(table_name=table_name),
+            "unique_id": _get_unique_id_for_description_table(section_name=section_name,
+                                                              table_name=table_name),
         },
         "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"
     }
 
 
-def produce_merges_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_merges_subsection(section_name: str, data_manager: DataManager) -> dict:
     table_name = TABLE_MERGE_ANALYSIS
     return {
         "title": "Merges",
@@ -197,15 +214,15 @@ def produce_merges_subsection(section_name: str, data_manager: DataManager) -> d
                 section_name=section_name,
                 table_name=table_name
             ),
-            "table_description": load_table_description_data(table_name=table_name),
-            "unique_id": get_unique_id_for_description_table(section_name=section_name,
-                                                             table_name=table_name),
+            "table_description": _load_table_description_data(table_name=table_name),
+            "unique_id": _get_unique_id_for_description_table(section_name=section_name,
+                                                              table_name=table_name),
         },
         "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"
     }
 
 
-def produce_edges_hierarchy_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_edges_hierarchy_subsection(section_name: str, data_manager: DataManager) -> dict:
     table_name = TABLE_EDGE_HIERARCHY_ANALYSIS
     return {
         "title": "Hierarchy edges", "link_title": "edges_hierarchy",
@@ -218,15 +235,15 @@ def produce_edges_hierarchy_subsection(section_name: str, data_manager: DataMana
                 section_name=section_name,
                 table_name=table_name
             ),
-            "table_description": load_table_description_data(table_name=table_name),
-            "unique_id": get_unique_id_for_description_table(section_name=section_name,
-                                                             table_name=table_name),
+            "table_description": _load_table_description_data(table_name=table_name),
+            "unique_id": _get_unique_id_for_description_table(section_name=section_name,
+                                                              table_name=table_name),
         },
         "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"}
 
 
 # todo
-def produce_overview_config_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_overview_config_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Configuration", "link_title": "configuration",
         "dataset": {
@@ -238,7 +255,7 @@ def produce_overview_config_subsection(section_name: str, data_manager: DataMana
 
 
 # todo
-def produce_overview_validation_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_overview_validation_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Validation",
         "link_title": "validation",
@@ -247,13 +264,14 @@ def produce_overview_validation_subsection(section_name: str, data_manager: Data
     }
 
 
-def produce_overview_summary_subsection(section_name: str, data_manager: DataManager) -> dict:
+# todo
+def _produce_overview_summary_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Summary",
         "link_title": "summary",
         "dataset": {
             "table_analysis": data_table_node_summary,
-            "table_description": table_description_node_summary,
+            "table_description": _load_table_description_data(table_name="node_summary"),
             "unique_id": "data_table_node_summary_description",
         },
         "template": "subsection_content/overview-summary.html"
@@ -261,7 +279,7 @@ def produce_overview_summary_subsection(section_name: str, data_manager: DataMan
 
 
 # todo
-def produce_pipeline_info_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Processing",
         "link_title": "pipeline",
@@ -282,7 +300,7 @@ def produce_pipeline_info_subsection(section_name: str, data_manager: DataManage
 
 
 # todo
-def produce_process_detail_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_process_detail_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Details",
         "link_title": "details",
@@ -294,7 +312,7 @@ def produce_process_detail_subsection(section_name: str, data_manager: DataManag
     }
 
 
-def produce_data_file_subsections(section_name: str, data_manager: DataManager) -> List[dict]:
+def _produce_data_file_subsections(section_name: str, data_manager: DataManager) -> List[dict]:
     table_name = TABLE_STATS
     template = "data_content/table_third_party_data.html"
     return [
@@ -322,11 +340,20 @@ def produce_data_file_subsections(section_name: str, data_manager: DataManager) 
     ]
 
 
+# DESCRIPTION LOADERS #
+def _load_section_summary_description_data(section_name: str) -> str:
+    return "..."
+
+
+def _load_table_description_data(table_name: str) -> dict:
+    return {}
+
+
 # HELPERS #
-def get_section_icon_file_name(section_name: str) -> str:
+def _get_section_icon_file_name(section_name: str) -> str:
     return f"icon_{section_name}.png"
 
 
-def get_unique_id_for_description_table(section_name: str, table_name: str) -> str:
+def _get_unique_id_for_description_table(section_name: str, table_name: str) -> str:
     """Unique IDs are used in the toggle javascript."""
     return f"{section_name}_{table_name}_description"
