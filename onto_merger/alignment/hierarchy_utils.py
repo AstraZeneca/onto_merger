@@ -1,9 +1,9 @@
 """Methods to produce node hierarchy and analyse node connectivity status."""
 
-import dataclasses
 import itertools
 import sys
 from typing import List, Optional, Tuple
+from datetime import datetime
 
 import pandas as pd
 from pandas import DataFrame
@@ -22,10 +22,8 @@ from onto_merger.data.constants import (
     COLUMN_TARGET_ID,
     ONTO_MERGER,
     RELATION_RDFS_SUBCLASS_OF,
-    SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
     SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MERGE_TABLE,
-    TABLE_CONNECTIVITY_STEPS_REPORT,
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MERGES_AGGREGATED,
@@ -39,6 +37,7 @@ from onto_merger.data.dataclasses import (
     ConnectivityStep,
     DataRepository,
     NamedTable,
+    convert_connectivity_steps_to_named_table
 )
 from onto_merger.logger.log import get_logger
 
@@ -76,7 +75,7 @@ def connect_nodes(
             name=TABLE_EDGES_HIERARCHY_POST,
             dataframe=pd.concat([seed_hierarchy_df, unmapped_node_hierarchy_df]).drop_duplicates(keep="first"),
         ),
-        _convert_connectivity_steps_to_named_table(steps=connectivity_steps),
+        convert_connectivity_steps_to_named_table(steps=connectivity_steps),
     ]
 
 
@@ -255,12 +254,14 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
         source_id=node_namespace, count_unmapped_node_ids=len(unmapped_node_ids_for_namespace)
     )
     if not unmapped_node_ids_for_namespace:
+        connectivity_step.task_finished()
         return [], {}, connectivity_step
 
     # get edges for ns
     edges_for_ns = mapping_utils.get_mappings_for_namespace(namespace=node_namespace, edges=hierarchy_edges)
     connectivity_step.count_available_edges = len(edges_for_ns)
     if edges_for_ns.empty:
+        connectivity_step.task_finished()
         return [], merge_and_connectivity_map_for_ns, connectivity_step
 
     # create the hierarchy graph for the namespace
@@ -305,6 +306,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
         + f"{len(connected_nodes):,d} are now connected, "
         + f"via {len(edges_for_namespace_nodes):,d} hierarchy edges."
     )
+    connectivity_step.task_finished()
 
     return edges_for_namespace_nodes, merge_and_connectivity_map_for_ns, connectivity_step
 
@@ -360,23 +362,6 @@ def _progress_bar(count, total, status=""):
     sys.stdout = sys.__stdout__
     sys.stdout.write("[%s] %s%s ...%s\r" % (bar, percents, "%", status))
     sys.stdout.flush()
-
-
-def _convert_connectivity_steps_to_named_table(
-    steps: List[ConnectivityStep],
-) -> NamedTable:
-    """Convert the list of ConnectivityStep dataclasses to a named table.
-
-    :param steps: The list of ConnectivityStep dataclasses.
-    :return: The ConnectivityStep report dataframe wrapped as a named table.
-    """
-    return NamedTable(
-        TABLE_CONNECTIVITY_STEPS_REPORT,
-        pd.DataFrame(
-            [dataclasses.astuple(step) for step in steps],
-            columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
-        ),
-    )
 
 
 def _produce_hierarchy_edge_table_from_edge_path_lists(edges_for_all_nodes: List[Tuple[str, str]]) -> DataFrame:

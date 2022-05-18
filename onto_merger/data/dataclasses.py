@@ -1,6 +1,8 @@
 """Data classes and helper methods."""
 
+import dataclasses
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Dict, List, Optional
 
 import pandas as pd
@@ -9,10 +11,14 @@ from pandas import DataFrame
 
 from onto_merger.data.constants import (
     SCHEMA_DATA_REPO_SUMMARY,
+    TABLE_PIPELINE_STEPS_REPORT,
     TABLES_DOMAIN,
     TABLES_INPUT,
     TABLES_INTERMEDIATE,
-)
+    SCHEMA_PIPELINE_STEPS_REPORT_TABLE,
+    TABLE_ALIGNMENT_STEPS_REPORT,
+    SCHEMA_ALIGNMENT_STEPS_TABLE,
+    TABLE_CONNECTIVITY_STEPS_REPORT, SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE)
 
 
 @dataclass_json
@@ -107,9 +113,9 @@ class DataRepository:
         return [self.get(table_name=table_name) for table_name in TABLES_DOMAIN if table_name in self.data]
 
     def update(
-        self,
-        table: Optional[NamedTable] = None,
-        tables: Optional[List[NamedTable]] = None,
+            self,
+            table: Optional[NamedTable] = None,
+            tables: Optional[List[NamedTable]] = None,
     ) -> None:
         """Update (adds or overwrites) either a single table or a list of named tables in the repository dictionary.
 
@@ -144,6 +150,28 @@ class DataRepository:
 
 
 @dataclass
+class RuntimeData:
+    """Represent an pipeline step metadata as a dataclass."""
+
+    task: str
+    start: str
+    end: str
+    elapsed: float
+
+    def __init__(
+            self,
+            task: str,
+            start: str,
+            end: str,
+            elapsed: float,
+    ):
+        self.task = task
+        self.start = start
+        self.end = end
+        self.elapsed = elapsed
+
+
+@dataclass
 class AlignmentStep:
     """Represent an alignment step metadata as a dataclass."""
 
@@ -154,13 +182,18 @@ class AlignmentStep:
     count_mappings: int
     count_nodes_one_source_to_many_target: int
     count_merged_nodes: int
+    task: str
+    start: str
+    start_date_time: datetime
+    end: str
+    elapsed: float
 
     def __init__(
-        self,
-        mapping_type_group: str,
-        source: str,
-        step_counter: int,
-        count_unmapped_nodes: int,
+            self,
+            mapping_type_group: str,
+            source: str,
+            step_counter: int,
+            count_unmapped_nodes: int,
     ):
         """Initialise the AlignmentStep dataclass.
 
@@ -171,6 +204,9 @@ class AlignmentStep:
         :param count_unmapped_nodes: The number of unmapped nodes at
         the start of the alignment step.
         """
+        self.start_date_time = datetime.now()
+        self.start = format_datetime(date_time=self.start_date_time)
+        self.task = f"{mapping_type_group} {source}"
         self.mapping_type_group = mapping_type_group
         self.source = source
         self.step_counter = step_counter
@@ -178,6 +214,11 @@ class AlignmentStep:
         self.count_mappings = 0
         self.count_nodes_one_source_to_many_target = 0
         self.count_merged_nodes = 0
+
+    def task_finished(self):
+        end = datetime.now()
+        self.end = format_datetime(date_time=end)
+        self.elapsed = (end - self.start_date_time).total_seconds()
 
 
 @dataclass
@@ -190,6 +231,11 @@ class ConnectivityStep:
     count_available_edges: int
     count_produced_edges: int
     count_connected_nodes: int
+    start: str
+    start_date_time: datetime
+    end: str
+    elapsed: float
+
 
     def __init__(self, source_id: str, count_unmapped_node_ids: int):
         """Initialise the ConnectivityStep dataclass.
@@ -198,9 +244,66 @@ class ConnectivityStep:
         :param count_unmapped_node_ids: The number of dangling and unmapped nodes
         of the ontology at the start of the connectivity step.
         """
+        self.start_date_time = datetime.now()
+        self.start = format_datetime(date_time=self.start_date_time)
         self.source_id = source_id
         self.count_unmapped_nodes = count_unmapped_node_ids
         self.count_reachable_unmapped_nodes = 0
         self.count_available_edges = 0
         self.count_produced_edges = 0
         self.count_connected_nodes = 0
+
+    def task_finished(self):
+        end = datetime.now()
+        self.end = format_datetime(date_time=end)
+        self.elapsed = (end - self.start_date_time).total_seconds()
+
+
+def convert_runtime_steps_to_named_table(
+        steps: List[RuntimeData],
+) -> NamedTable:
+    return NamedTable(
+        TABLE_PIPELINE_STEPS_REPORT,
+        pd.DataFrame(
+            [dataclasses.astuple(step) for step in steps],
+            columns=SCHEMA_PIPELINE_STEPS_REPORT_TABLE,
+        ),
+    )
+
+
+def convert_alignment_steps_to_named_table(
+        alignment_steps: List[AlignmentStep],
+) -> NamedTable:
+    """Convert the list of AlignmentStep dataclasses to a named table.
+
+    :param alignment_steps: The list of AlignmentStep dataclasses.
+    :return: The AlignmentStep report dataframe wrapped as a named table.
+    """
+    return NamedTable(
+        TABLE_ALIGNMENT_STEPS_REPORT,
+        pd.DataFrame(
+            [dataclasses.astuple(alignment_step) for alignment_step in alignment_steps],
+            columns=SCHEMA_ALIGNMENT_STEPS_TABLE,
+        ),
+    )
+
+
+def convert_connectivity_steps_to_named_table(
+        steps: List[ConnectivityStep],
+) -> NamedTable:
+    """Convert the list of ConnectivityStep dataclasses to a named table.
+
+    :param steps: The list of ConnectivityStep dataclasses.
+    :return: The ConnectivityStep report dataframe wrapped as a named table.
+    """
+    return NamedTable(
+        TABLE_CONNECTIVITY_STEPS_REPORT,
+        pd.DataFrame(
+            [dataclasses.astuple(step) for step in steps],
+            columns=SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE,
+        ),
+    )
+
+
+def format_datetime(date_time: datetime) -> str:
+    return f"{date_time.strftime('%Y/%m/%d %H:%M:%S')}"

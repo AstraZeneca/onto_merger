@@ -51,7 +51,7 @@ from onto_merger.data.dataclasses import (
     AlignmentConfigMappingTypeGroups,
     DataRepository,
     NamedTable,
-)
+    RuntimeData)
 from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)
@@ -275,10 +275,22 @@ class DataManager:
                             dataset: str,
                             analysed_table_name: str,
                             analysis_table_suffix: str,
-                            index=False):
+                            index=False) -> None:
         analysis_table.to_csv(
-            f"{self.get_analysis_folder_path()}/{dataset}_{analysed_table_name}_{analysis_table_suffix}.csv",
+            os.path.join(
+                self.get_analysis_folder_path(),
+                f"{dataset}_{analysed_table_name}_{analysis_table_suffix}.csv"
+            ),
             index=index
+        )
+
+    def get_analysis_figure_path(self,
+                                 dataset: str,
+                                 analysed_table_name: str,
+                                 analysis_table_suffix: str) -> str:
+        return os.path.join(
+            self.get_analysis_folder_path(),
+            f"{dataset}_{analysed_table_name}_{analysis_table_suffix}"
         )
 
     @staticmethod

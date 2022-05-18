@@ -18,7 +18,8 @@ from onto_merger.analyser.constants import TABLE_STATS, \
     ANALYSIS_NODE_NAMESPACE_FREQ, \
     TABLE_SECTION, TABLE_SUMMARY, ANALYSIS_GENERAL, ANALYSIS_PROV, ANALYSIS_TYPE, ANALYSIS_MAPPED_NSS, \
     HEATMAP_MAPPED_NSS, ANALYSIS_CONNECTED_NSS, HEATMAP_CONNECTED_NSS, ANALYSIS_MERGES_NSS, \
-    ANALYSIS_MERGES_NSS_FOR_CANONICAL
+    ANALYSIS_MERGES_NSS_FOR_CANONICAL, COLUMN_NAMESPACE_TARGET_ID, COLUMN_NAMESPACE_SOURCE_ID, COLUMN_FREQ, \
+    ANALYSIS_CONNECTED_NSS_CHART
 from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, COLUMN_COUNT, \
     COLUMN_PROVENANCE, COLUMN_RELATION, COLUMN_SOURCE_ID, COLUMN_TARGET_ID, \
     DIRECTORY_INPUT, COLUMN_SOURCE_TO_TARGET, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
@@ -30,7 +31,7 @@ from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.logger.log import get_logger
 from onto_merger.report.data.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
-
+from onto_merger.analyser import plotly_utils
 
 logger = get_logger(__name__)
 
@@ -213,17 +214,17 @@ def _produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFra
     return df
 
 
-def _produce_merge_analysis_for_merged_nss(merges: DataFrame) -> DataFrame:
+def _produce_source_to_target_analysis_for_directed_edge(edges: DataFrame) -> DataFrame:
     cols = [get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
             get_namespace_column_name_for_column(COLUMN_TARGET_ID)]
     df = produce_table_with_namespace_column_pair(
-        table=produce_table_with_namespace_column_for_node_ids(table=merges)) \
+        table=produce_table_with_namespace_column_for_node_ids(table=edges)) \
         .groupby(cols) \
-        .agg(count=(COLUMN_SOURCE_ID, 'count')) \
+        .agg(count=(COLUMN_SOURCE_ID, COLUMN_COUNT)) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
-    df["freq"] = df.apply(
-        lambda x: ((x[COLUMN_COUNT] / len(merges)) * 100), axis=1
+    df[COLUMN_FREQ] = df.apply(
+        lambda x: ((x[COLUMN_COUNT] / len(edges)) * 100), axis=1
     )
     return df
 
@@ -405,32 +406,30 @@ def _produce_and_save_summary_overview(data_manager: DataManager, data_repo: Dat
 
 
 # PRODUCE & SAVE for ENTITY #
-def _produce_and_save_node_analysis(nodes: DataFrame,
-                                    nodes_obsolete: Union[None, DataFrame],
+def _produce_and_save_node_analysis(node_tables: List[NamedTable],
                                     mappings: DataFrame,
                                     edges_hierarchy: DataFrame,
                                     dataset: str,
                                     data_manager: DataManager) -> None:
-    data_manager.save_analysis_table(
-        analysis_table=_produce_node_analysis(
-            nodes=nodes,
+    for table in node_tables:
+        analysis_table = _produce_node_analysis(
+            nodes=table.dataframe,
             mappings=mappings,
             edges_hierarchy=edges_hierarchy
-        ),
-        dataset=dataset,
-        analysed_table_name=TABLE_NODES,
-        analysis_table_suffix=ANALYSIS_GENERAL
-    )
-    if nodes_obsolete is not None:
+        )
         data_manager.save_analysis_table(
-            analysis_table=_produce_node_analysis(
-                nodes=nodes_obsolete,
-                mappings=mappings,
-                edges_hierarchy=edges_hierarchy
-            ),
+            analysis_table=analysis_table,
             dataset=dataset,
-            analysed_table_name=TABLE_NODES_OBSOLETE,
+            analysed_table_name=table.name,
             analysis_table_suffix=ANALYSIS_GENERAL
+        )
+        plotly_utils.produce_nodes_ns_freq_chart(
+            analysis_table=analysis_table,
+            file_path=data_manager.get_analysis_figure_path(
+                dataset=dataset,
+                analysed_table_name=table.name,
+                analysis_table_suffix=ANALYSIS_GENERAL
+            )
         )
 
 
@@ -456,16 +455,25 @@ def _produce_and_save_mapping_analysis(mappings: DataFrame,
         analysed_table_name=table_type,
         analysis_table_suffix=ANALYSIS_MAPPED_NSS
     )
+    mapped_nss_heatmap_data = _produce_edges_analysis_for_mapped_or_connected_nss_heatmap(
+        edges=mappings,
+        prune=False,
+        directed_edge=False
+    )
     data_manager.save_analysis_table(
-        analysis_table=_produce_edges_analysis_for_mapped_or_connected_nss_heatmap(
-            edges=mappings,
-            prune=False,
-            directed_edge=False
-        ),
+        analysis_table=mapped_nss_heatmap_data,
         dataset=dataset,
         analysed_table_name=table_type,
         analysis_table_suffix=HEATMAP_MAPPED_NSS,
         index=True
+    )
+    plotly_utils.produce_edge_heatmap(
+        analysis_table=mapped_nss_heatmap_data,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix=ANALYSIS_MAPPED_NSS
+        )
     )
 
 
@@ -479,26 +487,59 @@ def _produce_and_save_hierarchy_edge_analysis(edges: DataFrame,
         analysed_table_name=table_type,
         analysis_table_suffix=ANALYSIS_CONNECTED_NSS
     )
+    connected_nss = _produce_source_to_target_analysis_for_directed_edge(edges=edges)
     data_manager.save_analysis_table(
-        analysis_table=_produce_edges_analysis_for_mapped_or_connected_nss_heatmap(
-            edges=edges, prune=False, directed_edge=True
-        ),
+        analysis_table=connected_nss,
         dataset=dataset,
         analysed_table_name=table_type,
-        analysis_table_suffix=HEATMAP_CONNECTED_NSS,
-        index=True
+        analysis_table_suffix=ANALYSIS_CONNECTED_NSS_CHART
     )
+    plotly_utils.produce_hierarchy_nss_stacked_bar_chart(
+        analysis_table=connected_nss,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix=ANALYSIS_CONNECTED_NSS_CHART
+        )
+    )
+    # connected_nss_heatmap = _produce_edges_analysis_for_mapped_or_connected_nss_heatmap(
+    #     edges=edges, prune=False, directed_edge=True
+    # )
+    # data_manager.save_analysis_table(
+    #     analysis_table=connected_nss_heatmap,
+    #     dataset=dataset,
+    #     analysed_table_name=table_type,
+    #     analysis_table_suffix=HEATMAP_CONNECTED_NSS,
+    #     index=True
+    # )
+    # plotly_utils.produce_edge_heatmap(
+    #     analysis_table=connected_nss_heatmap,
+    #     file_path=data_manager.get_analysis_figure_path(
+    #         dataset=dataset,
+    #         analysed_table_name=table_type,
+    #         analysis_table_suffix=HEATMAP_CONNECTED_NSS
+    #     )
+    # )
 
 
 def _produce_and_save_merge_analysis(merges: DataFrame,
                                      dataset: str,
                                      data_manager: DataManager) -> None:
-    table_type = TABLE_EDGES_HIERARCHY
+    table_type = TABLE_MERGES
+    merged_nss = _produce_source_to_target_analysis_for_directed_edge(edges=merges)
     data_manager.save_analysis_table(
-        analysis_table=_produce_merge_analysis_for_merged_nss(merges=merges),
+        analysis_table=merged_nss,
         dataset=dataset,
         analysed_table_name=table_type,
         analysis_table_suffix=ANALYSIS_MERGES_NSS
+    )
+    plotly_utils.produce_merged_nss_stacked_bar_chart(
+        analysis_table=merged_nss,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix=ANALYSIS_MERGES_NSS
+        )
     )
     data_manager.save_analysis_table(
         analysis_table=_produce_merge_analysis_for_merged_nss_for_canonical(merges=merges),
@@ -519,9 +560,9 @@ def _produce_input_dataset_analysis(data_manager: DataManager) -> None:
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
     _produce_and_save_summary_input(data_manager=data_manager, data_repo=data_repo)
     _produce_and_save_node_analysis(
-        nodes=data_repo.get(table_name=TABLE_NODES).dataframe,
-        nodes_obsolete=data_repo.get(
-            table_name=TABLE_NODES_OBSOLETE).dataframe[SCHEMA_NODE_ID_LIST_TABLE],
+        node_tables=[
+            data_repo.get(table_name=TABLE_NODES), data_repo.get(table_name=TABLE_NODES_OBSOLETE)
+        ],
         mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
         edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
         dataset=section_dataset_name,
@@ -549,8 +590,9 @@ def _produce_output_dataset_analysis(data_manager: DataManager) -> None:
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
     _produce_and_save_summary_output(data_manager=data_manager, data_repo=data_repo)
     _produce_and_save_node_analysis(
-        nodes=data_repo.get(table_name=TABLE_NODES).dataframe,
-        nodes_obsolete=None,
+        node_tables=[
+            data_repo.get(table_name=TABLE_NODES)
+        ],
         mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
         edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
         dataset=section_dataset_name,
@@ -651,12 +693,12 @@ def _produce_overview_analysis(data_manager: DataManager) -> None:
 # MAIN #
 def produce_report_data(data_manager: DataManager) -> None:
     logger.info(f"Started producing report analysis...")
-    _produce_input_dataset_analysis(data_manager=data_manager)
+    # _produce_input_dataset_analysis(data_manager=data_manager)
     _produce_output_dataset_analysis(data_manager=data_manager)
-    _produce_alignment_process_analysis(data_manager=data_manager)
-    _produce_connectivity_process_analysis(data_manager=data_manager)
-    _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
-    _produce_overview_analysis(data_manager=data_manager)
+    # _produce_alignment_process_analysis(data_manager=data_manager)
+    # _produce_connectivity_process_analysis(data_manager=data_manager)
+    # _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
+    # _produce_overview_analysis(data_manager=data_manager)
     logger.info(f"Finished producing report analysis.")
 
 

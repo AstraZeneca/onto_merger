@@ -1,9 +1,7 @@
 """Alignment process runner and helper methods."""
 
-import dataclasses
 from typing import List, Tuple
 
-import pandas as pd
 from pandas import DataFrame
 
 from onto_merger.alignment import mapping_utils, merge_utils
@@ -16,9 +14,7 @@ from onto_merger.data.constants import (
     MAPPING_TYPE_GROUP_XREF,
     ONTO_MERGER,
     RELATION_MERGE,
-    SCHEMA_ALIGNMENT_STEPS_TABLE,
     SCHEMA_HIERARCHY_EDGE_TABLE,
-    TABLE_ALIGNMENT_STEPS_REPORT,
     TABLE_MAPPINGS,
     TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
     TABLE_MAPPINGS_UPDATED,
@@ -32,6 +28,7 @@ from onto_merger.data.dataclasses import (
     AlignmentStep,
     DataRepository,
     NamedTable,
+    convert_alignment_steps_to_named_table,
 )
 from onto_merger.logger.log import get_logger
 
@@ -42,10 +39,10 @@ class AlignmentManager:
     """Alignment process pipeline."""
 
     def __init__(
-        self,
-        alignment_config: AlignmentConfig,
-        data_repo: DataRepository,
-        data_manager: DataManager,
+            self,
+            alignment_config: AlignmentConfig,
+            data_repo: DataRepository,
+            data_manager: DataManager,
     ):
         """Initialise the AlignmentManager class.
 
@@ -102,10 +99,10 @@ class AlignmentManager:
         return self._data_repo_output, source_alignment_order
 
     def _align_sources(
-        self,
-        sources_to_align: List[str],
-        mapping_type_group_name: str,
-        mapping_types: List[str],
+            self,
+            sources_to_align: List[str],
+            mapping_type_group_name: str,
+            mapping_types: List[str],
     ) -> None:
         """Run the alignment for each source according to the priority order, for a given mapping type group.
 
@@ -133,11 +130,11 @@ class AlignmentManager:
             self._store_results_from_alignment_step(merges_for_source=merges_for_source, alignment_step=alignment_step)
 
     def _align_nodes_to_source(
-        self,
-        source_id: str,
-        step_counter: int,
-        mapping_type_group_name: str,
-        mapping_types: List[str],
+            self,
+            source_id: str,
+            step_counter: int,
+            mapping_type_group_name: str,
+            mapping_types: List[str],
     ) -> Tuple[NamedTable, AlignmentStep]:
         """Perform an alignment step to a source.
 
@@ -206,6 +203,7 @@ class AlignmentManager:
             mapping_type=mapping_type_group_name,
         )
         alignment_step.count_merged_nodes = len(merge_table.dataframe)
+        alignment_step.task_finished()
         logger.info(f"Finished aligning nodes onto {source_id}, mapped " + f"{len(merge_table.dataframe):,d} nodes.")
 
         return merge_table, alignment_step
@@ -273,7 +271,8 @@ class AlignmentManager:
                 source="START",
                 step_counter=0,
                 count_unmapped_nodes=(
-                    len(self._data_repo_input.get(TABLE_NODES).dataframe) - len(self_merges_for_seed_nodes.dataframe)
+                        len(self._data_repo_input.get(TABLE_NODES).dataframe) - len(
+                    self_merges_for_seed_nodes.dataframe)
                 ),
             )
         )
@@ -311,20 +310,3 @@ def produce_source_alignment_priority_order(seed_ontology_name: str, nodes: Data
     ontology_namespaces.remove(seed_ontology_name)
     priority_order.extend(ontology_namespaces)
     return priority_order
-
-
-def convert_alignment_steps_to_named_table(
-    alignment_steps: List[AlignmentStep],
-) -> NamedTable:
-    """Convert the list of AlignmentStep dataclasses to a named table.
-
-    :param alignment_steps: The list of AlignmentStep dataclasses.
-    :return: The AlignmentStep report dataframe wrapped as a named table.
-    """
-    return NamedTable(
-        TABLE_ALIGNMENT_STEPS_REPORT,
-        pd.DataFrame(
-            [dataclasses.astuple(alignment_step) for alignment_step in alignment_steps],
-            columns=SCHEMA_ALIGNMENT_STEPS_TABLE,
-        ),
-    )
