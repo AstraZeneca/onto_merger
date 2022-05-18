@@ -311,4 +311,4 @@ def convert_connectivity_steps_to_named_table(
 
 
 def format_datetime(date_time: datetime) -> str:
-    return f"{date_time.strftime('%Y/%m/%d %H:%M:%S')}"
+    return f"{date_time.strftime('%Y-%m-%d %H:%M:%S')}"

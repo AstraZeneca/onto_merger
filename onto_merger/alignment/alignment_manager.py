@@ -269,8 +269,8 @@ class AlignmentManager:
                 source="INITIALISATION",
                 step_counter=0,
                 count_unmapped_nodes=(
-                        len(self._data_repo_input.get(TABLE_NODES).dataframe) - len(
-                    self_merges_for_seed_nodes.dataframe)
+                        len(self._data_repo_input.get(TABLE_NODES).dataframe)
+                        - len(self_merges_for_seed_nodes.dataframe)
                 ),
             )
         step.task_finished()
