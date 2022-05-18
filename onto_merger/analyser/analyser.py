@@ -19,13 +19,14 @@ from onto_merger.analyser.constants import TABLE_STATS, \
     TABLE_SECTION, TABLE_SUMMARY, ANALYSIS_GENERAL, ANALYSIS_PROV, ANALYSIS_TYPE, ANALYSIS_MAPPED_NSS, \
     HEATMAP_MAPPED_NSS, ANALYSIS_CONNECTED_NSS, HEATMAP_CONNECTED_NSS, ANALYSIS_MERGES_NSS, \
     ANALYSIS_MERGES_NSS_FOR_CANONICAL, COLUMN_NAMESPACE_TARGET_ID, COLUMN_NAMESPACE_SOURCE_ID, COLUMN_FREQ, \
-    ANALYSIS_CONNECTED_NSS_CHART
+    ANALYSIS_CONNECTED_NSS_CHART, GANTT_CHART
 from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, COLUMN_COUNT, \
     COLUMN_PROVENANCE, COLUMN_RELATION, COLUMN_SOURCE_ID, COLUMN_TARGET_ID, \
     DIRECTORY_INPUT, COLUMN_SOURCE_TO_TARGET, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
     TABLE_TYPE_MAPPING, TABLES_MERGE, TABLE_TYPE_NODE, TABLE_TYPE_EDGE, DIRECTORY_INTERMEDIATE, \
     TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES, TABLE_MERGES, \
-    TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, TABLE_NODES_CONNECTED_ONLY
+    TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, TABLE_NODES_CONNECTED_ONLY, \
+    TABLE_ALIGNMENT_STEPS_REPORT, TABLE_CONNECTIVITY_STEPS_REPORT, TABLE_PIPELINE_STEPS_REPORT
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.logger.log import get_logger
@@ -636,6 +637,15 @@ def _produce_alignment_process_analysis(data_manager: DataManager) -> None:
         analysed_table_name=TABLE_NODES_UNMAPPED,
         analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
     )
+    plotly_utils.produce_gantt_chart(
+        analysis_table=data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=section_dataset_name,
+            analysed_table_name=TABLE_ALIGNMENT_STEPS_REPORT,
+            analysis_table_suffix=GANTT_CHART
+        ),
+        label_replacement={}
+    )
     # todo merges
     # todo merges aggregated
 
@@ -670,6 +680,15 @@ def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
         analysed_table_name=TABLE_NODES_DANGLING,
         analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
     )
+    plotly_utils.produce_gantt_chart(
+        analysis_table=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=section_dataset_name,
+            analysed_table_name=TABLE_CONNECTIVITY_STEPS_REPORT,
+            analysis_table_suffix=GANTT_CHART
+        ),
+        label_replacement={}
+    )
 
 
 def _produce_data_profiling_and_testing_analysis(data_manager: DataManager) -> None:
@@ -688,17 +707,26 @@ def _produce_overview_analysis(data_manager: DataManager) -> None:
     section_dataset_name = SECTION_OVERVIEW
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
     _produce_and_save_summary_overview(data_manager=data_manager, data_repo=data_repo)
+    plotly_utils.produce_gantt_chart(
+        analysis_table=data_repo.get(table_name=TABLE_PIPELINE_STEPS_REPORT).dataframe,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=section_dataset_name,
+            analysed_table_name=TABLE_PIPELINE_STEPS_REPORT,
+            analysis_table_suffix=GANTT_CHART
+        ),
+        label_replacement={}
+    )
 
 
 # MAIN #
 def produce_report_data(data_manager: DataManager) -> None:
     logger.info(f"Started producing report analysis...")
-    # _produce_input_dataset_analysis(data_manager=data_manager)
+    _produce_input_dataset_analysis(data_manager=data_manager)
     _produce_output_dataset_analysis(data_manager=data_manager)
-    # _produce_alignment_process_analysis(data_manager=data_manager)
-    # _produce_connectivity_process_analysis(data_manager=data_manager)
-    # _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
-    # _produce_overview_analysis(data_manager=data_manager)
+    _produce_alignment_process_analysis(data_manager=data_manager)
+    _produce_connectivity_process_analysis(data_manager=data_manager)
+    _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
+    _produce_overview_analysis(data_manager=data_manager)
     logger.info(f"Finished producing report analysis.")
 
 

@@ -206,7 +206,7 @@ class AlignmentStep:
         """
         self.start_date_time = datetime.now()
         self.start = format_datetime(date_time=self.start_date_time)
-        self.task = f"{mapping_type_group} {source}"
+        self.task = f"Aligning {source} {mapping_type_group}"
         self.mapping_type_group = mapping_type_group
         self.source = source
         self.step_counter = step_counter
@@ -214,6 +214,8 @@ class AlignmentStep:
         self.count_mappings = 0
         self.count_nodes_one_source_to_many_target = 0
         self.count_merged_nodes = 0
+        self.end = ""
+        self.elapsed = 0
 
     def task_finished(self):
         end = datetime.now()
@@ -231,11 +233,11 @@ class ConnectivityStep:
     count_available_edges: int
     count_produced_edges: int
     count_connected_nodes: int
+    task: str
     start: str
     start_date_time: datetime
     end: str
     elapsed: float
-
 
     def __init__(self, source_id: str, count_unmapped_node_ids: int):
         """Initialise the ConnectivityStep dataclass.
@@ -247,11 +249,14 @@ class ConnectivityStep:
         self.start_date_time = datetime.now()
         self.start = format_datetime(date_time=self.start_date_time)
         self.source_id = source_id
+        self.task = f"Connecting {source_id}"
         self.count_unmapped_nodes = count_unmapped_node_ids
         self.count_reachable_unmapped_nodes = 0
         self.count_available_edges = 0
         self.count_produced_edges = 0
         self.count_connected_nodes = 0
+        self.end = ""
+        self.elapsed = 0
 
     def task_finished(self):
         end = datetime.now()

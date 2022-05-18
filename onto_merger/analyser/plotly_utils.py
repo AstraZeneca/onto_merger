@@ -152,12 +152,12 @@ def produce_gantt_chart(
     # labels={'Task': ''}
     px.timeline(
         analysis_table,
-        x_start="Start",
-        x_end="Finish",
-        y="Task",
-        text='Duration',
+        x_start="start",
+        x_end="end",
+        y="task",
+        text="elapsed",
         width=700,
-        labels=label_replacement,
+        # labels=label_replacement,
     )\
         .update_layout(
         {

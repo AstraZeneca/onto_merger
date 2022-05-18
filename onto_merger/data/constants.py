@@ -190,6 +190,7 @@ SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE: List[str] = [
     "count_available_edges",
     "count_produced_edges",
     "count_connected_nodes",
+    "task",
     "start",
     "start_date_time",
     "end",

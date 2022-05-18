@@ -226,6 +226,7 @@ class DataManager:
     def _create_output_directory_structure(self):
         """Produce the empty directory structure for the output files.."""
         directory_paths = [
+            self.get_analysis_folder_path(),
             self._get_profiled_report_directory_path(),
             self.get_data_tests_path(),
             self.get_dropped_mappings_path(),

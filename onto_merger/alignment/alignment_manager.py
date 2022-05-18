@@ -203,7 +203,6 @@ class AlignmentManager:
             mapping_type=mapping_type_group_name,
         )
         alignment_step.count_merged_nodes = len(merge_table.dataframe)
-        alignment_step.task_finished()
         logger.info(f"Finished aligning nodes onto {source_id}, mapped " + f"{len(merge_table.dataframe):,d} nodes.")
 
         return merge_table, alignment_step
@@ -265,16 +264,18 @@ class AlignmentManager:
         self._data_repo_output.update(table=self_merges_for_seed_nodes)
 
         # record start step meta data
-        self._alignment_steps.append(
-            AlignmentStep(
+        step = AlignmentStep(
                 mapping_type_group=mapping_type_group_name,
-                source="START",
+                source="INITIALISATION",
                 step_counter=0,
                 count_unmapped_nodes=(
                         len(self._data_repo_input.get(TABLE_NODES).dataframe) - len(
                     self_merges_for_seed_nodes.dataframe)
                 ),
             )
+        step.task_finished()
+        self._alignment_steps.append(
+            step
         )
 
     def _store_results_from_alignment_step(self, merges_for_source: NamedTable, alignment_step: AlignmentStep) -> None:
@@ -284,6 +285,7 @@ class AlignmentManager:
         :param alignment_step: The alignment step meta data.
         :return:
         """
+        alignment_step.task_finished()
         self._alignment_steps.append(alignment_step)
         self._data_repo_output.update(
             table=DataManager.merge_tables_of_same_type(
