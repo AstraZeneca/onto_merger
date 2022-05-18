@@ -2,6 +2,8 @@
 from typing import List
 from datetime import datetime
 
+import pandas as pd
+
 from data.constants import DIRECTORY_INTERMEDIATE, DIRECTORY_INPUT, DIRECTORY_OUTPUT
 from onto_merger.data.data_manager import DataManager
 from onto_merger.report.data.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
@@ -346,7 +348,8 @@ def _load_section_summary_description_data(section_name: str) -> str:
 
 
 def _load_table_description_data(table_name: str) -> dict:
-    return {}
+    """Table descriptions explaining columns of tables presented in the report."""
+    return pd.read_csv(f"data/table_column_descriptions/{table_name}.csv").to_dict()
 
 
 # HELPERS #
