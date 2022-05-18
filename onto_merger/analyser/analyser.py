@@ -4,46 +4,47 @@ Produce data and figures are presented in the report.
 """
 
 import os
-from typing import Union, List
 from pathlib import Path
+from typing import Union, List
 
 import pandas as pd
 from pandas import DataFrame
 
-from onto_merger.data.data_manager import DataManager
-from onto_merger.data.dataclasses import NamedTable, DataRepository
-from onto_merger.analyser.analysis_util import produce_table_with_namespace_column_for_node_ids, \
-    produce_table_node_namespace_distribution, produce_table_with_namespace_column_pair
 from onto_merger.alignment.hierarchy_utils import produce_node_id_table_from_edge_table, \
     get_namespace_column_name_for_column
+from onto_merger.analyser.analysis_util import produce_table_with_namespace_column_for_node_ids, \
+    produce_table_node_namespace_distribution, produce_table_with_namespace_column_pair
+from onto_merger.analyser.constants import TABLE_STATS, \
+    ANALYSIS_NODE_NAMESPACE_FREQ, \
+    TABLE_SECTION, TABLE_SUMMARY, ANALYSIS_GENERAL, ANALYSIS_PROV, ANALYSIS_TYPE, ANALYSIS_MAPPED_NSS, \
+    HEATMAP_MAPPED_NSS, ANALYSIS_CONNECTED_NSS, HEATMAP_CONNECTED_NSS, ANALYSIS_MERGES_NSS, \
+    ANALYSIS_MERGES_NSS_FOR_CANONICAL
 from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, COLUMN_COUNT, \
     COLUMN_PROVENANCE, COLUMN_RELATION, COLUMN_SOURCE_ID, COLUMN_TARGET_ID, \
     DIRECTORY_INPUT, COLUMN_SOURCE_TO_TARGET, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
     TABLE_TYPE_MAPPING, TABLES_MERGE, TABLE_TYPE_NODE, TABLE_TYPE_EDGE, DIRECTORY_INTERMEDIATE, \
-    DIRECTORY_DOMAIN_ONTOLOGY, TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES
-from onto_merger.analyser.constants import TABLE_SECTION_SUMMARY, TABLE_NODE_ANALYSIS, TABLE_STATS
+    TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES, TABLE_MERGES, \
+    TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, TABLE_NODES_CONNECTED_ONLY
+from onto_merger.data.data_manager import DataManager
+from onto_merger.data.dataclasses import NamedTable, DataRepository
+from onto_merger.logger.log import get_logger
+from onto_merger.report.data.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
+    SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
 
-TEST_PATH = "/Users/kmnb265/Desktop/test_data"
-TEST_PATH_DOM = "/Users/kmnb265/Desktop/test_data/output/domain_ontology"
-TEST_PATH_INTER = "/Users/kmnb265/Desktop/test_data/output/intermediate"
-OUTPUT_PATH = f"{TEST_PATH}/output/intermediate/analysis/"
+
+logger = get_logger(__name__)
+
 COVERED = "covered"
 
 
-# HELPERS: todo remove #
-def load_csv(table_path: str) -> DataFrame:
-    df = pd.read_csv(table_path).drop_duplicates(keep="first", ignore_index=True)
-    print(f"Loaded table [{table_path.split('/')[-1]}] with {len(df):,d} row(s).")
-    return df
-
-
+# HELPERS todo
 def print_df_stats(df, name):
     print("\n\n", name, "\n\t", len(df), "\n\t", list(df))
     print(df.head(10))
 
 
 # ANALYSIS #
-def produce_node_namespace_distribution_with_type(nodes: DataFrame, metric_name: str) -> DataFrame:
+def _produce_node_namespace_distribution_with_type(nodes: DataFrame, metric_name: str) -> DataFrame:
     node_namespace_distribution_df = produce_table_node_namespace_distribution(
         node_table=produce_table_with_namespace_column_for_node_ids(table=nodes)
     )[["namespace", "count"]]
@@ -53,9 +54,9 @@ def produce_node_namespace_distribution_with_type(nodes: DataFrame, metric_name:
     return df
 
 
-def produce_node_covered_by_edge_table(nodes: DataFrame,
-                                       edges: DataFrame,
-                                       coverage_column: str) -> DataFrame:
+def _produce_node_covered_by_edge_table(nodes: DataFrame,
+                                        edges: DataFrame,
+                                        coverage_column: str) -> DataFrame:
     node_id_list_of_edges = produce_node_id_table_from_edge_table(edges=edges)
     node_id_list_of_edges[coverage_column] = True
     nodes_covered = pd.merge(
@@ -64,26 +65,25 @@ def produce_node_covered_by_edge_table(nodes: DataFrame,
         how="left",
         on=COLUMN_DEFAULT_ID,
     ).dropna(subset=[coverage_column])
-    print(f"covered nodes = {len(nodes_covered):,d} | nodes = {len(nodes):,d} | edges = {len(edges):,d}")
     return nodes_covered[SCHEMA_NODE_ID_LIST_TABLE]
 
 
-def produce_node_analysis(nodes: DataFrame, mappings: DataFrame, edges_hierarchy: DataFrame) -> DataFrame:
-    node_namespace_distribution_df = produce_node_namespace_distribution_with_type(
+def _produce_node_analysis(nodes: DataFrame, mappings: DataFrame, edges_hierarchy: DataFrame) -> DataFrame:
+    node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
         nodes=nodes, metric_name="namespace"
     )
 
-    node_mapping_coverage_df = produce_node_covered_by_edge_table(nodes=nodes,
-                                                                  edges=mappings,
-                                                                  coverage_column=COVERED)
-    node_mapping_coverage_distribution_df = produce_node_namespace_distribution_with_type(
+    node_mapping_coverage_df = _produce_node_covered_by_edge_table(nodes=nodes,
+                                                                   edges=mappings,
+                                                                   coverage_column=COVERED)
+    node_mapping_coverage_distribution_df = _produce_node_namespace_distribution_with_type(
         nodes=node_mapping_coverage_df, metric_name="mapping_coverage"
     )
 
-    node_edge_coverage_df = produce_node_covered_by_edge_table(nodes=nodes,
-                                                               edges=edges_hierarchy,
-                                                               coverage_column=COVERED)
-    node_edge_coverage_distribution_df = produce_node_namespace_distribution_with_type(
+    node_edge_coverage_df = _produce_node_covered_by_edge_table(nodes=nodes,
+                                                                edges=edges_hierarchy,
+                                                                coverage_column=COVERED)
+    node_edge_coverage_distribution_df = _produce_node_namespace_distribution_with_type(
         nodes=node_edge_coverage_df, metric_name="edge_coverage"
     )
 
@@ -119,14 +119,11 @@ def produce_node_analysis(nodes: DataFrame, mappings: DataFrame, edges_hierarchy
     node_analysis["edge_coverage_freq"] = node_analysis.apply(
         lambda x: (x['edge_coverage_count'] / x['namespace_count'] * 100), axis=1
     )
-
-    print_df_stats(node_analysis, "node_analysis")
-
     return node_analysis
 
 
-def produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
-    df = produce_node_namespace_distribution_with_type(
+def _produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
+    df = _produce_node_namespace_distribution_with_type(
         nodes=nodes, metric_name="namespace"
     )
     df["namespace_freq"] = df.apply(
@@ -135,27 +132,25 @@ def produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
     return df
 
 
-def produce_mapping_analysis_for_type(mappings: DataFrame) -> DataFrame:
+def _produce_mapping_analysis_for_type(mappings: DataFrame) -> DataFrame:
     df = mappings[[COLUMN_RELATION, COLUMN_PROVENANCE, COLUMN_SOURCE_ID]].groupby([COLUMN_RELATION]) \
         .agg(count=(COLUMN_SOURCE_ID, 'count'),
              provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
-    print_df_stats(df, "type")
     return df
 
 
-def produce_mapping_analysis_for_prov(mappings: DataFrame) -> DataFrame:
+def _produce_mapping_analysis_for_prov(mappings: DataFrame) -> DataFrame:
     df = mappings[[COLUMN_RELATION, COLUMN_PROVENANCE, COLUMN_SOURCE_ID]].groupby([COLUMN_PROVENANCE]) \
         .agg(count=(COLUMN_SOURCE_ID, 'count'),
              relations=(COLUMN_RELATION, lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
-    print_df_stats(df, "type")
     return df
 
 
-def produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
+def _produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
     col_nss_set = 'nss_set'
     df = produce_table_with_namespace_column_for_node_ids(table=mappings)
     df[col_nss_set] = df.apply(
@@ -170,13 +165,12 @@ def produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
              provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
-    print_df_stats(df, "nss")
     return df
 
 
-def produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
-                                                               prune: bool = False,
-                                                               directed_edge: bool = False):
+def _produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
+                                                                prune: bool = False,
+                                                                directed_edge: bool = False) -> DataFrame:
     cols = [get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
             get_namespace_column_name_for_column(COLUMN_TARGET_ID)]
     df = produce_table_with_namespace_column_for_node_ids(table=edges)
@@ -185,7 +179,7 @@ def produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
 
     # matrix
     namespaces = sorted(list(set((df[cols[0]].tolist() + df[cols[1]].tolist()))))
-    matrix = [range(0, len(namespaces)) for ns in namespaces]
+    matrix = [[0 for _ in namespaces] for _ in namespaces]
     for _, row in df.iterrows():
         src_ns = row[cols[0]]
         trg_ns = row[cols[1]]
@@ -205,7 +199,7 @@ def produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
     return matrix_df
 
 
-def produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFrame:
+def _produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFrame:
     df = produce_table_with_namespace_column_pair(
         table=produce_table_with_namespace_column_for_node_ids(table=edges)) \
         .groupby([COLUMN_SOURCE_TO_TARGET]) \
@@ -216,11 +210,10 @@ def produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFram
     df["freq"] = df.apply(
         lambda x: ((x[COLUMN_COUNT] / len(edges)) * 100), axis=1
     )
-    print_df_stats(df, "hierarchy_edge")
     return df
 
 
-def produce_merge_analysis_for_merged_nss(merges: DataFrame) -> DataFrame:
+def _produce_merge_analysis_for_merged_nss(merges: DataFrame) -> DataFrame:
     cols = [get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
             get_namespace_column_name_for_column(COLUMN_TARGET_ID)]
     df = produce_table_with_namespace_column_pair(
@@ -232,11 +225,10 @@ def produce_merge_analysis_for_merged_nss(merges: DataFrame) -> DataFrame:
     df["freq"] = df.apply(
         lambda x: ((x[COLUMN_COUNT] / len(merges)) * 100), axis=1
     )
-    print_df_stats(df, "merges")
     return df
 
 
-def produce_merge_analysis_for_merged_nss_for_canonicial(merges: DataFrame) -> DataFrame:
+def _produce_merge_analysis_for_merged_nss_for_canonical(merges: DataFrame) -> DataFrame:
     df = produce_table_with_namespace_column_pair(
         table=produce_table_with_namespace_column_for_node_ids(table=merges)) \
         .groupby([get_namespace_column_name_for_column(COLUMN_TARGET_ID)]) \
@@ -247,12 +239,11 @@ def produce_merge_analysis_for_merged_nss_for_canonicial(merges: DataFrame) -> D
     df["freq"] = df.apply(
         lambda x: ((x[COLUMN_COUNT] / len(merges)) * 100), axis=1
     )
-    print_df_stats(df, "merges")
     return df
 
 
 # TABLE DATA STATS #
-def get_table_type_for_table_name(table_name: str) -> str:
+def _get_table_type_for_table_name(table_name: str) -> str:
     if table_name in TABLES_NODE:
         return TABLE_TYPE_NODE
     elif table_name in TABLES_EDGE_HIERARCHY:
@@ -263,31 +254,31 @@ def get_table_type_for_table_name(table_name: str) -> str:
         return TABLE_TYPE_MAPPING
 
 
-def get_file_size_in_mb_for_named_table(table_name: str,
-                                        folder_path: str):
+def _get_file_size_in_mb_for_named_table(table_name: str,
+                                         folder_path: str) -> str:
     f_size = os.path.getsize(os.path.abspath(f"{folder_path}/{table_name}.csv"))
     return f"{f_size / float(1 << 20):,.3f} MB"
 
 
-def produce_ge_validation_report_map(validation_folder: str):
+def _produce_ge_validation_report_map(validation_folder: str) -> dict:
     return {
         str(path).split("validations/")[-1].split("/")[0].replace("_table", ""): str(path).split("output/")[-1]
         for path in Path(validation_folder).rglob('*.html')
     }
 
 
-def produce_table_stats_for_directory(tables: List[NamedTable],
-                                      folder_path: str,
-                                      data_manager: DataManager):
-    ge_validation_report_map = produce_ge_validation_report_map(
+def _produce_table_stats_for_directory(tables: List[NamedTable],
+                                       folder_path: str,
+                                       data_manager: DataManager) -> List[dict]:
+    ge_validation_report_map = _produce_ge_validation_report_map(
         validation_folder=analysis_data_manager.get_ge_data_docs_validations_folder_path(),
     )
     return [
         {
-            "type": get_table_type_for_table_name(table_name=table.name),
+            "type": _get_table_type_for_table_name(table_name=table.name),
             "name": f"{table.name}.csv",
             "rows": len(table.dataframe),
-            "size": get_file_size_in_mb_for_named_table(
+            "size": _get_file_size_in_mb_for_named_table(
                 table_name=table.name,
                 folder_path=folder_path
             ),
@@ -301,23 +292,23 @@ def produce_table_stats_for_directory(tables: List[NamedTable],
     ]
 
 
-def produce_table_stats(data_manager: DataManager) -> None:
+def _produce_table_stats(data_manager: DataManager) -> None:
     pd.DataFrame(
-        produce_table_stats_for_directory(
+        _produce_table_stats_for_directory(
             tables=data_manager.load_input_tables(),
             folder_path=data_manager.get_input_folder_path(),
             data_manager=data_manager
         )
     ).to_csv(f"{data_manager.get_analysis_folder_path()}/{DIRECTORY_INPUT}_{TABLE_STATS}.csv")
     pd.DataFrame(
-        produce_table_stats_for_directory(
+        _produce_table_stats_for_directory(
             tables=data_manager.load_intermediate_tables(),
             folder_path=data_manager.get_intermediate_folder_path(),
             data_manager=data_manager
         )
     ).to_csv(f"{data_manager.get_analysis_folder_path()}/{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}.csv")
     pd.DataFrame(
-        produce_table_stats_for_directory(
+        _produce_table_stats_for_directory(
             tables=data_manager.load_output_tables(),
             folder_path=data_manager.get_domain_ontology_folder_path(),
             data_manager=data_manager
@@ -326,135 +317,351 @@ def produce_table_stats(data_manager: DataManager) -> None:
 
 
 # SECTION SUMMARIES #
-def produce_and_save_summary_input(data_manager: DataManager, data_repo: DataRepository):
+def _produce_and_save_summary_input(data_manager: DataManager, data_repo: DataRepository) -> None:
     summary = [
-        {"metric": "Number of nodes", "values": len(data_repo.get(table_name=TABLES_NODE).dataframe)},
+        {"metric": "Number of nodes", "values": len(data_repo.get(table_name=TABLE_NODES).dataframe)},
         {"metric": "Number of obsolete nodes", "values": len(data_repo.get(table_name=TABLE_NODES_OBSOLETE).dataframe)},
         {"metric": "Number of mappings", "values": len(data_repo.get(table_name=TABLE_MAPPINGS).dataframe)},
         {"metric": "Number of hierarchy edges",
          "values": len(data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe)},
     ]
-    pd.DataFrame(summary).to_csv(
-        f"{data_manager.get_analysis_folder_path()}/{DIRECTORY_INPUT}_{TABLE_SECTION_SUMMARY}.csv")
+    data_manager.save_analysis_table(
+        analysis_table=pd.DataFrame(summary),
+        dataset=SECTION_INPUT,
+        analysed_table_name=TABLE_SECTION,
+        analysis_table_suffix=TABLE_SUMMARY
+    )
+
+
+def _produce_and_save_summary_output(data_manager: DataManager, data_repo: DataRepository) -> None:
+    summary = [
+        {"metric": "Number of nodes", "values": len(data_repo.get(table_name=TABLE_NODES).dataframe)},
+        {"metric": "Number of merges", "values": len(data_repo.get(table_name=TABLE_MERGES).dataframe)},
+        {"metric": "Number of mappings", "values": len(data_repo.get(table_name=TABLE_MAPPINGS).dataframe)},
+        {"metric": "Number of hierarchy edges",
+         "values": len(data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe)},
+    ]
+    data_manager.save_analysis_table(
+        analysis_table=pd.DataFrame(summary),
+        dataset=SECTION_OUTPUT,
+        analysed_table_name=TABLE_SECTION,
+        analysis_table_suffix=TABLE_SUMMARY
+    )
+
+
+def _produce_and_save_summary_alignment(data_manager: DataManager, data_repo: DataRepository) -> None:
+    summary = [
+    ]
+    data_manager.save_analysis_table(
+        analysis_table=pd.DataFrame(summary),
+        dataset=SECTION_ALIGNMENT,
+        analysed_table_name=TABLE_SECTION,
+        analysis_table_suffix=TABLE_SUMMARY
+    )
+
+
+def _produce_and_save_summary_connectivity(data_manager: DataManager, data_repo: DataRepository) -> None:
+    summary = [
+    ]
+    data_manager.save_analysis_table(
+        analysis_table=pd.DataFrame(summary),
+        dataset=SECTION_CONNECTIVITY,
+        analysed_table_name=TABLE_SECTION,
+        analysis_table_suffix=TABLE_SUMMARY
+    )
+
+
+def _produce_and_save_summary_data_tests(data_manager: DataManager) -> None:
+    summary = [
+    ]
+    data_manager.save_analysis_table(
+        analysis_table=pd.DataFrame(summary),
+        dataset=SECTION_DATA_TESTS,
+        analysed_table_name=TABLE_SECTION,
+        analysis_table_suffix=TABLE_SUMMARY
+    )
+
+
+def _produce_and_save_summary_data_profiling(data_manager: DataManager) -> None:
+    summary = [
+    ]
+    data_manager.save_analysis_table(
+        analysis_table=pd.DataFrame(summary),
+        dataset=SECTION_DATA_PROFILING,
+        analysed_table_name=TABLE_SECTION,
+        analysis_table_suffix=TABLE_SUMMARY
+    )
+
+
+def _produce_and_save_summary_overview(data_manager: DataManager, data_repo: DataRepository) -> None:
+    summary = [
+    ]
+    data_manager.save_analysis_table(
+        analysis_table=pd.DataFrame(summary),
+        dataset=SECTION_OVERVIEW,
+        analysed_table_name=TABLE_SECTION,
+        analysis_table_suffix=TABLE_SUMMARY
+    )
 
 
 # PRODUCE & SAVE for ENTITY #
-def produce_and_save_node_analysis(nodes: DataFrame,
-                                   nodes_obs: Union[None, DataFrame],
-                                   mappings: DataFrame,
-                                   edges_hierarchy: DataFrame,
-                                   dataset: str) -> None:
-    produce_node_analysis(nodes=nodes,
-                          mappings=mappings,
-                          edges_hierarchy=edges_hierarchy) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_{TABLE_NODE_ANALYSIS}.csv", index=False)
-    if nodes_obs:
-        produce_node_analysis(nodes=nodes_obs,
-                              mappings=mappings,
-                              edges_hierarchy=edges_hierarchy) \
-            .to_csv(f"{OUTPUT_PATH}/{dataset}_nodes_obsolete.csv", index=False)
+def _produce_and_save_node_analysis(nodes: DataFrame,
+                                    nodes_obsolete: Union[None, DataFrame],
+                                    mappings: DataFrame,
+                                    edges_hierarchy: DataFrame,
+                                    dataset: str,
+                                    data_manager: DataManager) -> None:
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_analysis(
+            nodes=nodes,
+            mappings=mappings,
+            edges_hierarchy=edges_hierarchy
+        ),
+        dataset=dataset,
+        analysed_table_name=TABLE_NODES,
+        analysis_table_suffix=ANALYSIS_GENERAL
+    )
+    if nodes_obsolete is not None:
+        data_manager.save_analysis_table(
+            analysis_table=_produce_node_analysis(
+                nodes=nodes_obsolete,
+                mappings=mappings,
+                edges_hierarchy=edges_hierarchy
+            ),
+            dataset=dataset,
+            analysed_table_name=TABLE_NODES_OBSOLETE,
+            analysis_table_suffix=ANALYSIS_GENERAL
+        )
 
 
-def produce_and_save_mapping_analysis(mappings: DataFrame, dataset: str) -> None:
-    produce_mapping_analysis_for_prov(mappings=mappings) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_mappings_prov.csv", index=False)
-    produce_mapping_analysis_for_type(mappings=mappings) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_mappings_type.csv", index=False)
-    produce_mapping_analysis_for_mapped_nss(mappings) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_mappings_mapped_nss.csv", index=False)
-    produce_edges_analysis_for_mapped_or_connected_nss_heatmap(mappings, prune=False, directed_edge=False) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_mappings_mapped_nss_heatmap.csv")
+def _produce_and_save_mapping_analysis(mappings: DataFrame,
+                                       dataset: str,
+                                       data_manager: DataManager) -> None:
+    table_type = TABLE_MAPPINGS
+    data_manager.save_analysis_table(
+        analysis_table=_produce_mapping_analysis_for_prov(mappings=mappings),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_PROV
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_mapping_analysis_for_type(mappings=mappings),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_TYPE
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_mapping_analysis_for_mapped_nss(mappings=mappings),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_MAPPED_NSS
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_edges_analysis_for_mapped_or_connected_nss_heatmap(
+            edges=mappings,
+            prune=False,
+            directed_edge=False
+        ),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=HEATMAP_MAPPED_NSS,
+        index=True
+    )
 
 
-def produce_and_save_hierarchy_edge_analysis(edges: DataFrame, dataset: str) -> None:
-    produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_hierarchy_edge_connected_nss.csv")
-    produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges=edges, prune=False, directed_edge=True) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_hierarchy_connected_nss_heatmap.csv", index=True)
-    produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges=edges, prune=True, directed_edge=True) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_hierarchy_edge_connected_nss_heatmap_pruned.csv", index=True)
+def _produce_and_save_hierarchy_edge_analysis(edges: DataFrame,
+                                              dataset: str,
+                                              data_manager: DataManager) -> None:
+    table_type = TABLE_EDGES_HIERARCHY
+    data_manager.save_analysis_table(
+        analysis_table=_produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_CONNECTED_NSS
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_edges_analysis_for_mapped_or_connected_nss_heatmap(
+            edges=edges, prune=False, directed_edge=True
+        ),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=HEATMAP_CONNECTED_NSS,
+        index=True
+    )
 
 
-def produce_and_save_merge_analysis(merges: DataFrame, dataset: str) -> None:
-    produce_merge_analysis_for_merged_nss(merges=merges) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_merges_nss.csv")
-    produce_merge_analysis_for_merged_nss_for_canonicial(merges=merges) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_merges_nss2.csv")
+def _produce_and_save_merge_analysis(merges: DataFrame,
+                                     dataset: str,
+                                     data_manager: DataManager) -> None:
+    table_type = TABLE_EDGES_HIERARCHY
+    data_manager.save_analysis_table(
+        analysis_table=_produce_merge_analysis_for_merged_nss(merges=merges),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_MERGES_NSS
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_merge_analysis_for_merged_nss_for_canonical(merges=merges),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_MERGES_NSS_FOR_CANONICAL
+    )
 
 
 # PRODUCE & SAVE for DATASET #
-def produce_input_dataset_report_data(data_manager: DataManager):
+def _produce_input_dataset_analysis(data_manager: DataManager) -> None:
     # load data
     data_repo = DataRepository()
     data_repo.update(tables=data_manager.load_input_tables())
 
     # analyse and save
-    produce_and_save_node_analysis(nodes=data_repo.get(table_name=TABLE_NODES).dataframe,
-                                   nodes_obs=data_repo.get(
-                                       table_name=TABLE_NODES_OBSOLETE).dataframe[SCHEMA_NODE_ID_LIST_TABLE],
-                                   mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
-                                   edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
-                                   dataset=DIRECTORY_INPUT)
-    produce_and_save_mapping_analysis(mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
-                                      dataset=DIRECTORY_INPUT)
-    produce_and_save_hierarchy_edge_analysis(edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
-                                             dataset=DIRECTORY_INPUT)
-    produce_and_save_summary_input(data_manager=data_manager, data_repo=data_repo)
+    section_dataset_name = SECTION_INPUT
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_input(data_manager=data_manager, data_repo=data_repo)
+    _produce_and_save_node_analysis(
+        nodes=data_repo.get(table_name=TABLE_NODES).dataframe,
+        nodes_obsolete=data_repo.get(
+            table_name=TABLE_NODES_OBSOLETE).dataframe[SCHEMA_NODE_ID_LIST_TABLE],
+        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
+        edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_mapping_analysis(
+        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_hierarchy_edge_analysis(
+        edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
 
 
-def analyse_output_dataset():
-    # load
-    output_nodes = load_csv(f"{TEST_PATH_DOM}/nodes.csv")
-    output_mappings = load_csv(f"{TEST_PATH_DOM}/mappings.csv")
-    output_merges = load_csv(f"{TEST_PATH_DOM}/merges.csv")
-    output_edges_hierarchy = load_csv(f"{TEST_PATH_DOM}/edges_hierarchy.csv")
-
-    # analyse and save
-    produce_and_save_node_analysis(nodes=output_nodes,
-                                   nodes_obs=None,
-                                   mappings=output_mappings,
-                                   edges_hierarchy=output_edges_hierarchy,
-                                   dataset=DIRECTORY_OUTPUT)
-    produce_and_save_mapping_analysis(mappings=output_mappings,
-                                      dataset=DIRECTORY_OUTPUT)
-    produce_and_save_hierarchy_edge_analysis(edges=output_edges_hierarchy,
-                                             dataset=DIRECTORY_OUTPUT)
-    produce_and_save_merge_analysis(merges=output_merges,
-                                    dataset=DIRECTORY_OUTPUT)
-
-
-def analyse_alignment_process_dataset():
-    # load
-    nodes_merged = load_csv(f"{TEST_PATH_INTER}/nodes_merged.csv")
-    nodes_unmapped = load_csv(f"{TEST_PATH_INTER}/nodes_unmapped.csv")
+def _produce_output_dataset_analysis(data_manager: DataManager) -> None:
+    # load data
+    data_repo = DataRepository()
+    data_repo.update(tables=data_manager.load_output_tables())
 
     # analyse and save
-    dataset = "alignment"
-    produce_node_namespace_freq(nodes=nodes_merged) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_nodes_merged_ns_freq.csv")
-    produce_node_namespace_freq(nodes=nodes_unmapped) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_nodes_unmapped_ns_freq.csv")
+    section_dataset_name = SECTION_OUTPUT
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_output(data_manager=data_manager, data_repo=data_repo)
+    _produce_and_save_node_analysis(
+        nodes=data_repo.get(table_name=TABLE_NODES).dataframe,
+        nodes_obsolete=None,
+        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
+        edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_mapping_analysis(
+        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_hierarchy_edge_analysis(
+        edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_merge_analysis(
+        merges=data_repo.get(table_name=TABLE_MERGES).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
 
 
-def analyse_connectivity_process_dataset():
-    # load
-    nodes_dangling = load_csv(f"{TEST_PATH_INTER}/nodes_dangling.csv")
-    nodes_merged = load_csv(f"{TEST_PATH_INTER}/nodes_merged.csv")
+def _produce_alignment_process_analysis(data_manager: DataManager) -> None:
+    # load data
+    data_repo = DataRepository()
+    data_repo.update(tables=data_manager.load_intermediate_tables())
 
     # analyse and save
-    dataset = "connectivity"
-    produce_node_namespace_freq(nodes=nodes_dangling) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_nodes_dangling_ns_freq.csv")
-    produce_node_namespace_freq(nodes=nodes_merged) \
-        .to_csv(f"{OUTPUT_PATH}/{dataset}_nodes_merged_ns_freq.csv")
+    section_dataset_name = SECTION_ALIGNMENT
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_alignment(data_manager=data_manager, data_repo=data_repo)
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_MERGED).dataframe),
+        dataset=section_dataset_name,
+        analysed_table_name=TABLE_NODES_MERGED,
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe),
+        dataset=section_dataset_name,
+        analysed_table_name=TABLE_NODES_UNMAPPED,
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
+    # todo merges
+    # todo merges aggregated
 
 
-def produce_data_profiling_and_testing_report_data(data_manager: DataManager):
-    produce_table_stats(data_manager=data_manager)
+def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
+    # load data
+    data_repo = DataRepository()
+    data_repo.update(tables=data_manager.load_intermediate_tables())
+
+    # analyse and save
+    section_dataset_name = SECTION_CONNECTIVITY
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_connectivity(data_manager=data_manager, data_repo=data_repo)
+    # todo
+    # data_manager.save_analysis_table(
+    #     analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe),
+    #     dataset=dataset,
+    #     analysed_table_name=TABLE_NODES_CONNECTED,
+    #     analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    # )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(
+            nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED_ONLY).dataframe),
+        dataset=section_dataset_name,
+        analysed_table_name=TABLE_NODES_CONNECTED_ONLY,
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(
+            nodes=data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe),
+        dataset=section_dataset_name,
+        analysed_table_name=TABLE_NODES_DANGLING,
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
 
 
-project_folder_path = os.path.abspath(TEST_PATH)
+def _produce_data_profiling_and_testing_analysis(data_manager: DataManager) -> None:
+    logger.info(f"Producing report section '{SECTION_DATA_PROFILING}' and '{SECTION_DATA_TESTS}' analysis...")
+    _produce_table_stats(data_manager=data_manager)
+    _produce_and_save_summary_data_profiling(data_manager=data_manager)
+    _produce_and_save_summary_data_tests(data_manager=data_manager)
+
+
+def _produce_overview_analysis(data_manager: DataManager) -> None:
+    # load data
+    data_repo = DataRepository()
+    data_repo.update(tables=data_manager.load_output_tables())  # todo
+
+    # analyse and save
+    section_dataset_name = SECTION_OVERVIEW
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_overview(data_manager=data_manager, data_repo=data_repo)
+
+
+# MAIN #
+def produce_report_data(data_manager: DataManager) -> None:
+    logger.info(f"Started producing report analysis...")
+    _produce_input_dataset_analysis(data_manager=data_manager)
+    _produce_output_dataset_analysis(data_manager=data_manager)
+    _produce_alignment_process_analysis(data_manager=data_manager)
+    _produce_connectivity_process_analysis(data_manager=data_manager)
+    _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
+    _produce_overview_analysis(data_manager=data_manager)
+    logger.info(f"Finished producing report analysis.")
+
+
+# todo
+project_folder_path = os.path.abspath("/Users/kmnb265/Desktop/test_data")
 analysis_data_manager = DataManager(project_folder_path=project_folder_path,
                                     clear_output_directory=False)
-# produce_input_dataset_report_data(data_manager=analysis_data_manager)
-produce_data_profiling_and_testing_report_data(data_manager=analysis_data_manager)
+produce_report_data(data_manager=analysis_data_manager)

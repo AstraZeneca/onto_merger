@@ -270,6 +270,17 @@ class DataManager:
             process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}",
         )
 
+    def save_analysis_table(self,
+                            analysis_table: DataFrame,
+                            dataset: str,
+                            analysed_table_name: str,
+                            analysis_table_suffix: str,
+                            index=False):
+        analysis_table.to_csv(
+            f"{self.get_analysis_folder_path()}/{dataset}_{analysed_table_name}_{analysis_table_suffix}.csv",
+            index=index
+        )
+
     @staticmethod
     def produce_domain_ontology_tables(data_repo: DataRepository) -> List[NamedTable]:
         """Produce the domain ontology files with minimal data.
