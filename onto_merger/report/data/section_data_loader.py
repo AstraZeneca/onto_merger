@@ -1,4 +1,5 @@
 """Loads data for report sections."""
+import json
 from typing import List
 from datetime import datetime
 import os
@@ -263,7 +264,7 @@ def _produce_overview_config_subsection(section_name: str, data_manager: DataMan
         "title": "Configuration", "link_title": "configuration",
         "dataset": {
             "about": "The config JSON ...",
-            "config_json": "..."
+            "config_json": json.dumps(data_manager.load_alignment_config().as_dict, indent=4)
         },
         "template": "subsection_content/overview-configuration.html"
     }

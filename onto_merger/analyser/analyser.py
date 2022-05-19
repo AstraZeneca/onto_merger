@@ -6,10 +6,11 @@ import json
 import os
 from pathlib import Path
 from typing import Union, List
-import itertools
+from datetime import timedelta
 
 import pandas as pd
 from pandas import DataFrame
+from pandas_profiling import __version__ as pandas_profiling_version
 
 from onto_merger.alignment.hierarchy_utils import produce_node_id_table_from_edge_table, \
     get_namespace_column_name_for_column
@@ -36,6 +37,7 @@ from onto_merger.report.data.constants import SECTION_INPUT, SECTION_OUTPUT, SEC
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
 from onto_merger.analyser import plotly_utils
 from onto_merger.report import report_generator
+from onto_merger.version import __version__ as onto_merger_version
 
 logger = get_logger(__name__)
 
@@ -138,6 +140,133 @@ def _produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
     return df
 
 
+# NODE STATUS TABLES & CHARTS #
+def _produce_and_node_status_analyses(
+        seed_name: str, data_manager: DataManager, data_repo: DataRepository,
+) -> DataFrame:
+    # tables
+    nodes = data_repo.get(TABLE_NODES).dataframe
+    node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
+        nodes=nodes, metric_name="namespace"
+    )
+    nodes_connected = produce_node_id_table_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
+    nodes_connected_only = data_repo.get(TABLE_NODES_CONNECTED_ONLY).dataframe
+    nodes_unmapped = data_repo.get(TABLE_NODES_UNMAPPED).dataframe
+    nodes_dangling = data_repo.get(TABLE_NODES_DANGLING).dataframe
+
+    # counts
+    input_count = len(nodes)
+    seed_node_count = node_namespace_distribution_df \
+        .query(expr=f'{COLUMN_NAMESPACE} == "{seed_name}"', inplace=False)['namespace_count'].iloc[0]
+    non_seed_count = input_count - seed_node_count
+    unmapped_count = len(nodes_unmapped)
+    connected_only_count = len(nodes_connected_only)
+    dangling_count = len(nodes_dangling)
+    merge_analysis_df = _produce_merge_analysis_for_merged_nss_for_canonical(
+        merges=data_repo.get(TABLE_MERGES).dataframe
+    )
+    merged_to_seed_count = merge_analysis_df \
+        .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
+    merged_not_seed_count = input_count - (seed_node_count + merged_to_seed_count + unmapped_count)
+    connected_and_merged_count = merged_to_seed_count  # todo
+
+    # INPUT:    | Seed | Others |
+    input_data = [
+        [SECTION_INPUT, seed_node_count, "Seed"],
+        [SECTION_INPUT, non_seed_count, "Other"],
+    ]
+    _process_node_status_table(
+        data=input_data,
+        total_count=input_count,
+        section_dataset_name=SECTION_INPUT,
+        data_manager=data_manager,
+    )
+
+    # ALG:      | Seed | Merged to seed | Merged | Unmapped |
+    alignment_data = [
+        [SECTION_ALIGNMENT, seed_node_count, "Seed"],
+        [SECTION_ALIGNMENT, merged_to_seed_count, "Merged to seed"],
+        [SECTION_ALIGNMENT, merged_not_seed_count, "Merged"],
+        [SECTION_ALIGNMENT, unmapped_count, "Unmapped"],
+    ]
+    _process_node_status_table(
+        data=alignment_data,
+        total_count=input_count,
+        section_dataset_name=SECTION_ALIGNMENT,
+        data_manager=data_manager,
+    )
+
+    # CON:      | Seed | Merged and Connected | Connected | Dangling |
+    connectivity_data = [
+        [SECTION_CONNECTIVITY, seed_node_count, "Seed"],
+        [SECTION_CONNECTIVITY, connected_and_merged_count, "Connected and Merged"],
+        [SECTION_CONNECTIVITY, connected_only_count, "Connected"],
+        [SECTION_CONNECTIVITY, dangling_count, "Dangling"],
+    ]
+    _process_node_status_table(
+        data=connectivity_data,
+        total_count=input_count,
+        section_dataset_name=SECTION_CONNECTIVITY,
+        data_manager=data_manager,
+    )
+
+    # Output # todo
+    _process_node_status_table(
+        data=connectivity_data,
+        total_count=input_count,
+        section_dataset_name=SECTION_OUTPUT,
+        data_manager=data_manager,
+    )
+
+    # Overview
+    overview_data = input_data + alignment_data + connectivity_data
+    overview_df = _process_node_status_table(
+        data=overview_data,
+        total_count=input_count,
+        section_dataset_name=SECTION_OVERVIEW,
+        data_manager=data_manager,
+        is_one_bar=False
+    )
+    return overview_df
+
+
+def _process_node_status_table(
+        data: List[list], total_count: int, section_dataset_name: str,
+        data_manager: DataManager, is_one_bar: bool = True,
+) -> DataFrame:
+    node_status_table = pd.DataFrame(data, columns=["category", "count", "status_no_freq"])
+    node_status_table = _add_ratio_to_node_status_table(
+        node_status_table=node_status_table, total_count=total_count,
+    )
+    data_manager.save_analysis_table(
+        analysis_table=node_status_table,
+        dataset=section_dataset_name,
+        analysed_table_name="node",
+        analysis_table_suffix="status",
+    )
+    plotly_utils.produce_node_status_stacked_bar_chart(
+        analysis_table=node_status_table,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=section_dataset_name,
+            analysed_table_name="node",
+            analysis_table_suffix="status",
+        ),
+        is_one_bar=is_one_bar,
+    )
+    return node_status_table
+
+
+def _add_ratio_to_node_status_table(node_status_table: DataFrame, total_count: int) -> DataFrame:
+    node_status_table["ratio"] = node_status_table.apply(
+        lambda x: (round((x['count'] / total_count * 100), 3)), axis=1
+    )
+    node_status_table["status"] = node_status_table.apply(
+        lambda x: f"{x['status_no_freq']} ({x['ratio']:.1f}%)", axis=1
+    )
+    return node_status_table
+
+
+# MAPPING #
 def _produce_mapping_analysis_for_type(mappings: DataFrame) -> DataFrame:
     df = mappings[[COLUMN_RELATION, COLUMN_PROVENANCE, COLUMN_SOURCE_ID]].groupby([COLUMN_RELATION]) \
         .agg(count=(COLUMN_SOURCE_ID, 'count'),
@@ -180,6 +309,7 @@ def _produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
     return df
 
 
+# EDGE #
 def _produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
                                                                 prune: bool = False,
                                                                 directed_edge: bool = False) -> DataFrame:
@@ -254,6 +384,7 @@ def _produce_merge_analysis_for_merged_nss_for_canonical(merges: DataFrame) -> D
     return df
 
 
+# PROCESSING #
 def _produce_and_save_alignment_step_node_analysis(
         alignment_step_report: DataFrame,
         section_dataset_name: str,
@@ -401,28 +532,44 @@ def _produce_data_test_stats_for_directory(tables: List[str],
     ]
 
 
-def _produce_data_profiling_table_stats(data_manager: DataManager, section_name: str) -> None:
-    pd.DataFrame(
+def _produce_data_profiling_table_stats(data_manager: DataManager, section_name: str) -> DataFrame:
+    main_path = f"{data_manager.get_analysis_folder_path()}/{section_name}"
+    input_df = pd.DataFrame(
         _produce_data_profiling_stats_for_directory(
             tables=data_manager.load_input_tables(),
             folder_path=data_manager.get_input_folder_path(),
             data_manager=data_manager
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_INPUT}_{TABLE_STATS}.csv")
-    pd.DataFrame(
+    )
+    input_df['directory'] = DIRECTORY_INPUT
+    input_df.to_csv(f"{main_path}_{DIRECTORY_INPUT}_{TABLE_STATS}.csv")
+
+    intermed_df = pd.DataFrame(
         _produce_data_profiling_stats_for_directory(
             tables=data_manager.load_intermediate_tables(),
             folder_path=data_manager.get_intermediate_folder_path(),
             data_manager=data_manager
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}.csv")
-    pd.DataFrame(
+    )
+    intermed_df['directory'] = DIRECTORY_INTERMEDIATE
+    intermed_df.to_csv(f"{main_path}_{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}.csv")
+
+    output_df = pd.DataFrame(
         _produce_data_profiling_stats_for_directory(
             tables=data_manager.load_output_tables(),
             folder_path=data_manager.get_domain_ontology_folder_path(),
             data_manager=data_manager
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
+    )
+    output_df['directory'] = DIRECTORY_OUTPUT
+    output_df.to_csv(f"{main_path}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
+    all_df = pd.concat([input_df, intermed_df, output_df])
+    all_df['size_float'] = all_df.apply(
+        lambda x: float(x['size'].replace(" MB", "")),
+        axis=1
+    )
+
+    return all_df
 
 
 def _produce_data_testing_table_stats(data_manager: DataManager, section_name: str) -> DataFrame:
@@ -464,7 +611,6 @@ def _produce_data_testing_table_stats(data_manager: DataManager, section_name: s
     )
     output_df['directory'] = DIRECTORY_OUTPUT
     output_df.to_csv(f"{main_path}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
-
     all_df = pd.concat([input_df, intermed_df, output_df])
     return all_df
 
@@ -498,6 +644,10 @@ def _produce_and_save_runtime_tables(
         label_replacement={}
     )
     # support table: step duration
+    # runtime_table['elapsed_sec'] = runtime_table.apply(
+    #     lambda x: timedelta(seconds=int(x['elapsed'])),
+    #     axis=1
+    # )
     data_manager.save_analysis_table(
         analysis_table=runtime_table[["task", "elapsed_sec"]],
         dataset=section_dataset_name,
@@ -509,10 +659,10 @@ def _produce_and_save_runtime_tables(
         ("Number of steps", len(runtime_table)),
         ("Start", runtime_table["start"].iloc[0]),
         ("End", runtime_table["end"].iloc[len(runtime_table) - 1]),
-        ("Total runtime", f"{round(runtime_table['elapsed'].sum(), 3)} seconds"),
-        ("Min runtime", f"{round(runtime_table['elapsed'].min(), 3)} seconds"),
-        ("Avg runtime", f"{round(runtime_table['elapsed'].mean(), 3)} seconds"),
-        ("Max runtime", f"{round(runtime_table['elapsed'].max(), 3)} seconds"),
+        ("Total runtime", timedelta(seconds=int(runtime_table['elapsed'].sum()))),
+        ("Min runtime", timedelta(seconds=(runtime_table['elapsed'].min()))),
+        ("Avg runtime", timedelta(seconds=(runtime_table['elapsed'].mean()))),
+        ("Max runtime", timedelta(seconds=(runtime_table['elapsed'].max()))),
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(runtime_overview, columns=["metric", "value"]),
@@ -522,12 +672,32 @@ def _produce_and_save_runtime_tables(
     )
 
 
+def _get_runtime_for_main_step(
+        process_name: str,
+        data_repo: DataRepository,
+) -> str:
+    runtime_df = _add_elapsed_seconds_column_to_runtime(
+        runtime=data_repo.get(table_name=TABLE_PIPELINE_STEPS_REPORT).dataframe
+    )
+    runtime_table_for_process = runtime_df[runtime_df['task'].str.contains(process_name)]
+    elapsed = int(runtime_table_for_process['elapsed'].sum())
+    return str(timedelta(seconds=elapsed))
+
+
 # SECTION SUMMARIES #
-def _produce_and_save_summary_overview(data_manager: DataManager, data_repo: DataRepository) -> None:
+def _produce_and_save_summary_overview(
+        data_manager: DataManager, data_repo: DataRepository, node_status: DataFrame,
+) -> None:
+    config = data_manager.load_alignment_config()
+    steps_report = data_repo.get(table_name=TABLE_PIPELINE_STEPS_REPORT).dataframe
+    elapsed_time = timedelta(seconds=int(steps_report['elapsed'].sum()))
     summary = [
-        {"metric": "Dataset (folder name)", "values": "foo"},
-        {"metric": "Time taken", "values": "1 min 23 seconds"},
-        {"metric": "OntoMerger version", "values": "<code>1.2.3</code>"},
+        {"metric": "Dataset (folder name)",
+         "values": f"<code>{data_manager.get_project_folder_path().split('/')[-1]}</code>"},
+        {"metric": "Domain", "values": config.base_config.domain_node_type},
+        {"metric": "Seed ontology", "values": config.base_config.seed_ontology_name},
+        {"metric": "Total runtime", "values": elapsed_time},
+        {"metric": "OntoMerger version", "values": f"<code>{onto_merger_version}</code>"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -554,9 +724,19 @@ def _produce_and_save_summary_input(data_manager: DataManager, data_repo: DataRe
 
 
 def _produce_and_save_summary_output(data_manager: DataManager, data_repo: DataRepository) -> None:
+    nodes_connected = produce_node_id_table_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
+    nb_unique_nodes = (len(data_repo.get(table_name=TABLE_NODES).dataframe)
+                       - len(data_repo.get(table_name=TABLE_MERGES).dataframe))
     summary = [
-        {"metric": "Number of nodes", "values": len(data_repo.get(table_name=TABLE_NODES).dataframe)},
-        {"metric": "Number of merges", "values": len(data_repo.get(table_name=TABLE_MERGES).dataframe)},
+        {"metric": "Number of unique nodes", "values": nb_unique_nodes},
+        {"metric": "Number of merged nodes", "values": len(data_repo.get(table_name=TABLE_MERGES).dataframe)},
+        {"metric": "Number of connected nodes (in hierarchy)", "values": len(nodes_connected)},
+        {"metric": "Percentage of connected nodes",
+         "values": f"{round(len(nodes_connected) / nb_unique_nodes * 100, 2)}%"},
+        {"metric": "Number of dangling nodes (not in hierarchy)",
+         "values": f"{len(data_repo.get(TABLE_NODES_DANGLING).dataframe)}"},
+        {"metric": "Percentage of dangling nodes",
+         "values": f"{round(len(data_repo.get(TABLE_NODES_DANGLING).dataframe) / nb_unique_nodes * 100, 2)}%"},
         {"metric": "Number of mappings", "values": len(data_repo.get(table_name=TABLE_MAPPINGS).dataframe)},
         {"metric": "Number of hierarchy edges",
          "values": len(data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe)},
@@ -570,16 +750,21 @@ def _produce_and_save_summary_output(data_manager: DataManager, data_repo: DataR
 
 
 def _produce_and_save_summary_alignment(data_manager: DataManager, data_repo: DataRepository) -> None:
+    steps_report = data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe
+    nodes_input = steps_report['count_unmapped_nodes'].iloc[0]
+    nodes_seed = steps_report['count_merged_nodes'].iloc[0]
+    nodes_merged = steps_report['count_merged_nodes'].sum() - nodes_seed
+    nodes_unmapped = nodes_input - nodes_seed - nodes_merged
     summary = [
-        {"metric": "Number of steps", "values": "24"},
-        {"metric": "Number of sources", "values": "12"},
-        {"metric": "Mapping type groups used", "values": "2"},
-        {"metric": "Input nodes", "values": "99,000"},
-        {"metric": "Unmapped nodes", "values": "50,000"},
-        {"metric": "Unmapped nodes (%)", "values": "51.00%"},
-        {"metric": "Merged nodes", "values": "49,000"},
-        {"metric": "Merged nodes (%)", "values": "49.00%"},
-        {"metric": "Merges", "values": "49,000"},
+        {"metric": "Process runtime",
+         "values": _get_runtime_for_main_step(process_name="ALIGNMENT", data_repo=data_repo)},
+        {"metric": "Number of steps", "values": len(steps_report)},
+        {"metric": "Number of sources", "values": len(set(steps_report['source'].tolist())) - 1},
+        {"metric": "Number of mapping type groups used", "values": len(set(steps_report['mapping_type_group'].tolist()))},
+        {"metric": "Number of input nodes", "values": nodes_input},
+        {"metric": "Number of seed nodes", "values": nodes_seed},
+        {"metric": "Number of merged nodes (excluding seed)", "values": nodes_merged},
+        {"metric": "Number of unmapped nodes", "values": nodes_unmapped},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -590,16 +775,24 @@ def _produce_and_save_summary_alignment(data_manager: DataManager, data_repo: Da
 
 
 def _produce_and_save_summary_connectivity(data_manager: DataManager, data_repo: DataRepository) -> None:
+    steps_report = data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe
+    nodes_to_connect = len(data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe)
+    nodes_connected_seed = steps_report['count_connected_nodes'].iloc[0]
+    nodes_connected_not_seed = steps_report['count_connected_nodes'].sum() - nodes_connected_seed
+    edges_input_df = data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe
+    edges_input = len(edges_input_df)
+    edges_seed = steps_report['count_available_edges'].iloc[0]
+    edges_output = steps_report['count_produced_edges'].sum()
+    edges_produced = edges_output - edges_seed
     summary = [
-        {"metric": "Number of steps", "values": "24"},
-        {"metric": "Number of sources", "values": "12"},
-        {"metric": "Mapping type groups used", "values": "2"},
-        {"metric": "Input nodes", "values": "99,000"},
-        {"metric": "Unmapped nodes", "values": "50,000"},
-        {"metric": "Unmapped nodes (%)", "values": "51.00%"},
-        {"metric": "Merged nodes", "values": "49,000"},
-        {"metric": "Merged nodes (%)", "values": "49.00%"},
-        {"metric": "Merges", "values": "49,000"},
+        {"metric": "Process runtime",
+         "values": _get_runtime_for_main_step(process_name="CONNECTIVITY", data_repo=data_repo)},
+        {"metric": "Number of steps run", "values": len(steps_report)},
+        {"metric": "Number of nodes to connect (excluding seed)", "values": nodes_to_connect},
+        {"metric": "Number of connected nodes (excluding seed)", "values": nodes_connected_not_seed},
+        {"metric": "Number of input hierarchy edges", "values": edges_input},
+        {"metric": "Number of seed hierarchy edges", "values": edges_seed},
+        {"metric": "Number of produced hierarchy edges", "values": edges_produced},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -609,22 +802,25 @@ def _produce_and_save_summary_connectivity(data_manager: DataManager, data_repo:
     )
 
 
-def _produce_and_save_summary_data_tests(data_manager: DataManager, data_test_stats: DataFrame) -> None:
+def _produce_and_save_summary_data_tests(data_manager: DataManager,
+                                         data_repo: DataRepository,
+                                         stats: DataFrame) -> None:
     summary = [
-        {"metric": "Time taken", "values": "..."},
-        {"metric": "Number of tables tested", "values": len(data_test_stats)},
-        {"metric": "Number of tests run", "values": data_test_stats['nb_validations'].sum()},
-        {"metric": "Total failed tests", "values": data_test_stats['nb_failed_validations'].sum()},
+        {"metric": "Process runtime",
+         "values": _get_runtime_for_main_step(process_name="VALIDATION", data_repo=data_repo)},
+        {"metric": "Number of tables tested", "values": len(stats)},
+        {"metric": "Number of data tests run", "values": stats['nb_validations'].sum()},
         {"metric": "Number of failed tests (input data)",
-         "values": data_test_stats.query(expr=f"directory == '{DIRECTORY_INPUT}'", inplace=False)
+         "values": stats.query(expr=f"directory == '{DIRECTORY_INPUT}'", inplace=False)
          ['nb_failed_validations'].sum()},
         {"metric": "Number of failed tests (intermediate data)",
-         "values": data_test_stats.query(expr=f"directory == '{DIRECTORY_INTERMEDIATE}'", inplace=False)
+         "values": stats.query(expr=f"directory == '{DIRECTORY_INTERMEDIATE}'", inplace=False)
          ['nb_failed_validations'].sum()},
         {"metric": "Number of failed tests (output data)",
-         "values": data_test_stats.query(expr=f"directory == '{DIRECTORY_OUTPUT}'", inplace=False)
+         "values": stats.query(expr=f"directory == '{DIRECTORY_OUTPUT}'", inplace=False)
          ['nb_failed_validations'].sum()},
-        {"metric": "GE version", "values": f"<code>{data_test_stats['ge_version'].iloc[0]}</code>"},
+        {"metric": "Total failed tests", "values": stats['nb_failed_validations'].sum()},
+        {"metric": "GE version", "values": f"<code>{stats['ge_version'].iloc[0]}</code>"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -634,11 +830,19 @@ def _produce_and_save_summary_data_tests(data_manager: DataManager, data_test_st
     )
 
 
-def _produce_and_save_summary_data_profiling(data_manager: DataManager) -> None:
+def _produce_and_save_summary_data_profiling(data_manager: DataManager,
+                                             data_repo: DataRepository,
+                                             data_profiling_stats: DataFrame) -> None:
+    print(data_profiling_stats[['size_float']].head(10))
     summary = [
-        {"metric": "Time taken", "values": "1 min 23 seconds"},
-        {"metric": "Profiled tables", "values": "18"},
-        {"metric": "Pandas profiling version", "values": "1.2.3"},
+        {"metric": "Process runtime",
+         "values": _get_runtime_for_main_step(process_name="PROFILING", data_repo=data_repo)},
+        {"metric": "Number of tables profiled", "values": len(data_profiling_stats)},
+        {"metric": "Number of rows profiled", "values": data_profiling_stats['rows'].sum()},
+        {"metric": "Total file size",
+         "values": f"{data_profiling_stats['size_float'].sum():,.2f} MB"},
+        {"metric": "Pandas profiling version",
+         "values": f"<code>{pandas_profiling_version}</code>"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -801,133 +1005,8 @@ def _produce_and_save_merge_analysis(merges: DataFrame,
     )
 
 
-# NODE STATUS TABLES & CHARTS #
-def _produce_and_node_status_analyses(
-        seed_name: str, data_manager: DataManager, data_repo: DataRepository,
-) -> None:
-    # tables
-    nodes = data_repo.get(TABLE_NODES).dataframe
-    node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
-        nodes=nodes, metric_name="namespace"
-    )
-    nodes_connected = produce_node_id_table_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
-    nodes_connected_only = data_repo.get(TABLE_NODES_CONNECTED_ONLY).dataframe
-    nodes_unmapped = data_repo.get(TABLE_NODES_UNMAPPED).dataframe
-    nodes_dangling = data_repo.get(TABLE_NODES_DANGLING).dataframe
-
-    # counts
-    input_count = len(nodes)
-    seed_node_count = node_namespace_distribution_df \
-        .query(expr=f'{COLUMN_NAMESPACE} == "{seed_name}"', inplace=False)['namespace_count'].iloc[0]
-    non_seed_count = input_count - seed_node_count
-    unmapped_count = len(nodes_unmapped)
-    connected_only_count = len(nodes_connected_only)
-    dangling_count = len(nodes_dangling)
-    merge_analysis_df = _produce_merge_analysis_for_merged_nss_for_canonical(
-        merges=data_repo.get(TABLE_MERGES).dataframe
-    )
-    merged_to_seed_count = merge_analysis_df \
-        .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
-    merged_not_seed_count = input_count - (seed_node_count + merged_to_seed_count + unmapped_count)
-    connected_and_merged_count = merged_to_seed_count  # todo
-
-    # INPUT:    | Seed | Others |
-    input_data = [
-        [SECTION_INPUT, seed_node_count, "Seed"],
-        [SECTION_INPUT, non_seed_count, "Other"],
-    ]
-    _process_node_status_table(
-        data=input_data,
-        total_count=input_count,
-        section_dataset_name=SECTION_INPUT,
-        data_manager=data_manager,
-    )
-
-    # ALG:      | Seed | Merged to seed | Merged | Unmapped |
-    alignment_data = [
-        [SECTION_ALIGNMENT, seed_node_count, "Seed"],
-        [SECTION_ALIGNMENT, merged_to_seed_count, "Merged to seed"],
-        [SECTION_ALIGNMENT, merged_not_seed_count, "Merged"],
-        [SECTION_ALIGNMENT, unmapped_count, "Unmapped"],
-    ]
-    _process_node_status_table(
-        data=alignment_data,
-        total_count=input_count,
-        section_dataset_name=SECTION_ALIGNMENT,
-        data_manager=data_manager,
-    )
-
-    # CON:      | Seed | Merged and Connected | Connected | Dangling |
-    connectivity_data = [
-        [SECTION_CONNECTIVITY, seed_node_count, "Seed"],
-        [SECTION_CONNECTIVITY, connected_and_merged_count, "Connected and Merged"],
-        [SECTION_CONNECTIVITY, connected_only_count, "Connected"],
-        [SECTION_CONNECTIVITY, dangling_count, "Dangling"],
-    ]
-    _process_node_status_table(
-        data=connectivity_data,
-        total_count=input_count,
-        section_dataset_name=SECTION_CONNECTIVITY,
-        data_manager=data_manager,
-    )
-
-    # Output # todo
-    _process_node_status_table(
-        data=connectivity_data,
-        total_count=input_count,
-        section_dataset_name=SECTION_OUTPUT,
-        data_manager=data_manager,
-    )
-
-    # Overview
-    overview_data = input_data + alignment_data + connectivity_data
-    _process_node_status_table(
-        data=overview_data,
-        total_count=input_count,
-        section_dataset_name=SECTION_OVERVIEW,
-        data_manager=data_manager,
-        is_one_bar=False
-    )
-
-
-def _process_node_status_table(
-        data: List[list], total_count: int, section_dataset_name: str,
-        data_manager: DataManager, is_one_bar: bool = True,
-) -> None:
-    node_status_table = pd.DataFrame(data, columns=["category", "count", "status_no_freq"])
-    node_status_table = _add_ratio_to_node_status_table(
-        node_status_table=node_status_table, total_count=total_count,
-    )
-    data_manager.save_analysis_table(
-        analysis_table=node_status_table,
-        dataset=section_dataset_name,
-        analysed_table_name="node",
-        analysis_table_suffix="status",
-    )
-    plotly_utils.produce_node_status_stacked_bar_chart(
-        analysis_table=node_status_table,
-        file_path=data_manager.get_analysis_figure_path(
-            dataset=section_dataset_name,
-            analysed_table_name="node",
-            analysis_table_suffix="status",
-        ),
-        is_one_bar=is_one_bar,
-    )
-
-
-def _add_ratio_to_node_status_table(node_status_table: DataFrame, total_count: int) -> DataFrame:
-    node_status_table["ratio"] = node_status_table.apply(
-        lambda x: (round((x['count'] / total_count * 100), 3)), axis=1
-    )
-    node_status_table["status"] = node_status_table.apply(
-        lambda x: f"{x['status_no_freq']} ({x['ratio']:.1f}%)", axis=1
-    )
-    return node_status_table
-
-
 # PRODUCE & SAVE for DATASET #
 def _produce_input_dataset_analysis(data_manager: DataManager) -> None:
-    # load data
     data_repo = DataRepository()
     data_repo.update(tables=data_manager.load_input_tables())
 
@@ -957,9 +1036,9 @@ def _produce_input_dataset_analysis(data_manager: DataManager) -> None:
 
 
 def _produce_output_dataset_analysis(data_manager: DataManager) -> None:
-    # load data
     data_repo = DataRepository()
     data_repo.update(tables=data_manager.load_output_tables())
+    data_repo.update(tables=data_manager.load_intermediate_tables())
 
     # analyse and save
     section_dataset_name = SECTION_OUTPUT
@@ -991,11 +1070,7 @@ def _produce_output_dataset_analysis(data_manager: DataManager) -> None:
     )
 
 
-def _produce_alignment_process_analysis(data_manager: DataManager) -> None:
-    # load data
-    data_repo = DataRepository()
-    data_repo.update(tables=data_manager.load_intermediate_tables())
-
+def _produce_alignment_process_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
     # analyse and save
     section_dataset_name = SECTION_ALIGNMENT
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
@@ -1031,12 +1106,7 @@ def _produce_alignment_process_analysis(data_manager: DataManager) -> None:
     )
 
 
-def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
-    # load data
-    data_repo = DataRepository()
-    data_repo.update(tables=data_manager.load_intermediate_tables())
-
-    # analyse and save
+def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
     section_dataset_name = SECTION_CONNECTIVITY
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
     _produce_and_save_summary_connectivity(data_manager=data_manager, data_repo=data_repo)
@@ -1083,44 +1153,59 @@ def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
     )
 
 
-def _produce_data_profiling_and_testing_analysis(data_manager: DataManager) -> None:
+def _produce_data_profiling_and_testing_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
     logger.info(f"Producing report section '{SECTION_DATA_PROFILING}' and '{SECTION_DATA_TESTS}' analysis...")
-    _produce_data_profiling_table_stats(data_manager=data_manager, section_name=SECTION_DATA_PROFILING)
-    _produce_and_save_summary_data_profiling(data_manager=data_manager)
+    data_profiling_stats = _produce_data_profiling_table_stats(data_manager=data_manager,
+                                                               section_name=SECTION_DATA_PROFILING)
+    _produce_and_save_summary_data_profiling(data_manager=data_manager,
+                                             data_repo=data_repo,
+                                             data_profiling_stats=data_profiling_stats)
     data_test_stats = _produce_data_testing_table_stats(data_manager=data_manager,
                                                         section_name=SECTION_DATA_TESTS)
-    _produce_and_save_summary_data_tests(data_manager=data_manager, data_test_stats=data_test_stats)
+    _produce_and_save_summary_data_tests(data_manager=data_manager,
+                                         data_repo=data_repo,
+                                         stats=data_test_stats)
 
 
-def _produce_overview_analysis(data_manager: DataManager) -> None:
-    # load data
-    data_repo = DataRepository()
-    data_repo.update(tables=data_manager.load_input_tables())
-    data_repo.update(tables=data_manager.load_output_tables())
-    data_repo.update(tables=data_manager.load_intermediate_tables())
-
+def _produce_overview_analysis(data_manager: DataManager, data_repo: DataRepository) -> DataFrame:
     # analyse and save
     section_dataset_name = SECTION_OVERVIEW
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
-    _produce_and_save_summary_overview(data_manager=data_manager, data_repo=data_repo)
-    _produce_and_node_status_analyses(seed_name="MONDO", data_manager=data_manager, data_repo=data_repo)
+    node_status_df = _produce_and_node_status_analyses(
+        seed_name=data_manager.load_alignment_config().base_config.seed_ontology_name,
+        data_manager=data_manager,
+        data_repo=data_repo
+    )
     _produce_and_save_runtime_tables(
         table_name=TABLE_PIPELINE_STEPS_REPORT,
         section_dataset_name=section_dataset_name,
         data_manager=data_manager,
         data_repo=data_repo,
     )
+    _produce_and_save_summary_overview(
+        data_manager=data_manager,
+        data_repo=data_repo,
+        node_status=node_status_df,
+    )
+    return node_status_df
 
 
 # MAIN #
 def produce_report_data(data_manager: DataManager) -> None:
     logger.info(f"Started producing report analysis...")
+
+    # load data todo remove
+    data_repo = DataRepository()
+    data_repo.update(tables=data_manager.load_input_tables())
+    data_repo.update(tables=data_manager.load_output_tables())
+    data_repo.update(tables=data_manager.load_intermediate_tables())
+
+    node_status_df = _produce_overview_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_input_dataset_analysis(data_manager=data_manager)
     _produce_output_dataset_analysis(data_manager=data_manager)
-    _produce_alignment_process_analysis(data_manager=data_manager)
-    _produce_connectivity_process_analysis(data_manager=data_manager)
-    _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
-    _produce_overview_analysis(data_manager=data_manager)
+    _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_data_profiling_and_testing_analysis(data_manager=data_manager, data_repo=data_repo)
     logger.info(f"Finished producing report analysis.")
 
 
@@ -1128,11 +1213,7 @@ def produce_report_data(data_manager: DataManager) -> None:
 project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
 analysis_data_manager = DataManager(project_folder_path=project_folder_path,
                                     clear_output_directory=False)
-# this_data_repo = DataRepository()
-# this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
-
-_produce_data_profiling_and_testing_analysis(data_manager=analysis_data_manager)
-# _produce_validation_analysis(data_manager=analysis_data_manager)
+# _produce_output_dataset_analysis(data_manager=analysis_data_manager)
 
 # produce_report_data(data_manager=analysis_data_manager)
 report_generator.produce_report(data_manager=analysis_data_manager)
