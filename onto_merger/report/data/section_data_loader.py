@@ -94,7 +94,7 @@ def _load_alignment_section_data(data_manager: DataManager) -> dict:
         section_name=section_name,
         subsections=[
             _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
+            # _produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
             _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
@@ -107,7 +107,7 @@ def _load_connectivity_section_data(data_manager: DataManager) -> dict:
         section_name=section_name,
         subsections=[
             _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
+            # _produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
             _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
@@ -373,6 +373,7 @@ def _load_table_description_data(table_name: str) -> dict:
 # HELPERS #
 def _get_section_icon_file_name(section_name: str) -> str:
     return f"icon_{section_name}.png"
+
 
 def _get_figure_path(section_name: str, table_name:str) -> str:
     return f"images/{section_name}_{table_name}.svg"
