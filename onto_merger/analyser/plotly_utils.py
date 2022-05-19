@@ -71,7 +71,7 @@ def produce_node_status_stacked_bar_chart(
         orientation='h',
         width=width,
         height=height,
-        labels={'ratio': 'Input nodes'},
+        labels={'ratio': 'Nodes (%)', 'status_no_freq': 'Stage'},
     ) \
         .update_layout({
         "plot_bgcolor": _COLOR_WHITE,

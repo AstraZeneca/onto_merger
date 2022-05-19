@@ -1,4 +1,4 @@
-from onto_merger.report.data.table_descriptions import *
+from onto_merger.report.data.section_summary_descriptions import *
 
 # DUMMY DATA #
 data_table_node_summary = [

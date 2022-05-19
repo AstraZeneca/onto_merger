@@ -168,6 +168,9 @@ def _produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
              provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
+    df["freq"] = df.apply(
+        lambda x: ((x['count'] / len(mappings)) * 100), axis=1
+    )
     return df
 
 
@@ -265,7 +268,7 @@ def _get_file_size_in_mb_for_named_table(table_name: str,
 
 def _produce_ge_validation_report_map(validation_folder: str) -> dict:
     return {
-        str(path).split("validations/")[-1].split("/")[0].replace("_table", ""): str(path).split("output/")[-1]
+        str(path).split("validations/")[-1].split("/")[0].replace("_table", ""): str(path).split("output/report/")[-1]
         for path in Path(validation_folder).rglob('*.html')
     }
 
@@ -287,7 +290,7 @@ def _produce_table_stats_for_directory(tables: List[NamedTable],
             ),
             "data_profiling": data_manager.get_profiled_table_report_path(
                 table_name=table.name,
-                relative_path=True
+                relative_path=False
             ),
             "data_tests": ge_validation_report_map.get(table.name)
         }
@@ -342,7 +345,7 @@ def _produce_and_save_runtime_tables(
         analysis_table=runtime_table,
         file_path=data_manager.get_analysis_figure_path(
             dataset=section_dataset_name,
-            analysed_table_name=table_name,
+            analysed_table_name="pipeline_steps_report",
             analysis_table_suffix=GANTT_CHART
         ),
         label_replacement={}
@@ -351,19 +354,19 @@ def _produce_and_save_runtime_tables(
     data_manager.save_analysis_table(
         analysis_table=runtime_table[["task", "elapsed_sec"]],
         dataset=section_dataset_name,
-        analysed_table_name=table_name,
+        analysed_table_name="pipeline_steps_report",
         analysis_table_suffix="step_duration"
     )
     # support table: runtime overview
     runtime_overview = [
-        ("START", runtime_table["start"].iloc[0]),
-        ("END", runtime_table["end"].iloc[len(runtime_table) - 1]),
-        ("RUNTIME", f"{runtime_table['elapsed'].sum()} seconds"),
+        ("Start", runtime_table["start"].iloc[0]),
+        ("End", runtime_table["end"].iloc[len(runtime_table) - 1]),
+        ("Total runtime", f"{round(runtime_table['elapsed'].sum(), 2)} seconds"),
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(runtime_overview, columns=["metric", "value"]),
         dataset=section_dataset_name,
-        analysed_table_name=table_name,
+        analysed_table_name="pipeline_steps_report",
         analysis_table_suffix="runtime_overview"
     )
 
@@ -403,6 +406,15 @@ def _produce_and_save_summary_output(data_manager: DataManager, data_repo: DataR
 
 def _produce_and_save_summary_alignment(data_manager: DataManager, data_repo: DataRepository) -> None:
     summary = [
+        {"metric": "Number of steps", "values": "24"},
+        {"metric": "Number of sources", "values": "12"},
+        {"metric": "Mapping type groups used", "values": "2"},
+        {"metric": "Input nodes", "values": "99,000"},
+        {"metric": "Unmapped nodes", "values": "50,000"},
+        {"metric": "Unmapped nodes (%)", "values": "51.00%"},
+        {"metric": "Merged nodes", "values": "49,000"},
+        {"metric": "Merged nodes (%)", "values": "49.00%"},
+        {"metric": "Merges", "values": "49,000"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -414,6 +426,15 @@ def _produce_and_save_summary_alignment(data_manager: DataManager, data_repo: Da
 
 def _produce_and_save_summary_connectivity(data_manager: DataManager, data_repo: DataRepository) -> None:
     summary = [
+        {"metric": "Number of steps", "values": "24"},
+        {"metric": "Number of sources", "values": "12"},
+        {"metric": "Mapping type groups used", "values": "2"},
+        {"metric": "Input nodes", "values": "99,000"},
+        {"metric": "Unmapped nodes", "values": "50,000"},
+        {"metric": "Unmapped nodes (%)", "values": "51.00%"},
+        {"metric": "Merged nodes", "values": "49,000"},
+        {"metric": "Merged nodes (%)", "values": "49.00%"},
+        {"metric": "Merges", "values": "49,000"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -425,6 +446,13 @@ def _produce_and_save_summary_connectivity(data_manager: DataManager, data_repo:
 
 def _produce_and_save_summary_data_tests(data_manager: DataManager) -> None:
     summary = [
+        {"metric": "Time taken", "values": "2 min 23 seconds"},
+        {"metric": "Number of tables tested", "values": "18"},
+        {"metric": "Number of tests run", "values": "123"},
+        {"metric": "Number of failed tests (input data)", "values": "0"},
+        {"metric": "Number of failed tests (intermediate data)", "values": "0"},
+        {"metric": "Number of failed tests (output data)", "values": "0"},
+        {"metric": "GE version", "values": "1.2.3"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -436,6 +464,9 @@ def _produce_and_save_summary_data_tests(data_manager: DataManager) -> None:
 
 def _produce_and_save_summary_data_profiling(data_manager: DataManager) -> None:
     summary = [
+        {"metric": "Time taken", "values": "1 min 23 seconds"},
+        {"metric": "Profiled tables", "values": "18"},
+        {"metric": "Pandas profiling version", "values": "1.2.3"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -447,6 +478,7 @@ def _produce_and_save_summary_data_profiling(data_manager: DataManager) -> None:
 
 def _produce_and_save_summary_overview(data_manager: DataManager, data_repo: DataRepository) -> None:
     summary = [
+        {"metric": "Time taken", "values": "1 min 23 seconds"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -812,6 +844,12 @@ def _produce_alignment_process_analysis(data_manager: DataManager) -> None:
         data_manager=data_manager,
         data_repo=data_repo,
     )
+    data_manager.save_analysis_table(
+        analysis_table=data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe,
+        dataset=section_dataset_name,
+        analysed_table_name="steps",
+        analysis_table_suffix="detail"
+    )
     # todo merges
     # todo merges aggregated
 
@@ -851,6 +889,12 @@ def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
         section_dataset_name=section_dataset_name,
         data_manager=data_manager,
         data_repo=data_repo,
+    )
+    data_manager.save_analysis_table(
+        analysis_table=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
+        dataset=section_dataset_name,
+        analysed_table_name="steps",
+        analysis_table_suffix="detail"
     )
 
 

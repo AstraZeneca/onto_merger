@@ -11,8 +11,8 @@
     {% if rows | length > 0 %}
       {% for row in rows %}
         <tr>
-          <td>{{ row['canonical_ns'] }}</td>
-          <td>{{ row['merged_ns'] }}</td>
+          <td>{{ row['namespace_target_id'] }}</td>
+          <td>{{ row['namespace_source_id'] }}</td>
           <td>{{ row['count'] }}</td>
           <td>{{ row['freq'] }}</td>
         </tr>

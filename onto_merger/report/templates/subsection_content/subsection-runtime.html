@@ -2,7 +2,8 @@
     <div class="col-sm-6">
         <div>
             <img class="img-responsive center-img"
-                 src="{{ subsection_data['gant_img'] }}" alt="foo">
+                 style="display: block; margin: auto;"
+                 src="{{ subsection_data['gantt_img'] }}" alt="foo">
         </div>
     </div>
     <div class="col-sm-6">
@@ -12,7 +13,7 @@
         {% endwith %}
         <p class="h4 table-title">Step duration</p>
         {% with rows=subsection_data['runtime_table'] %}
-            {% include 'templates/data_content/table_summary_two_col.html' %}
+            {% include 'templates/data_content/table_summary_two_col_no_bold.html' %}
         {% endwith %}
     </div>
 </div>

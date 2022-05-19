@@ -160,19 +160,29 @@ class DataManager:
             for table_name in TABLES_INTERMEDIATE
         ]
 
-    def load_analysis_report_table_as_dict(self, section_name: str, table_name: str) -> dict:
-        return self.load_analysis_report_table(section_name=section_name, table_name=table_name).to_dict()
-
-    def load_analysis_report_table_data_stats(self, section_name: str, replace_col_name: str, table_name: str) -> dict:
-        return self.load_analysis_report_table(
-            section_name=section_name,
-            table_name=table_name
-        ).rename(columns={replace_col_name: "link"}, inplace=True).to_dict()
+    def load_analysis_report_table_as_dict(self,
+                                           section_name: str,
+                                           table_name: str,
+                                           rename_columns: dict = None) -> List[dict]:
+        # todo fix this hack
+        df = self.load_analysis_report_table(section_name=section_name, table_name=table_name)
+        if rename_columns is not None:
+            df.rename(columns=rename_columns, inplace=True)
+        return [
+            {
+                col: row[col]
+                for col in list(df)
+            }
+            for _, row in df.iterrows()
+        ]
 
     def load_analysis_report_table(self, section_name: str, table_name: str) -> DataFrame:
-        file_name = f"{section_name}/{table_name}"
-        file_path = os.path.join(self.get_analysis_folder_path(), file_name, ".csv")
-        return pd.read_csv(file_path)
+        file_name = f"{section_name}_{table_name}.csv"
+        print(f"load_analysis_report_table {os.path.join(self.get_analysis_folder_path(), file_name)}")
+        file_path = os.path.join(self.get_analysis_folder_path(), file_name)
+        df = pd.read_csv(file_path)
+        print(df)
+        return df
 
     @staticmethod
     def get_absolute_path(path: str) -> str:
@@ -285,13 +295,23 @@ class DataManager:
             index=index
         )
 
+    @staticmethod
+    def get_analysis_figure_file_name(dataset: str,
+                                      analysed_table_name: str,
+                                      analysis_table_suffix: str) -> str:
+        return f"{dataset}_{analysed_table_name}_{analysis_table_suffix}"
+
     def get_analysis_figure_path(self,
                                  dataset: str,
                                  analysed_table_name: str,
                                  analysis_table_suffix: str) -> str:
         return os.path.join(
             self.get_analysis_folder_path(),
-            f"{dataset}_{analysed_table_name}_{analysis_table_suffix}"
+            self.get_analysis_figure_file_name(
+                dataset=dataset,
+                analysed_table_name=analysed_table_name,
+                analysis_table_suffix=analysis_table_suffix
+            )
         )
 
     @staticmethod
@@ -337,14 +357,34 @@ class DataManager:
 
     def save_merged_ontology_report(self, content) -> str:
         """Save the analysis report HTML content."""
-        file_path = self.produce_merged_ontology_report_path()
+        file_path = self._produce_analysis_report_path()
         with open(file_path, "w") as f:
             f.write(content)
+        self._copy_images()
         return file_path
 
-    def produce_merged_ontology_report_path(self):
+    def _copy_images(self):
+        images_folder = os.path.join(self._produce_analysis_report_folder_path(), "images")
+        if Path(images_folder).exists() is False:
+            shutil.copytree(
+                os.path.abspath("../report/templates/images"),
+                images_folder
+            )
+        [
+            shutil.copy(
+                os.path.join(self.get_analysis_folder_path(), figure_file),
+                os.path.join(images_folder, figure_file)
+            )
+            for figure_file in os.listdir(self.get_analysis_folder_path()) if figure_file.endswith(".svg")
+        ]
+
+    def _produce_analysis_report_folder_path(self):
+        """Produce the analysis report path."""
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
+
+    def _produce_analysis_report_path(self):
         """Produce the analysis report HTML path."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "index.html")
+        return os.path.join(self._produce_analysis_report_folder_path(), "index.html")
 
     def save_dropped_mappings_table(self, table: DataFrame, step_count: int, source_id: str, mapping_type: str) -> None:
         """Save a dropped mapping dataframe as a CSV, with meta data in the file name.

@@ -1,0 +1,22 @@
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <td style="width:70%"></td>
+            <td style="width:30%"></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if rows | length > 0 %}
+      {% for row in rows %}
+        <tr>
+          <td>{{ row['metric'] }}</td>
+          <td>{{ row['values'] }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="2">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

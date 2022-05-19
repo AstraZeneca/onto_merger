@@ -9,20 +9,28 @@
             {% with dataset=input_data %}
                 {% include 'templates/section_content/section-generic.html' %}
             {% endwith %}
-            {% if output_data %}
-                {% with dataset=output_data %}
-                    {% include 'templates/section_content/section-generic.html' %}
-                {% endwith %}
-                {% with dataset=alignment_data %}
-                    {% include 'templates/section_content/section-generic.html' %}
-                {% endwith %}
-                {% with dataset=connectivity_data %}
-                    {% include 'templates/section_content/section-generic.html' %}
-                {% endwith %}
-            {% endif %}
+        {% endif %}
+        {% if output_data %}
+            {% with dataset=output_data %}
+                {% include 'templates/section_content/section-generic.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if alignment_data %}
+            {% with dataset=alignment_data %}
+                {% include 'templates/section_content/section-generic.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if connectivity_data %}
+            {% with dataset=connectivity_data %}
+                {% include 'templates/section_content/section-generic.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if data_profiling %}
             {% with dataset=data_profiling %}
                 {% include 'templates/section_content/section-generic.html' %}
             {% endwith %}
+        {% endif %}
+        {% if data_tests %}
             {% with dataset=data_tests %}
                 {% include 'templates/section_content/section-generic.html' %}
             {% endwith %}

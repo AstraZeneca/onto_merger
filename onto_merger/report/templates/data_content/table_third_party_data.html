@@ -14,8 +14,8 @@
         <tr>
             <td><span class="badge bg-primary {{ row['type'] }}">{{ row['type'] }}</span></td>
             <td><code>{{ row['name'] }}</code></td>
-            <td></td>
-            <td></td>
+            <td>{{ row['rows'] }}</td>
+            <td>{{ row['size'] }}</td>
             <td><a href="{{ row['link'] }}" target="_blank">Link</a></td>
         </tr>
       {% endfor %}

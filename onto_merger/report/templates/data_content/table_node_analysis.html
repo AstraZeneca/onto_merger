@@ -12,11 +12,11 @@
     {% if rows | length > 0 %}
       {% for row in rows %}
         <tr>
-          <td>{{ row['ns'] }}</td>
-          <td>{{ row['count'] }}</td>
-          <td>{{ row['freq'] }}</td>
-          <td>{{ row['coverage_mapping'] }}</td>
-          <td>{{ row['coverage_edge_hierarchy'] }}</td>
+          <td>{{ row['namespace'] }}</td>
+          <td>{{ row['namespace_count'] }}</td>
+          <td>{{ row['namespace_freq'] }}%</td>
+          <td>{{ row['mapping_coverage_freq'] }}%</td>
+          <td>{{ row['edge_coverage_freq'] }}%</td>
         </tr>
       {% endfor %}
     {% else %}

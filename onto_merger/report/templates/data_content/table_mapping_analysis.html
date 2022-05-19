@@ -12,9 +12,9 @@
     {% if rows | length > 0 %}
       {% for row in rows %}
         <tr>
-          <td>{{ row['node_nss'] }}</td>
+          <td>{{ row['nss_set'] }}</td>
           <td>{{ row['count'] }}</td>
-          <td>{{ row['freq'] }}</td>
+          <td>{{ row['freq'] }}%</td>
           <td>{{ row['types'] }}</td>
           <td>{{ row['provs'] }}</td>
         </tr>
