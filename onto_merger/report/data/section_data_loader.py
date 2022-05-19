@@ -422,22 +422,31 @@ def _produce_data_file_subsections(section_name: str, data_manager: DataManager)
     template = "data_content/table_third_party_data.html"
     return [
         {"title": "Data: Input", "link_title": "data_input",
-         "dataset": data_manager.load_analysis_report_table_as_dict(
-             section_name=f"{section_name}_{DIRECTORY_INPUT}_{TABLE_STATS}",
-             table_name=table_name,
-         ),
+         "dataset": {
+             "rows": data_manager.load_analysis_report_table_as_dict(
+                 section_name=f"{section_name}_{DIRECTORY_INPUT}",
+                 table_name=table_name,
+             ),
+             "section_name": section_name,
+         },
          "template": template},
         {"title": "Data: Intermediate", "link_title": "data_intermediate",
-         "dataset": data_manager.load_analysis_report_table_as_dict(
-             section_name=f"{section_name}_{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}",
-             table_name=table_name,
-         ),
+         "dataset": {
+             "rows": data_manager.load_analysis_report_table_as_dict(
+                 section_name=f"{section_name}_{DIRECTORY_INTERMEDIATE}",
+                 table_name=table_name,
+             ),
+             "section_name": section_name,
+         },
          "template": template},
         {"title": "Data: Output", "link_title": "data_output",
-         "dataset": data_manager.load_analysis_report_table_as_dict(
-             section_name=f"{section_name}_{DIRECTORY_OUTPUT}_{TABLE_STATS}",
-             table_name=table_name,
-         ),
+         "dataset": {
+             "rows": data_manager.load_analysis_report_table_as_dict(
+                 section_name=f"{section_name}_{DIRECTORY_OUTPUT}",
+                 table_name=table_name,
+             ),
+             "section_name": section_name,
+         },
          "template": template},
     ]
 

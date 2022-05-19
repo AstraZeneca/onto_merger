@@ -224,7 +224,7 @@ class DataManager:
         """Produce the path for the Pandas profile report HTML."""
         table_html = f"{table_name}_report.html"
         if relative_path is True:
-            return os.path.join(DIRECTORY_OUTPUT, DIRECTORY_PROFILED_DATA, table_html)
+            return os.path.join(DIRECTORY_PROFILED_DATA, table_html)
         return os.path.join(self._get_profiled_report_directory_path(), table_html)
 
     def get_log_file_path(self) -> str:

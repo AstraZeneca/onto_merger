@@ -1,22 +1,32 @@
 <table class="table table-hover third_party_data">
     <thead>
         <tr>
-            <td style="width:20%"><b>Table type</b></td>
-            <td style="width:20%"><b>Table name</b></td>
-            <td style="width:20%"><b>Rows</b></td>
-            <td style="width:20%"><b>File size</b></td>
+            <td style="width:15%"><b>Table type</b></td>
+            <td style="width:25%"><b>Table name</b></td>
+            {% if subsection_data['section_name'] == "data_profiling" %}
+                <td style="width:20%"><b>Rows</b></td>
+                <td style="width:20%"><b>File size</b></td>
+            {% else %}
+                <td style="width:20%"><b>Validations</b></td>
+                <td style="width:20%"><b>Success (%)</b></td>
+            {% endif %}
             <td style="width:20%"><b>Report</b></td>
         </tr>
     </thead>
     <tbody>
-    {% if subsection_data | length > 0 %}
-      {% for row in subsection_data %}
+    {% if subsection_data['rows'] | length > 0 %}
+      {% for row in subsection_data['rows'] %}
         <tr>
             <td><span class="badge bg-primary {{ row['type'] }}">{{ row['type'] }}</span></td>
             <td><code>{{ row['name'] }}</code></td>
-            <td>{{ row['rows'] }}</td>
-            <td>{{ row['size'] }}</td>
-            <td><a href="{{ row['link'] }}" target="_blank">Link</a></td>
+            {% if subsection_data['section_name'] == "data_profiling" %}
+                <td>{{ row['rows'] }}</td>
+                <td>{{ row['size'] }}</td>
+            {% else %}
+                <td>{{ row['nb_validations'] }}</td>
+                <td>{{ row['success_percent'] }}</td>
+            {% endif %}
+            <td><a href="{{ row['report'] }}" target="_blank">Link</a></td>
         </tr>
       {% endfor %}
     {% else %}

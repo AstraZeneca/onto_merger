@@ -337,15 +337,17 @@ def _produce_ge_validation_report_map(validation_folder: str) -> dict:
     }
 
 
-def _produce_ge_validation_analysis(data_manager: DataManager,) -> dict:
+def _produce_ge_validation_analysis(data_manager: DataManager, ) -> dict:
     data: List[dict] = []
     for path in Path(data_manager.get_ge_json_validations_folder_path()).rglob('*.json'):
         with open(str(path)) as json_file:
             validation_json = json.load(json_file)
             data.append(
                 {
-                    "table_name": validation_json['meta']['active_batch_definition']['datasource_name'].replace("_datasource", ""),
-                    "directory_name": validation_json['meta']['active_batch_definition']['data_asset_name'].split("_")[0],
+                    "table_name": validation_json['meta']['active_batch_definition']['datasource_name'].replace(
+                        "_datasource", ""),
+                    "directory_name": validation_json['meta']['active_batch_definition']['data_asset_name'].split("_")[
+                        0],
                     "nb_validations": validation_json['statistics']['evaluated_expectations'],
                     "success_percent": validation_json['statistics']['success_percent'],
                     "nb_failed_validations": validation_json['statistics']['unsuccessful_expectations'],
@@ -374,7 +376,7 @@ def _produce_data_profiling_stats_for_directory(tables: List[NamedTable],
             ),
             "report": data_manager.get_profiled_table_report_path(
                 table_name=table.name,
-                relative_path=False
+                relative_path=True
             )
         }
         for table in tables if "steps_report" not in table.name
@@ -423,36 +425,48 @@ def _produce_data_profiling_table_stats(data_manager: DataManager, section_name:
     ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
 
 
-def _produce_data_testing_table_stats(data_manager: DataManager, section_name: str) -> None:
+def _produce_data_testing_table_stats(data_manager: DataManager, section_name: str) -> DataFrame:
     validation_analysis = _produce_ge_validation_analysis(data_manager=data_manager)
     ge_validation_report_map = _produce_ge_validation_report_map(
         validation_folder=data_manager.get_ge_data_docs_validations_folder_path(),
     )
-    print(ge_validation_report_map)
-    pd.DataFrame(
+    main_path = f"{data_manager.get_analysis_folder_path()}/{section_name}"
+
+    input_df = pd.DataFrame(
         _produce_data_test_stats_for_directory(
             tables=TABLES_INPUT,
             ge_validation_report_map=ge_validation_report_map,
             validation_analysis=validation_analysis,
             directory=DIRECTORY_INPUT,
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_INPUT}_{TABLE_STATS}.csv")
-    pd.DataFrame(
+    )
+    input_df['directory'] = DIRECTORY_INPUT
+    input_df.to_csv(f"{main_path}_{DIRECTORY_INPUT}_{TABLE_STATS}.csv")
+
+    intermed_df = pd.DataFrame(
         _produce_data_test_stats_for_directory(
             tables=TABLES_INTERMEDIATE,
             ge_validation_report_map=ge_validation_report_map,
             validation_analysis=validation_analysis,
             directory=DIRECTORY_INTERMEDIATE,
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}.csv")
-    pd.DataFrame(
+    )
+    intermed_df['directory'] = DIRECTORY_INTERMEDIATE
+    intermed_df.to_csv(f"{main_path}_{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}.csv")
+
+    output_df = pd.DataFrame(
         _produce_data_test_stats_for_directory(
             tables=TABLES_DOMAIN,
             ge_validation_report_map=ge_validation_report_map,
             validation_analysis=validation_analysis,
             directory="domain",
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
+    )
+    output_df['directory'] = DIRECTORY_OUTPUT
+    output_df.to_csv(f"{main_path}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
+
+    all_df = pd.concat([input_df, intermed_df, output_df])
+    return all_df
 
 
 # RUNTIME
@@ -509,6 +523,20 @@ def _produce_and_save_runtime_tables(
 
 
 # SECTION SUMMARIES #
+def _produce_and_save_summary_overview(data_manager: DataManager, data_repo: DataRepository) -> None:
+    summary = [
+        {"metric": "Dataset (folder name)", "values": "foo"},
+        {"metric": "Time taken", "values": "1 min 23 seconds"},
+        {"metric": "OntoMerger version", "values": "<code>1.2.3</code>"},
+    ]
+    data_manager.save_analysis_table(
+        analysis_table=pd.DataFrame(summary),
+        dataset=SECTION_OVERVIEW,
+        analysed_table_name=TABLE_SECTION,
+        analysis_table_suffix=TABLE_SUMMARY
+    )
+
+
 def _produce_and_save_summary_input(data_manager: DataManager, data_repo: DataRepository) -> None:
     summary = [
         {"metric": "Number of nodes", "values": len(data_repo.get(table_name=TABLE_NODES).dataframe)},
@@ -581,15 +609,22 @@ def _produce_and_save_summary_connectivity(data_manager: DataManager, data_repo:
     )
 
 
-def _produce_and_save_summary_data_tests(data_manager: DataManager) -> None:
+def _produce_and_save_summary_data_tests(data_manager: DataManager, data_test_stats: DataFrame) -> None:
     summary = [
-        {"metric": "Time taken", "values": "2 min 23 seconds"},
-        {"metric": "Number of tables tested", "values": "18"},
-        {"metric": "Number of tests run", "values": "123"},
-        {"metric": "Number of failed tests (input data)", "values": "0"},
-        {"metric": "Number of failed tests (intermediate data)", "values": "0"},
-        {"metric": "Number of failed tests (output data)", "values": "0"},
-        {"metric": "GE version", "values": "1.2.3"},
+        {"metric": "Time taken", "values": "..."},
+        {"metric": "Number of tables tested", "values": len(data_test_stats)},
+        {"metric": "Number of tests run", "values": data_test_stats['nb_validations'].sum()},
+        {"metric": "Total failed tests", "values": data_test_stats['nb_failed_validations'].sum()},
+        {"metric": "Number of failed tests (input data)",
+         "values": data_test_stats.query(expr=f"directory == '{DIRECTORY_INPUT}'", inplace=False)
+         ['nb_failed_validations'].sum()},
+        {"metric": "Number of failed tests (intermediate data)",
+         "values": data_test_stats.query(expr=f"directory == '{DIRECTORY_INTERMEDIATE}'", inplace=False)
+         ['nb_failed_validations'].sum()},
+        {"metric": "Number of failed tests (output data)",
+         "values": data_test_stats.query(expr=f"directory == '{DIRECTORY_OUTPUT}'", inplace=False)
+         ['nb_failed_validations'].sum()},
+        {"metric": "GE version", "values": f"<code>{data_test_stats['ge_version'].iloc[0]}</code>"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -608,18 +643,6 @@ def _produce_and_save_summary_data_profiling(data_manager: DataManager) -> None:
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
         dataset=SECTION_DATA_PROFILING,
-        analysed_table_name=TABLE_SECTION,
-        analysis_table_suffix=TABLE_SUMMARY
-    )
-
-
-def _produce_and_save_summary_overview(data_manager: DataManager, data_repo: DataRepository) -> None:
-    summary = [
-        {"metric": "Time taken", "values": "1 min 23 seconds"},
-    ]
-    data_manager.save_analysis_table(
-        analysis_table=pd.DataFrame(summary),
-        dataset=SECTION_OVERVIEW,
         analysed_table_name=TABLE_SECTION,
         analysis_table_suffix=TABLE_SUMMARY
     )
@@ -1063,9 +1086,10 @@ def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
 def _produce_data_profiling_and_testing_analysis(data_manager: DataManager) -> None:
     logger.info(f"Producing report section '{SECTION_DATA_PROFILING}' and '{SECTION_DATA_TESTS}' analysis...")
     _produce_data_profiling_table_stats(data_manager=data_manager, section_name=SECTION_DATA_PROFILING)
-    _produce_data_testing_table_stats(data_manager=data_manager, section_name=SECTION_DATA_TESTS)
     _produce_and_save_summary_data_profiling(data_manager=data_manager)
-    _produce_and_save_summary_data_tests(data_manager=data_manager)
+    data_test_stats = _produce_data_testing_table_stats(data_manager=data_manager,
+                                                        section_name=SECTION_DATA_TESTS)
+    _produce_and_save_summary_data_tests(data_manager=data_manager, data_test_stats=data_test_stats)
 
 
 def _produce_overview_analysis(data_manager: DataManager) -> None:
@@ -1107,7 +1131,7 @@ analysis_data_manager = DataManager(project_folder_path=project_folder_path,
 # this_data_repo = DataRepository()
 # this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
 
-# _produce_data_profiling_and_testing_analysis(data_manager=analysis_data_manager)
+_produce_data_profiling_and_testing_analysis(data_manager=analysis_data_manager)
 # _produce_validation_analysis(data_manager=analysis_data_manager)
 
 # produce_report_data(data_manager=analysis_data_manager)
