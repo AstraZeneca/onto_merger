@@ -2,7 +2,7 @@
 
 Produce data and figures are presented in the report.
 """
-
+import json
 import os
 from pathlib import Path
 from typing import Union, List
@@ -28,7 +28,7 @@ from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT
     TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES, TABLE_MERGES, \
     TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, TABLE_NODES_CONNECTED_ONLY, \
     TABLE_ALIGNMENT_STEPS_REPORT, TABLE_CONNECTIVITY_STEPS_REPORT, TABLE_PIPELINE_STEPS_REPORT, COLUMN_NAMESPACE, \
-    TABLE_EDGES_HIERARCHY_POST
+    TABLE_EDGES_HIERARCHY_POST, TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.logger.log import get_logger
@@ -337,12 +337,32 @@ def _produce_ge_validation_report_map(validation_folder: str) -> dict:
     }
 
 
-def _produce_table_stats_for_directory(tables: List[NamedTable],
-                                       folder_path: str,
-                                       data_manager: DataManager) -> List[dict]:
-    ge_validation_report_map = _produce_ge_validation_report_map(
-        validation_folder=analysis_data_manager.get_ge_data_docs_validations_folder_path(),
-    )
+def _produce_ge_validation_analysis(data_manager: DataManager,) -> dict:
+    data: List[dict] = []
+    for path in Path(data_manager.get_ge_json_validations_folder_path()).rglob('*.json'):
+        with open(str(path)) as json_file:
+            validation_json = json.load(json_file)
+            data.append(
+                {
+                    "table_name": validation_json['meta']['active_batch_definition']['datasource_name'].replace("_datasource", ""),
+                    "directory_name": validation_json['meta']['active_batch_definition']['data_asset_name'].split("_")[0],
+                    "nb_validations": validation_json['statistics']['evaluated_expectations'],
+                    "success_percent": validation_json['statistics']['success_percent'],
+                    "nb_failed_validations": validation_json['statistics']['unsuccessful_expectations'],
+                    "success": validation_json['success'],
+                    "ge_version": validation_json['meta']["great_expectations_version"],
+                }
+            )
+    data_dic = {
+        f"{item['directory_name']}_{item['table_name']}": item
+        for item in data
+    }
+    return data_dic
+
+
+def _produce_data_profiling_stats_for_directory(tables: List[NamedTable],
+                                                folder_path: str,
+                                                data_manager: DataManager) -> List[dict]:
     return [
         {
             "type": _get_table_type_for_table_name(table_name=table.name),
@@ -352,38 +372,87 @@ def _produce_table_stats_for_directory(tables: List[NamedTable],
                 table_name=table.name,
                 folder_path=folder_path
             ),
-            "data_profiling": data_manager.get_profiled_table_report_path(
+            "report": data_manager.get_profiled_table_report_path(
                 table_name=table.name,
                 relative_path=False
-            ),
-            "data_tests": ge_validation_report_map.get(table.name)
+            )
         }
-        for table in tables
+        for table in tables if "steps_report" not in table.name
     ]
 
 
-def _produce_table_stats(data_manager: DataManager) -> None:
+def _produce_data_test_stats_for_directory(tables: List[str],
+                                           directory: str,
+                                           ge_validation_report_map: dict,
+                                           validation_analysis: dict) -> List[dict]:
+    return [
+        {
+            "type": _get_table_type_for_table_name(table_name=table),
+            "name": f"{table}.csv",
+            "report": ge_validation_report_map.get(table),
+            "nb_validations": validation_analysis[f"{directory}_{table}"]["nb_validations"],
+            "nb_failed_validations": validation_analysis[f"{directory}_{table}"]["nb_failed_validations"],
+            "success_percent": validation_analysis[f"{directory}_{table}"]["success_percent"],
+            "ge_version": validation_analysis[f"{directory}_{table}"]["ge_version"],
+        }
+        for table in tables if "steps_report" not in table
+    ]
+
+
+def _produce_data_profiling_table_stats(data_manager: DataManager, section_name: str) -> None:
     pd.DataFrame(
-        _produce_table_stats_for_directory(
+        _produce_data_profiling_stats_for_directory(
             tables=data_manager.load_input_tables(),
             folder_path=data_manager.get_input_folder_path(),
             data_manager=data_manager
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{DIRECTORY_INPUT}_{TABLE_STATS}.csv")
+    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_INPUT}_{TABLE_STATS}.csv")
     pd.DataFrame(
-        _produce_table_stats_for_directory(
+        _produce_data_profiling_stats_for_directory(
             tables=data_manager.load_intermediate_tables(),
             folder_path=data_manager.get_intermediate_folder_path(),
             data_manager=data_manager
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}.csv")
+    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}.csv")
     pd.DataFrame(
-        _produce_table_stats_for_directory(
+        _produce_data_profiling_stats_for_directory(
             tables=data_manager.load_output_tables(),
             folder_path=data_manager.get_domain_ontology_folder_path(),
             data_manager=data_manager
         )
-    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
+    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
+
+
+def _produce_data_testing_table_stats(data_manager: DataManager, section_name: str) -> None:
+    validation_analysis = _produce_ge_validation_analysis(data_manager=data_manager)
+    ge_validation_report_map = _produce_ge_validation_report_map(
+        validation_folder=data_manager.get_ge_data_docs_validations_folder_path(),
+    )
+    print(ge_validation_report_map)
+    pd.DataFrame(
+        _produce_data_test_stats_for_directory(
+            tables=TABLES_INPUT,
+            ge_validation_report_map=ge_validation_report_map,
+            validation_analysis=validation_analysis,
+            directory=DIRECTORY_INPUT,
+        )
+    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_INPUT}_{TABLE_STATS}.csv")
+    pd.DataFrame(
+        _produce_data_test_stats_for_directory(
+            tables=TABLES_INTERMEDIATE,
+            ge_validation_report_map=ge_validation_report_map,
+            validation_analysis=validation_analysis,
+            directory=DIRECTORY_INTERMEDIATE,
+        )
+    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}.csv")
+    pd.DataFrame(
+        _produce_data_test_stats_for_directory(
+            tables=TABLES_DOMAIN,
+            ge_validation_report_map=ge_validation_report_map,
+            validation_analysis=validation_analysis,
+            directory="domain",
+        )
+    ).to_csv(f"{data_manager.get_analysis_folder_path()}/{section_name}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
 
 
 # RUNTIME
@@ -729,16 +798,15 @@ def _produce_and_node_status_analyses(
         .query(expr=f'{COLUMN_NAMESPACE} == "{seed_name}"', inplace=False)['namespace_count'].iloc[0]
     non_seed_count = input_count - seed_node_count
     unmapped_count = len(nodes_unmapped)
-    connected_count = len(nodes_dangling)
     connected_only_count = len(nodes_connected_only)
     dangling_count = len(nodes_dangling)
-    connected_and_merged_count = input_count - (seed_node_count + dangling_count + connected_only_count)
     merge_analysis_df = _produce_merge_analysis_for_merged_nss_for_canonical(
         merges=data_repo.get(TABLE_MERGES).dataframe
     )
     merged_to_seed_count = merge_analysis_df \
         .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
     merged_not_seed_count = input_count - (seed_node_count + merged_to_seed_count + unmapped_count)
+    connected_and_merged_count = merged_to_seed_count  # todo
 
     # INPUT:    | Seed | Others |
     input_data = [
@@ -994,7 +1062,8 @@ def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
 
 def _produce_data_profiling_and_testing_analysis(data_manager: DataManager) -> None:
     logger.info(f"Producing report section '{SECTION_DATA_PROFILING}' and '{SECTION_DATA_TESTS}' analysis...")
-    _produce_table_stats(data_manager=data_manager)
+    _produce_data_profiling_table_stats(data_manager=data_manager, section_name=SECTION_DATA_PROFILING)
+    _produce_data_testing_table_stats(data_manager=data_manager, section_name=SECTION_DATA_TESTS)
     _produce_and_save_summary_data_profiling(data_manager=data_manager)
     _produce_and_save_summary_data_tests(data_manager=data_manager)
 
@@ -1022,9 +1091,9 @@ def _produce_overview_analysis(data_manager: DataManager) -> None:
 # MAIN #
 def produce_report_data(data_manager: DataManager) -> None:
     logger.info(f"Started producing report analysis...")
-    # _produce_input_dataset_analysis(data_manager=data_manager)
-    # _produce_output_dataset_analysis(data_manager=data_manager)
-    # _produce_alignment_process_analysis(data_manager=data_manager)
+    _produce_input_dataset_analysis(data_manager=data_manager)
+    _produce_output_dataset_analysis(data_manager=data_manager)
+    _produce_alignment_process_analysis(data_manager=data_manager)
     _produce_connectivity_process_analysis(data_manager=data_manager)
     _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
     _produce_overview_analysis(data_manager=data_manager)
@@ -1035,14 +1104,11 @@ def produce_report_data(data_manager: DataManager) -> None:
 project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
 analysis_data_manager = DataManager(project_folder_path=project_folder_path,
                                     clear_output_directory=False)
-produce_report_data(data_manager=analysis_data_manager)
+# this_data_repo = DataRepository()
+# this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
 
-# data_repo = DataRepository()
-# data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
-# _produce_and_save_connectivity_step_node_analysis(
-#     step_report=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
-#     section_dataset_name=SECTION_CONNECTIVITY,
-#     data_manager=analysis_data_manager,
-# )
+# _produce_data_profiling_and_testing_analysis(data_manager=analysis_data_manager)
+# _produce_validation_analysis(data_manager=analysis_data_manager)
 
-# report_generator.produce_report(data_manager=analysis_data_manager)
+# produce_report_data(data_manager=analysis_data_manager)
+report_generator.produce_report(data_manager=analysis_data_manager)

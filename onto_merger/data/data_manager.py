@@ -456,6 +456,9 @@ class DataManager:
     def get_ge_data_docs_validations_folder_path(self):
         return os.path.join(self.get_ge_data_docs_folder_path(), "local_site/validations")
 
+    def get_ge_json_validations_folder_path(self):
+        return os.path.join(self.get_data_tests_path(), "uncommitted/validations")
+
     def get_output_report_folder_path(self):
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
 

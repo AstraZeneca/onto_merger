@@ -1,15 +1,3 @@
 <div class="overview summary">
-<h4>Node status</h4>
-<div style="align-content: center">
-    <img class="img-responsive center-img"
-         style="align-content: center"
-         src="plotly_horizontal_bar_chart_node_types.svg" alt="foo">
-</div>
-<h4>Node alignment & connectivity summary</h4>
-{% with rows=subsection_data['table_analysis'] %}
-    {% include 'templates/data_content/table_overview_node_summary.html' %}
-{% endwith %}
-{% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
-    {% include 'templates/subsection_content/table-description-accordion.html' %}
-{% endwith %}
+    {% include 'templates/subsection_content/node-status.html' %}
 </div>

@@ -39,8 +39,3 @@ def _produce_report_content(report_data: dict) -> str:
     report_content = template.render(report_data)
     return report_content
 
-
-project_folder_path = "/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data"
-analysis_data_manager = DataManager(project_folder_path=project_folder_path,
-                                    clear_output_directory=False)
-produce_report(data_manager=analysis_data_manager)

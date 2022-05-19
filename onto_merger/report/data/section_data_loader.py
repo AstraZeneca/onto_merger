@@ -80,7 +80,7 @@ def _load_overview_section_data(data_manager: DataManager) -> dict:
         section_name=section_name,
         subsections=[
             _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            # _produce_overview_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_summary_subsection(section_name=section_name, data_manager=data_manager),
             _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
             _produce_overview_config_subsection(section_name=section_name, data_manager=data_manager),
             _produce_overview_validation_subsection(section_name=section_name, data_manager=data_manager),
@@ -282,15 +282,14 @@ def _produce_overview_validation_subsection(section_name: str, data_manager: Dat
 # todo
 def _produce_overview_summary_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
-        "title": "Summary",
-        "link_title": "summary",
+        "title": "Nodes",
+        "link_title": "nodes",
         "dataset": {
-            "table_analysis": data_manager.load_analysis_report_table_as_dict(
+            "node_status_fig_path": _get_figure_path(section_name=section_name, table_name="node_status"),
+            "node_status_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
-                table_name="???"  # todo
+                table_name="node_status"
             ),
-            "table_description": _load_table_description_data(table_name="node_summary"),
-            "unique_id": "data_table_node_summary_description",
         },
         "template": "subsection_content/overview-summary.html"
     }
@@ -405,7 +404,7 @@ def _produce_connectivity_node_subsection(section_name: str, data_manager: DataM
             ),
             "connected_nodes_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
-                table_name="nodes_connected_ns_freq_analysis", # todo
+                table_name="nodes_connected_ns_freq_analysis",
                 rename_columns=ns_freq_labels,
             ),
             "dangling_nodes_table": data_manager.load_analysis_report_table_as_dict(
@@ -424,23 +423,20 @@ def _produce_data_file_subsections(section_name: str, data_manager: DataManager)
     return [
         {"title": "Data: Input", "link_title": "data_input",
          "dataset": data_manager.load_analysis_report_table_as_dict(
-             section_name=DIRECTORY_INPUT,
+             section_name=f"{section_name}_{DIRECTORY_INPUT}_{TABLE_STATS}",
              table_name=table_name,
-             rename_columns={section_name: "link"},
          ),
          "template": template},
         {"title": "Data: Intermediate", "link_title": "data_intermediate",
          "dataset": data_manager.load_analysis_report_table_as_dict(
-             section_name=DIRECTORY_INTERMEDIATE,
+             section_name=f"{section_name}_{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}",
              table_name=table_name,
-             rename_columns={section_name: "link"},
          ),
          "template": template},
         {"title": "Data: Output", "link_title": "data_output",
          "dataset": data_manager.load_analysis_report_table_as_dict(
-             section_name=DIRECTORY_OUTPUT,
+             section_name=f"{section_name}_{DIRECTORY_OUTPUT}_{TABLE_STATS}",
              table_name=table_name,
-             rename_columns={section_name: "link"},
          ),
          "template": template},
     ]
