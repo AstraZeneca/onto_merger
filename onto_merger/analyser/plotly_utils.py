@@ -11,6 +11,8 @@ from onto_merger.analyser.constants import COLUMN_NAMESPACE, COLUMN_NAMESPACE_FR
 
 _FIGURE_FORMAT = "svg"
 _COLOR_WHITE = "#fff"
+_WIDTH_ONE_COL_ROW = 1100
+_WIDTH_TWO_COL_ROW = round(_WIDTH_ONE_COL_ROW / 2)
 
 
 def _get_figure_filepath(file_path: str) -> str:
@@ -54,11 +56,11 @@ def produce_node_status_stacked_bar_chart(
 ):
     if is_one_bar is True:
         showlegend_and_axes = False
-        width = 700
+        width = _WIDTH_ONE_COL_ROW
         height = 50
     else:
         showlegend_and_axes = True
-        width = 700
+        width = _WIDTH_ONE_COL_ROW
         height = 300
 
     # adjust setting for 1 vs multiple bars
@@ -193,7 +195,7 @@ def produce_gantt_chart(
         x_end="end",
         y="task",
         text="elapsed_sec",
-        width=700,
+        width=_WIDTH_ONE_COL_ROW,
         labels={
             'task': ''
         },
@@ -214,7 +216,7 @@ def produce_gantt_chart(
         .write_image(_get_figure_filepath(file_path=file_path))
 
 
-# ?? #
+# todo remove unused
 def produce_vertical_bar_chart_stacked():
     df = pd.DataFrame([
         [1, 0, "mapped"],

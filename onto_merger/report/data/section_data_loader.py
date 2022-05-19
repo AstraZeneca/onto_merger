@@ -151,7 +151,7 @@ def _produce_section_summary_subsection(section_name: str, data_manager: DataMan
         "title": "Summary",
         "link_title": section_name,
         "dataset": {
-            "description": _load_section_summary_description_data(section_name=section_name),
+            # "description": _load_section_summary_description_data(section_name=section_name),
             "summary_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name=TABLE_SECTION_SUMMARY
@@ -286,7 +286,7 @@ def _produce_overview_summary_subsection(section_name: str, data_manager: DataMa
 
 # todo
 def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManager) -> dict:
-    return {
+    section_data = {
         "title": "Processing",
         "link_title": "pipeline",
         "dataset": {
@@ -307,6 +307,9 @@ def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManag
         },
         "template": "subsection_content/subsection-runtime.html"
     }
+    section_data["dataset"]["unique_id"] = \
+        section_data["dataset"]["gantt_img"].split("/")[-1].replace(".svg", "")
+    return section_data
 
 
 # todo

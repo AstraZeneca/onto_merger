@@ -113,14 +113,14 @@ def _produce_node_analysis(nodes: DataFrame, mappings: DataFrame, edges_hierarch
 
     # add freq
     node_analysis["namespace_freq"] = node_analysis.apply(
-        lambda x: ((x['namespace_count'] / len(nodes)) * 100), axis=1
+        lambda x: (round(x['namespace_count'] / len(nodes) * 100, 2)), axis=1
     )
     # add relative freq
     node_analysis["mapping_coverage_freq"] = node_analysis.apply(
-        lambda x: (x['mapping_coverage_count'] / x['namespace_count'] * 100), axis=1
+        lambda x: (round(x['mapping_coverage_count'] / x['namespace_count'] * 100, 2)), axis=1
     )
     node_analysis["edge_coverage_freq"] = node_analysis.apply(
-        lambda x: (x['edge_coverage_count'] / x['namespace_count'] * 100), axis=1
+        lambda x: (round(x['edge_coverage_count'] / x['namespace_count'] * 100, 2)), axis=1
     )
     return node_analysis
 
@@ -130,7 +130,7 @@ def _produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
         nodes=nodes, metric_name="namespace"
     )
     df["namespace_freq"] = df.apply(
-        lambda x: ((x['namespace_count'] / len(nodes)) * 100), axis=1
+        lambda x: (round((x['namespace_count'] / len(nodes) * 100), 3)), axis=1
     )
     return df
 
@@ -169,7 +169,7 @@ def _produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
     df["freq"] = df.apply(
-        lambda x: ((x['count'] / len(mappings)) * 100), axis=1
+        lambda x: (round((x['count'] / len(mappings) * 100), 2)), axis=1
     )
     return df
 
@@ -214,7 +214,7 @@ def _produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFra
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
     df["freq"] = df.apply(
-        lambda x: ((x[COLUMN_COUNT] / len(edges)) * 100), axis=1
+        lambda x: (round((x[COLUMN_COUNT] / len(edges))) * 100), axis=1
     )
     return df
 
@@ -229,7 +229,7 @@ def _produce_source_to_target_analysis_for_directed_edge(edges: DataFrame) -> Da
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
     df[COLUMN_FREQ] = df.apply(
-        lambda x: ((x[COLUMN_COUNT] / len(edges)) * 100), axis=1
+        lambda x: (round((x[COLUMN_COUNT] / len(edges))) * 100), axis=1
     )
     return df
 
@@ -243,7 +243,7 @@ def _produce_merge_analysis_for_merged_nss_for_canonical(merges: DataFrame) -> D
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
     df["freq"] = df.apply(
-        lambda x: ((x[COLUMN_COUNT] / len(merges)) * 100), axis=1
+        lambda x: (round((x[COLUMN_COUNT] / len(merges) * 100), 3)), axis=1
     )
     return df
 
@@ -359,9 +359,13 @@ def _produce_and_save_runtime_tables(
     )
     # support table: runtime overview
     runtime_overview = [
+        ("Number of steps", len(runtime_table)),
         ("Start", runtime_table["start"].iloc[0]),
         ("End", runtime_table["end"].iloc[len(runtime_table) - 1]),
-        ("Total runtime", f"{round(runtime_table['elapsed'].sum(), 2)} seconds"),
+        ("Total runtime", f"{round(runtime_table['elapsed'].sum(), 3)} seconds"),
+        ("Min runtime", f"{round(runtime_table['elapsed'].min(), 3)} seconds"),
+        ("Avg runtime", f"{round(runtime_table['elapsed'].mean(), 3)} seconds"),
+        ("Max runtime", f"{round(runtime_table['elapsed'].max(), 3)} seconds"),
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(runtime_overview, columns=["metric", "value"]),
@@ -938,7 +942,14 @@ def produce_report_data(data_manager: DataManager) -> None:
 
 
 # todo
+print("\n\nANALYSIS\n\n")
 project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
 analysis_data_manager = DataManager(project_folder_path=project_folder_path,
                                     clear_output_directory=False)
+print("\n\nREPORT\n\n")
 produce_report_data(data_manager=analysis_data_manager)
+
+# from onto_merger.report import report_generator
+# report_generator.produce_report(data_manager=analysis_data_manager)
+
+

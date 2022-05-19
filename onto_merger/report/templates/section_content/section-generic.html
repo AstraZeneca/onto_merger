@@ -22,13 +22,13 @@
         {% for subsection in dataset['subsections'] %}
             {% if dataset['subsections'].index(subsection) == 0 %}
                 <div class="tab-pane active" id="{{ subsection['link_title'] }}_{{ dataset['link_title'] }}">
-                {% with subsection_data=subsection['dataset'], template=subsection['template'] %}
+                {% with subsection_data=subsection['dataset'], template=subsection['template'], link_title=subsection['link_title'] %}
                     {% set path = 'templates/' + template %}{% include path %}
                 {% endwith %}
                 </div>
             {% else %}
                 <div class="tab-pane " id="{{ subsection['link_title'] }}_{{ dataset['link_title'] }}">
-                {% with subsection_data=subsection['dataset'], template=subsection['template'] %}
+                {% with subsection_data=subsection['dataset'], template=subsection['template'], link_title=subsection['link_title'] %}
                     {% set path = 'templates/' + template %}{% include path %}
                 {% endwith %}
                 </div>

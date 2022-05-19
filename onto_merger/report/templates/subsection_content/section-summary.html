@@ -5,8 +5,11 @@
     {% endwith %}
 </div>
 <div class="col-sm-6">
-    <p class="h4 table-title">{{ subsection_data['description']['title'] }}</p>
-    {% with description=subsection_data['description']['text'], unique_id=subsection_data['unique_id'] %}
-        {% include 'templates/data_content/table_description.html' %}
-    {% endwith %}
+    <p class="h4 table-title">About</p>
+    <table class="table table-condensed" style="margin-bottom: 0px; padding-bottom: 0px">
+        <thead><tr><td style="width:100%"></td></tr></thead>
+        <tbody><tr><td></td></tr></tbody>
+    </table>
+    {% set path = 'data/section_summary_descriptions/' + link_title + '_summary_about.html' %}
+    {% include path %}
 </div>
