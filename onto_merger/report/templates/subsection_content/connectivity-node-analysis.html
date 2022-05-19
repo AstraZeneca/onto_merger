@@ -1,0 +1,15 @@
+<div class="overview summary">
+    {% include 'templates/subsection_content/node-status.html' %}
+    <hr>
+    <h4>Connected & Dangling</h4>
+    <div class="col-sm-6">
+        {% with rows=subsection_data['connected_nodes_table'], title='Merged' %}
+            {% include 'templates/data_content/table_frequency.html' %}
+        {% endwith %}
+    </div>
+    <div class="col-sm-6">
+        {% with rows=subsection_data['dangling_nodes_table'], title='Dangling' %}
+            {% include 'templates/data_content/table_frequency.html' %}
+        {% endwith %}
+    </div>
+</div>

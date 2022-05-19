@@ -82,6 +82,7 @@ class AlignmentManager:
             sources_to_align=source_alignment_order,
             mapping_type_group_name=MAPPING_TYPE_GROUP_EQV,
             mapping_types=self._alignment_config.mapping_type_groups.equivalence,
+            start_step=0,
         )
 
         # (2) use the weaker relations: database reference
@@ -89,6 +90,7 @@ class AlignmentManager:
             sources_to_align=source_alignment_order,
             mapping_type_group_name=MAPPING_TYPE_GROUP_XREF,
             mapping_types=self._alignment_config.mapping_type_groups.database_reference,
+            start_step=len(source_alignment_order)
         )
 
         # save meta data
@@ -103,6 +105,7 @@ class AlignmentManager:
             sources_to_align: List[str],
             mapping_type_group_name: str,
             mapping_types: List[str],
+            start_step: int,
     ) -> None:
         """Run the alignment for each source according to the priority order, for a given mapping type group.
 
@@ -115,7 +118,7 @@ class AlignmentManager:
         :return:
         """
         for source_id in sources_to_align:
-            step_counter = sources_to_align.index(source_id) + 1
+            step_counter = start_step + sources_to_align.index(source_id) + 1
             logger.info(
                 f"* * * * * SOURCE: {source_id} | STEP: {step_counter} of "
                 + f"{len(sources_to_align)} | MAPPING: {mapping_type_group_name} "
@@ -270,9 +273,9 @@ class AlignmentManager:
                 step_counter=0,
                 count_unmapped_nodes=(
                         len(self._data_repo_input.get(TABLE_NODES).dataframe)
-                        - len(self_merges_for_seed_nodes.dataframe)
                 ),
             )
+        step.count_mappings = len(self_merges_for_seed_nodes.dataframe)
         step.task_finished()
         self._alignment_steps.append(
             step

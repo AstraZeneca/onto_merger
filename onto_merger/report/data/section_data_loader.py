@@ -1,6 +1,7 @@
 """Loads data for report sections."""
 from typing import List
 from datetime import datetime
+import os
 
 import pandas as pd
 
@@ -94,7 +95,8 @@ def _load_alignment_section_data(data_manager: DataManager) -> dict:
         section_name=section_name,
         subsections=[
             _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            # _produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_alignment_detail_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_alignment_node_subsection(section_name=section_name, data_manager=data_manager),
             _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
@@ -107,7 +109,8 @@ def _load_connectivity_section_data(data_manager: DataManager) -> dict:
         section_name=section_name,
         subsections=[
             _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            # _produce_process_detail_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_connectivity_detail_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_connectivity_node_subsection(section_name=section_name, data_manager=data_manager),
             _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
@@ -167,6 +170,11 @@ def _produce_nodes_subsection(section_name: str, data_manager: DataManager, is_o
         "title": "Nodes" if is_obsolete is False else "Nodes (Obsolete)",
         "link_title": "nodes" if is_obsolete is False else "nodes_obsolete",
         "dataset": {
+            "node_status_fig_path": _get_figure_path(section_name=section_name, table_name="node_status"),
+            "node_status_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="node_status"
+            ),
             "table_analysis": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name=table_name
@@ -188,8 +196,10 @@ def _produce_mappings_subsection(section_name: str, data_manager: DataManager) -
         "dataset": {
             "analysed_entity": "Mappings",
             "analysis_table_template": "data_content/table_mapping_analysis.html",
-            "analysis_fig_path": _get_figure_path(section_name=section_name, table_name=table_name),
-            "analysis_fig_alt_text": "...",
+            "heatmap_fig_path": _get_figure_path(section_name=section_name, table_name=table_name),
+            "heatmap_fig_alt_text": "...",
+            "types_fig_path": _get_figure_path(section_name=section_name, table_name="mappings_type_analysis"),
+            "types_fig_alt_text": "...",
             "table_analysis": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name=table_name
@@ -198,7 +208,7 @@ def _produce_mappings_subsection(section_name: str, data_manager: DataManager) -
             "unique_id": _get_unique_id_for_description_table(section_name=section_name,
                                                               table_name=table_name),
         },
-        "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"
+        "template": "subsection_content/mapping-analysis.html"
     }
 
 
@@ -220,14 +230,15 @@ def _produce_merges_subsection(section_name: str, data_manager: DataManager) -> 
             "unique_id": _get_unique_id_for_description_table(section_name=section_name,
                                                               table_name=table_name),
         },
-        "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"
+        "template": "subsection_content/merges-analysis.html",
     }
 
 
 def _produce_edges_hierarchy_subsection(section_name: str, data_manager: DataManager) -> dict:
     table_name = "edges_hierarchy_connected_nss_analysis"
     return {
-        "title": "Hierarchy edges", "link_title": "edges_hierarchy",
+        "title": "Hierarchy edges",
+        "link_title": "edges_hierarchy",
         "dataset": {
             "analysed_entity": "Hierarchy edges",
             "analysis_table_template": "data_content/table_edge_analysis.html",
@@ -242,7 +253,8 @@ def _produce_edges_hierarchy_subsection(section_name: str, data_manager: DataMan
             "unique_id": _get_unique_id_for_description_table(section_name=section_name,
                                                               table_name=table_name),
         },
-        "template": "subsection_content/dataset-entity-analysis-with-chart-and-description.html"}
+        "template": "subsection_content/edges-analysis.html",
+    }
 
 
 # todo
@@ -312,16 +324,97 @@ def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManag
     return section_data
 
 
-# todo
-def _produce_process_detail_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_alignment_detail_subsection(section_name: str, data_manager: DataManager) -> dict:
+    table_name = "alignment_steps_detail"
     return {
-        "title": "Details",
-        "link_title": "details",
+        "title": "Step details",
+        "link_title": "step_details",
         "dataset": {
-            "steps_table": [],
-            "table_description": [],
-            "unique_id": "data_table_connectivity_steps_description",
-        }
+            "fig_path": _get_figure_path(section_name=section_name,
+                                         table_name="step_node_analysis_stacked_bar_chart"),
+            "steps_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="steps_detail"
+            ),
+            "table_description": _load_table_description_data(table_name=table_name),
+            "unique_id": _get_unique_id_for_description_table(section_name=section_name,
+                                                              table_name=table_name),
+        },
+        "template": "subsection_content/alignment-details.html",
+    }
+
+
+def _produce_connectivity_detail_subsection(section_name: str, data_manager: DataManager) -> dict:
+    table_name = "connectivity_steps_detail"
+    return {
+        "title": "Step details",
+        "link_title": "step_details",
+        "dataset": {
+            "fig_path": _get_figure_path(section_name=section_name,
+                                         table_name="step_node_analysis_stacked_bar_chart"),
+            "steps_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="steps_detail"
+            ),
+            "table_description": _load_table_description_data(table_name=table_name),
+            "unique_id": _get_unique_id_for_description_table(section_name=section_name,
+                                                              table_name=table_name),
+        },
+        "template": "subsection_content/connectivity-details.html",
+    }
+
+
+def _produce_alignment_node_subsection(section_name: str, data_manager: DataManager) -> dict:
+    ns_freq_labels = {'namespace': 'ns', 'namespace_count': 'count', 'namespace_freq': 'freq'}
+    return {
+        "title": "Node analysis",
+        "link_title": "node_analysis",
+        "dataset": {
+            "node_status_fig_path": _get_figure_path(section_name=section_name,
+                                                     table_name="node_status"),
+            "node_status_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="node_status",
+            ),
+            "unmapped_nodes_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="nodes_merged_ns_freq_analysis",
+                rename_columns=ns_freq_labels,
+            ),
+            "merged_nodes_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="nodes_unmapped_ns_freq_analysis",
+                rename_columns=ns_freq_labels,
+            ),
+        },
+        "template": "subsection_content/alignment-node-analysis.html",
+    }
+
+
+def _produce_connectivity_node_subsection(section_name: str, data_manager: DataManager) -> dict:
+    ns_freq_labels = {'namespace': 'ns', 'namespace_count': 'count', 'namespace_freq': 'freq'}
+    return {
+        "title": "Node analysis",
+        "link_title": "node_analysis",
+        "dataset": {
+            "node_status_fig_path": _get_figure_path(section_name=section_name,
+                                                     table_name="node_status"),
+            "node_status_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="node_status",
+            ),
+            "connected_nodes_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="nodes_connected_ns_freq_analysis", # todo
+                rename_columns=ns_freq_labels,
+            ),
+            "dangling_nodes_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="nodes_dangling_ns_freq_analysis",
+                rename_columns=ns_freq_labels,
+            ),
+        },
+        "template": "subsection_content/connectivity-node-analysis.html",
     }
 
 
@@ -363,7 +456,7 @@ def _load_section_summary_description_data(section_name: str) -> dict:
 
 def _load_table_description_data(table_name: str) -> dict:
     """Table descriptions explaining columns of tables presented in the report."""
-    df = pd.read_csv(f"data/table_column_descriptions/{table_name}.csv")
+    df = pd.read_csv(os.path.abspath(f"../report/data/table_column_descriptions/{table_name}.csv"))
     return [
         {
             col: row[col]
@@ -378,7 +471,7 @@ def _get_section_icon_file_name(section_name: str) -> str:
     return f"icon_{section_name}.png"
 
 
-def _get_figure_path(section_name: str, table_name:str) -> str:
+def _get_figure_path(section_name: str, table_name: str) -> str:
     return f"images/{section_name}_{table_name}.svg"
 
 

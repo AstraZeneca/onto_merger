@@ -79,16 +79,36 @@ def produce_node_status_stacked_bar_chart(
         "plot_bgcolor": _COLOR_WHITE,
         'showlegend': showlegend_and_axes,
         'margin': {
-            "l": 35,  # left
+            "l": 0,  # left
             "r": 0,  # right
-            "t": 10,  # top
-            "b": 10,  # bottom
+            "t": 0,  # top
+            "b": 0,  # bottom
         }
     }) \
         .update_yaxes(autorange="reversed") \
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
         .update_xaxes(visible=showlegend_and_axes) \
         .update_yaxes(visible=showlegend_and_axes) \
+        .write_image(_get_figure_filepath(file_path=file_path))
+
+
+def produce_mapping_type_freq_chart(
+        analysis_table: DataFrame,
+        file_path: str,
+) -> None:
+    px.bar(
+        _format_percentage_column_to_decimal_places(
+            analysis_table=analysis_table,
+            column_name=COLUMN_FREQ,
+        ),
+        x=COLUMN_FREQ,
+        y="relation",
+        text=COLUMN_FREQ,
+        orientation='h',
+        labels={'relation': '', COLUMN_FREQ: 'Frequency (%)'}
+    ) \
+        .update_layout(plot_bgcolor=_COLOR_WHITE) \
+        .update_yaxes(autorange="reversed") \
         .write_image(_get_figure_filepath(file_path=file_path))
 
 
@@ -146,17 +166,17 @@ def _produce_directed_edge_stacked_bar_chart(
         text=text,
         color=color,
         orientation='h',
-        width=700,
+        width=_WIDTH_ONE_COL_ROW,
         labels=label_replacement,
     ) \
         .update_layout(
         {
             "plot_bgcolor": _COLOR_WHITE,
             'margin': {
-                "l": 5,  # left
-                "r": 5,  # right
-                "t": 5,  # top
-                "b": 5,  # bottom
+                "l": 0,  # left
+                "r": 0,  # right
+                "t": 0,  # top
+                "b": 0,  # bottom
             },
             'yaxis': {
                 'autorange': 'reversed'
@@ -216,30 +236,26 @@ def produce_gantt_chart(
         .write_image(_get_figure_filepath(file_path=file_path))
 
 
+def produce_vertical_bar_chart_stacked(
+        analysis_table: DataFrame,
+        file_path: str,
+):
+    px.bar(
+        analysis_table,
+        x="step_name",
+        y="freq",
+        labels={'status': 'Status', 'freq': 'Ratio of nodes (%)', 'step_name': 'Step'},
+        color="status",
+        text="freq",
+        width=_WIDTH_ONE_COL_ROW,
+        height=400,
+    )\
+        .update_layout(plot_bgcolor=_COLOR_WHITE) \
+        .update_xaxes({"tickmode": "linear"}) \
+        .write_image(_get_figure_filepath(file_path=file_path))
+
+
 # todo remove unused
-def produce_vertical_bar_chart_stacked():
-    df = pd.DataFrame([
-        [1, 0, "mapped"],
-        [1, 100, "unmapped"],
-        [2, 50, "mapped"],
-        [2, 50, "unmapped"],
-        [3, 100, "mapped"],
-        [3, 0, "unmapped"],
-    ], columns=["step", "ratio", "status"])
-
-    fig = px.bar(df,
-                 x="step",
-                 y="ratio",
-                 labels={'step': 'Step', 'status': 'Status'},
-                 color="status",
-                 text="ratio"
-                 )
-    fig \
-        .update_layout(plot_bgcolor="#fff") \
-        .update_xaxes({"tickmode": "linear"})
-    fig.write_image("plotly_vertical_bar_stacked.svg")
-
-
 def produce_vertical_bar_chart_node_ns():
     df = pd.DataFrame([
         ["MEDDRA", 123455, 0.80],

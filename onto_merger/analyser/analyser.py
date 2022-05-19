@@ -6,6 +6,7 @@ Produce data and figures are presented in the report.
 import os
 from pathlib import Path
 from typing import Union, List
+import itertools
 
 import pandas as pd
 from pandas import DataFrame
@@ -34,6 +35,7 @@ from onto_merger.logger.log import get_logger
 from onto_merger.report.data.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
 from onto_merger.analyser import plotly_utils
+from onto_merger.report import report_generator
 
 logger = get_logger(__name__)
 
@@ -42,8 +44,9 @@ COVERED = "covered"
 
 # HELPERS todo
 def print_df_stats(df, name):
-    print("\n\n", name, "\n\t", len(df), "\n\t", list(df))
-    print(df.head(10))
+    # print("\n\n", name, "\n\t", len(df), "\n\t", list(df))
+    # print(df.head(10))
+    pass
 
 
 # ANALYSIS #
@@ -141,6 +144,9 @@ def _produce_mapping_analysis_for_type(mappings: DataFrame) -> DataFrame:
              provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
+    df["freq"] = df.apply(
+        lambda x: (round((x['count'] / len(mappings) * 100), 3)), axis=1
+    )
     return df
 
 
@@ -229,7 +235,7 @@ def _produce_source_to_target_analysis_for_directed_edge(edges: DataFrame) -> Da
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
     df[COLUMN_FREQ] = df.apply(
-        lambda x: (round((x[COLUMN_COUNT] / len(edges))) * 100), axis=1
+        lambda x: (round((x[COLUMN_COUNT] / len(edges) * 100), 3)), axis=1
     )
     return df
 
@@ -246,6 +252,64 @@ def _produce_merge_analysis_for_merged_nss_for_canonical(merges: DataFrame) -> D
         lambda x: (round((x[COLUMN_COUNT] / len(merges) * 100), 3)), axis=1
     )
     return df
+
+
+def _produce_and_save_alignment_step_node_analysis(
+        alignment_step_report: DataFrame,
+        section_dataset_name: str,
+        data_manager: DataManager,
+) -> None:
+    mapped_count = 0
+    data = []
+    for _, row in alignment_step_report.iterrows():
+        mapped_count += row['count_mappings']
+        data.append([row['step_counter'], mapped_count, "Mapped",
+                     f"{row['step_counter']} : {row['source']}"])
+        data.append([row['step_counter'], (row['count_unmapped_nodes'] - row['count_mappings']), "Unmapped",
+                     f"{row['step_counter']} : {row['source']}"])
+    df = pd.DataFrame(data=data, columns=["step", "count", "status", "step_name"])
+    start_unmapped = alignment_step_report["count_unmapped_nodes"].iloc[0]
+    df["freq"] = df.apply(
+        lambda x: (round((x[COLUMN_COUNT] / start_unmapped * 100), 1)), axis=1
+    )
+    print_df_stats(df, "!!!")
+    plotly_utils.produce_vertical_bar_chart_stacked(
+        analysis_table=df,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=section_dataset_name,
+            analysed_table_name="step_node_analysis",
+            analysis_table_suffix="stacked_bar_chart"
+        ),
+    )
+
+
+def _produce_and_save_connectivity_step_node_analysis(
+        step_report: DataFrame,
+        section_dataset_name: str,
+        data_manager: DataManager,
+) -> None:
+    connected_count = 0
+    dangling_start = step_report["count_unmapped_nodes"].sum()
+    data = []
+    for _, row in step_report.iterrows():
+        connected_count += row['count_connected_nodes']
+        data.append([row['step_counter'], connected_count, "Connected",
+                     f"{row['step_counter']} : {row['source']}"])
+        data.append([row['step_counter'], (dangling_start - connected_count), "Dangling",
+                     f"{row['step_counter']} : {row['source']}"])
+    df = pd.DataFrame(data=data, columns=["step", "count", "status", "step_name"])
+    df["freq"] = df.apply(
+        lambda x: (round((x[COLUMN_COUNT] / dangling_start * 100), 1)), axis=1
+    )
+    print_df_stats(df, "!!!")
+    plotly_utils.produce_vertical_bar_chart_stacked(
+        analysis_table=df,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=section_dataset_name,
+            analysed_table_name="step_node_analysis",
+            analysis_table_suffix="stacked_bar_chart"
+        ),
+    )
 
 
 # TABLE DATA STATS #
@@ -530,11 +594,20 @@ def _produce_and_save_mapping_analysis(mappings: DataFrame,
         analysed_table_name=table_type,
         analysis_table_suffix=ANALYSIS_PROV
     )
+    mapping_type_analysis = _produce_mapping_analysis_for_type(mappings=mappings)
     data_manager.save_analysis_table(
-        analysis_table=_produce_mapping_analysis_for_type(mappings=mappings),
+        analysis_table=mapping_type_analysis,
         dataset=dataset,
         analysed_table_name=table_type,
         analysis_table_suffix=ANALYSIS_TYPE
+    )
+    plotly_utils.produce_mapping_type_freq_chart(
+        analysis_table=mapping_type_analysis,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix="type_analysis"
+        )
     )
     data_manager.save_analysis_table(
         analysis_table=_produce_mapping_analysis_for_mapped_nss(mappings=mappings),
@@ -640,8 +713,6 @@ def _produce_and_save_merge_analysis(merges: DataFrame,
 def _produce_and_node_status_analyses(
         seed_name: str, data_manager: DataManager, data_repo: DataRepository,
 ) -> None:
-
-
     # tables
     nodes = data_repo.get(TABLE_NODES).dataframe
     node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
@@ -665,7 +736,7 @@ def _produce_and_node_status_analyses(
     merge_analysis_df = _produce_merge_analysis_for_merged_nss_for_canonical(
         merges=data_repo.get(TABLE_MERGES).dataframe
     )
-    merged_to_seed_count = merge_analysis_df\
+    merged_to_seed_count = merge_analysis_df \
         .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
     merged_not_seed_count = input_count - (seed_node_count + merged_to_seed_count + unmapped_count)
 
@@ -709,6 +780,14 @@ def _produce_and_node_status_analyses(
         data_manager=data_manager,
     )
 
+    # Output # todo
+    _process_node_status_table(
+        data=connectivity_data,
+        total_count=input_count,
+        section_dataset_name=SECTION_OUTPUT,
+        data_manager=data_manager,
+    )
+
     # Overview
     overview_data = input_data + alignment_data + connectivity_data
     _process_node_status_table(
@@ -747,7 +826,7 @@ def _process_node_status_table(
 
 def _add_ratio_to_node_status_table(node_status_table: DataFrame, total_count: int) -> DataFrame:
     node_status_table["ratio"] = node_status_table.apply(
-        lambda x: x['count'] / total_count * 100, axis=1
+        lambda x: (round((x['count'] / total_count * 100), 3)), axis=1
     )
     node_status_table["status"] = node_status_table.apply(
         lambda x: f"{x['status_no_freq']} ({x['ratio']:.1f}%)", axis=1
@@ -854,8 +933,11 @@ def _produce_alignment_process_analysis(data_manager: DataManager) -> None:
         analysed_table_name="steps",
         analysis_table_suffix="detail"
     )
-    # todo merges
-    # todo merges aggregated
+    _produce_and_save_alignment_step_node_analysis(
+        alignment_step_report=data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe,
+        section_dataset_name=section_dataset_name,
+        data_manager=data_manager,
+    )
 
 
 def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
@@ -867,13 +949,16 @@ def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
     section_dataset_name = SECTION_CONNECTIVITY
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
     _produce_and_save_summary_connectivity(data_manager=data_manager, data_repo=data_repo)
-    # todo
-    # data_manager.save_analysis_table(
-    #     analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe),
-    #     dataset=dataset,
-    #     analysed_table_name=TABLE_NODES_CONNECTED,
-    #     analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
-    # )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(
+            nodes=produce_node_id_table_from_edge_table(
+                edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe
+            )
+        ),
+        dataset=section_dataset_name,
+        analysed_table_name="nodes_connected",
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
     data_manager.save_analysis_table(
         analysis_table=_produce_node_namespace_freq(
             nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED_ONLY).dataframe),
@@ -899,6 +984,11 @@ def _produce_connectivity_process_analysis(data_manager: DataManager) -> None:
         dataset=section_dataset_name,
         analysed_table_name="steps",
         analysis_table_suffix="detail"
+    )
+    _produce_and_save_connectivity_step_node_analysis(
+        step_report=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
+        section_dataset_name=section_dataset_name,
+        data_manager=data_manager,
     )
 
 
@@ -932,9 +1022,9 @@ def _produce_overview_analysis(data_manager: DataManager) -> None:
 # MAIN #
 def produce_report_data(data_manager: DataManager) -> None:
     logger.info(f"Started producing report analysis...")
-    _produce_input_dataset_analysis(data_manager=data_manager)
-    _produce_output_dataset_analysis(data_manager=data_manager)
-    _produce_alignment_process_analysis(data_manager=data_manager)
+    # _produce_input_dataset_analysis(data_manager=data_manager)
+    # _produce_output_dataset_analysis(data_manager=data_manager)
+    # _produce_alignment_process_analysis(data_manager=data_manager)
     _produce_connectivity_process_analysis(data_manager=data_manager)
     _produce_data_profiling_and_testing_analysis(data_manager=data_manager)
     _produce_overview_analysis(data_manager=data_manager)
@@ -942,14 +1032,17 @@ def produce_report_data(data_manager: DataManager) -> None:
 
 
 # todo
-print("\n\nANALYSIS\n\n")
 project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
 analysis_data_manager = DataManager(project_folder_path=project_folder_path,
                                     clear_output_directory=False)
-print("\n\nREPORT\n\n")
 produce_report_data(data_manager=analysis_data_manager)
 
-# from onto_merger.report import report_generator
+# data_repo = DataRepository()
+# data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
+# _produce_and_save_connectivity_step_node_analysis(
+#     step_report=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
+#     section_dataset_name=SECTION_CONNECTIVITY,
+#     data_manager=analysis_data_manager,
+# )
+
 # report_generator.produce_report(data_manager=analysis_data_manager)
-
-

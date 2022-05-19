@@ -14,7 +14,7 @@
     {% if table_data | length > 0 %}
       {% for row in table_data %}
         <tr>
-            <td>{{ row['step'] }}</td>
+            <td>{{ row['step_counter'] }}</td>
             <td>{{ row['mapping_type_group'] }}</td>
             <td>{{ row['source'] }}</td>
             <td>{{ row['count_unmapped_nodes'] }}</td>
