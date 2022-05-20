@@ -129,6 +129,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
             hierarchy_edges=hierarchy_edges,
             merge_and_connectivity_map=merge_and_connectivity_map,
         )
+        connectivity_step.step_counter = connectivity_order.index(node_namespace)
         connectivity_steps.append(connectivity_step)
         if edges_for_namespace_nodes:
             # update result and processing data structures
@@ -164,7 +165,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
         + f"{(len(unmapped_node_ids_for_namespace) * 100) / len(unmapped_nodes):.2f}% of total) * * *"
     )
     connectivity_step = ConnectivityStep(
-        source_id=node_namespace, count_unmapped_node_ids=len(unmapped_node_ids_for_namespace)
+        source_id=node_namespace, count_unmapped_node_ids=len(unmapped_node_ids_for_namespace),
     )
     if not unmapped_node_ids_for_namespace:
         connectivity_step.task_finished()

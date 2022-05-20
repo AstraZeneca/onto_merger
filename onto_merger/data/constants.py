@@ -182,6 +182,7 @@ SCHEMA_ALIGNMENT_STEPS_TABLE: List[str] = [
     "elapsed",
 ]
 SCHEMA_CONNECTIVITY_STEPS_REPORT_TABLE: List[str] = [
+    COLUMN_STEP_COUNTER,
     COLUMN_SOURCE,
     COLUMN_COUNT_UNMAPPED_NODES,
     "count_reachable_unmapped_nodes",

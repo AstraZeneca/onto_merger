@@ -227,6 +227,7 @@ class AlignmentStep:
 class ConnectivityStep:
     """Hierarchy connectivity step metadata."""
 
+    step_counter: int
     source_id: str
     count_unmapped_nodes: int
     count_reachable_unmapped_nodes: int

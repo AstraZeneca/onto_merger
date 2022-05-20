@@ -1,3 +1,15 @@
 <div class="overview summary">
-    {% include 'templates/subsection_content/node-status.html' %}
+    <h4>Node status</h4>
+    <div style="align-content: center">
+        <img class="center-img"
+             style="width: max-content"
+             src="{{ subsection_data['node_status_fig_path'] }}" alt="foo">
+    </div>
+    <hr>
+    <h4>Status details</h4>
+    {% if subsection_data['node_status_table'] %}
+        {% with rows=subsection_data['node_status_table'] %}
+            {% include 'templates/data_content/table_node_status_overview.html' %}
+        {% endwith %}
+    {% endif %}
 </div>

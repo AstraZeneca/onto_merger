@@ -145,131 +145,158 @@ def _produce_and_save_node_status_analyses(
         seed_name: str, data_manager: DataManager, data_repo: DataRepository,
 ) -> DataFrame:
 
+    # assume seed is all connected
+
+    seed_ontology_name = data_manager.load_alignment_config().base_config.seed_ontology_name
+
     # data tables
     steps_report_alignment = data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe
     steps_report_connectivity = data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe
     merge_analysis_df = _produce_merge_analysis_for_merged_nss_for_canonical(
         merges=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe
     )
-    nodes_unmapped_df = data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe
+    nodes_input_df = produce_table_with_namespace_column_for_node_ids(
+        table=data_repo.get(table_name=TABLE_NODES).dataframe
+    )
     nodes_merged_df = data_repo.get(table_name=TABLE_NODES_MERGED).dataframe
-    nodes_connected_df = data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe  # ok
+    nodes_connected_df = data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe
+    nodes_dangling_df = data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe
 
-    # node calculations
-    nodes_input = steps_report_alignment['count_unmapped_nodes'].iloc[0]
-    nodes_seed = steps_report_alignment['count_merged_nodes'].iloc[0]
+    # INPUT
+    nodes_input = len(nodes_input_df)
+    nodes_seed = len(nodes_input_df
+                     .query(expr=f"{get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)} == '{seed_ontology_name}'"))
+    nodes_not_seed = nodes_input - nodes_seed
+
+    # ALIGNMENT
     nodes_merged_total = len(nodes_merged_df)
-    nodes_merged_total_check = steps_report_alignment['count_merged_nodes'].sum() - nodes_seed
-    nodes_unique = nodes_input - nodes_merged_total
-    nodes_merged = steps_report_alignment['count_merged_nodes'].sum() - nodes_seed
     nodes_merged_to_seed = merge_analysis_df \
         .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
-    nodes_merged_to_not_seed = nodes_merged - nodes_merged_to_seed
-    nodes_merged_to_connected = 0
-    nodes_merged_to_dangling = 0  # only connected
+    nodes_merged_to_not_seed = nodes_merged_total - nodes_merged_to_seed
     nodes_unmapped = nodes_input - nodes_seed - nodes_merged_total
-    nodes_connected = 0
-    nodes_connected_and_merged = 0
-    nodes_connected_not_merged = 0
-    nodes_dangling = len(data_repo.get(TABLE_NODES_DANGLING).dataframe)
+    nodes_aligned = nodes_seed + nodes_merged_total
 
-    # tables
-    nodes = data_repo.get(TABLE_NODES).dataframe
-    node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
-        nodes=nodes, metric_name="namespace"
-    )
-    nodes_connected = produce_table_node_ids_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
-    nodes_connected_only = data_repo.get(TABLE_NODES_UNMAPPED).dataframe
-    nodes_unmapped = data_repo.get(TABLE_NODES_UNMAPPED).dataframe
-    nodes_dangling = data_repo.get(TABLE_NODES_DANGLING).dataframe
+    # CONNECTIVITY
+    nodes_connected = len(nodes_connected_df)
+    nodes_dangling = len(nodes_dangling_df)
+    nodes_connected_excluding_seed = nodes_connected - nodes_seed
+    nodes_merged_to_connected_excluding_seed = 0
+    nodes_merged_to_dangling = 0
 
-    # counts
-    input_count = len(nodes)
-    seed_node_count = node_namespace_distribution_df \
-        .query(expr=f'{COLUMN_NAMESPACE} == "{seed_name}"', inplace=False)['namespace_count'].iloc[0]
-    non_seed_count = input_count - seed_node_count
-    unmapped_count = len(nodes_unmapped)
-    connected_only_count = len(nodes_connected_only)
-    dangling_count = len(nodes_dangling)
-
-    merged_to_seed_count = merge_analysis_df \
-        .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
-    merged_not_seed_count = input_count - (seed_node_count + merged_to_seed_count + unmapped_count)
-    connected_and_merged_count = merged_to_seed_count  # todo
+    # OUTPUT
+    nodes_input_output_diff = nodes_input - (nodes_input - (nodes_merged_to_seed + nodes_merged_to_not_seed))
 
     # INPUT:    | Seed | Others |
     input_data = [
-        [SECTION_INPUT, seed_node_count, "Seed"],
-        [SECTION_INPUT, non_seed_count, "Other"],
+        [SECTION_INPUT, nodes_seed, "Seed"],
+        [SECTION_INPUT, nodes_not_seed, "Other input"],
     ]
-    _process_node_status_table(
+    _process_node_status_table_and_plot(
         data=input_data,
-        total_count=input_count,
+        total_count=nodes_input,
         section_dataset_name=SECTION_INPUT,
         data_manager=data_manager,
     )
 
     # ALG:      | Seed | Merged to seed | Merged | Unmapped |
     alignment_data = [
-        [SECTION_ALIGNMENT, seed_node_count, "Seed"],
-        [SECTION_ALIGNMENT, merged_to_seed_count, "Merged to seed"],
-        [SECTION_ALIGNMENT, merged_not_seed_count, "Merged"],
-        [SECTION_ALIGNMENT, unmapped_count, "Unmapped"],
+        [SECTION_ALIGNMENT, nodes_seed, "Seed"],
+        [SECTION_ALIGNMENT, nodes_merged_to_seed, "Merged to seed"],
+        [SECTION_ALIGNMENT, nodes_merged_to_not_seed, "Merged"],
+        [SECTION_ALIGNMENT, nodes_unmapped, "Unmapped"],
     ]
-    _process_node_status_table(
+    _process_node_status_table_and_plot(
         data=alignment_data,
-        total_count=input_count,
+        total_count=nodes_input,
         section_dataset_name=SECTION_ALIGNMENT,
         data_manager=data_manager,
     )
 
     # CON:      | Seed | Merged and Connected | Connected | Dangling |
     connectivity_data = [
-        [SECTION_CONNECTIVITY, seed_node_count, "Seed"],
-        [SECTION_CONNECTIVITY, connected_and_merged_count, "Connected and Merged"],
-        [SECTION_CONNECTIVITY, connected_only_count, "Connected"],
-        [SECTION_CONNECTIVITY, dangling_count, "Dangling"],
+        [SECTION_CONNECTIVITY, nodes_aligned, "Aligned"],
+        [SECTION_CONNECTIVITY, nodes_connected_excluding_seed, "Connected"],
+        [SECTION_CONNECTIVITY, nodes_dangling, "Dangling"],
     ]
-    _process_node_status_table(
+    _process_node_status_table_and_plot(
         data=connectivity_data,
-        total_count=input_count,
+        total_count=nodes_input,
         section_dataset_name=SECTION_CONNECTIVITY,
         data_manager=data_manager,
     )
 
-    # Output # todo
-    _process_node_status_table(
-        data=connectivity_data,
-        total_count=input_count,
+    # Output
+    output_data = [
+        [SECTION_OUTPUT, nodes_connected, "Connected"],
+        [SECTION_OUTPUT, nodes_dangling, "Dangling"],
+        [SECTION_OUTPUT, nodes_input_output_diff, "Diff from Input"],
+    ]
+    _process_node_status_table_and_plot(
+        data=output_data,
+        total_count=nodes_input,
         section_dataset_name=SECTION_OUTPUT,
         data_manager=data_manager,
     )
 
     # Overview
-    overview_data = input_data + alignment_data + connectivity_data
-    overview_df = _process_node_status_table(
+    overview_data = input_data + alignment_data + connectivity_data + output_data
+    overview_df = _process_node_status_table_and_plot(
         data=overview_data,
-        total_count=input_count,
+        total_count=nodes_input,
         section_dataset_name=SECTION_OVERVIEW,
         data_manager=data_manager,
         is_one_bar=False
     )
+
+    # overview status
+    overview_node_status_table = [
+        [SECTION_INPUT, nodes_input, "<b>Input nodes</b>"],
+        [SECTION_INPUT, nodes_seed, "Seed nodes"],
+        [SECTION_INPUT, nodes_not_seed, "Nodes excluding seed"],
+        [SECTION_ALIGNMENT, nodes_aligned, "<b>Aligned nodes(seed + merged)</b>"],
+        [SECTION_ALIGNMENT, nodes_merged_to_seed, "Nodes merged to seed"],
+        [SECTION_ALIGNMENT, nodes_merged_to_not_seed, "Nodes Merged to other than seed"],
+        [SECTION_ALIGNMENT, nodes_unmapped, "Unmapped nodes"],
+        [SECTION_CONNECTIVITY, nodes_aligned, "<b>Connected nodes (seed + other connected)</b>"],
+        [SECTION_CONNECTIVITY, nodes_connected_excluding_seed, "\tConnected nodes (excluding seed + merged to seed)"],
+        [SECTION_CONNECTIVITY, nodes_dangling, "Dangling nodes (not connected or merged)"],
+        [SECTION_OUTPUT, nodes_input_output_diff, "<b>Input & Output node diff</b>"],
+    ]
+    _produce_and_save_node_status_table(
+        data=overview_node_status_table,
+        total_count=nodes_input,
+        section_dataset_name=SECTION_OVERVIEW,
+        data_manager=data_manager,
+    )
     return overview_df
 
 
-def _process_node_status_table(
+def _produce_and_save_node_status_table(
         data: List[list], total_count: int, section_dataset_name: str,
-        data_manager: DataManager, is_one_bar: bool = True,
+        data_manager: DataManager,
 ) -> DataFrame:
-    node_status_table = pd.DataFrame(data, columns=["category", "count", "status_no_freq"])
-    node_status_table = _add_ratio_to_node_status_table(
-        node_status_table=node_status_table, total_count=total_count,
+    df = pd.DataFrame(data, columns=["category", "count", "status_no_freq"])
+    df = _add_ratio_to_node_status_table(
+        node_status_table=df, total_count=total_count,
     )
     data_manager.save_analysis_table(
-        analysis_table=node_status_table,
+        analysis_table=df,
         dataset=section_dataset_name,
         analysed_table_name="node",
         analysis_table_suffix="status",
+    )
+    return df
+
+
+def _process_node_status_table_and_plot(
+        data: List[list], total_count: int, section_dataset_name: str,
+        data_manager: DataManager, is_one_bar: bool = True,
+) -> DataFrame:
+    node_status_table = _produce_and_save_node_status_table(
+        data=data,
+        total_count=total_count,
+        section_dataset_name=section_dataset_name,
+        data_manager=data_manager,
     )
     plotly_utils.produce_node_status_stacked_bar_chart(
         analysis_table=node_status_table,
@@ -1300,5 +1327,5 @@ def produce_report_data(data_manager: DataManager) -> None:
 project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
 analysis_data_manager = DataManager(project_folder_path=project_folder_path,
                                     clear_output_directory=False)
-produce_report_data(data_manager=analysis_data_manager)
+# produce_report_data(data_manager=analysis_data_manager)
 report_generator.produce_report(data_manager=analysis_data_manager)
