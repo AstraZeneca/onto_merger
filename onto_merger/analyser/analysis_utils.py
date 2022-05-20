@@ -5,6 +5,7 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
+from data.constants import COLUMN_SOURCE_ID, COLUMN_DEFAULT_ID, COLUMN_TARGET_ID
 from onto_merger.data.constants import (
     COLUMN_COUNT,
     COLUMN_DEFAULT_ID,
@@ -17,6 +18,9 @@ from onto_merger.data.constants import (
     SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE,
 )
 from onto_merger.data.dataclasses import NamedTable
+from onto_merger.logger.log import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_namespace_column_name_for_column(node_id_column: str) -> str:
@@ -71,14 +75,14 @@ def produce_table_with_namespace_column_pair(table: DataFrame) -> DataFrame:
     table_copy = table.copy()
     table_copy[COLUMN_SOURCE_TO_TARGET] = table_copy.apply(
         lambda x: f"{get_namespace_for_node_id(x[COLUMN_SOURCE_ID])}"
-        + f" to {get_namespace_for_node_id(x[COLUMN_TARGET_ID])}",
+                  + f" to {get_namespace_for_node_id(x[COLUMN_TARGET_ID])}",
         axis=1,
     )
     return table_copy
 
 
 def add_namespace_column_to_loaded_tables(
-    tables: List[NamedTable],
+        tables: List[NamedTable],
 ) -> List[NamedTable]:
     """Produce a list of named tables appended with namespace columns, and namespace pair column.
 
@@ -98,7 +102,7 @@ def add_namespace_column_to_loaded_tables(
 
 
 def produce_table_node_namespace_distribution(
-    node_table: DataFrame,
+        node_table: DataFrame,
 ) -> DataFrame:
     """Produce a named table that shows the node ID namespaces distribution of the input table.
 
@@ -114,13 +118,46 @@ def produce_table_node_namespace_distribution(
     ns_column = get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
     namespace_distribution_table = (
         produce_table_with_namespace_column_for_node_ids(node_table)
-        .groupby([ns_column])
-        .count()
-        .reset_index()
-        .sort_values(COLUMN_DEFAULT_ID, ascending=False)
-        .rename(columns={COLUMN_DEFAULT_ID: COLUMN_COUNT, ns_column: COLUMN_NAMESPACE})
+            .groupby([ns_column])
+            .count()
+            .reset_index()
+            .sort_values(COLUMN_DEFAULT_ID, ascending=False)
+            .rename(columns={COLUMN_DEFAULT_ID: COLUMN_COUNT, ns_column: COLUMN_NAMESPACE})
     )
     namespace_distribution_table[COLUMN_FREQUENCY] = namespace_distribution_table.apply(
         lambda x: f"{((x[COLUMN_COUNT] / node_table_count) * 100):.2f}%", axis=1
     )
     return namespace_distribution_table[SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE]
+
+
+def filter_nodes_for_namespace(nodes: DataFrame, namespace: str) -> DataFrame:
+    """Filter a given node dataframe for a namespace.
+
+    :param nodes: The node table to be filtered.
+    :param namespace: The ontology ID.
+    :return: The node dataframe where all nodes belong to the same ontology (namespace).
+    """
+    nodes_copy = nodes.copy()
+    default_id_ns = get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
+    if default_id_ns not in list(nodes_copy):
+        nodes_copy = produce_table_with_namespace_column_for_node_ids(table=nodes_copy)
+    nodes_for_namespace = nodes_copy.query(f'{default_id_ns} == "{namespace}"', inplace=False)
+    logger.info(
+        f"Found {len(nodes_for_namespace):,d} nodes for namespace " + f"{namespace} from total {len(nodes):,d} nodes."
+    )
+    return nodes_for_namespace
+
+
+def produce_table_node_ids_from_edge_table(edges: DataFrame) -> DataFrame:
+    """Produce a node ID table from a given edge set by aggregating the source and target node IDs.
+
+    :param edges: The edge table.
+    :return: The node table with unique node IDs.
+    """
+    nodes_source = (edges[[COLUMN_SOURCE_ID]]).rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID}, inplace=False)[
+        [COLUMN_DEFAULT_ID]
+    ]
+    nodes_target = (edges[[COLUMN_TARGET_ID]]).rename(columns={COLUMN_TARGET_ID: COLUMN_DEFAULT_ID}, inplace=False)[
+        [COLUMN_DEFAULT_ID]
+    ]
+    return pd.concat([nodes_source, nodes_target]).drop_duplicates(keep="first")

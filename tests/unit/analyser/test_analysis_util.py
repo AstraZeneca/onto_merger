@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 
-from onto_merger.analyser import analysis_util
+from onto_merger.analyser import analysis_utils
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     COLUMN_SOURCE_ID,
@@ -33,21 +33,21 @@ def expected_edge_column_with_node_ids_ns_pair() -> DataFrame:
         ],
         columns=SCHEMA_MAPPING_TABLE
         + [
-            analysis_util.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
-            analysis_util.get_namespace_column_name_for_column(COLUMN_TARGET_ID),
+            analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
+            analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID),
             COLUMN_SOURCE_TO_TARGET,
         ],
     )
 
 
 def test_get_namespace_column_name_for_column():
-    actual = analysis_util.get_namespace_column_name_for_column(node_id_column="foo")
+    actual = analysis_utils.get_namespace_column_name_for_column(node_id_column="foo")
     assert isinstance(actual, str)
     assert actual == "namespace_foo"
 
 
 def test_get_namespace_for_node_id():
-    actual = analysis_util.get_namespace_for_node_id(node_id="FOO:123")
+    actual = analysis_utils.get_namespace_for_node_id(node_id="FOO:123")
     assert isinstance(actual, str)
     assert actual == "FOO"
 
@@ -70,11 +70,11 @@ def test_produce_table_with_namespace_column_for_node_ids():
         ],
         columns=SCHEMA_MAPPING_TABLE
         + [
-            analysis_util.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
-            analysis_util.get_namespace_column_name_for_column(COLUMN_TARGET_ID),
+            analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
+            analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID),
         ],
     )
-    actual = analysis_util.produce_table_with_namespace_column_for_node_ids(table=input_data)
+    actual = analysis_utils.produce_table_with_namespace_column_for_node_ids(table=input_data)
     assert isinstance(actual, DataFrame)
     assert np.array_equal(actual.values, expected.values) is True
 
@@ -84,8 +84,8 @@ def test_add_namespace_column_pair(
     expected_edge_column_with_node_ids_ns_pair: DataFrame,
 ):
     table_schema = SCHEMA_MAPPING_TABLE + [
-        analysis_util.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
-        analysis_util.get_namespace_column_name_for_column(COLUMN_TARGET_ID),
+        analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
+        analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID),
     ]
     input_data = pd.DataFrame(
         [
@@ -100,14 +100,14 @@ def test_add_namespace_column_pair(
         ],
         columns=table_schema,
     )
-    actual = analysis_util.produce_table_with_namespace_column_pair(table=input_data)
+    actual = analysis_utils.produce_table_with_namespace_column_pair(table=input_data)
     assert isinstance(actual, DataFrame)
     assert np.array_equal(actual.values, expected_edge_column_with_node_ids_ns_pair.values) is True
 
 
 def test_add_namespace_column_pair_no_such_column():
     input_data = pd.DataFrame(["MONDO:0000004"], columns=[COLUMN_DEFAULT_ID])
-    actual = analysis_util.produce_table_with_namespace_column_pair(table=input_data)
+    actual = analysis_utils.produce_table_with_namespace_column_pair(table=input_data)
     assert isinstance(actual, DataFrame)
     assert np.array_equal(actual.values, input_data.values) is True
 
@@ -123,7 +123,7 @@ def test_add_namespace_column_to_loaded_tables(
             columns=SCHEMA_MAPPING_TABLE,
         ),
     )
-    actual = analysis_util.add_namespace_column_to_loaded_tables(tables=[input_data])
+    actual = analysis_utils.add_namespace_column_to_loaded_tables(tables=[input_data])
     assert isinstance(actual, list)
     for obj in actual:
         assert isinstance(obj, NamedTable)
@@ -142,11 +142,11 @@ def test_produce_table_node_namespace_distribution():
         [("MONDO", 2, "66.67%"), ("SNOMED", 1, "33.33%")],
         columns=SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE,
     )
-    actual_1 = analysis_util.produce_table_node_namespace_distribution(node_table=input_nodes)
+    actual_1 = analysis_utils.produce_table_node_namespace_distribution(node_table=input_nodes)
     assert isinstance(actual_1, DataFrame)
     assert np.array_equal(actual_1.values, expected_1.values) is True
 
-    actual_2 = analysis_util.produce_table_node_namespace_distribution(
+    actual_2 = analysis_utils.produce_table_node_namespace_distribution(
         node_table=pd.DataFrame([], columns=[COLUMN_DEFAULT_ID])
     )
     expected_2 = pd.DataFrame(

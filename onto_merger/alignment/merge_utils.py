@@ -8,9 +8,8 @@ from networkx import connected_components
 from pandas import DataFrame
 
 from onto_merger.alignment import networkx_utils
-from onto_merger.analyser import analysis_util
+from onto_merger.analyser import analysis_utils
 from onto_merger.data.constants import (
-    COLUMN_DEFAULT_ID,
     COLUMN_MAPPING_TYPE_GROUP,
     COLUMN_SOURCE_ID,
     COLUMN_SOURCE_ID_ALIGNED_TO,
@@ -20,15 +19,31 @@ from onto_merger.data.constants import (
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MERGES_AGGREGATED,
     TABLE_MERGES_WITH_META_DATA,
-    TABLE_NODES_MERGED,
-)
-from onto_merger.data.dataclasses import NamedTable
+    TABLE_NODES_MERGED, COLUMN_DEFAULT_ID, TABLE_NODES_UNMAPPED, TABLE_NODES)
+from onto_merger.data.dataclasses import DataRepository, NamedTable
 from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)
 
 
-def produce_named_table_aggregate_merges(merges: DataFrame, alignment_priority_order: List[str]) -> NamedTable:
+def post_process_alignment_results(data_repo: DataRepository,
+                                   alignment_priority_order: List[str]) -> List[NamedTable]:
+    # aggregate merges
+    table_aggregated_merges = _produce_named_table_aggregated_merges(
+        merges=data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,
+        alignment_priority_order=alignment_priority_order,
+    )
+    # nodes
+    table_merged_nodes = _produce_named_table_merged_nodes(merges_aggregated=table_aggregated_merges.dataframe)
+    table_unmapped_nodes = _produce_named_table_unmapped_nodes(
+        nodes=data_repo.get(TABLE_NODES).dataframe,
+        merged_nodes=table_merged_nodes.dataframe
+    )
+
+    return [table_aggregated_merges, table_merged_nodes, table_unmapped_nodes]
+
+
+def _produce_named_table_aggregated_merges(merges: DataFrame, alignment_priority_order: List[str]) -> NamedTable:
     """Produce a named table with aggregated merges.
 
     In aggregated merges the target ID is always the canonical ID for a given merge cluster
@@ -49,7 +64,7 @@ def produce_named_table_aggregate_merges(merges: DataFrame, alignment_priority_o
 
     # canonical node according to the priority order
     merges_aggregated[COLUMN_TARGET_ID] = merges_aggregated.apply(
-        lambda x: get_canonical_node_for_merge_cluster(
+        lambda x: _get_canonical_node_for_merge_cluster(
             merge_cluster=x[COLUMN_SOURCE_ID],
             alignment_priority_order=alignment_priority_order,
         ),
@@ -65,39 +80,57 @@ def produce_named_table_aggregate_merges(merges: DataFrame, alignment_priority_o
     return NamedTable(TABLE_MERGES_AGGREGATED, merges_aggregated)
 
 
-def get_canonical_node_for_merge_cluster(
-    merge_cluster: List[str], alignment_priority_order: List[str]
-) -> Optional[str]:
-    """Return the canonical node ID for a given merge cluster.
-
-    :param merge_cluster: The merge cluster, i.e. nodes that form a merge chain.
-    :param alignment_priority_order: The alignment priority order that defines the
-    canonical node.
-    :return: The canonical node ID if it can be determined, otherwise None.
-    """
-    merge_cluster_ns_to_id = {analysis_util.get_namespace_for_node_id(node_id): node_id for node_id in merge_cluster}
-    for source_id in alignment_priority_order:
-        if source_id in merge_cluster_ns_to_id:
-            return merge_cluster_ns_to_id.get(source_id)
-    return None
-
-
-def produce_named_table_merged_nodes(merges: DataFrame) -> NamedTable:
+def _produce_named_table_merged_nodes(merges_aggregated: DataFrame) -> NamedTable:
     """Produce a named table by wrapping merge dataframe.
 
-    :param merges: The merge dataframe.
+    :param merges_aggregated: The merge dataframe.
     :return: The named table.
     """
     return NamedTable(
         name=TABLE_NODES_MERGED,
-        dataframe=merges[[COLUMN_SOURCE_ID]]
-        .rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID}, inplace=False)
-        .sort_values([COLUMN_DEFAULT_ID], ascending=True),
+        dataframe=_produce_table_merged_nodes(merges=merges_aggregated),
     )
 
 
+def _produce_table_merged_nodes(merges: DataFrame) -> DataFrame:
+    return merges[[COLUMN_SOURCE_ID]]\
+        .rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID}, inplace=False)\
+        .sort_values([COLUMN_DEFAULT_ID], ascending=True)
+
+
+def _produce_named_table_unmapped_nodes(nodes: DataFrame, merged_nodes: DataFrame) -> NamedTable:
+    """Produce the dataframe of unmapped node IDs.
+
+    :param nodes: The set of input nodes to be filtered.
+    :param merged_nodes: The set of merges used to determine node mapped status.
+    :return: The set of unmapped nodes.
+    """
+    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_nodes, merged_nodes]).drop_duplicates(keep=False)
+    logger.info(
+        f"Out of {len(nodes):,d} nodes, {len(df):,d} "
+        + f"({((len(df) / len(nodes)) * 100):.2f}%) are unmapped."
+    )
+    return NamedTable(TABLE_NODES_UNMAPPED, df)
+
+
+def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
+    """Produce the dataframe of unmapped node IDs.
+
+    :param merges:
+    :param nodes: The set of input nodes to be filtered.
+    :return: The set of unmapped nodes.
+    """
+    merged_nodes = _produce_table_merged_nodes(merges=merges)
+    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_nodes, merged_nodes]).drop_duplicates(keep=False)
+    logger.info(
+        f"Out of {len(nodes):,d} nodes, {len(df):,d} "
+        + f"({((len(df) / len(nodes)) * 100):.2f}%) are unmapped."
+    )
+    return df
+
+
 def produce_named_table_merges_with_alignment_meta_data(
-    merges: DataFrame, source_id: str, step_counter: int, mapping_type: str
+        merges: DataFrame, source_id: str, step_counter: int, mapping_type: str
 ) -> NamedTable:
     """Produce a named merge table with alignment meta data (step number, mapping types used).
 
@@ -115,3 +148,20 @@ def produce_named_table_merges_with_alignment_meta_data(
         name=TABLE_MERGES_WITH_META_DATA,
         dataframe=df[SCHEMA_MERGE_TABLE_WITH_META_DATA],
     )
+
+
+def _get_canonical_node_for_merge_cluster(
+        merge_cluster: List[str], alignment_priority_order: List[str]
+) -> Optional[str]:
+    """Return the canonical node ID for a given merge cluster.
+
+    :param merge_cluster: The merge cluster, i.e. nodes that form a merge chain.
+    :param alignment_priority_order: The alignment priority order that defines the
+    canonical node.
+    :return: The canonical node ID if it can be determined, otherwise None.
+    """
+    merge_cluster_ns_to_id = {analysis_utils.get_namespace_for_node_id(node_id): node_id for node_id in merge_cluster}
+    for source_id in alignment_priority_order:
+        if source_id in merge_cluster_ns_to_id:
+            return merge_cluster_ns_to_id.get(source_id)
+    return None

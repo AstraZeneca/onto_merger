@@ -54,16 +54,17 @@ def produce_node_status_stacked_bar_chart(
         file_path: str,
         is_one_bar: bool,
 ):
-    if is_one_bar is True:
-        showlegend_and_axes = False
-        width = _WIDTH_ONE_COL_ROW
-        height = 50
-    else:
-        showlegend_and_axes = True
-        width = _WIDTH_ONE_COL_ROW
-        height = 300
-
     # adjust setting for 1 vs multiple bars
+    if is_one_bar is True:
+        showaxis = False
+        height = 50
+        margin_right = 0
+    else:
+        showaxis = True
+        height = 300
+        margin_right = 30
+
+    # produce image
     px.bar(
         analysis_table,
         y="category",
@@ -71,24 +72,24 @@ def produce_node_status_stacked_bar_chart(
         text="status",
         color="status_no_freq",
         orientation='h',
-        width=width,
+        width=_WIDTH_ONE_COL_ROW,
         height=height,
-        labels={'ratio': 'Nodes (%)', 'status_no_freq': 'Stage'},
+        labels={'ratio': 'Nodes (%)', 'status_no_freq': 'Stage', 'category': ''},
     ) \
         .update_layout({
         "plot_bgcolor": _COLOR_WHITE,
-        'showlegend': showlegend_and_axes,
+        'showlegend': False,
         'margin': {
             "l": 0,  # left
-            "r": 0,  # right
+            "r": margin_right,  # right
             "t": 0,  # top
             "b": 0,  # bottom
         }
     }) \
         .update_yaxes(autorange="reversed") \
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
-        .update_xaxes(visible=showlegend_and_axes) \
-        .update_yaxes(visible=showlegend_and_axes) \
+        .update_xaxes(visible=showaxis) \
+        .update_yaxes(visible=showaxis) \
         .write_image(_get_figure_filepath(file_path=file_path))
 
 

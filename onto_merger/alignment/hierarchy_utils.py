@@ -3,17 +3,13 @@
 import itertools
 import sys
 from typing import List, Optional, Tuple
-from datetime import datetime
 
 import pandas as pd
 from pandas import DataFrame
 
+from onto_merger.analyser.analysis_utils import filter_nodes_for_namespace, produce_table_node_ids_from_edge_table
 from onto_merger.alignment import mapping_utils, networkx_utils
 from onto_merger.alignment.networkit_utils import NetworkitGraph
-from onto_merger.analyser.analysis_util import (
-    get_namespace_column_name_for_column,
-    produce_table_with_namespace_column_for_node_ids,
-)
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     COLUMN_PROVENANCE,
@@ -28,9 +24,7 @@ from onto_merger.data.constants import (
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MERGES_AGGREGATED,
     TABLE_NODES,
-    TABLE_NODES_CONNECTED_ONLY,
-    TABLE_NODES_DANGLING,
-    TABLE_NODES_UNMAPPED,
+    TABLE_NODES_UNMAPPED, TABLE_NODES_CONNECTED, SCHEMA_NODE_ID_LIST_TABLE, TABLE_NODES_DANGLING
 )
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
@@ -45,7 +39,7 @@ logger = get_logger(__name__)
 
 
 def connect_nodes(
-    alignment_config: AlignmentConfig, source_alignment_order: List[str], data_repo: DataRepository
+        alignment_config: AlignmentConfig, source_alignment_order: List[str], data_repo: DataRepository
 ) -> List[NamedTable]:
     """Run the connectivity process to establish a hierarchy between the domain nodes.
 
@@ -55,7 +49,7 @@ def connect_nodes(
     :return: The produced hierarchy edge table.
     """
     # (1) get the seed hierarchy as main scaffolding
-    seed_hierarchy_df = produce_table_seed_ontology_hierarchy(
+    seed_hierarchy_df = _produce_table_seed_ontology_hierarchy(
         seed_ontology_name=alignment_config.base_config.seed_ontology_name,
         nodes=data_repo.get(TABLE_NODES).dataframe,
         hierarchy_edges=data_repo.get(TABLE_EDGES_HIERARCHY).dataframe,
@@ -69,7 +63,7 @@ def connect_nodes(
         hierarchy_edges=data_repo.get(TABLE_EDGES_HIERARCHY).dataframe,
     )
 
-    # (3) return the merged hierarchy
+    # (4) return the merged hierarchy and node tables
     return [
         NamedTable(
             name=TABLE_EDGES_HIERARCHY_POST,
@@ -79,8 +73,8 @@ def connect_nodes(
     ]
 
 
-def produce_table_seed_ontology_hierarchy(
-    seed_ontology_name: str, nodes: DataFrame, hierarchy_edges: DataFrame
+def _produce_table_seed_ontology_hierarchy(
+        seed_ontology_name: str, nodes: DataFrame, hierarchy_edges: DataFrame
 ) -> Optional[DataFrame]:
     """Produce the hierarchy edge table for the seed ontology nodes.
 
@@ -112,89 +106,8 @@ def produce_table_seed_ontology_hierarchy(
         return seed_hierarchy_table[SCHEMA_HIERARCHY_EDGE_TABLE]
 
 
-def produce_table_nodes_only_connected(hierarchy_edges: DataFrame, merges: DataFrame) -> NamedTable:
-    """Produce a table containing nodes that are not merged but connected (i.e. are in an edge hierarchy).
-
-    :param hierarchy_edges: The domain node hierarchy.
-    :param merges: The domain node merges.
-    :return: The table of nodes connected that are not merged but connected.
-    """
-    nodes_connected = produce_node_id_table_from_edge_table(edges=hierarchy_edges)
-    merged_node_ids = produce_merged_node_id_list(merges=merges)
-    nodes_only_connected = nodes_connected.query(
-        f"{COLUMN_DEFAULT_ID} not in @node_ids",
-        local_dict={"node_ids": merged_node_ids},
-        inplace=False,
-    )
-    return NamedTable(TABLE_NODES_CONNECTED_ONLY, nodes_only_connected)
-
-
-def produce_table_nodes_dangling(nodes: DataFrame, hierarchy_edges: DataFrame, merges: DataFrame) -> NamedTable:
-    """Produce a table containing nodes that are not merged or connected.
-
-    :param nodes: The set of domain nodes (including seed nodes).
-    :param hierarchy_edges: The domain node hierarchy.
-    :param merges: The domain node merges.
-    :return: The table of nodes connected that are not merged but connected.
-    """
-    connected_nodes_ids = (
-        produce_table_nodes_only_connected(hierarchy_edges=hierarchy_edges, merges=merges)
-        .dataframe[COLUMN_DEFAULT_ID]
-        .tolist()
-    )
-    connected_or_merged_node_ids = produce_merged_node_id_list(merges=merges) + connected_nodes_ids
-    nodes_dangling = nodes.query(
-        f"{COLUMN_DEFAULT_ID} not in @node_ids",
-        local_dict={"node_ids": connected_or_merged_node_ids},
-        inplace=False,
-    )
-    return NamedTable(TABLE_NODES_DANGLING, nodes_dangling)
-
-
-def produce_node_id_table_from_edge_table(edges: DataFrame) -> DataFrame:
-    """Produce a node ID table from a given edge set by aggregating the source and target node IDs.
-
-    :param edges: The edge table.
-    :return: The node table with unique node IDs.
-    """
-    nodes_source = (edges[[COLUMN_SOURCE_ID]]).rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID}, inplace=False)[
-        [COLUMN_DEFAULT_ID]
-    ]
-    nodes_target = (edges[[COLUMN_TARGET_ID]]).rename(columns={COLUMN_TARGET_ID: COLUMN_DEFAULT_ID}, inplace=False)[
-        [COLUMN_DEFAULT_ID]
-    ]
-    return pd.concat([nodes_source, nodes_target]).drop_duplicates(keep="first")
-
-
-def produce_merged_node_id_list(merges: DataFrame) -> List[str]:
-    """Produce a list of node IDs that are merged (the source node ID).
-
-    :param merges: The table of merges.
-    :return: The merged node IDs as a list.
-    """
-    return merges[COLUMN_SOURCE_ID].tolist()
-
-
-def filter_nodes_for_namespace(nodes: DataFrame, namespace: str) -> DataFrame:
-    """Filter a given node dataframe for a namespace.
-
-    :param nodes: The node table to be filtered.
-    :param namespace: The ontology ID.
-    :return: The node dataframe where all nodes belong to the same ontology (namespace).
-    """
-    nodes_copy = nodes.copy()
-    default_id_ns = get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
-    if default_id_ns not in list(nodes_copy):
-        nodes_copy = produce_table_with_namespace_column_for_node_ids(table=nodes_copy)
-    nodes_for_namespace = nodes_copy.query(f'{default_id_ns} == "{namespace}"', inplace=False)
-    logger.info(
-        f"Found {len(nodes_for_namespace):,d} nodes for namespace " + f"{namespace} from total {len(nodes):,d} nodes."
-    )
-    return nodes_for_namespace
-
-
 def _produce_hierarchy_edges_for_unmapped_nodes(
-    unmapped_nodes: DataFrame, merges: DataFrame, source_alignment_order: List[str], hierarchy_edges: DataFrame
+        unmapped_nodes: DataFrame, merges: DataFrame, source_alignment_order: List[str], hierarchy_edges: DataFrame
 ) -> Tuple[DataFrame, List[ConnectivityStep]]:
     # contains all merges; iteratively extended with connected nodes (where the node will "merge" to itself)
     # this provides a single data structure to identify terminus nodes in hierarchy paths, i.e. where
@@ -237,7 +150,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
 
 
 def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
-    node_namespace: str, unmapped_nodes: DataFrame, hierarchy_edges: DataFrame, merge_and_connectivity_map: dict
+        node_namespace: str, unmapped_nodes: DataFrame, hierarchy_edges: DataFrame, merge_and_connectivity_map: dict
 ) -> Tuple[List[Tuple[str, str]], dict, ConnectivityStep]:
     merge_and_connectivity_map_for_ns = merge_and_connectivity_map.copy()
 
@@ -312,10 +225,10 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
 
 
 def _produce_hierarchy_path_for_unmapped_node(
-    node_to_connect: str,
-    unmapped_node_ids: List[str],
-    merge_and_connectivity_map_for_ns: dict,
-    hierarchy_graph_for_ns: NetworkitGraph,
+        node_to_connect: str,
+        unmapped_node_ids: List[str],
+        merge_and_connectivity_map_for_ns: dict,
+        hierarchy_graph_for_ns: NetworkitGraph,
 ) -> List[Tuple[str, str]]:
     # get shortest path
     shortest_path = hierarchy_graph_for_ns.get_path_for_node(node_id=node_to_connect)
@@ -370,3 +283,49 @@ def _produce_hierarchy_edge_table_from_edge_path_lists(edges_for_all_nodes: List
     new_hierarchy_edges[COLUMN_PROVENANCE] = ONTO_MERGER
     new_hierarchy_edges = new_hierarchy_edges[SCHEMA_HIERARCHY_EDGE_TABLE]
     return new_hierarchy_edges
+
+
+def post_process_connectivity_results(data_repo: DataRepository) -> List[NamedTable]:
+    nodes_connected = _produce_named_table_nodes_connected(
+        hierarchy_edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe
+    )
+    print(nodes_connected.dataframe.head())
+    print(data_repo.get(TABLE_NODES_UNMAPPED).dataframe.head())
+    nodes_dangling = _produce_named_table_nodes_dangling(
+        nodes_unmapped=data_repo.get(TABLE_NODES_UNMAPPED).dataframe,
+        nodes_connected=nodes_connected.dataframe,
+    )
+    return [nodes_connected, nodes_dangling]
+
+
+def _produce_named_table_nodes_connected(hierarchy_edges: DataFrame) -> NamedTable:
+    """Produce a table containing nodes that are in an edge hierarchy.
+
+    :param hierarchy_edges: The domain node hierarchy.
+    :return: The table of nodes connected that are not merged but connected.
+    """
+    return NamedTable(
+        TABLE_NODES_CONNECTED,
+        produce_table_node_ids_from_edge_table(edges=hierarchy_edges)[SCHEMA_NODE_ID_LIST_TABLE]
+    )
+
+
+def _produce_named_table_nodes_dangling(
+        nodes_unmapped: DataFrame, nodes_connected: DataFrame,
+) -> NamedTable:
+    """Produce a table containing nodes that are not merged or connected.
+
+    :param nodes_unmapped: The unmapped nodes.
+    :param nodes_connected: The domain node hierarchy.
+    :return: The table of nodes connected that are not merged but connected.
+    """
+    df = pd.concat([
+        nodes_unmapped[SCHEMA_NODE_ID_LIST_TABLE],
+        nodes_connected[SCHEMA_NODE_ID_LIST_TABLE],
+        nodes_connected[SCHEMA_NODE_ID_LIST_TABLE],
+    ]).drop_duplicates(keep=False)
+    logger.info(
+        f"Out of {len(nodes_unmapped):,d} nodes, {len(df):,d} "
+        + f"({((len(df) / len(nodes_unmapped)) * 100):.2f}%) are connected."
+    )
+    return NamedTable(TABLE_NODES_DANGLING, df)

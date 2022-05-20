@@ -5,7 +5,7 @@ from typing import List, Tuple
 from pandas import DataFrame
 
 from onto_merger.alignment import mapping_utils, merge_utils
-from onto_merger.analyser import analysis_util
+from onto_merger.analyser import analysis_utils
 from onto_merger.data.constants import (
     COLUMN_NAMESPACE,
     COLUMN_PROVENANCE,
@@ -21,7 +21,7 @@ from onto_merger.data.constants import (
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
     TABLE_NODES_OBSOLETE,
-)
+    COLUMN_DEFAULT_ID)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
@@ -71,7 +71,7 @@ class AlignmentManager:
         """
         # prepare for alignment
         self._preprocess_mappings()
-        source_alignment_order = produce_source_alignment_priority_order(
+        source_alignment_order = _produce_source_alignment_priority_order(
             seed_ontology_name=self._alignment_config.base_config.seed_ontology_name,
             nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
         )
@@ -147,7 +147,7 @@ class AlignmentManager:
         :param mapping_types: The mapping types in the given type group.
         :return: The merge named table for the step, and the step meta data dataclass.
         """
-        unmapped_nodes = mapping_utils.produce_table_unmapped_nodes(
+        unmapped_nodes = merge_utils.produce_table_unmapped_nodes(
             nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
             merges=self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA).dataframe,
         )
@@ -297,7 +297,7 @@ class AlignmentManager:
         )
 
 
-def produce_source_alignment_priority_order(seed_ontology_name: str, nodes: DataFrame) -> List[str]:
+def _produce_source_alignment_priority_order(seed_ontology_name: str, nodes: DataFrame) -> List[str]:
     """Produce the alignment process source priority order.
 
     The alignment order is produced by putting the seed ontology as first (this
@@ -310,7 +310,7 @@ def produce_source_alignment_priority_order(seed_ontology_name: str, nodes: Data
     """
     priority_order = [seed_ontology_name]
     ontology_namespaces = list(
-        analysis_util.produce_table_node_namespace_distribution(node_table=nodes)[COLUMN_NAMESPACE]
+        analysis_utils.produce_table_node_namespace_distribution(node_table=nodes)[COLUMN_NAMESPACE]
     )
     ontology_namespaces.remove(seed_ontology_name)
     priority_order.extend(ontology_namespaces)

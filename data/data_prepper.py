@@ -9,7 +9,7 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
-from onto_merger.analyser import analysis_util
+from onto_merger.analyser import analysis_utils
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     COLUMN_PROVENANCE,
@@ -33,7 +33,7 @@ from onto_merger.data.dataclasses import DataRepository, NamedTable
 
 def prune_nodes_by_namespace(nodes_raw: DataFrame,
                              node_namespaces_to_remove: List[str]) -> DataFrame:
-    default_id_ns_column_name = analysis_util.get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
+    default_id_ns_column_name = analysis_utils.get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
     nodes_updated = nodes_raw.query(
         expr=f"{default_id_ns_column_name} != @node_nss",
         local_dict={"node_nss": node_namespaces_to_remove},
@@ -49,8 +49,8 @@ def prune_nodes_by_namespace(nodes_raw: DataFrame,
 
 def prune_edges_by_namespace(edges_raw: DataFrame,
                              node_namespaces_to_remove: List[str]) -> DataFrame:
-    src_ns_column_name = analysis_util.get_namespace_column_name_for_column(COLUMN_SOURCE_ID)
-    trg_ns_column_name = analysis_util.get_namespace_column_name_for_column(COLUMN_TARGET_ID)
+    src_ns_column_name = analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID)
+    trg_ns_column_name = analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID)
     edges_pruned = edges_raw.query(
         expr=f"{src_ns_column_name} != @node_nss & {trg_ns_column_name} != @node_nss",
         local_dict={"node_nss": node_namespaces_to_remove},
@@ -86,7 +86,7 @@ def produce_example_data_set(raw_input_path: str = "bikg_2022-02-28-4.27.0_disea
 
     # (1) raw input load data
     data_manager_raw_input = DataManager(project_folder_path=raw_input_path, clear_output_directory=False)
-    raw_input_data: List[NamedTable] = analysis_util.add_namespace_column_to_loaded_tables(
+    raw_input_data: List[NamedTable] = analysis_utils.add_namespace_column_to_loaded_tables(
         data_manager_raw_input.load_input_tables()
     )
     data_repo: DataRepository = DataRepository()
@@ -153,7 +153,7 @@ def produce_test_data_set(raw_path: str = "bikg_2022-02-28-4.27.0_disease",
                           example_data_set_path: str = "bikg_disease") -> None:
     # load example
     data_manager_example_input = DataManager(project_folder_path=example_data_set_path, clear_output_directory=False)
-    raw_input_data: List[NamedTable] = analysis_util.add_namespace_column_to_loaded_tables(
+    raw_input_data: List[NamedTable] = analysis_utils.add_namespace_column_to_loaded_tables(
         data_manager_example_input.load_input_tables()
     )
     data_repo: DataRepository = DataRepository()
@@ -181,7 +181,7 @@ def produce_test_data_set(raw_path: str = "bikg_2022-02-28-4.27.0_disease",
         local_dict={"node_ids": nodes_to_keep},
         inplace=False
     )
-    default_id_ns_column_name = analysis_util.get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
+    default_id_ns_column_name = analysis_utils.get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
     namespaces = list(set(nodes_some_to_keep[default_id_ns_column_name].tolist()))
     print(f"nodes_updated_to_keep = {len(nodes_updated_to_keep):,d}")
     print(f"nodes_some_to_keep = {len(nodes_some_to_keep):,d} | namespaces = {namespaces}")

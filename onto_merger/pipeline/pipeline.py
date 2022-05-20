@@ -1,22 +1,15 @@
 """Runs the alignment and connection process, input and output validation and produces reports."""
-from typing import List
 from datetime import datetime
+from typing import List
 
-from onto_merger.alignment import hierarchy_utils, mapping_utils, merge_utils
+from onto_merger.alignment import hierarchy_utils, merge_utils
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.alignment_config.validator import validate_alignment_configuration
-from onto_merger.analyser import analysis_util, pandas_profiler
-from onto_merger.analyser.merged_ontology_analyser import MergedOntologyAnalyser
+from onto_merger.analyser import analysis_utils, pandas_profiler
 from onto_merger.data.constants import (
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_INPUT,
-    DIRECTORY_INTERMEDIATE,
-    SCHEMA_MERGE_TABLE,
-    TABLE_EDGES_HIERARCHY_POST,
-    TABLE_MERGES_AGGREGATED,
-    TABLE_MERGES_WITH_META_DATA,
-    TABLE_NODES,
-)
+    DIRECTORY_INTERMEDIATE)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository, RuntimeData, convert_runtime_steps_to_named_table, \
     format_datetime
@@ -42,7 +35,7 @@ class Pipeline:
         self._data_manager = DataManager(project_folder_path=self._project_folder_path)
         self._alignment_config = self._data_manager.load_alignment_config()
         self.logger = setup_logger(module_name=__name__, file_name=self._data_manager.get_log_file_path())
-        self._source_alignment_order: List[str] = []
+        self._alignment_priority_order: List[str] = []
         self._runtime_data: List[RuntimeData] = []
 
     def run_alignment_and_connection_process(self) -> None:
@@ -58,22 +51,20 @@ class Pipeline:
         # (2) LOAD AND CHECK INPUT DATA
         self._process_input_data()
 
-        # (3) RUN ALIGNMENT
+        # (3) RUN ALIGNMENT & POST PROCESSING
         self._align_nodes()
+        self._post_process_alignment_output()
 
-        # (4) AGGREGATE MERGES
-        self._aggregate_merges()
-
-        # (5) RUN CONNECTIVITY
+        # (4) RUN CONNECTIVITY & POST PROCESSING
         self._connect_nodes()
 
-        # (6) FINALISE OUTPUTS
+        # (5) FINALISE OUTPUTS
         self._finalise_outputs()
 
-        # (7) VALIDATE: output data
+        # (6) VALIDATE: output data
         self._validate_outputs()
 
-        # (8) PRODUCE REPORT
+        # (7) PRODUCE REPORT
         self._produce_report()
 
         self.logger.info("Finished running alignment and connection process for " + f"'{self._short_project_name}'")
@@ -85,13 +76,13 @@ class Pipeline:
 
         :return:
         """
-        start_date_time = datetime.now()
         self.logger.info("Started validating alignment config...")
+        start_date_time = datetime.now()
         config_json_is_valid = validate_alignment_configuration(alignment_config=self._alignment_config.as_dict)
         if config_json_is_valid is False:
             raise Exception
-        self.logger.info("Finished validating alignment config.")
         self._record_runtime(start_date_time=start_date_time, task_name="VALIDATE CONFIG")
+        self.logger.info("Finished validating alignment config.")
 
     def _process_input_data(self) -> None:
         """Load, preprocess, profile and validate the input data.
@@ -101,24 +92,25 @@ class Pipeline:
 
         :return:
         """
-        start_date_time = datetime.now()
         self.logger.info("Started processing input data...")
 
         # load  and preprocess input tables: add namespaces for downstream processing
         self._data_repo.update(
-            tables=analysis_util.add_namespace_column_to_loaded_tables(tables=self._data_manager.load_input_tables())
+            tables=analysis_utils.add_namespace_column_to_loaded_tables(tables=self._data_manager.load_input_tables())
         )
 
         # profile input tables
+        start_date_time = datetime.now()
         pandas_profiler.profile_tables(tables=self._data_repo.get_input_tables(), data_manager=self._data_manager)
+        self._record_runtime(start_date_time=start_date_time, task_name="PROFILING input")
 
         # validate input tables
+        start_date_time = datetime.now()
         GERunner(
             alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path()
         ).run_ge_tests(named_tables=self._data_repo.get_input_tables(), data_origin=DIRECTORY_INPUT)
-
+        self._record_runtime(start_date_time=start_date_time, task_name="VALIDATION input")
         self.logger.info("Finished processing input data.")
-        self._record_runtime(start_date_time=start_date_time, task_name="PROCESS INPUT")
 
     def _align_nodes(self) -> None:
         """Run the alignment process.
@@ -127,39 +119,35 @@ class Pipeline:
 
         :return:
         """
-        start_date_time = datetime.now()
         self.logger.info("Started aligning nodes...")
+        start_date_time = datetime.now()
         alignment_results, source_alignment_order = AlignmentManager(
             alignment_config=self._alignment_config,
             data_repo=self._data_repo,
             data_manager=self._data_manager,
         ).align_nodes()
         self._data_repo.update(tables=alignment_results.get_intermediate_tables())
-        self._source_alignment_order.extend(source_alignment_order)
-        self.logger.info("Finished aligning nodes...")
-        self._record_runtime(start_date_time=start_date_time, task_name="ALIGNMENT PROCESS")
+        self._alignment_priority_order.extend(source_alignment_order)
+        self._record_runtime(start_date_time=start_date_time, task_name="ALIGNMENT")
+        self.logger.info("Finished aligning nodes.")
 
-    def _aggregate_merges(self) -> None:
+    def _post_process_alignment_output(self) -> None:
         """Run the merge aggregation process (merges targets become only canonical IDs).
 
         Results (aggregated merges) are stored in the data repository.
 
         :return:
         """
-        start_date_time = datetime.now()
         self.logger.info("Started aggregating merges...")
-        table_aggregated_merges = merge_utils.produce_named_table_aggregate_merges(
-            merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe[SCHEMA_MERGE_TABLE],
-            alignment_priority_order=self._source_alignment_order,
+        start_date_time = datetime.now()
+        self._data_repo.update(
+            tables=merge_utils.post_process_alignment_results(
+                data_repo=self._data_repo,
+                alignment_priority_order=self._alignment_priority_order
+            )
         )
-        table_merged_nodes = merge_utils.produce_named_table_merged_nodes(merges=table_aggregated_merges.dataframe)
-        table_unmapped_nodes = mapping_utils.produce_named_table_unmapped_nodes(
-            nodes=self._data_repo.get(TABLE_NODES).dataframe,
-            merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,
-        )
-        self._data_repo.update(tables=[table_aggregated_merges, table_merged_nodes, table_unmapped_nodes])
+        self._record_runtime(start_date_time=start_date_time, task_name="ALIGNMENT postprocessing")
         self.logger.info("Finished aggregating merges.")
-        self._record_runtime(start_date_time=start_date_time, task_name="AGGREGATING MERGES")
 
     def _connect_nodes(self) -> None:
         """Run the connectivity process to produce the domain ontology hierarchy.
@@ -168,53 +156,37 @@ class Pipeline:
 
         :return:
         """
-        start_date_time = datetime.now()
         self.logger.info("Started connecting nodes...")
+        start_date_time = datetime.now()
         self._data_repo.update(
             tables=hierarchy_utils.connect_nodes(
                 alignment_config=self._alignment_config,
-                source_alignment_order=self._source_alignment_order,
+                source_alignment_order=self._alignment_priority_order,
                 data_repo=self._data_repo,
             )
         )
-        self.logger.info("Finished connecting nodes.")
+        self._data_repo.update(
+            tables=hierarchy_utils.post_process_connectivity_results(
+                data_repo=self._data_repo,
+            )
+        )
         self._record_runtime(start_date_time=start_date_time, task_name="CONNECTIVITY PROCESS")
+        self.logger.info("Finished connecting nodes.")
 
     def _finalise_outputs(self) -> None:
         """Produce the final merged ontology and pre-processes tables for validation.
 
-        Results (merged, unmapped, connected, danging nodes) are stored in the data
-        repository.
+        Results are stored in the data repository.
 
         :return:
         """
         start_date_time = datetime.now()
         self.logger.info("Started finalising outputs...")
 
-        # todo fix TABLE_MERGES_WITH_META_DATA  vs TABLE_MERGES_AGGREGATED
-
-        # compute: unmapped, dangling, only connected
-        self._data_repo.update(
-            tables=[
-                mapping_utils.produce_named_table_unmapped_nodes(
-                    nodes=self._data_repo.get(TABLE_NODES).dataframe,
-                    merges=self._data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,
-                ),
-                hierarchy_utils.produce_table_nodes_only_connected(
-                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe,
-                    merges=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
-                ),
-                hierarchy_utils.produce_table_nodes_dangling(
-                    nodes=self._data_repo.get(TABLE_NODES).dataframe,
-                    hierarchy_edges=self._data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe,
-                    merges=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe,
-                ),
-            ]
-        )
-
         #  add NS to all outputs
         self._data_repo.update(
-            tables=analysis_util.add_namespace_column_to_loaded_tables(tables=self._data_repo.get_intermediate_tables())
+            tables=analysis_utils.add_namespace_column_to_loaded_tables(
+                tables=self._data_repo.get_intermediate_tables())
         )
 
         # save all outputs
@@ -240,15 +212,15 @@ class Pipeline:
         GERunner(
             alignment_config=self._alignment_config,
             ge_base_directory=self._data_manager.get_data_tests_path(),
-        ).run_ge_tests(named_tables=self._data_repo.get_domain_tables(), data_origin=DIRECTORY_DOMAIN_ONTOLOGY)
-        self._record_runtime(start_date_time=start_date_time, task_name="VALIDATION OUTPUTS")
+        ).run_ge_tests(named_tables=self._data_repo.get_intermediate_tables(), data_origin=DIRECTORY_INTERMEDIATE)
+        self._record_runtime(start_date_time=start_date_time, task_name="VALIDATION intermediate")
 
         start_date_time = datetime.now()
         GERunner(
             alignment_config=self._alignment_config,
             ge_base_directory=self._data_manager.get_data_tests_path(),
-        ).run_ge_tests(named_tables=self._data_repo.get_intermediate_tables(), data_origin=DIRECTORY_INTERMEDIATE)
-        self._record_runtime(start_date_time=start_date_time, task_name="VALIDATION INTERMEDIATE")
+        ).run_ge_tests(named_tables=self._data_repo.get_domain_tables(), data_origin=DIRECTORY_DOMAIN_ONTOLOGY)
+        self._record_runtime(start_date_time=start_date_time, task_name="VALIDATION output")
 
         # move data docs to report folder
         self._data_manager.move_data_docs_to_reports()

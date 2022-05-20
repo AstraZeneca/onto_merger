@@ -160,6 +160,16 @@ class DataManager:
             for table_name in TABLES_INTERMEDIATE
         ]
 
+    def load_specified_tables(self, table_names: List[str]) -> List[NamedTable]:
+        return [
+            NamedTable(
+                table_name,
+                self.load_table(table_name=table_name,
+                                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"),
+            )
+            for table_name in table_names
+        ]
+
     def load_analysis_report_table_as_dict(self,
                                            section_name: str,
                                            table_name: str,
@@ -250,7 +260,7 @@ class DataManager:
         """Delete the output folder and its contents."""
         output_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT)
         if os.path.exists(output_path):
-            shutil.rmtree(output_path)
+            shutil.rmtree(output_path, ignore_errors=True)
 
     def save_table(
             self, table: NamedTable, process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"

@@ -5,7 +5,7 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
-from onto_merger.analyser.analysis_util import (
+from onto_merger.analyser.analysis_utils import (
     get_namespace_column_name_for_column,
     produce_table_with_namespace_column_for_node_ids,
 )
@@ -18,7 +18,6 @@ from onto_merger.data.constants import (
     COLUMN_TARGET_ID,
     SCHEMA_MAPPING_TABLE,
     TABLE_MERGES_WITH_META_DATA,
-    TABLE_NODES_UNMAPPED,
 )
 from onto_merger.data.dataclasses import NamedTable
 from onto_merger.logger.log import get_logger
@@ -297,38 +296,6 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
         inplace=True,
     )
     return df[SCHEMA_MAPPING_TABLE]
-
-
-def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
-    """Produce the dataframe of unmapped node IDs.
-
-    :param nodes: The set of input nodes to be filtered.
-    :param merges: The set of merges used to determine node mapped status.
-    :return: The set of unmapped nodes.
-    """
-    merges_updated = merges[[COLUMN_SOURCE_ID]].rename(
-        columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID},
-        inplace=False,
-    )[[COLUMN_DEFAULT_ID]]
-
-    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merges_updated, merges_updated]).drop_duplicates(keep=False)
-
-    logger.info(
-        f"Out of {len(nodes):,d} nodes, {len(df):,d} "
-        + f"({((len(df) / len(nodes)) * 100):.2f}%) "
-        + f"are unmapped (merges {len(merges):,d})."
-    )
-    return df
-
-
-def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> NamedTable:
-    """Produce the named table of unmapped node IDs.
-
-    :param nodes: The set of input nodes to be filtered.
-    :param merges: The set of merges used to determine node mapped status.
-    :return: The set of unmapped nodes.
-    """
-    return NamedTable(TABLE_NODES_UNMAPPED, produce_table_unmapped_nodes(nodes=nodes, merges=merges))
 
 
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:

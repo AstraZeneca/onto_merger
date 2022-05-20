@@ -12,10 +12,9 @@ import pandas as pd
 from pandas import DataFrame
 from pandas_profiling import __version__ as pandas_profiling_version
 
-from onto_merger.alignment.hierarchy_utils import produce_node_id_table_from_edge_table, \
-    get_namespace_column_name_for_column
-from onto_merger.analyser.analysis_util import produce_table_with_namespace_column_for_node_ids, \
-    produce_table_node_namespace_distribution, produce_table_with_namespace_column_pair
+from onto_merger.analyser.analysis_utils import produce_table_with_namespace_column_for_node_ids, \
+    produce_table_node_namespace_distribution, produce_table_with_namespace_column_pair, \
+    get_namespace_column_name_for_column, produce_table_node_ids_from_edge_table
 from onto_merger.analyser.constants import TABLE_STATS, \
     ANALYSIS_NODE_NAMESPACE_FREQ, \
     TABLE_SECTION, TABLE_SUMMARY, ANALYSIS_GENERAL, ANALYSIS_PROV, ANALYSIS_TYPE, ANALYSIS_MAPPED_NSS, \
@@ -27,9 +26,10 @@ from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT
     DIRECTORY_INPUT, COLUMN_SOURCE_TO_TARGET, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
     TABLE_TYPE_MAPPING, TABLES_MERGE, TABLE_TYPE_NODE, TABLE_TYPE_EDGE, DIRECTORY_INTERMEDIATE, \
     TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES, TABLE_MERGES, \
-    TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, TABLE_NODES_CONNECTED_ONLY, \
+    TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, \
     TABLE_ALIGNMENT_STEPS_REPORT, TABLE_CONNECTIVITY_STEPS_REPORT, TABLE_PIPELINE_STEPS_REPORT, COLUMN_NAMESPACE, \
-    TABLE_EDGES_HIERARCHY_POST, TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE
+    TABLE_EDGES_HIERARCHY_POST, TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE, TABLE_MERGES_AGGREGATED, \
+    TABLE_NODES_CONNECTED
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.logger.log import get_logger
@@ -65,7 +65,7 @@ def _produce_node_namespace_distribution_with_type(nodes: DataFrame, metric_name
 def _produce_node_covered_by_edge_table(nodes: DataFrame,
                                         edges: DataFrame,
                                         coverage_column: str) -> DataFrame:
-    node_id_list_of_edges = produce_node_id_table_from_edge_table(edges=edges)
+    node_id_list_of_edges = produce_table_node_ids_from_edge_table(edges=edges)
     node_id_list_of_edges[coverage_column] = True
     nodes_covered = pd.merge(
         nodes[SCHEMA_NODE_ID_LIST_TABLE],
@@ -141,16 +141,45 @@ def _produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
 
 
 # NODE STATUS TABLES & CHARTS #
-def _produce_and_node_status_analyses(
+def _produce_and_save_node_status_analyses(
         seed_name: str, data_manager: DataManager, data_repo: DataRepository,
 ) -> DataFrame:
+
+    # data tables
+    steps_report_alignment = data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe
+    steps_report_connectivity = data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe
+    merge_analysis_df = _produce_merge_analysis_for_merged_nss_for_canonical(
+        merges=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe
+    )
+    nodes_unmapped_df = data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe
+    nodes_merged_df = data_repo.get(table_name=TABLE_NODES_MERGED).dataframe
+    nodes_connected_df = data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe  # ok
+
+    # node calculations
+    nodes_input = steps_report_alignment['count_unmapped_nodes'].iloc[0]
+    nodes_seed = steps_report_alignment['count_merged_nodes'].iloc[0]
+    nodes_merged_total = len(nodes_merged_df)
+    nodes_merged_total_check = steps_report_alignment['count_merged_nodes'].sum() - nodes_seed
+    nodes_unique = nodes_input - nodes_merged_total
+    nodes_merged = steps_report_alignment['count_merged_nodes'].sum() - nodes_seed
+    nodes_merged_to_seed = merge_analysis_df \
+        .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
+    nodes_merged_to_not_seed = nodes_merged - nodes_merged_to_seed
+    nodes_merged_to_connected = 0
+    nodes_merged_to_dangling = 0  # only connected
+    nodes_unmapped = nodes_input - nodes_seed - nodes_merged_total
+    nodes_connected = 0
+    nodes_connected_and_merged = 0
+    nodes_connected_not_merged = 0
+    nodes_dangling = len(data_repo.get(TABLE_NODES_DANGLING).dataframe)
+
     # tables
     nodes = data_repo.get(TABLE_NODES).dataframe
     node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
         nodes=nodes, metric_name="namespace"
     )
-    nodes_connected = produce_node_id_table_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
-    nodes_connected_only = data_repo.get(TABLE_NODES_CONNECTED_ONLY).dataframe
+    nodes_connected = produce_table_node_ids_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
+    nodes_connected_only = data_repo.get(TABLE_NODES_UNMAPPED).dataframe
     nodes_unmapped = data_repo.get(TABLE_NODES_UNMAPPED).dataframe
     nodes_dangling = data_repo.get(TABLE_NODES_DANGLING).dataframe
 
@@ -162,9 +191,7 @@ def _produce_and_node_status_analyses(
     unmapped_count = len(nodes_unmapped)
     connected_only_count = len(nodes_connected_only)
     dangling_count = len(nodes_dangling)
-    merge_analysis_df = _produce_merge_analysis_for_merged_nss_for_canonical(
-        merges=data_repo.get(TABLE_MERGES).dataframe
-    )
+
     merged_to_seed_count = merge_analysis_df \
         .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
     merged_not_seed_count = input_count - (seed_node_count + merged_to_seed_count + unmapped_count)
@@ -403,7 +430,6 @@ def _produce_and_save_alignment_step_node_analysis(
     df["freq"] = df.apply(
         lambda x: (round((x[COLUMN_COUNT] / start_unmapped * 100), 1)), axis=1
     )
-    print_df_stats(df, "!!!")
     plotly_utils.produce_vertical_bar_chart_stacked(
         analysis_table=df,
         file_path=data_manager.get_analysis_figure_path(
@@ -432,7 +458,6 @@ def _produce_and_save_connectivity_step_node_analysis(
     df["freq"] = df.apply(
         lambda x: (round((x[COLUMN_COUNT] / dangling_start * 100), 1)), axis=1
     )
-    print_df_stats(df, "!!!")
     plotly_utils.produce_vertical_bar_chart_stacked(
         analysis_table=df,
         file_path=data_manager.get_analysis_figure_path(
@@ -440,6 +465,38 @@ def _produce_and_save_connectivity_step_node_analysis(
             analysed_table_name="step_node_analysis",
             analysis_table_suffix="stacked_bar_chart"
         ),
+    )
+
+
+# OVERVIEW #
+def _produce_and_save_validation_overview_analyses(data_manager: DataManager,
+                                                   data_profiling_stats: DataFrame,
+                                                   data_test_stats: DataFrame):
+    df_merged = pd.merge(
+        data_profiling_stats[['directory', 'type', 'name', 'rows', 'columns', 'size_float']],
+        data_test_stats[['directory', 'type', 'name', 'nb_validations', 'nb_failed_validations']],
+        how="left",
+        on=['directory', 'name'],
+    )
+    summary_data = []
+    for directory in [DIRECTORY_INPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_OUTPUT]:
+        df = df_merged.query(expr=f"directory == '{directory}'", inplace=False)
+        nb_validations = df['nb_validations'].sum()
+        nb_failed_validations = df['nb_failed_validations'].sum()
+        success_ratio = f"{(nb_validations - nb_failed_validations) / nb_validations * 100:.2f}%"
+        summary_data.append(
+            [directory, df['name'].count(), df['rows'].sum(), f"{(df['size_float'].sum() / float(1 << 20)):,.2f}MB",
+             nb_validations, nb_failed_validations, success_ratio, (True if nb_failed_validations == 0 else False)]
+        )
+    summary_df = pd.DataFrame(summary_data,
+                              columns=['directory', 'tables', 'rows', 'file_size',
+                                       'nb_validations', 'nb_failed_validations',
+                                       'success_ratio', 'success_status'])
+    data_manager.save_analysis_table(
+        analysis_table=summary_df,
+        dataset=SECTION_OVERVIEW,
+        analysed_table_name="data_profiling_and_tests",
+        analysis_table_suffix="summary"
     )
 
 
@@ -458,7 +515,12 @@ def _get_table_type_for_table_name(table_name: str) -> str:
 def _get_file_size_in_mb_for_named_table(table_name: str,
                                          folder_path: str) -> str:
     f_size = os.path.getsize(os.path.abspath(f"{folder_path}/{table_name}.csv"))
-    return f"{f_size / float(1 << 20):,.3f} MB"
+    return f"{f_size / float(1 << 20):,.3f}MB"
+
+
+def _get_file_size_for_named_table(table_name: str,
+                                   folder_path: str) -> float:
+    return os.path.getsize(os.path.abspath(f"{folder_path}/{table_name}.csv"))
 
 
 def _produce_ge_validation_report_map(validation_folder: str) -> dict:
@@ -501,7 +563,12 @@ def _produce_data_profiling_stats_for_directory(tables: List[NamedTable],
             "type": _get_table_type_for_table_name(table_name=table.name),
             "name": f"{table.name}.csv",
             "rows": len(table.dataframe),
+            "columns": len(list(table.dataframe)),
             "size": _get_file_size_in_mb_for_named_table(
+                table_name=table.name,
+                folder_path=folder_path
+            ),
+            "size_float": _get_file_size_for_named_table(
                 table_name=table.name,
                 folder_path=folder_path
             ),
@@ -521,7 +588,7 @@ def _produce_data_test_stats_for_directory(tables: List[str],
     return [
         {
             "type": _get_table_type_for_table_name(table_name=table),
-            "name": f"{table}.csv",
+            "name": f'{table.replace("_domain", "")}.csv',
             "report": ge_validation_report_map.get(table),
             "nb_validations": validation_analysis[f"{directory}_{table}"]["nb_validations"],
             "nb_failed_validations": validation_analysis[f"{directory}_{table}"]["nb_failed_validations"],
@@ -564,11 +631,6 @@ def _produce_data_profiling_table_stats(data_manager: DataManager, section_name:
     output_df['directory'] = DIRECTORY_OUTPUT
     output_df.to_csv(f"{main_path}_{DIRECTORY_OUTPUT}_{TABLE_STATS}.csv")
     all_df = pd.concat([input_df, intermed_df, output_df])
-    all_df['size_float'] = all_df.apply(
-        lambda x: float(x['size'].replace(" MB", "")),
-        axis=1
-    )
-
     return all_df
 
 
@@ -724,7 +786,7 @@ def _produce_and_save_summary_input(data_manager: DataManager, data_repo: DataRe
 
 
 def _produce_and_save_summary_output(data_manager: DataManager, data_repo: DataRepository) -> None:
-    nodes_connected = produce_node_id_table_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
+    nodes_connected = produce_table_node_ids_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
     nb_unique_nodes = (len(data_repo.get(table_name=TABLE_NODES).dataframe)
                        - len(data_repo.get(table_name=TABLE_MERGES).dataframe))
     summary = [
@@ -808,6 +870,8 @@ def _produce_and_save_summary_data_tests(data_manager: DataManager,
     summary = [
         {"metric": "Process runtime",
          "values": _get_runtime_for_main_step(process_name="VALIDATION", data_repo=data_repo)},
+        {"metric": "Data docs report",
+         "values": f'<a href="data_docs/local_site/index.html" target="_blank">Link</a>'},
         {"metric": "Number of tables tested", "values": len(stats)},
         {"metric": "Number of data tests run", "values": stats['nb_validations'].sum()},
         {"metric": "Number of failed tests (input data)",
@@ -833,14 +897,15 @@ def _produce_and_save_summary_data_tests(data_manager: DataManager,
 def _produce_and_save_summary_data_profiling(data_manager: DataManager,
                                              data_repo: DataRepository,
                                              data_profiling_stats: DataFrame) -> None:
-    print(data_profiling_stats[['size_float']].head(10))
     summary = [
         {"metric": "Process runtime",
          "values": _get_runtime_for_main_step(process_name="PROFILING", data_repo=data_repo)},
+        {"metric": "Data profiling reports (folder)",
+         "values": f'<a href="data_profile_reports/" target="_blank">Link</a>'},
         {"metric": "Number of tables profiled", "values": len(data_profiling_stats)},
         {"metric": "Number of rows profiled", "values": data_profiling_stats['rows'].sum()},
         {"metric": "Total file size",
-         "values": f"{data_profiling_stats['size_float'].sum():,.2f} MB"},
+         "values": f"{data_profiling_stats['size_float'].sum():,.2f}MB"},
         {"metric": "Pandas profiling version",
          "values": f"<code>{pandas_profiling_version}</code>"},
     ]
@@ -1112,7 +1177,7 @@ def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo:
     _produce_and_save_summary_connectivity(data_manager=data_manager, data_repo=data_repo)
     data_manager.save_analysis_table(
         analysis_table=_produce_node_namespace_freq(
-            nodes=produce_node_id_table_from_edge_table(
+            nodes=produce_table_node_ids_from_edge_table(
                 edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe
             )
         ),
@@ -1120,13 +1185,13 @@ def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo:
         analysed_table_name="nodes_connected",
         analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
     )
-    data_manager.save_analysis_table(
-        analysis_table=_produce_node_namespace_freq(
-            nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED_ONLY).dataframe),
-        dataset=section_dataset_name,
-        analysed_table_name=TABLE_NODES_CONNECTED_ONLY,
-        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
-    )
+    # data_manager.save_analysis_table(
+    #     analysis_table=_produce_node_namespace_freq(
+    #         nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED_ONLY).dataframe),
+    #     dataset=section_dataset_name,
+    #     analysed_table_name=TABLE_NODES_CONNECTED_ONLY,
+    #     analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    # )
     data_manager.save_analysis_table(
         analysis_table=_produce_node_namespace_freq(
             nodes=data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe),
@@ -1153,28 +1218,44 @@ def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo:
     )
 
 
-def _produce_data_profiling_and_testing_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
+def _produce_data_profiling_and_testing_analysis(
+        data_manager: DataManager, data_repo: DataRepository
+) -> (DataFrame, DataFrame):
     logger.info(f"Producing report section '{SECTION_DATA_PROFILING}' and '{SECTION_DATA_TESTS}' analysis...")
+
+    # profiling
     data_profiling_stats = _produce_data_profiling_table_stats(data_manager=data_manager,
                                                                section_name=SECTION_DATA_PROFILING)
     _produce_and_save_summary_data_profiling(data_manager=data_manager,
                                              data_repo=data_repo,
                                              data_profiling_stats=data_profiling_stats)
+
+    # data tests
     data_test_stats = _produce_data_testing_table_stats(data_manager=data_manager,
                                                         section_name=SECTION_DATA_TESTS)
     _produce_and_save_summary_data_tests(data_manager=data_manager,
                                          data_repo=data_repo,
                                          stats=data_test_stats)
 
+    return data_profiling_stats, data_test_stats
 
-def _produce_overview_analysis(data_manager: DataManager, data_repo: DataRepository) -> DataFrame:
+
+def _produce_overview_analysis(data_manager: DataManager,
+                               data_repo: DataRepository,
+                               data_profiling_stats: DataFrame,
+                               data_test_stats: DataFrame) -> DataFrame:
     # analyse and save
     section_dataset_name = SECTION_OVERVIEW
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
-    node_status_df = _produce_and_node_status_analyses(
+    node_status_df = _produce_and_save_node_status_analyses(
         seed_name=data_manager.load_alignment_config().base_config.seed_ontology_name,
         data_manager=data_manager,
         data_repo=data_repo
+    )
+    _produce_and_save_validation_overview_analyses(
+        data_manager=data_manager,
+        data_profiling_stats=data_profiling_stats,
+        data_test_stats=data_test_stats,
     )
     _produce_and_save_runtime_tables(
         table_name=TABLE_PIPELINE_STEPS_REPORT,
@@ -1200,12 +1281,18 @@ def produce_report_data(data_manager: DataManager) -> None:
     data_repo.update(tables=data_manager.load_output_tables())
     data_repo.update(tables=data_manager.load_intermediate_tables())
 
-    node_status_df = _produce_overview_analysis(data_manager=data_manager, data_repo=data_repo)
+    data_profiling_stats, data_test_stats = \
+        _produce_data_profiling_and_testing_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_overview_analysis(
+        data_manager=data_manager,
+        data_repo=data_repo,
+        data_profiling_stats=data_profiling_stats,
+        data_test_stats=data_test_stats,
+    )
     _produce_input_dataset_analysis(data_manager=data_manager)
     _produce_output_dataset_analysis(data_manager=data_manager)
     _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_data_profiling_and_testing_analysis(data_manager=data_manager, data_repo=data_repo)
     logger.info(f"Finished producing report analysis.")
 
 
@@ -1213,7 +1300,5 @@ def produce_report_data(data_manager: DataManager) -> None:
 project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
 analysis_data_manager = DataManager(project_folder_path=project_folder_path,
                                     clear_output_directory=False)
-# _produce_output_dataset_analysis(data_manager=analysis_data_manager)
-
-# produce_report_data(data_manager=analysis_data_manager)
+produce_report_data(data_manager=analysis_data_manager)
 report_generator.produce_report(data_manager=analysis_data_manager)

@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 
+import analyser.analyser_tables
 from onto_merger.alignment import mapping_utils
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
@@ -247,7 +248,7 @@ def test_get_unmapped_nodes():
     input_nodes = pd.DataFrame(["FIZZBANG:0000001", "SNOMED:001", "FOOBAR:1234"], columns=[COLUMN_DEFAULT_ID])
 
     # run
-    actual = mapping_utils.produce_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
+    actual = analyser.analyser_tables.produce_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
 
     # expected
     expected = pd.DataFrame(["SNOMED:001"], columns=[COLUMN_DEFAULT_ID])
@@ -305,7 +306,7 @@ def test_produce_named_table_unmapped_nodes():
     input_nodes = pd.DataFrame(["FIZZBANG:0000001", "SNOMED:001", "FOOBAR:1234"], columns=[COLUMN_DEFAULT_ID])
 
     # run
-    actual = mapping_utils.produce_named_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
+    actual = analyser.analyser_tables.produce_named_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
 
     # evaluate
     assert isinstance(actual, NamedTable)

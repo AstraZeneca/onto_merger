@@ -3,6 +3,7 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 
+import analyser.analyser_tables
 from onto_merger.alignment import hierarchy_utils
 from onto_merger.alignment.networkit_utils import NetworkitGraph
 from onto_merger.analyser import get_namespace_column_name_for_column
@@ -29,7 +30,7 @@ def example_hierarchy_edges():
 
 def test_produce_seed_ontology_hierarchy_table(example_hierarchy_edges):
     nodes = pd.DataFrame(["MONDO:001", "MONDO:002", "MONDO:003"], columns=[COLUMN_DEFAULT_ID])
-    actual = hierarchy_utils.produce_table_seed_ontology_hierarchy(
+    actual = hierarchy_utils._produce_table_seed_ontology_hierarchy(
         seed_ontology_name="MONDO",
         nodes=nodes,
         hierarchy_edges=example_hierarchy_edges,
@@ -42,7 +43,7 @@ def test_produce_seed_ontology_hierarchy_table(example_hierarchy_edges):
     assert isinstance(actual, DataFrame)
     assert np.array_equal(actual.values, expected.values) is True
 
-    actual2 = hierarchy_utils.produce_table_seed_ontology_hierarchy(
+    actual2 = hierarchy_utils._produce_table_seed_ontology_hierarchy(
         seed_ontology_name="MO",
         nodes=nodes,
         hierarchy_edges=example_hierarchy_edges,
@@ -54,7 +55,7 @@ def test_produce_table_nodes_only_connected():
     hierarchy_edges = pd.DataFrame([("FOO:001", "SNOMED:001")], columns=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS)
     merges = pd.DataFrame([("SNOMED:001", "SNOMED:001")], columns=SCHEMA_MERGE_TABLE)
     expected = pd.DataFrame(["FOO:001"], columns=[COLUMN_DEFAULT_ID])
-    actual = hierarchy_utils.produce_table_nodes_only_connected(hierarchy_edges=hierarchy_edges, merges=merges)
+    actual = analyser.analyser_tables.produce_named_table_nodes_only_connected(hierarchy_edges=hierarchy_edges, merges_aggregated=merges)
     assert isinstance(actual, NamedTable)
     assert isinstance(actual.dataframe, DataFrame)
     assert np.array_equal(actual.dataframe.values, expected.values) is True
@@ -65,7 +66,7 @@ def test_produce_table_nodes_dangling():
     merges = pd.DataFrame([("SNOMED:001", "SNOMED:001")], columns=SCHEMA_MERGE_TABLE)
     nodes = pd.DataFrame(["FOO:001", "SNOMED:001", "MONDO:002"], columns=[COLUMN_DEFAULT_ID])
     expected = pd.DataFrame(["MONDO:002"], columns=[COLUMN_DEFAULT_ID])
-    actual = hierarchy_utils.produce_table_nodes_dangling(nodes=nodes, hierarchy_edges=hierarchy_edges, merges=merges)
+    actual = analyser.analyser_tables.produce_named_table_nodes_dangling(nodes=nodes, hierarchy_edges=hierarchy_edges, merges_aggregated=merges)
     assert isinstance(actual, NamedTable)
     assert isinstance(actual.dataframe, DataFrame)
     assert np.array_equal(actual.dataframe.values, expected.values) is True
@@ -74,7 +75,7 @@ def test_produce_table_nodes_dangling():
 def test_produce_node_id_table_from_edge_table():
     edges = pd.DataFrame([("FOO:001", "SNOMED:001")], columns=SCHEMA_MERGE_TABLE)
     expected = pd.DataFrame(["FOO:001", "SNOMED:001"], columns=[COLUMN_DEFAULT_ID])
-    actual = hierarchy_utils.produce_node_id_table_from_edge_table(edges=edges)
+    actual = analyser.analyser_tables.produce_table_node_ids_from_edge_table(edges=edges)
     assert isinstance(actual, DataFrame)
     assert np.array_equal(actual.values, expected.values) is True
 
@@ -82,7 +83,7 @@ def test_produce_node_id_table_from_edge_table():
 def test_produce_merged_node_id_list():
     merges = pd.DataFrame([("FOO:001", "SNOMED:001")], columns=SCHEMA_MERGE_TABLE)
     expected = ["FOO:001"]
-    actual = hierarchy_utils.produce_merged_node_id_list(merges=merges)
+    actual = analyser.analyser_tables.produce_merged_node_id_list(merges_aggregated=merges)
     assert isinstance(actual, list)
     assert actual == expected
 
@@ -96,7 +97,7 @@ def test_filter_nodes_for_namespace():
             get_namespace_column_name_for_column(COLUMN_DEFAULT_ID),
         ],
     )
-    actual = hierarchy_utils.filter_nodes_for_namespace(nodes=input_nodes, namespace="MONDO")
+    actual = analyser.analyser_tables.filter_nodes_for_namespace(nodes=input_nodes, namespace="MONDO")
     assert isinstance(actual, DataFrame)
     assert np.array_equal(actual.values, expected.values) is True
 

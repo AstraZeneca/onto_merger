@@ -270,13 +270,17 @@ def _produce_overview_config_subsection(section_name: str, data_manager: DataMan
     }
 
 
-# todo
 def _produce_overview_validation_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
-        "title": "Validation",
-        "link_title": "validation",
-        "dataset": {},
-        "template": "subsection_content/overview-validation.html"
+        "title": "Profiling & validation",
+        "link_title": "profiling_and_validation",
+        "dataset": {
+            "rows": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="data_profiling_and_tests_summary",
+            ),
+        },
+        "template": "data_content/table_validation_summary.html"
     }
 
 

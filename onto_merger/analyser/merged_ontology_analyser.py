@@ -3,7 +3,7 @@
 from jinja2 import Template
 from pandas import DataFrame
 
-from onto_merger.analyser import analysis_util
+from onto_merger.analyser import analysis_utils
 from onto_merger.data.constants import (
     TABLE_ALIGNMENT_STEPS_REPORT,
     TABLE_CONNECTIVITY_STEPS_REPORT,
@@ -65,7 +65,7 @@ class MergedOntologyAnalyser:
         table_count = len(node_table.dataframe)
         diff_ratio = (table_count / len(input_nodes)) * 100
         count_and_ratio = f"{table_count:,d} ({diff_ratio:.2f}%)"
-        namespace_distribution_table: DataFrame = analysis_util.produce_table_node_namespace_distribution(
+        namespace_distribution_table: DataFrame = analysis_utils.produce_table_node_namespace_distribution(
             node_table=node_table.dataframe
         )
         pandas_profiling_link = (

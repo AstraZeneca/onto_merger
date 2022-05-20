@@ -8,7 +8,7 @@ from typing import List
 import pytest
 
 from onto_merger.alignment import AlignmentManager
-from onto_merger.analyser.analysis_util import (
+from onto_merger.analyser.analysis_utils import (
     produce_table_with_namespace_column_for_node_ids,
 )
 from onto_merger.data.constants import (

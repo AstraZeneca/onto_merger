@@ -4,7 +4,7 @@ from typing import List, Union
 
 from great_expectations.core import ExpectationConfiguration
 
-from onto_merger.analyser.analysis_util import get_namespace_column_name_for_column
+from onto_merger.analyser.analysis_utils import get_namespace_column_name_for_column
 from onto_merger.data.constants import (
     COLUMN_COUNT_UNMAPPED_NODES,
     COLUMN_DEFAULT_ID,

@@ -6,7 +6,7 @@ from pandas import DataFrame
 
 from onto_merger.alignment.alignment_manager import (
     convert_alignment_steps_to_named_table,
-    produce_source_alignment_priority_order,
+    _produce_source_alignment_priority_order,
 )
 from onto_merger.data.constants import (
     SCHEMA_ALIGNMENT_STEPS_TABLE,
@@ -18,7 +18,7 @@ from tests.fixtures import data_repo, source_alignment_priority_order
 
 
 def test_produce_source_alignment_priority_order(data_repo, source_alignment_priority_order):
-    actual = produce_source_alignment_priority_order(
+    actual = _produce_source_alignment_priority_order(
         seed_ontology_name="MONDO", nodes=data_repo.get(TABLE_NODES).dataframe
     )
     assert actual == source_alignment_priority_order
