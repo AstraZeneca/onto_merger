@@ -5,6 +5,9 @@
              style="align-content: center"
              src="{{ subsection_data['fig_path'] }}" alt="foo">
     </div>
+
+    <hr class="panel-separator">
+
     <h4>Connectivity step details</h4>
     {% with table_data=subsection_data['steps_table'] %}
         {% include 'templates/data_content/table_steps_connectivity.html' %}

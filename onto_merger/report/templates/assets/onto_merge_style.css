@@ -106,8 +106,6 @@ div.overview.summary {
     margin-right: 20px;
 }
 
-
-
 div.col-sm-6 {
     margin-top: 20px;
 }
@@ -131,4 +129,11 @@ div.three-parts-top-row {
 .footer-text {
     padding-top: 25px;
     padding-bottom: 25px;
+}
+
+hr.panel-separator {
+    height:1px;
+    border-width:0;
+    color:lightgray;
+    background-color:lightgray
 }

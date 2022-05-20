@@ -10,9 +10,8 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
+from onto_merger.alignment import merge_utils
 from onto_merger.data.constants import (
-    COLUMN_PROVENANCE,
-    COLUMN_RELATION,
     DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
@@ -25,33 +24,26 @@ from onto_merger.data.constants import (
     DOMAIN_SUFFIX,
     FILE_NAME_CONFIG_JSON,
     FILE_NAME_LOG,
-    ONTO_MERGER,
-    RELATION_MERGE,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
     SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MAPPING_TABLE,
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
-    SCHEMA_NODE_ID_LIST_TABLE,
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_DOMAIN,
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MAPPINGS_DOMAIN,
     TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES_AGGREGATED,
-    TABLE_MERGES_DOMAIN,
     TABLE_MERGES_WITH_META_DATA,
-    TABLE_NAME_TO_TABLE_SCHEMA_MAP,
     TABLE_NODES,
-    TABLE_NODES_DOMAIN,
     TABLES_INPUT,
-    TABLES_OUTPUT, TABLES_INTERMEDIATE)
+    TABLES_OUTPUT, TABLES_INTERMEDIATE, TABLE_NODES_MERGED)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
     AlignmentConfigMappingTypeGroups,
     DataRepository,
-    NamedTable,
-    RuntimeData)
+    NamedTable)
 from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)
@@ -334,28 +326,19 @@ class DataManager:
         :param data_repo: The data repository containing the files.
         :return: The finalised (i.e. domain ontology) tables.
         """
-        # finalise table
-        table_merges = data_repo.get(TABLE_MERGES_AGGREGATED).dataframe.copy()
-        table_merges[COLUMN_RELATION] = RELATION_MERGE
-        table_merges[COLUMN_PROVENANCE] = ONTO_MERGER
-        table_merges = table_merges[TABLE_NAME_TO_TABLE_SCHEMA_MAP[TABLE_MERGES_DOMAIN]]
-
         return [
-            NamedTable(
-                name=TABLE_NODES_DOMAIN,
-                dataframe=data_repo.get(TABLE_NODES)
-                    .dataframe[SCHEMA_NODE_ID_LIST_TABLE]
-                    .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False),
+            merge_utils.produce_named_table_domain_nodes(
+                nodes=data_repo.get(TABLE_NODES).dataframe,
+                merged_nodes=data_repo.get(TABLE_NODES_MERGED).dataframe,
             ),
+            merge_utils.produce_named_table_domain_merges(
+                merges_aggregated=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe)
+            ,
             NamedTable(
                 name=TABLE_MAPPINGS_DOMAIN,
                 dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)
                     .dataframe[SCHEMA_MAPPING_TABLE]
                     .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
-            ),
-            NamedTable(
-                name=TABLE_MERGES_DOMAIN,
-                dataframe=table_merges.sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
             ),
             NamedTable(
                 name=TABLE_EDGES_HIERARCHY_DOMAIN,
@@ -374,12 +357,14 @@ class DataManager:
         return file_path
 
     def _copy_images(self):
+        # images  from assets
         images_folder = os.path.join(self._produce_analysis_report_folder_path(), "images")
         if Path(images_folder).exists() is False:
             shutil.copytree(
-                os.path.abspath("../report/templates/images"),
+                os.path.abspath("../../onto_merger/onto_merger/report/templates/images"),
                 images_folder
             )
+        # plots from analysis output folder
         [
             shutil.copy(
                 os.path.join(self.get_analysis_folder_path(), figure_file),

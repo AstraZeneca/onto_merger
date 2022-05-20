@@ -4,39 +4,38 @@ Produce data and figures are presented in the report.
 """
 import json
 import os
-from pathlib import Path
-from typing import Union, List
 from datetime import timedelta
+from pathlib import Path
+from typing import List
 
 import pandas as pd
 from pandas import DataFrame
 from pandas_profiling import __version__ as pandas_profiling_version
 
+from onto_merger.analyser import plotly_utils
 from onto_merger.analyser.analysis_utils import produce_table_with_namespace_column_for_node_ids, \
     produce_table_node_namespace_distribution, produce_table_with_namespace_column_pair, \
     get_namespace_column_name_for_column, produce_table_node_ids_from_edge_table
 from onto_merger.analyser.constants import TABLE_STATS, \
     ANALYSIS_NODE_NAMESPACE_FREQ, \
     TABLE_SECTION, TABLE_SUMMARY, ANALYSIS_GENERAL, ANALYSIS_PROV, ANALYSIS_TYPE, ANALYSIS_MAPPED_NSS, \
-    HEATMAP_MAPPED_NSS, ANALYSIS_CONNECTED_NSS, HEATMAP_CONNECTED_NSS, ANALYSIS_MERGES_NSS, \
-    ANALYSIS_MERGES_NSS_FOR_CANONICAL, COLUMN_NAMESPACE_TARGET_ID, COLUMN_NAMESPACE_SOURCE_ID, COLUMN_FREQ, \
+    HEATMAP_MAPPED_NSS, ANALYSIS_CONNECTED_NSS, ANALYSIS_MERGES_NSS, \
+    ANALYSIS_MERGES_NSS_FOR_CANONICAL, COLUMN_NAMESPACE_TARGET_ID, COLUMN_FREQ, \
     ANALYSIS_CONNECTED_NSS_CHART, GANTT_CHART
 from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, COLUMN_COUNT, \
     COLUMN_PROVENANCE, COLUMN_RELATION, COLUMN_SOURCE_ID, COLUMN_TARGET_ID, \
     DIRECTORY_INPUT, COLUMN_SOURCE_TO_TARGET, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
     TABLE_TYPE_MAPPING, TABLES_MERGE, TABLE_TYPE_NODE, TABLE_TYPE_EDGE, DIRECTORY_INTERMEDIATE, \
-    TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES, TABLE_MERGES, \
+    TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES, \
     TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, \
-    TABLE_ALIGNMENT_STEPS_REPORT, TABLE_CONNECTIVITY_STEPS_REPORT, TABLE_PIPELINE_STEPS_REPORT, COLUMN_NAMESPACE, \
+    TABLE_ALIGNMENT_STEPS_REPORT, TABLE_CONNECTIVITY_STEPS_REPORT, TABLE_PIPELINE_STEPS_REPORT, \
     TABLE_EDGES_HIERARCHY_POST, TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE, TABLE_MERGES_AGGREGATED, \
     TABLE_NODES_CONNECTED
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.logger.log import get_logger
-from onto_merger.report.data.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
+from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
-from onto_merger.analyser import plotly_utils
-from onto_merger.report import report_generator
 from onto_merger.version import __version__ as onto_merger_version
 
 logger = get_logger(__name__)
@@ -815,10 +814,10 @@ def _produce_and_save_summary_input(data_manager: DataManager, data_repo: DataRe
 def _produce_and_save_summary_output(data_manager: DataManager, data_repo: DataRepository) -> None:
     nodes_connected = produce_table_node_ids_from_edge_table(edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe)
     nb_unique_nodes = (len(data_repo.get(table_name=TABLE_NODES).dataframe)
-                       - len(data_repo.get(table_name=TABLE_MERGES).dataframe))
+                       - len(data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe))
     summary = [
         {"metric": "Number of unique nodes", "values": nb_unique_nodes},
-        {"metric": "Number of merged nodes", "values": len(data_repo.get(table_name=TABLE_MERGES).dataframe)},
+        {"metric": "Number of merged nodes", "values": len(data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe)},
         {"metric": "Number of connected nodes (in hierarchy)", "values": len(nodes_connected)},
         {"metric": "Percentage of connected nodes",
          "values": f"{round(len(nodes_connected) / nb_unique_nodes * 100, 2)}%"},
@@ -1073,7 +1072,7 @@ def _produce_and_save_hierarchy_edge_analysis(edges: DataFrame,
 def _produce_and_save_merge_analysis(merges: DataFrame,
                                      dataset: str,
                                      data_manager: DataManager) -> None:
-    table_type = TABLE_MERGES
+    table_type = "merges"
     merged_nss = _produce_source_to_target_analysis_for_directed_edge(edges=merges)
     data_manager.save_analysis_table(
         analysis_table=merged_nss,
@@ -1098,9 +1097,7 @@ def _produce_and_save_merge_analysis(merges: DataFrame,
 
 
 # PRODUCE & SAVE for DATASET #
-def _produce_input_dataset_analysis(data_manager: DataManager) -> None:
-    data_repo = DataRepository()
-    data_repo.update(tables=data_manager.load_input_tables())
+def _produce_input_dataset_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
 
     # analyse and save
     section_dataset_name = SECTION_INPUT
@@ -1127,12 +1124,7 @@ def _produce_input_dataset_analysis(data_manager: DataManager) -> None:
     )
 
 
-def _produce_output_dataset_analysis(data_manager: DataManager) -> None:
-    data_repo = DataRepository()
-    data_repo.update(tables=data_manager.load_output_tables())
-    data_repo.update(tables=data_manager.load_intermediate_tables())
-
-    # analyse and save
+def _produce_output_dataset_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
     section_dataset_name = SECTION_OUTPUT
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
     _produce_and_save_summary_output(data_manager=data_manager, data_repo=data_repo)
@@ -1156,7 +1148,7 @@ def _produce_output_dataset_analysis(data_manager: DataManager) -> None:
         data_manager=data_manager
     )
     _produce_and_save_merge_analysis(
-        merges=data_repo.get(table_name=TABLE_MERGES).dataframe,
+        merges=data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe,
         dataset=section_dataset_name,
         data_manager=data_manager
     )
@@ -1203,22 +1195,11 @@ def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo:
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
     _produce_and_save_summary_connectivity(data_manager=data_manager, data_repo=data_repo)
     data_manager.save_analysis_table(
-        analysis_table=_produce_node_namespace_freq(
-            nodes=produce_table_node_ids_from_edge_table(
-                edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe
-            )
-        ),
+        analysis_table=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
         dataset=section_dataset_name,
         analysed_table_name="nodes_connected",
         analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
     )
-    # data_manager.save_analysis_table(
-    #     analysis_table=_produce_node_namespace_freq(
-    #         nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED_ONLY).dataframe),
-    #     dataset=section_dataset_name,
-    #     analysed_table_name=TABLE_NODES_CONNECTED_ONLY,
-    #     analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
-    # )
     data_manager.save_analysis_table(
         analysis_table=_produce_node_namespace_freq(
             nodes=data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe),
@@ -1299,15 +1280,8 @@ def _produce_overview_analysis(data_manager: DataManager,
 
 
 # MAIN #
-def produce_report_data(data_manager: DataManager) -> None:
+def produce_report_data(data_manager: DataManager, data_repo: DataRepository) -> None:
     logger.info(f"Started producing report analysis...")
-
-    # load data todo remove
-    data_repo = DataRepository()
-    data_repo.update(tables=data_manager.load_input_tables())
-    data_repo.update(tables=data_manager.load_output_tables())
-    data_repo.update(tables=data_manager.load_intermediate_tables())
-
     data_profiling_stats, data_test_stats = \
         _produce_data_profiling_and_testing_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_overview_analysis(
@@ -1316,16 +1290,8 @@ def produce_report_data(data_manager: DataManager) -> None:
         data_profiling_stats=data_profiling_stats,
         data_test_stats=data_test_stats,
     )
-    _produce_input_dataset_analysis(data_manager=data_manager)
-    _produce_output_dataset_analysis(data_manager=data_manager)
+    _produce_input_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_output_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
     logger.info(f"Finished producing report analysis.")
-
-
-# todo
-project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
-analysis_data_manager = DataManager(project_folder_path=project_folder_path,
-                                    clear_output_directory=False)
-# produce_report_data(data_manager=analysis_data_manager)
-report_generator.produce_report(data_manager=analysis_data_manager)

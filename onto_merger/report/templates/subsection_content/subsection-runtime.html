@@ -4,6 +4,9 @@
         <img class="img-responsive center-img"
              style="display: block; margin: auto;"
              src="{{ subsection_data['gantt_img'] }}" alt="foo">
+
+        <hr class="panel-separator">
+
         <p class="h4 table-title">Summary</p>
         {% with rows=subsection_data['runtime_summary_table'] %}
             {% include 'templates/data_content/table_summary_two_col.html' %}

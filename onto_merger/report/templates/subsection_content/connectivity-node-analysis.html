@@ -1,6 +1,8 @@
 <div class="overview summary">
     {% include 'templates/subsection_content/node-status.html' %}
-    <hr>
+
+    <hr class="panel-separator">
+
     <h4>Connected & Dangling</h4>
     <div class="col-sm-6">
         {% with rows=subsection_data['connected_nodes_table'], title='Merged' %}

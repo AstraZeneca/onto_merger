@@ -51,3 +51,20 @@ if __name__ == "__main__":
             main(project_folder_path=example_data_sets[arguments[FOLDER_PATH_ARG]])
         else:
             main(project_folder_path=arguments[FOLDER_PATH_ARG])
+
+
+
+# # todo
+# project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
+# analysis_data_manager = DataManager(project_folder_path=project_folder_path,
+#                                     clear_output_directory=False)
+# # load data todo remove
+# this_data_repo = DataRepository()
+# this_data_repo.update(tables=analysis_data_manager.load_input_tables())
+# this_data_repo.update(tables=analysis_data_manager.load_output_tables())
+# this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
+#
+# produce_report_data(data_manager=analysis_data_manager, data_repo=this_data_repo)
+#
+# from onto_merger.report import report_generator
+# report_generator.produce_report(data_manager=analysis_data_manager)

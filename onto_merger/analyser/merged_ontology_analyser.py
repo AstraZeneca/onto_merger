@@ -5,12 +5,7 @@ from pandas import DataFrame
 
 from onto_merger.analyser import analysis_utils
 from onto_merger.data.constants import (
-    TABLE_ALIGNMENT_STEPS_REPORT,
-    TABLE_CONNECTIVITY_STEPS_REPORT,
     TABLE_NODES,
-    TABLE_NODES_CONNECTED_ONLY,
-    TABLE_NODES_DANGLING,
-    TABLE_NODES_MERGED,
 )
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository, NamedTable

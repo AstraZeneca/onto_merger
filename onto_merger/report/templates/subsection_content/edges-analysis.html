@@ -5,6 +5,7 @@
              src="{{ subsection_data['analysis_fig_path'] }}"
              alt="{{ subsection_data['analysis_fig_alt_text'] }}">
     </div>
+    <hr class="panel-separator">
     <h4>Child & parent node analysis</h4>
     {% with rows=subsection_data['table_analysis'] %}
         {% include 'templates/data_content/table_edge_analysis.html' %}

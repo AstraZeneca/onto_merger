@@ -5,7 +5,9 @@
              style="width: max-content"
              src="{{ subsection_data['node_status_fig_path'] }}" alt="foo">
     </div>
-    <hr>
+
+    <hr class="panel-separator">
+
     <h4>Status details</h4>
     {% if subsection_data['node_status_table'] %}
         {% with rows=subsection_data['node_status_table'] %}

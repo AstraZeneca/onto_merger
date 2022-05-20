@@ -1,20 +1,16 @@
 """Loads data for report sections."""
 import json
-from typing import List
-from datetime import datetime
 import os
+from datetime import datetime
+from typing import List
 
 import pandas as pd
 
+from onto_merger.analyser.constants import TABLE_SECTION_SUMMARY, TABLE_STATS
 from onto_merger.data.constants import DIRECTORY_INTERMEDIATE, DIRECTORY_INPUT, DIRECTORY_OUTPUT
 from onto_merger.data.data_manager import DataManager
-from onto_merger.report.data.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
+from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
-from onto_merger.analyser.constants import TABLE_SECTION_SUMMARY, TABLE_NODE_ANALYSIS, TABLE_NODE_OBSOLETE_ANALYSIS, \
-    TABLE_MAPPING_ANALYSIS, TABLE_EDGE_HIERARCHY_ANALYSIS, TABLE_STATS, TABLE_MERGE_ANALYSIS
-
-# todo
-# from onto_merger.report.dummy_data import *
 from onto_merger.version import __version__
 
 
@@ -466,7 +462,7 @@ def _load_section_summary_description_data(section_name: str) -> dict:
 
 def _load_table_description_data(table_name: str) -> dict:
     """Table descriptions explaining columns of tables presented in the report."""
-    df = pd.read_csv(os.path.abspath(f"../report/data/table_column_descriptions/{table_name}.csv"))
+    df = pd.read_csv(os.path.abspath(f"../../onto_merger/onto_merger/report/data/table_column_descriptions/{table_name}.csv"))
     return [
         {
             col: row[col]

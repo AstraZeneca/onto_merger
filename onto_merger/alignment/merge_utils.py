@@ -19,7 +19,9 @@ from onto_merger.data.constants import (
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MERGES_AGGREGATED,
     TABLE_MERGES_WITH_META_DATA,
-    TABLE_NODES_MERGED, COLUMN_DEFAULT_ID, TABLE_NODES_UNMAPPED, TABLE_NODES)
+    TABLE_NODES_MERGED, COLUMN_DEFAULT_ID, TABLE_NODES_UNMAPPED, TABLE_NODES, SCHEMA_NODE_ID_LIST_TABLE,
+    TABLE_NODES_DOMAIN, COLUMN_RELATION, COLUMN_PROVENANCE, TABLE_NAME_TO_TABLE_SCHEMA_MAP, TABLE_MERGES_DOMAIN,
+    ONTO_MERGER, RELATION_MERGE)
 from onto_merger.data.dataclasses import DataRepository, NamedTable
 from onto_merger.logger.log import get_logger
 
@@ -93,8 +95,8 @@ def _produce_named_table_merged_nodes(merges_aggregated: DataFrame) -> NamedTabl
 
 
 def _produce_table_merged_nodes(merges: DataFrame) -> DataFrame:
-    return merges[[COLUMN_SOURCE_ID]]\
-        .rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID}, inplace=False)\
+    return merges[[COLUMN_SOURCE_ID]] \
+        .rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID}, inplace=False) \
         .sort_values([COLUMN_DEFAULT_ID], ascending=True)
 
 
@@ -111,22 +113,6 @@ def _produce_named_table_unmapped_nodes(nodes: DataFrame, merged_nodes: DataFram
         + f"({((len(df) / len(nodes)) * 100):.2f}%) are unmapped."
     )
     return NamedTable(TABLE_NODES_UNMAPPED, df)
-
-
-def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
-    """Produce the dataframe of unmapped node IDs.
-
-    :param merges:
-    :param nodes: The set of input nodes to be filtered.
-    :return: The set of unmapped nodes.
-    """
-    merged_nodes = _produce_table_merged_nodes(merges=merges)
-    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_nodes, merged_nodes]).drop_duplicates(keep=False)
-    logger.info(
-        f"Out of {len(nodes):,d} nodes, {len(df):,d} "
-        + f"({((len(df) / len(nodes)) * 100):.2f}%) are unmapped."
-    )
-    return df
 
 
 def produce_named_table_merges_with_alignment_meta_data(
@@ -148,6 +134,39 @@ def produce_named_table_merges_with_alignment_meta_data(
         name=TABLE_MERGES_WITH_META_DATA,
         dataframe=df[SCHEMA_MERGE_TABLE_WITH_META_DATA],
     )
+
+
+def produce_named_table_domain_nodes(nodes: DataFrame, merged_nodes: DataFrame,) -> NamedTable:
+    df = pd.concat([
+        nodes[SCHEMA_NODE_ID_LIST_TABLE],
+        merged_nodes[SCHEMA_NODE_ID_LIST_TABLE],
+        merged_nodes[SCHEMA_NODE_ID_LIST_TABLE]
+    ]).drop_duplicates(keep="first")
+    return NamedTable(TABLE_NODES_DOMAIN, df)
+
+
+def produce_named_table_domain_merges(merges_aggregated: DataFrame,) -> NamedTable:
+    df = merges_aggregated.copy()
+    df[COLUMN_RELATION] = RELATION_MERGE
+    df[COLUMN_PROVENANCE] = ONTO_MERGER
+    df = df[TABLE_NAME_TO_TABLE_SCHEMA_MAP[TABLE_MERGES_DOMAIN]]
+    return NamedTable(TABLE_MERGES_DOMAIN, df)
+
+
+def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
+    """Produce the dataframe of unmapped node IDs.
+
+    :param merges:
+    :param nodes: The set of input nodes to be filtered.
+    :return: The set of unmapped nodes.
+    """
+    merged_nodes = _produce_table_merged_nodes(merges=merges)
+    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_nodes, merged_nodes]).drop_duplicates(keep=False)
+    logger.info(
+        f"Out of {len(nodes):,d} nodes, {len(df):,d} "
+        + f"({((len(df) / len(nodes)) * 100):.2f}%) are unmapped."
+    )
+    return df
 
 
 def _get_canonical_node_for_merge_cluster(

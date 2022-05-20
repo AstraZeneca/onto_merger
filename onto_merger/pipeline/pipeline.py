@@ -5,16 +5,17 @@ from typing import List
 from onto_merger.alignment import hierarchy_utils, merge_utils
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.alignment_config.validator import validate_alignment_configuration
-from onto_merger.analyser import analysis_utils, pandas_profiler
+from onto_merger.analyser import analysis_utils, pandas_profiler, analyser
 from onto_merger.data.constants import (
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_INPUT,
     DIRECTORY_INTERMEDIATE)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository, RuntimeData, convert_runtime_steps_to_named_table, \
-    format_datetime
+    format_datetime, NamedTable
 from onto_merger.data_testing.ge_runner import GERunner
 from onto_merger.logger.log import setup_logger
+from onto_merger.report import report_generator
 
 
 class Pipeline:
@@ -61,8 +62,17 @@ class Pipeline:
         # (5) FINALISE OUTPUTS
         self._finalise_outputs()
 
-        # (6) VALIDATE: output data
-        self._validate_outputs()
+        # (6) VALIDATE & PROFILE: intermediate & output data
+        self._validate_and_profile_dataset(
+            data_origin=DIRECTORY_INTERMEDIATE,
+            data_runtime_name=DIRECTORY_INTERMEDIATE,
+            tables=self._data_repo.get_intermediate_tables()
+        )
+        self._validate_and_profile_dataset(
+            data_origin=DIRECTORY_DOMAIN_ONTOLOGY,
+            data_runtime_name="output",
+            tables=self._data_repo.get_domain_tables()
+        )
 
         # (7) PRODUCE REPORT
         self._produce_report()
@@ -100,16 +110,12 @@ class Pipeline:
         )
 
         # profile input tables
-        start_date_time = datetime.now()
-        pandas_profiler.profile_tables(tables=self._data_repo.get_input_tables(), data_manager=self._data_manager)
-        self._record_runtime(start_date_time=start_date_time, task_name="PROFILING input")
+        self._validate_and_profile_dataset(
+            data_origin=DIRECTORY_INPUT,
+            data_runtime_name=DIRECTORY_INPUT,
+            tables=self._data_repo.get_input_tables()
+        )
 
-        # validate input tables
-        start_date_time = datetime.now()
-        GERunner(
-            alignment_config=self._alignment_config, ge_base_directory=self._data_manager.get_data_tests_path()
-        ).run_ge_tests(named_tables=self._data_repo.get_input_tables(), data_origin=DIRECTORY_INPUT)
-        self._record_runtime(start_date_time=start_date_time, task_name="VALIDATION input")
         self.logger.info("Finished processing input data.")
 
     def _align_nodes(self) -> None:
@@ -170,7 +176,7 @@ class Pipeline:
                 data_repo=self._data_repo,
             )
         )
-        self._record_runtime(start_date_time=start_date_time, task_name="CONNECTIVITY PROCESS")
+        self._record_runtime(start_date_time=start_date_time, task_name="CONNECTIVITY")
         self.logger.info("Finished connecting nodes.")
 
     def _finalise_outputs(self) -> None:
@@ -180,8 +186,8 @@ class Pipeline:
 
         :return:
         """
-        start_date_time = datetime.now()
         self.logger.info("Started finalising outputs...")
+        start_date_time = datetime.now()
 
         #  add NS to all outputs
         self._data_repo.update(
@@ -197,55 +203,53 @@ class Pipeline:
         self._data_repo.update(tables=domain_tables)
         self._data_manager.save_domain_ontology_tables(tables=domain_tables)
 
-        self.logger.info("Finished finalising outputs.")
         self._record_runtime(start_date_time=start_date_time, task_name="FINALISING OUTPUTS")
-
-    def _validate_outputs(self) -> None:
-        """Run the output data validation process.
-
-        :return:
-        """
-        self.logger.info("Started validating produced data...")
-
-        # run data tests
-        start_date_time = datetime.now()
-        GERunner(
-            alignment_config=self._alignment_config,
-            ge_base_directory=self._data_manager.get_data_tests_path(),
-        ).run_ge_tests(named_tables=self._data_repo.get_intermediate_tables(), data_origin=DIRECTORY_INTERMEDIATE)
-        self._record_runtime(start_date_time=start_date_time, task_name="VALIDATION intermediate")
-
-        start_date_time = datetime.now()
-        GERunner(
-            alignment_config=self._alignment_config,
-            ge_base_directory=self._data_manager.get_data_tests_path(),
-        ).run_ge_tests(named_tables=self._data_repo.get_domain_tables(), data_origin=DIRECTORY_DOMAIN_ONTOLOGY)
-        self._record_runtime(start_date_time=start_date_time, task_name="VALIDATION output")
-
-        # move data docs to report folder
-        self._data_manager.move_data_docs_to_reports()
-        self.logger.info("Finished validating produced data.")
+        self.logger.info("Finished finalising outputs.")
 
     def _produce_report(self) -> None:
         """Run the alignment and connectivity evaluation process.
 
         :return:
         """
-        start_date_time = datetime.now()
-        # profile outputs
-        pandas_profiler.profile_tables(
-            tables=self._data_repo.get_intermediate_tables(), data_manager=self._data_manager
-        )
-        self._record_runtime(start_date_time=start_date_time, task_name="PROFILING INTERMEDIATE DATA")
-        self._data_manager.save_table(
-            table=convert_runtime_steps_to_named_table(steps=self._runtime_data)
-        )
+        self.logger.info("Started creating report....")
 
-        # produce HTML report
-        # report_path = MergedOntologyAnalyser(
-        #     data_repo=self._data_repo, data_manager=self._data_manager
-        # ).produce_report()
-        # self.logger.info(f"Saved report to {report_path}.")
+        # move data docs to report folder
+        self._data_manager.move_data_docs_to_reports()
+
+        # save runtime stats
+        run_time_table = convert_runtime_steps_to_named_table(steps=self._runtime_data)
+        self._data_repo.update(table=run_time_table)
+        self._data_manager.save_table(table=run_time_table)
+
+        # run analysis & produce report
+        analyser.produce_report_data(data_manager=self._data_manager, data_repo=self._data_repo)
+        report_path = report_generator.produce_report(data_manager=self._data_manager)
+
+        self.logger.info(f"Finished producing HTML report (saved to '{report_path}'.")
+
+    def _validate_and_profile_dataset(
+            self, data_origin: str, data_runtime_name: str, tables: List[NamedTable]
+    ) -> None:
+        """Profile and validate a dataset.
+
+        :return:
+        """
+        self.logger.info(f"Started validating {data_runtime_name} data...")
+
+        # profile outputs
+        start_date_time = datetime.now()
+        pandas_profiler.profile_tables(tables=tables, data_manager=self._data_manager)
+        self._record_runtime(start_date_time=start_date_time, task_name=f"PROFILING {data_runtime_name} DATA")
+
+        # run data tests
+        start_date_time = datetime.now()
+        GERunner(
+            alignment_config=self._alignment_config,
+            ge_base_directory=self._data_manager.get_data_tests_path(),
+        ).run_ge_tests(named_tables=tables, data_origin=data_origin)
+        self._record_runtime(start_date_time=start_date_time, task_name=f"VALIDATION {data_runtime_name} DATA")
+
+        self.logger.info(f"Finished validating {data_runtime_name} data.")
 
     def _record_runtime(self, start_date_time: datetime, task_name: str) -> None:
         end_date_time = datetime.now()

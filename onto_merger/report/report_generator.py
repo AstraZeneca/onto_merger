@@ -1,13 +1,10 @@
 """OntoMerger HTML report."""
 
-from datetime import datetime
-
 from jinja2 import Environment, FileSystemLoader
 
 from onto_merger.data.data_manager import DataManager
-from onto_merger.report.data.section_data_loader import load_report_data
+from onto_merger.report.section_data_loader import load_report_data
 from onto_merger.logger.log import get_logger
-# from onto_merger.report.dummy_data import *  # todo remove
 
 logger = get_logger(__name__)
 
@@ -32,7 +29,7 @@ def produce_report(data_manager: DataManager) -> str:
 
 
 def _produce_report_content(report_data: dict) -> str:
-    template_loader = FileSystemLoader(searchpath="../../onto_merger/report")
+    template_loader = FileSystemLoader(searchpath="../../onto_merger/onto_merger/report")
     template_environment = Environment(loader=template_loader)
     report_template = "templates/report.html"
     template = template_environment.get_template(report_template)
