@@ -141,7 +141,9 @@ def produce_named_table_domain_nodes(nodes: DataFrame, merged_nodes: DataFrame,)
         nodes[SCHEMA_NODE_ID_LIST_TABLE],
         merged_nodes[SCHEMA_NODE_ID_LIST_TABLE],
         merged_nodes[SCHEMA_NODE_ID_LIST_TABLE]
-    ]).drop_duplicates(keep="first")
+    ])\
+             .drop_duplicates(keep=False)\
+             .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False)
     return NamedTable(TABLE_NODES_DOMAIN, df)
 
 

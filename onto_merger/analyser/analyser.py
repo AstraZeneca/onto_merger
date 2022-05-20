@@ -931,7 +931,7 @@ def _produce_and_save_summary_data_profiling(data_manager: DataManager,
         {"metric": "Number of tables profiled", "values": len(data_profiling_stats)},
         {"metric": "Number of rows profiled", "values": data_profiling_stats['rows'].sum()},
         {"metric": "Total file size",
-         "values": f"{data_profiling_stats['size_float'].sum():,.2f}MB"},
+         "values": f"{data_profiling_stats['size_float'].sum() / float(1 << 20):,.3f}MB"},
         {"metric": "Pandas profiling version",
          "values": f"<code>{pandas_profiling_version}</code>"},
     ]

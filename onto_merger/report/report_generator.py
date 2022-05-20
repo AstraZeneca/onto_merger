@@ -14,8 +14,6 @@ def produce_report(data_manager: DataManager) -> str:
 
     :return: The path of the HTML report.
     """
-    print("\n\n\nGENERATING REPORT\n\n\n")
-
     # load data
     report_data = load_report_data(data_manager=data_manager)
 
