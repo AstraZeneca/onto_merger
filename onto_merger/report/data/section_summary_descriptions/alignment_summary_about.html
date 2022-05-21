@@ -1,6 +1,17 @@
 <p>The alignment process takes available mappings and produces a
-    set of stable merges (<code>output/domain_ontology/merges.csv</code>)</p>
-
-<p>For more details, please
+    set of stable merges (<code>output/domain_ontology/merges.csv</code>).
+    The goal is to have the minimal number of nodes, from the minimal number of different
+    sources (ontologies).
+</p>
+<p>
+    The alignment process is a sequence of steps,
+    where in each step we attempt to merge nodes to a given ontology.
+    This alignment order is produced by putting the <b>seed ontology</b> as first
+    (this should have the most mappings and the desired hierarchy), and the rest of the
+    ontologies according to the frequency of the nodes.</p>
+<p>
+    First we use the strongest mapping relation
+    type group, equivalence, then database reference and the rest.
+    For more details about the alignment process, please
     <a href="https://ontomerger.readthedocs.io/en/latest/notes/alignment.html">
         read the docs</a>.</p>

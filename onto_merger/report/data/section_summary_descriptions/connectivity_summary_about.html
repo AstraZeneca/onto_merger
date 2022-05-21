@@ -1,1 +1,14 @@
-<p>foo</p>
+<p>The connectivity process takes the available hierarchies and attempts to produce a single hierarchy
+    (<code>output/domain_ontology/edges_hierarchy.csv</code>). The <b>seed ontology</b> provides
+    the scaffolding of the domain ontology hierarchy. We assume that the seed ontology
+    hierarchy is provided and all seed nodes are connected to form a DAG.
+</p>
+<p>
+    For each <b>unmapped node</b>, we check whether there is a mapped parent of that node, and
+    produce a direct hierarchy edge from the unmapped node to the mapped parent.
+    The intermediate nodes in the hierarchy are dropped (unless they are also in the
+    set of unmapped nodes). The result could be a crude approximation where granularity
+    is lost but connectivity is established.
+    For more details about the connectivity process, please
+    <a href="https://ontomerger.readthedocs.io/en/latest/notes/alignment.html">
+        read the docs</a>.</p>
