@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <td style="width:20%"><b>Canonical</b></td>
-            <td style="width:20%"><b>Merged </b></td>
+            <td style="width:40%"><b>Merged </b></td>
             <td style="width:20%"><b>Count</b></td>
             <td style="width:20%"><b>Frequency</b></td>
         </tr>
@@ -14,7 +14,7 @@
           <td>{{ row['namespace_target_id'] }}</td>
           <td>{{ row['namespace_source_id'] }}</td>
           <td>{{ row['count'] }}</td>
-          <td>{{ row['freq'] }}</td>
+          <td>{{ row['freq'] }}%</td>
         </tr>
       {% endfor %}
     {% else %}

@@ -3,11 +3,11 @@
         <tr>
             <td style="width:40%"><b>{{ title }}</b></td>
             <td style="width:10%"><b>Total</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
+            <td style="width:10%"><b>Freq.</b></td>
             <td style="width:10%"><b>Covered</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
+            <td style="width:10%"><b>Freq.</b></td>
             <td style="width:10%"><b>Uncovered</b></td>
-            <td style="width:10%"><b>Freq. (%)</b></td>
+            <td style="width:10%"><b>Freq.</b></td>
         </tr>
     </thead>
     <tbody>
@@ -18,9 +18,9 @@
           <td>{{ row['total_count'] }}</td>
           <td>{{ row['total_freq'] }}</td>
           <td>{{ row['covered_count'] }}</td>
-          <td>{{ row['covered_freq'] }}</td>
+          <td>{{ row['covered_freq'] }}%</td>
           <td>{{ row['uncovered_count'] }}</td>
-          <td>{{ row['uncovered_freq'] }}</td>
+          <td>{{ row['uncovered_freq'] }}%</td>
         </tr>
       {% endfor %}
     {% else %}

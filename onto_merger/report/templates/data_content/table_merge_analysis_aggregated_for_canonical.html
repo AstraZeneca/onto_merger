@@ -1,7 +1,8 @@
 <table class="table table-hover table-striped">
     <thead>
         <tr>
-            <td style="width:60%"><b>{{ title }}</b></td>
+            <td style="width:20%"><b>Canonical</b></td>
+            <td style="width:40%"><b>Merged</b></td>
             <td style="width:20%"><b>Count</b></td>
             <td style="width:20%"><b>Frequency</b></td>
         </tr>
@@ -10,14 +11,15 @@
     {% if rows | length > 0 %}
       {% for row in rows %}
         <tr>
-          <td>{{ row['ns'] }}</td>
+          <td>{{ row['namespace_target_id'] }}</td>
+          <td>{{ row['source_nss'] }}</td>
           <td>{{ row['count'] }}</td>
           <td>{{ row['freq'] }}%</td>
         </tr>
       {% endfor %}
     {% else %}
         <tr>
-            <td colspan="3">No values found.</td>
+            <td colspan="4">No values found.</td>
         </tr>
     {% endif %}
     </tbody>

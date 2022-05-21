@@ -17,7 +17,7 @@ from onto_merger.logger.log import get_logger
 logger = get_logger(__name__)
 
 
-# REPORT #
+# MAIN #
 def load_report_data(data_manager: DataManager) -> dict:
     return {
         "date": f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')}",
@@ -34,12 +34,14 @@ def load_report_data(data_manager: DataManager) -> dict:
 
 
 # SECTIONS #
-def _produce_section(title: str, section_name: str, subsections: List[dict]) -> dict:
+def _produce_section(title: str, section_name: str, subsections: List[dict], data_manager: DataManager) -> dict:
     return {
         "title": title,
         "link_title": section_name,
         "logo": _get_section_icon_file_name(section_name=section_name),
-        "subsections": subsections
+        "subsections": [
+                           _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+                       ] + subsections
     }
 
 
@@ -49,13 +51,14 @@ def _load_overview_section_data(data_manager: DataManager) -> dict:
         title="Overview",
         section_name=section_name,
         subsections=[
-            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_overview_summary_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_runtime_info_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_nodes_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_edges_subsection(section_name=section_name, data_manager=data_manager),
             _produce_overview_config_subsection(section_name=section_name, data_manager=data_manager),
             _produce_overview_validation_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_overview_attributions_subsection(section_name=section_name, data_manager=data_manager),
-        ]
+            _produce_overview_attributions_subsection(),
+        ],
+        data_manager=data_manager
     )
 
 
@@ -65,27 +68,12 @@ def _load_input_section_data(data_manager: DataManager) -> dict:
         title="Input",
         section_name=section_name,
         subsections=[
-            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
             _produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=False),
             _produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=True),
             _produce_mappings_subsection(section_name=section_name, data_manager=data_manager),
             _produce_edges_hierarchy_subsection(section_name=section_name, data_manager=data_manager),
-        ]
-    )
-
-
-def _load_output_section_data(data_manager: DataManager) -> dict:
-    section_name = SECTION_OUTPUT
-    return _produce_section(
-        title="Output",
-        section_name=section_name,
-        subsections=[
-            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=False),
-            _produce_merges_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_mappings_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_edges_hierarchy_subsection(section_name=section_name, data_manager=data_manager),
-        ]
+        ],
+        data_manager=data_manager
     )
 
 
@@ -95,11 +83,12 @@ def _load_alignment_section_data(data_manager: DataManager) -> dict:
         title="Alignment",
         section_name=section_name,
         subsections=[
-            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_runtime_info_subsection(section_name=section_name, data_manager=data_manager),
             _produce_alignment_detail_subsection(section_name=section_name, data_manager=data_manager),
             _produce_alignment_node_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
-        ]
+            _produce_merges_subsection(section_name=section_name, data_manager=data_manager),
+        ],
+        data_manager=data_manager
     )
 
 
@@ -109,47 +98,55 @@ def _load_connectivity_section_data(data_manager: DataManager) -> dict:
         title="Connectivity",
         section_name=section_name,
         subsections=[
-            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_runtime_info_subsection(section_name=section_name, data_manager=data_manager),
             _produce_connectivity_detail_subsection(section_name=section_name, data_manager=data_manager),
             _produce_connectivity_node_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
-        ]
+        ],
+        data_manager=data_manager
+    )
+
+
+def _load_output_section_data(data_manager: DataManager) -> dict:
+    section_name = SECTION_OUTPUT
+    return _produce_section(
+        title="Output",
+        section_name=section_name,
+        subsections=[
+            _produce_nodes_subsection(section_name=section_name, data_manager=data_manager, is_obsolete=False),
+            _produce_mappings_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_edges_hierarchy_subsection(section_name=section_name, data_manager=data_manager),
+        ],
+        data_manager=data_manager
     )
 
 
 def _load_data_profiling_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_DATA_PROFILING
-    subsections = [_produce_section_summary_subsection(section_name=section_name, data_manager=data_manager)]
-    subsections.extend(
-        _produce_data_file_subsections(
-            section_name=section_name,
-            data_manager=data_manager
-        )
-    )
     return _produce_section(
         title="Data Profiling",
         section_name=section_name,
-        subsections=subsections
+        subsections=_produce_data_file_subsections(
+            section_name=section_name,
+            data_manager=data_manager
+        ),
+        data_manager=data_manager
     )
 
 
 def _load_data_testing_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_DATA_TESTS
-    subsections = [_produce_section_summary_subsection(section_name=section_name, data_manager=data_manager)]
-    subsections.extend(
-        _produce_data_file_subsections(
-            section_name=section_name,
-            data_manager=data_manager
-        )
-    )
     return _produce_section(
         title="Data Tests",
         section_name=section_name,
-        subsections=subsections
+        subsections=_produce_data_file_subsections(
+            section_name=section_name,
+            data_manager=data_manager
+        ),
+        data_manager=data_manager
     )
 
 
-# SUBSECTIONS #
+# GENERIC SUBSECTION #
 def _produce_section_summary_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Summary",
@@ -165,6 +162,33 @@ def _produce_section_summary_subsection(section_name: str, data_manager: DataMan
     }
 
 
+def _produce_runtime_info_subsection(section_name: str, data_manager: DataManager) -> dict:
+    section_data = {
+        "title": "Processing",
+        "link_title": "pipeline",
+        "dataset": {
+            "gantt_img": f"images/{section_name}_pipeline_steps_report_gantt_chart.svg",
+            "runtime_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="pipeline_steps_report_step_duration",
+                rename_columns={"task": "metric", "elapsed_sec": "values"},
+            ),
+            "runtime_summary_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="pipeline_steps_report_runtime_overview",
+                rename_columns={"value": "values"},
+            ),
+            "unique_id": _get_unique_id_for_description_table(
+                section_name=section_name,
+                table_name=f"{section_name}_pipeline_steps"
+            ),
+        },
+        "template": "subsection_content/subsection-runtime.html"
+    }
+    return section_data
+
+
+# SUBSECTIONS #
 def _produce_nodes_subsection(section_name: str, data_manager: DataManager, is_obsolete: bool) -> dict:
     table_name = "nodes_general_analysis" if is_obsolete is False else "nodes_obsolete_general_analysis"
     return {
@@ -213,28 +237,6 @@ def _produce_mappings_subsection(section_name: str, data_manager: DataManager) -
     }
 
 
-def _produce_merges_subsection(section_name: str, data_manager: DataManager) -> dict:
-    table_name = "merges_nss_analysis"
-    return {
-        "title": "Merges",
-        "link_title": "merges",
-        "dataset": {
-            "analysed_entity": "Merges",
-            "analysis_table_template": "data_content/table_merge_analysis.html",
-            "analysis_fig_path": _get_figure_path(section_name=section_name, table_name="merges_nss_analysis"),
-            "analysis_fig_alt_text": "...",
-            "table_analysis": data_manager.load_analysis_report_table_as_dict(
-                section_name=section_name,
-                table_name=table_name
-            ),
-            "table_description": _load_table_description_data(table_name=table_name),
-            "unique_id": _get_unique_id_for_description_table(section_name=section_name,
-                                                              table_name=table_name),
-        },
-        "template": "subsection_content/merges-analysis.html",
-    }
-
-
 def _produce_edges_hierarchy_subsection(section_name: str, data_manager: DataManager) -> dict:
     table_name = "edges_hierarchy_connected_nss_analysis"
     return {
@@ -258,6 +260,7 @@ def _produce_edges_hierarchy_subsection(section_name: str, data_manager: DataMan
     }
 
 
+# SECTION: OVERVIEW #
 def _produce_overview_config_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Configuration", "link_title": "configuration",
@@ -283,8 +286,7 @@ def _produce_overview_validation_subsection(section_name: str, data_manager: Dat
     }
 
 
-# todo
-def _produce_overview_summary_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_overview_nodes_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Nodes",
         "link_title": "nodes",
@@ -295,11 +297,22 @@ def _produce_overview_summary_subsection(section_name: str, data_manager: DataMa
                 table_name="node_status"
             ),
         },
-        "template": "subsection_content/overview-summary.html"
+        "template": "subsection_content/overview-node-summary.html"
     }
 
 
-def _produce_overview_attributions_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_overview_edges_subsection(section_name: str, data_manager: DataManager) -> dict:
+    return {
+        "title": "Hierarchy edges",
+        "link_title": "edges",
+        "dataset": {
+
+        },
+        "template": "subsection_content/overview-edge-summary.html"
+    }
+
+
+def _produce_overview_attributions_subsection() -> dict:
     return {
         "title": "Attributions",
         "link_title": "attributions",
@@ -309,32 +322,7 @@ def _produce_overview_attributions_subsection(section_name: str, data_manager: D
     }
 
 
-def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManager) -> dict:
-    section_data = {
-        "title": "Processing",
-        "link_title": "pipeline",
-        "dataset": {
-            "gantt_img": f"images/{section_name}_pipeline_steps_report_gantt_chart.svg",
-            "runtime_table": data_manager.load_analysis_report_table_as_dict(
-                section_name=section_name,
-                table_name="pipeline_steps_report_step_duration",
-                rename_columns={"task": "metric", "elapsed_sec": "values"},
-            ),
-            "runtime_summary_table": data_manager.load_analysis_report_table_as_dict(
-                section_name=section_name,
-                table_name="pipeline_steps_report_runtime_overview",
-                rename_columns={"value": "values"},
-            ),
-            "unique_id": _get_unique_id_for_description_table(
-                section_name=section_name,
-                table_name=f"{section_name}_pipeline_steps"
-            ),
-        },
-        "template": "subsection_content/subsection-runtime.html"
-    }
-    return section_data
-
-
+# SECTION: ALIGNMENT #
 def _produce_alignment_detail_subsection(section_name: str, data_manager: DataManager) -> dict:
     table_name = "alignment_steps_detail"
     return {
@@ -355,6 +343,60 @@ def _produce_alignment_detail_subsection(section_name: str, data_manager: DataMa
     }
 
 
+def _produce_alignment_node_subsection(section_name: str, data_manager: DataManager) -> dict:
+    ns_freq_labels = {'namespace': 'ns', 'namespace_count': 'count', 'namespace_freq': 'freq'}
+    return {
+        "title": "Node analysis",
+        "link_title": "node_analysis",
+        "dataset": {
+            "node_status_fig_path": _get_figure_path(section_name=section_name,
+                                                     table_name="node_status"),
+            "node_status_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="node_status",
+            ),
+            "merged_nodes_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="nodes_merged_ns_freq_analysis",
+                rename_columns=ns_freq_labels,
+            ),
+            "unmapped_nodes_table": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="nodes_unmapped_ns_freq_analysis",
+                rename_columns=ns_freq_labels,
+            ),
+        },
+        "template": "subsection_content/alignment-node-analysis.html",
+    }
+
+
+def _produce_merges_subsection(section_name: str, data_manager: DataManager) -> dict:
+    table_name = "merges_nss_analysis"
+    return {
+        "title": "Merge analysis",
+        "link_title": "merges",
+        "dataset": {
+            "analysed_entity": "Merges",
+            "analysis_table_template": "data_content/table_merge_analysis.html",
+            "analysis_fig_path": _get_figure_path(section_name=section_name, table_name="merges_nss_analysis"),
+            "analysis_fig_alt_text": "...",
+            "table_analysis": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name=table_name
+            ),
+            "table_analysis_2": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="merges_nss_canonical_analysis",
+            ),
+            "table_description": _load_table_description_data(table_name=table_name),
+            "unique_id": _get_unique_id_for_description_table(section_name=section_name,
+                                                              table_name=table_name),
+        },
+        "template": "subsection_content/alignment-merge-analysis.html",
+    }
+
+
+# SECTION: CONNECTIVITY #
 def _produce_connectivity_detail_subsection(section_name: str, data_manager: DataManager) -> dict:
     table_name = "connectivity_steps_detail"
     return {
@@ -372,33 +414,6 @@ def _produce_connectivity_detail_subsection(section_name: str, data_manager: Dat
                                                               table_name=table_name),
         },
         "template": "subsection_content/connectivity-details.html",
-    }
-
-
-def _produce_alignment_node_subsection(section_name: str, data_manager: DataManager) -> dict:
-    ns_freq_labels = {'namespace': 'ns', 'namespace_count': 'count', 'namespace_freq': 'freq'}
-    return {
-        "title": "Node analysis",
-        "link_title": "node_analysis",
-        "dataset": {
-            "node_status_fig_path": _get_figure_path(section_name=section_name,
-                                                     table_name="node_status"),
-            "node_status_table": data_manager.load_analysis_report_table_as_dict(
-                section_name=section_name,
-                table_name="node_status",
-            ),
-            "unmapped_nodes_table": data_manager.load_analysis_report_table_as_dict(
-                section_name=section_name,
-                table_name="nodes_merged_ns_freq_analysis",
-                rename_columns=ns_freq_labels,
-            ),
-            "merged_nodes_table": data_manager.load_analysis_report_table_as_dict(
-                section_name=section_name,
-                table_name="nodes_unmapped_ns_freq_analysis",
-                rename_columns=ns_freq_labels,
-            ),
-        },
-        "template": "subsection_content/alignment-node-analysis.html",
     }
 
 
@@ -429,6 +444,7 @@ def _produce_connectivity_node_subsection(section_name: str, data_manager: DataM
     }
 
 
+# SECTIONS: DATA PROFILING & TESTING #
 def _produce_data_file_subsections(section_name: str, data_manager: DataManager) -> List[dict]:
     table_name = TABLE_STATS
     template = "data_content/table_third_party_data.html"

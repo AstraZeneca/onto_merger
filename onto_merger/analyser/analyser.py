@@ -1153,11 +1153,6 @@ def _produce_output_dataset_analysis(data_manager: DataManager, data_repo: DataR
         dataset=section_dataset_name,
         data_manager=data_manager
     )
-    _produce_and_save_merge_analysis(
-        merges=data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe,
-        dataset=section_dataset_name,
-        data_manager=data_manager
-    )
 
 
 def _produce_alignment_process_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
@@ -1170,6 +1165,11 @@ def _produce_alignment_process_analysis(data_manager: DataManager, data_repo: Da
         dataset=section_dataset_name,
         analysed_table_name=TABLE_NODES_MERGED,
         analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
+    _produce_and_save_merge_analysis(
+        merges=data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
     )
     data_manager.save_analysis_table(
         analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe),
@@ -1201,7 +1201,8 @@ def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo:
     logger.info(f"Producing report section '{section_dataset_name}' analysis...")
     _produce_and_save_summary_connectivity(data_manager=data_manager, data_repo=data_repo)
     data_manager.save_analysis_table(
-        analysis_table=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
+        analysis_table=_produce_node_namespace_freq(
+            nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe),
         dataset=section_dataset_name,
         analysed_table_name="nodes_connected",
         analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ

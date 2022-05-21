@@ -58,11 +58,9 @@ def produce_node_status_stacked_bar_chart(
     if is_one_bar is True:
         showaxis = False
         height = 50
-        margin_right = 0
     else:
         showaxis = True
         height = 300
-        margin_right = 30
 
     # produce image
     px.bar(
@@ -81,7 +79,7 @@ def produce_node_status_stacked_bar_chart(
         'showlegend': False,
         'margin': {
             "l": 0,  # left
-            "r": margin_right,  # right
+            "r": 0,  # right
             "t": 0,  # top
             "b": 0,  # bottom
         }
@@ -155,22 +153,24 @@ def _produce_directed_edge_stacked_bar_chart(
         analysis_table: DataFrame,
         file_path: str,
         label_replacement: dict,
-        y: str, x: str, text: str, color: str
+        y: str, x: str, text: str, color: str,
 ) -> None:
-    px.bar(
-        _format_percentage_column_to_decimal_places(
+    data = _format_percentage_column_to_decimal_places(
             analysis_table=analysis_table,
             column_name=COLUMN_FREQ,
-        ),
+        )
+    fig = px.bar(
+        data,
         y=y,
         x=x,
+        height=_compute_dynamic_height(y_axis_column_name=COLUMN_NAMESPACE_TARGET_ID, table=analysis_table),
         text=text,
         color=color,
         orientation='h',
         width=_WIDTH_ONE_COL_ROW,
         labels=label_replacement,
-    ) \
-        .update_layout(
+    )
+    fig.update_layout(
         {
             "plot_bgcolor": _COLOR_WHITE,
             'margin': {
@@ -254,6 +254,12 @@ def produce_vertical_bar_chart_stacked(
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
         .update_xaxes({"tickmode": "linear"}) \
         .write_image(_get_figure_filepath(file_path=file_path))
+
+
+# HELPERS #
+def _compute_dynamic_height(y_axis_column_name: str, table: DataFrame) -> int:
+    offset = 150
+    return offset + (len(set(table[y_axis_column_name].tolist())) * 50)
 
 
 # todo remove unused
