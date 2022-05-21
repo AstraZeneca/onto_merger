@@ -9,21 +9,6 @@ a.anchor-pos {
     visibility: hidden;
 }
 
-span.badge.bg-primary.node {
-    background-color: cornflowerblue;
-}
-span.badge.bg-primary.node_obsolete {
-    background-color: dodgerblue;
-}
-span.badge.bg-primary.mapping {
-    background-color: dimgray;
-}
-span.badge.bg-primary.edge {
-    background-color: darkgreen;
-}
-span.badge.bg-primary.label {
-    border-radius: 0.25em;
-}
 
 .nav-onto-merger {
     height: 70px;
@@ -136,4 +121,37 @@ hr.panel-separator {
     border-width:0;
     color:lightgray;
     background-color:lightgray
+}
+
+
+/* Badges */
+span.badge.bg-primary.input {
+    alignment: center;
+    background-color: black;
+}
+span.badge.bg-primary.alignment {
+    background-color: blue;
+}
+span.badge.bg-primary.connectivity {
+    background-color: darkgreen;
+}
+span.badge.bg-primary.output {
+    background-color: da;
+    border-color: black;
+}
+
+span.badge.bg-primary.node {
+    background-color: cornflowerblue;
+}
+span.badge.bg-primary.node_obsolete {
+    background-color: dodgerblue;
+}
+span.badge.bg-primary.mapping {
+    background-color: dimgray;
+}
+span.badge.bg-primary.edge {
+    background-color: darkgreen;
+}
+span.badge.bg-primary.label {
+    border-radius: 0.25em;
 }

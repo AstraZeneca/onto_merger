@@ -11,7 +11,9 @@
     {% if rows | length > 0 %}
       {% for row in rows %}
         <tr>
-            <td style="text-align:center"><i>{{ row['category'] }}</i></td>
+            <td tyle="text-align:center">
+                <span class="badge bg-primary {{ row['category'] }}">{{ row['category'] }}</span>
+            </td>
             <td>{{ row['status_no_freq'] }}</td>
             <td>{{ row['count'] }}</td>
             <td>{{ row['ratio'] }}%</td>

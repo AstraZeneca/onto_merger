@@ -314,9 +314,6 @@ def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManag
         "title": "Processing",
         "link_title": "pipeline",
         "dataset": {
-            "start_date_time": "???",
-            "end_date_time": "???",
-            "total_runtime": "1 hour 23 minutes",
             "gantt_img": f"images/{section_name}_pipeline_steps_report_gantt_chart.svg",
             "runtime_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
@@ -328,11 +325,13 @@ def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManag
                 table_name="pipeline_steps_report_runtime_overview",
                 rename_columns={"value": "values"},
             ),
+            "unique_id": _get_unique_id_for_description_table(
+                section_name=section_name,
+                table_name=f"images/{section_name}_pipeline_steps_report_gantt_chart"
+            ),
         },
         "template": "subsection_content/subsection-runtime.html"
     }
-    section_data["dataset"]["unique_id"] = \
-        section_data["dataset"]["gantt_img"].split("/")[-1].replace(".svg", "")
     return section_data
 
 
@@ -479,7 +478,7 @@ def _load_table_description_data(table_name: str) -> List[dict]:
         ]
     except FileNotFoundError as e:
         logger.error(f"Data table missing: {e}")
-        return []
+    return []
 
 
 # HELPERS #

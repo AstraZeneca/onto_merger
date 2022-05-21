@@ -782,6 +782,8 @@ def _produce_and_save_summary_overview(
     summary = [
         {"metric": "Dataset (folder name)",
          "values": f"<code>{data_manager.get_project_folder_path().split('/')[-1]}</code>"},
+        {"metric": "Dataset",
+         "values": f'<a href="../.." target="_blank">Link</a>'},
         {"metric": "Domain", "values": config.base_config.domain_node_type},
         {"metric": "Seed ontology", "values": config.base_config.seed_ontology_name},
         {"metric": "Total runtime", "values": elapsed_time},
@@ -797,6 +799,8 @@ def _produce_and_save_summary_overview(
 
 def _produce_and_save_summary_input(data_manager: DataManager, data_repo: DataRepository) -> None:
     summary = [
+        {"metric": "Dataset",
+         "values": f'<a href="../../input" target="_blank">Link</a>'},
         {"metric": "Number of nodes", "values": len(data_repo.get(table_name=TABLE_NODES).dataframe)},
         {"metric": "Number of obsolete nodes", "values": len(data_repo.get(table_name=TABLE_NODES_OBSOLETE).dataframe)},
         {"metric": "Number of mappings", "values": len(data_repo.get(table_name=TABLE_MAPPINGS).dataframe)},
@@ -816,6 +820,8 @@ def _produce_and_save_summary_output(data_manager: DataManager, data_repo: DataR
     nb_unique_nodes = (len(data_repo.get(table_name=TABLE_NODES).dataframe)
                        - len(data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe))
     summary = [
+        {"metric": "Dataset",
+         "values": f'<a href="../../output/domain_ontology" target="_blank">Link</a>'},
         {"metric": "Number of unique nodes", "values": nb_unique_nodes},
         {"metric": "Number of merged nodes", "values": len(data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe)},
         {"metric": "Number of connected nodes (in hierarchy)", "values": len(nodes_connected)},
