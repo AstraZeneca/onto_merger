@@ -15,11 +15,9 @@
                 </div>
             </div>
         </div>
-
-        <hr class="panel-separator">
-
         <div class="col-sm-12">
-             <h4>{{ subsection_data['analysed_entity'] }} analysis</h4>
+            <hr class="panel-separator">
+             <h4 class="h4 table-title-2">{{ subsection_data['analysed_entity'] }} analysis</h4>
             {% with rows=subsection_data['table_analysis'], template=subsection_data['analysis_table_template'] %}
                 {% set path = 'templates/' + template %}{% include path %}
             {% endwith %}

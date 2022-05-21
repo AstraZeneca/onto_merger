@@ -1,15 +1,14 @@
 <div class="overview summary">
     <div class="col-sm-12">
-        <p class="h4 table-title">Runtime Gantt chart</p>
-        <img class="img-responsive center-img"
-             style="display: block; margin: auto;"
+        <p class="h4 table-title-2">Runtime Gantt chart</p>
+        <img class="img-responsive center-img one-row"
              src="{{ subsection_data['gantt_img'] }}" alt="foo">
 
         <hr class="panel-separator">
 
-        <p class="h4 table-title">Summary</p>
+        <p class="h4 table-title-2">Summary</p>
         {% with rows=subsection_data['runtime_summary_table'] %}
-            {% include 'templates/data_content/table_summary_two_col.html' %}
+            {% include 'templates/data_content/table_summary_two_col_striped.html' %}
         {% endwith %}
         <div class="accordion" id="accordionExample_{{ subsection_data['unique_id'] }}">
           <div class="accordion-item">
@@ -24,7 +23,7 @@
                  aria-labelledby="headingOne_{{ subsection_data['unique_id'] }}"
                  data-bs-parent="#accordionExample_{{ subsection_data['unique_id'] }}" style="">
               <div class="accordion-body">
-                <p class="h4 table-title">Step details</p>
+                <p class="h4 table-title-2">Step details</p>
                 {% with rows=subsection_data['runtime_table'] %}
                     {% include 'templates/data_content/table_summary_two_col_no_bold.html' %}
                 {% endwith %}

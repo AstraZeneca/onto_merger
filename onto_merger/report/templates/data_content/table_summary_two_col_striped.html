@@ -9,7 +9,7 @@
     {% if rows | length > 0 %}
       {% for row in rows %}
         <tr>
-          <td>{{ row['metric'] }}</td>
+          <td style="font-weight: bold;">{{ row['metric'] }}</td>
           <td>{{ row['values'] }}</td>
         </tr>
       {% endfor %}

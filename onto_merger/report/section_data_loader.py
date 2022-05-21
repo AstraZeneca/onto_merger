@@ -327,7 +327,7 @@ def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManag
             ),
             "unique_id": _get_unique_id_for_description_table(
                 section_name=section_name,
-                table_name=f"images/{section_name}_pipeline_steps_report_gantt_chart"
+                table_name=f"{section_name}_pipeline_steps"
             ),
         },
         "template": "subsection_content/subsection-runtime.html"

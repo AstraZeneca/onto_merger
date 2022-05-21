@@ -1,15 +1,11 @@
 <div class="overview summary">
-    <h4>Merge analysis</h4>
     <div class="col-sm-12">
-        <img class="img-responsive center-img"
+    <p class="h4 table-title-2">Merge analysis</p>
+        <img class="img-responsive center-img one-row"
              src="{{ subsection_data['analysis_fig_path'] }}"
              alt="{{ subsection_data['analysis_fig_alt_text'] }}">
-    </div>
 
-    <hr class="panel-separator">
-
-    <div class="col-sm-12">
-        <h4>Merge analysis</h4>
+        <hr class="panel-separator">
         {% with rows=subsection_data['table_analysis'] %}
             {% include 'templates/data_content/table_merge_analysis.html' %}
         {% endwith %}

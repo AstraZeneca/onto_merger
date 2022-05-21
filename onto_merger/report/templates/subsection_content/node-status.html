@@ -5,8 +5,6 @@
          src="{{ subsection_data['node_status_fig_path'] }}" alt="foo">
 </div>
 
-<hr class="panel-separator">
-
 {% if subsection_data['node_status_table'] %}
     {% with rows=subsection_data['node_status_table'] %}
         {% include 'templates/data_content/table_node_status.html' %}

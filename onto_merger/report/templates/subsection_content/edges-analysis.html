@@ -1,16 +1,15 @@
 <div class="overview summary">
-    <h4>Edge analysis</h4>
     <div class="col-sm-12">
-        <img class="img-responsive center-img"
+    <p class="h4 table-title-2">Edge analysis</p>
+        <img class="img-responsive center-img one-row"
              src="{{ subsection_data['analysis_fig_path'] }}"
              alt="{{ subsection_data['analysis_fig_alt_text'] }}">
-    </div>
     <hr class="panel-separator">
-    <h4>Child & parent node analysis</h4>
     {% with rows=subsection_data['table_analysis'] %}
         {% include 'templates/data_content/table_edge_analysis.html' %}
     {% endwith %}
     {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
         {% include 'templates/subsection_content/table-description-accordion.html' %}
     {% endwith %}
+    </div>
 </div>

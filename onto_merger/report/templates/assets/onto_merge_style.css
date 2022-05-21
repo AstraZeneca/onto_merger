@@ -2,34 +2,6 @@ body {
     padding-top: 60px;
 }
 
-a.anchor-pos {
-    display: block;
-    position: relative;
-    top: -100px;
-    visibility: hidden;
-}
-
-
-.nav-onto-merger {
-    height: 70px;
-}
-
-.navbar-onto-merger {
-    padding-top: 10px;
-}
-
-.navbar-title-onto-merger {
-    padding-top: 25px;
-}
-
-/*.nav-link.active {*/
-/*    background-color: #004fa5;*/
-/*}*/
-
-.onto-merger-logo {
-    max-height: 40px;
-}
-
 .page-header {
     border-bottom: none;
     margin-bottom: 1px;
@@ -42,6 +14,45 @@ a.anchor-pos {
     background: #555;
 }
 
+/* Navigation */
+.nav-onto-merger {
+    height: 70px;
+}
+
+.navbar-onto-merger {
+    padding-top: 10px;
+}
+
+.navbar-title-onto-merger {
+    padding-top: 25px;
+}
+
+a.anchor-pos {
+    display: block;
+    position: relative;
+    top: -100px;
+    visibility: hidden;
+}
+
+/* Images */
+img.status_check {
+    height: 15px;
+    width: 15px;
+    horiz-align: center;
+}
+
+img.one-row {
+    display: block;
+    margin: auto;
+    padding-top: 20px;
+    padding-bottom: 20px
+}
+
+.onto-merger-logo {
+    max-height: 40px;
+}
+
+
 .section-items {
     border: 1px solid lightgray;
     padding: 10px;
@@ -49,7 +60,7 @@ a.anchor-pos {
     padding-bottom: 5px;
 }
 
-.row.spacing{
+.row.spacing {
     padding: 0.25em 1em;
 }
 
@@ -57,7 +68,7 @@ a.anchor-pos {
     padding-left: 5px;
 }
 
-/* Full row tables */
+/* Tables */
 div.table-full-row {
     padding-top: 10px;
     padding-right: 20px;
@@ -65,6 +76,7 @@ div.table-full-row {
     padding-bottom: 0;
     margin-bottom: 0;
 }
+
 .table-hover.third_party_data {
     table-layout: auto;
     padding-top: 10px;
@@ -78,10 +90,17 @@ p.h4.table-title {
     margin-bottom: 0;
 }
 
-img.status_check {
-    height: 15px;
-    width: 15px;
-    horiz-align: center;
+p.h4.table-title-2 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 0;
+}
+
+hr.panel-separator {
+    height: 1px;
+    border-width: 0;
+    color: lightgray;
+    background-color: lightgray
 }
 
 div.overview.summary {
@@ -94,6 +113,7 @@ div.overview.summary {
 div.col-sm-6 {
     margin-top: 20px;
 }
+
 div.text.about {
     margin: 10px;
 }
@@ -116,12 +136,7 @@ div.three-parts-top-row {
     padding-bottom: 25px;
 }
 
-hr.panel-separator {
-    height:1px;
-    border-width:0;
-    color:lightgray;
-    background-color:lightgray
-}
+
 
 
 /* Badges */
@@ -129,29 +144,35 @@ span.badge.bg-primary.input {
     alignment: center;
     background-color: black;
 }
+
 span.badge.bg-primary.alignment {
     background-color: blue;
 }
+
 span.badge.bg-primary.connectivity {
     background-color: darkgreen;
 }
+
 span.badge.bg-primary.output {
-    background-color: da;
-    border-color: black;
+    background-color: deepskyblue;
 }
 
 span.badge.bg-primary.node {
     background-color: cornflowerblue;
 }
+
 span.badge.bg-primary.node_obsolete {
     background-color: dodgerblue;
 }
+
 span.badge.bg-primary.mapping {
     background-color: dimgray;
 }
+
 span.badge.bg-primary.edge {
     background-color: darkgreen;
 }
+
 span.badge.bg-primary.label {
     border-radius: 0.25em;
 }

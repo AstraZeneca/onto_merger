@@ -67,5 +67,6 @@ this_data_repo = DataRepository()
 this_data_repo.update(tables=analysis_data_manager.load_input_tables())
 # this_data_repo.update(tables=analysis_data_manager.load_output_tables())
 this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
-analyser.produce_report_data(data_manager=analysis_data_manager, data_repo=this_data_repo)
+
+# analyser.produce_report_data(data_manager=analysis_data_manager, data_repo=this_data_repo)
 report_generator.produce_report(data_manager=analysis_data_manager)

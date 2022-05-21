@@ -745,12 +745,12 @@ def _produce_and_save_runtime_tables(
     # support table: runtime overview
     runtime_overview = [
         ("Number of steps", len(runtime_table)),
+        ("Total runtime", timedelta(seconds=int(runtime_table['elapsed'].sum()))),
         ("Start", runtime_table["start"].iloc[0]),
         ("End", runtime_table["end"].iloc[len(runtime_table) - 1]),
-        ("Total runtime", timedelta(seconds=int(runtime_table['elapsed'].sum()))),
-        ("Min runtime", timedelta(seconds=(runtime_table['elapsed'].min()))),
-        ("Avg runtime", timedelta(seconds=(runtime_table['elapsed'].mean()))),
-        ("Max runtime", timedelta(seconds=(runtime_table['elapsed'].max()))),
+        # ("Min runtime", timedelta(seconds=(runtime_table['elapsed'].min()))),
+        # ("Avg runtime", timedelta(seconds=(runtime_table['elapsed'].mean()))),
+        # ("Max runtime", timedelta(seconds=(runtime_table['elapsed'].max()))),
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(runtime_overview, columns=["metric", "value"]),
