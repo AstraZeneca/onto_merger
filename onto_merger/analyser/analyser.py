@@ -897,7 +897,7 @@ def _produce_and_save_summary_data_tests(data_manager: DataManager,
         {"metric": "Process runtime",
          "values": _get_runtime_for_main_step(process_name="VALIDATION", data_repo=data_repo)},
         {"metric": "Data docs report",
-         "values": f'<a href="data_docs/local_site/index.html" target="_blank">Link</a>'},
+         "values": '<a href="data_docs/local_site/index.html" target="_blank">Link</a>'},
         {"metric": "Number of tables tested", "values": len(stats)},
         {"metric": "Number of data tests run", "values": stats['nb_validations'].sum()},
         {"metric": "Number of failed tests (input data)",
@@ -910,7 +910,7 @@ def _produce_and_save_summary_data_tests(data_manager: DataManager,
          "values": stats.query(expr=f"directory == '{DIRECTORY_OUTPUT}'", inplace=False)
          ['nb_failed_validations'].sum()},
         {"metric": "Total failed tests", "values": stats['nb_failed_validations'].sum()},
-        {"metric": "GE version", "values": f"<code>{stats['ge_version'].iloc[0]}</code>"},
+        {"metric": "Great Expectations package version", "values": f"<code>{stats['ge_version'].iloc[0]}</code>"},
     ]
     data_manager.save_analysis_table(
         analysis_table=pd.DataFrame(summary),
@@ -932,7 +932,7 @@ def _produce_and_save_summary_data_profiling(data_manager: DataManager,
         {"metric": "Number of rows profiled", "values": data_profiling_stats['rows'].sum()},
         {"metric": "Total file size",
          "values": f"{data_profiling_stats['size_float'].sum() / float(1 << 20):,.3f}MB"},
-        {"metric": "Pandas profiling version",
+        {"metric": "Pandas profiling version package version",
          "values": f"<code>{pandas_profiling_version}</code>"},
     ]
     data_manager.save_analysis_table(

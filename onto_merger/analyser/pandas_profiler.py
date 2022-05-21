@@ -36,6 +36,7 @@ def produce_table_report(table: NamedTable) -> ProfileReport:
     return ProfileReport(
         df=table.dataframe,
         title=f"{table.name} Profiling Report",
+        html={"style": {"logo": "../images/onto_merger_logo.jpg"}},
         minimal=True,
         n_freq_table_max=250,
     )

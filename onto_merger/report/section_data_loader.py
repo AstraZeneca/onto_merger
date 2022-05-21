@@ -12,6 +12,9 @@ from onto_merger.data.data_manager import DataManager
 from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
 from onto_merger.version import __version__
+from onto_merger.logger.log import get_logger
+
+logger = get_logger(__name__)
 
 
 # REPORT #
@@ -40,6 +43,22 @@ def _produce_section(title: str, section_name: str, subsections: List[dict]) -> 
     }
 
 
+def _load_overview_section_data(data_manager: DataManager) -> dict:
+    section_name = SECTION_OVERVIEW
+    return _produce_section(
+        title="Overview",
+        section_name=section_name,
+        subsections=[
+            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_summary_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_config_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_validation_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_attributions_subsection(section_name=section_name, data_manager=data_manager),
+        ]
+    )
+
+
 def _load_input_section_data(data_manager: DataManager) -> dict:
     section_name = SECTION_INPUT
     return _produce_section(
@@ -66,21 +85,6 @@ def _load_output_section_data(data_manager: DataManager) -> dict:
             _produce_merges_subsection(section_name=section_name, data_manager=data_manager),
             _produce_mappings_subsection(section_name=section_name, data_manager=data_manager),
             _produce_edges_hierarchy_subsection(section_name=section_name, data_manager=data_manager),
-        ]
-    )
-
-
-def _load_overview_section_data(data_manager: DataManager) -> dict:
-    section_name = SECTION_OVERVIEW
-    return _produce_section(
-        title="Overview",
-        section_name=section_name,
-        subsections=[
-            _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_overview_summary_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_pipeline_info_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_overview_config_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_overview_validation_subsection(section_name=section_name, data_manager=data_manager),
         ]
     )
 
@@ -254,13 +258,12 @@ def _produce_edges_hierarchy_subsection(section_name: str, data_manager: DataMan
     }
 
 
-# todo
 def _produce_overview_config_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
         "title": "Configuration", "link_title": "configuration",
         "dataset": {
-            "about": "The config JSON ...",
-            "config_json": json.dumps(data_manager.load_alignment_config().as_dict, indent=4)
+            "dataset_id": data_manager.get_project_folder_path().split("/")[-1],
+            "config_json": json.dumps(data_manager.load_alignment_config().as_dict, indent=4),
         },
         "template": "subsection_content/overview-configuration.html"
     }
@@ -268,7 +271,7 @@ def _produce_overview_config_subsection(section_name: str, data_manager: DataMan
 
 def _produce_overview_validation_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
-        "title": "Profiling & validation",
+        "title": "Profiling & Validation",
         "link_title": "profiling_and_validation",
         "dataset": {
             "rows": data_manager.load_analysis_report_table_as_dict(
@@ -296,7 +299,16 @@ def _produce_overview_summary_subsection(section_name: str, data_manager: DataMa
     }
 
 
-# todo
+def _produce_overview_attributions_subsection(section_name: str, data_manager: DataManager) -> dict:
+    return {
+        "title": "Attributions",
+        "link_title": "attributions",
+        "dataset": {
+        },
+        "template": "subsection_content/attributions.html"
+    }
+
+
 def _produce_pipeline_info_subsection(section_name: str, data_manager: DataManager) -> dict:
     section_data = {
         "title": "Processing",
@@ -453,23 +465,21 @@ def _produce_data_file_subsections(section_name: str, data_manager: DataManager)
 
 
 # DESCRIPTION LOADERS #
-def _load_section_summary_description_data(section_name: str) -> dict:
-    return {
-        "title": "About",
-        "text": "...",
-    }
-
-
-def _load_table_description_data(table_name: str) -> dict:
+def _load_table_description_data(table_name: str) -> List[dict]:
     """Table descriptions explaining columns of tables presented in the report."""
-    df = pd.read_csv(os.path.abspath(f"../../onto_merger/onto_merger/report/data/table_column_descriptions/{table_name}.csv"))
-    return [
-        {
-            col: row[col]
-            for col in list(df)
-        }
-        for _, row in df.iterrows()
-    ]
+    try:
+        df = pd.read_csv(os.path.abspath(
+            f"../../onto_merger/onto_merger/report/data/table_column_descriptions/{table_name}.csv"))
+        return [
+            {
+                col: row[col]
+                for col in list(df)
+            }
+            for _, row in df.iterrows()
+        ]
+    except FileNotFoundError as e:
+        logger.error(f"Data table missing: {e}")
+        return []
 
 
 # HELPERS #

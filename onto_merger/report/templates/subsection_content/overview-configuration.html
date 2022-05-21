@@ -1,14 +1,31 @@
-<div class="overview summary" style="padding-top: 0px">
-    <div class="col-sm-6">
-        <p class="h4">JSON</p>
-        <pre><code>{{ subsection_data['config_json'] }}</code></pre>
-    </div>
-    <div class="col-sm-6">
-        <p class="h4">About</p>
-        <table class="table table-condensed" style="margin-bottom: 0px; padding-bottom: 0px">
-            <thead><tr><td style="width:100%"></td></tr></thead>
-            <tbody><tr><td></td></tr></tbody>
-        </table>
-        {{ subsection_data['about'] }}
-    </div>
+<div class="col-sm-6">
+    <p class="h4 table-title">Dataset <code>{{ subsection_data['dataset_id'] }}</code>
+        configuration JSON</p>
+    {% include 'templates/subsection_content/horizontal-rule.html' %}
+    <pre><code>{{ subsection_data['config_json'] }}</code></pre>
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
+    {% include 'templates/subsection_content/horizontal-rule.html' %}
+
+    <p>The alignment and connectivity is configured with a JSON, that contains:</p>
+    <ul>
+        <li><code>domain_node_type:</code> the common type of the domain nodes.</li>
+        <li><code>seed_ontology_name:</code> the ontology used for scaffolding.</li>
+
+        <li><code>mappings/type_groups:</code> the available mapping relations corresponding to three
+            strength categories that are handled differently during the alignment process.
+            <ul>
+                <li><code>equivalence:</code> the strongest mapping relation category; must
+                    contain at least one mapping relation type.</li>
+                <li><code>database_reference:</code> the second strongest mapping relation
+                    category that can be an empty list.</li>
+                <li><code>label_match:</code> the weakest mapping relation category that can be
+                    an empty list.</li>
+            </ul>
+        </li>
+    </ul>
+    <p>For more details, please
+        <a href="https://ontomerger.readthedocs.io/en/latest/notes/alignment_configuration.html">
+        read the docs</a>.</p>
 </div>
