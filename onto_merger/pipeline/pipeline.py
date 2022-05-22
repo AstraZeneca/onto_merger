@@ -5,7 +5,7 @@ from typing import List
 from onto_merger.alignment import hierarchy_utils, merge_utils
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.alignment_config.validator import validate_alignment_configuration
-from onto_merger.analyser import analysis_utils, pandas_profiler, analyser
+from onto_merger.analyser import analysis_utils, pandas_profiler, report_analyser
 from onto_merger.data.constants import (
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_INPUT,
@@ -222,7 +222,7 @@ class Pipeline:
         self._data_manager.save_table(table=run_time_table)
 
         # run analysis & produce report
-        analyser.produce_report_data(data_manager=self._data_manager, data_repo=self._data_repo)
+        report_analyser.produce_report_data(data_manager=self._data_manager, data_repo=self._data_repo)
         report_path = report_generator.produce_report(data_manager=self._data_manager)
 
         self.logger.info(f"Finished producing HTML report (saved to '{report_path}'.")

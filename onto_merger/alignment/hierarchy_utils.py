@@ -117,6 +117,8 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
     edges_for_all_nodes = []
     connectivity_steps = []
 
+    f = open(f"/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data/hierarchy_edges_paths.csv", "w")
+    f.write("node_id,length_original_path,length_produced_path,original_path,produced_path\n")
     for node_namespace in connectivity_order:
         # produce the hierarchy edges for the namespace node set
         (
@@ -128,6 +130,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
             unmapped_nodes=unmapped_nodes,
             hierarchy_edges=hierarchy_edges,
             merge_and_connectivity_map=merge_and_connectivity_map,
+            f=f
         )
         connectivity_step.step_counter = connectivity_order.index(node_namespace)
         connectivity_steps.append(connectivity_step)
@@ -135,6 +138,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
             # update result and processing data structures
             edges_for_all_nodes.extend(edges_for_namespace_nodes)
             merge_and_connectivity_map = merge_and_connectivity_map_for_ns
+    f.close()
 
     # edges
     connected_nodes = [
@@ -151,7 +155,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
 
 
 def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
-        node_namespace: str, unmapped_nodes: DataFrame, hierarchy_edges: DataFrame, merge_and_connectivity_map: dict
+        node_namespace: str, unmapped_nodes: DataFrame, hierarchy_edges: DataFrame, merge_and_connectivity_map: dict, f
 ) -> Tuple[List[Tuple[str, str]], dict, ConnectivityStep]:
     merge_and_connectivity_map_for_ns = merge_and_connectivity_map.copy()
 
@@ -201,6 +205,7 @@ def _produce_hierarchy_edges_for_unmapped_nodes_of_namespace(
                 unmapped_node_ids=unmapped_node_ids_for_namespace,
                 merge_and_connectivity_map_for_ns=merge_and_connectivity_map_for_ns,
                 hierarchy_graph_for_ns=hierarchy_graph_for_ns,
+                f=f
             )
             if edges_for_node:
                 # update result and processing data structures
@@ -230,6 +235,7 @@ def _produce_hierarchy_path_for_unmapped_node(
         unmapped_node_ids: List[str],
         merge_and_connectivity_map_for_ns: dict,
         hierarchy_graph_for_ns: NetworkitGraph,
+        f
 ) -> List[Tuple[str, str]]:
     # get shortest path
     shortest_path = hierarchy_graph_for_ns.get_path_for_node(node_id=node_to_connect)
@@ -251,6 +257,10 @@ def _produce_hierarchy_path_for_unmapped_node(
     unmapped_node_ids_in_path = [node_id for node_id in shortest_path if node_id in unmapped_node_ids]
     permitted_node_ids_in_path = unmapped_node_ids_in_path + merged_node_ids_in_path + [first_merged_node_canonical_id]
     final_path = [node_id for node_id in pruned_path if node_id in permitted_node_ids_in_path]
+
+    #
+    f.write(f"{node_to_connect},{len(shortest_path)},{len(final_path)},"
+            + f"{str(shortest_path).replace(',', '')},{str(final_path).replace(',', '')}\n")
 
     # convert the path into a hierarchy edge tuple list
     edges = _convert_hierarchy_path_into_tuple_list(pruned_path=final_path)

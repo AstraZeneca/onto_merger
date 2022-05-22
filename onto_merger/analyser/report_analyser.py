@@ -12,6 +12,7 @@ import pandas as pd
 from pandas import DataFrame
 from pandas_profiling import __version__ as pandas_profiling_version
 
+from onto_merger.analyser.report_analyser_utils import _produce_merge_cluster_analysis
 from onto_merger.analyser import plotly_utils
 from onto_merger.analyser.analysis_utils import produce_table_with_namespace_column_for_node_ids, \
     produce_table_node_namespace_distribution, produce_table_with_namespace_column_pair, \
@@ -423,6 +424,7 @@ def _produce_source_to_target_analysis_for_directed_edge(edges: DataFrame) -> Da
     return df
 
 
+# MERGE #
 def _produce_merge_analysis_for_merged_nss_for_canonical(merges: DataFrame) -> DataFrame:
     df = produce_table_with_namespace_column_pair(
         table=produce_table_with_namespace_column_for_node_ids(table=merges)) \
@@ -1100,6 +1102,13 @@ def _produce_and_save_merge_analysis(merges: DataFrame,
         analysed_table_name=table_type,
         analysis_table_suffix=ANALYSIS_MERGES_NSS_FOR_CANONICAL
     )
+    for table in _produce_merge_cluster_analysis(merges_aggregated=merges):
+        data_manager.save_analysis_table(
+            analysis_table=table.dataframe,
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix=table.name,
+        )
 
 
 # PRODUCE & SAVE for DATASET #
