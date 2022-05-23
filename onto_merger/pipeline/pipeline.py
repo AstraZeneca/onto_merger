@@ -2,8 +2,9 @@
 from datetime import datetime
 from typing import List
 
-from onto_merger.alignment import hierarchy_utils, merge_utils
+from onto_merger.alignment import merge_utils, hierarchy_utils
 from onto_merger.alignment.alignment_manager import AlignmentManager
+from onto_merger.alignment.hierarchy_utils import HierarchyManager
 from onto_merger.alignment_config.validator import validate_alignment_configuration
 from onto_merger.analyser import analysis_utils, pandas_profiler, report_analyser
 from onto_merger.data.constants import (
@@ -165,7 +166,7 @@ class Pipeline:
         self.logger.info("Started connecting nodes...")
         start_date_time = datetime.now()
         self._data_repo.update(
-            tables=hierarchy_utils.connect_nodes(
+            tables=HierarchyManager(data_manager=self._data_manager).connect_nodes(
                 alignment_config=self._alignment_config,
                 source_alignment_order=self._alignment_priority_order,
                 data_repo=self._data_repo,

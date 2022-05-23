@@ -31,7 +31,7 @@ from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT
     TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, \
     TABLE_ALIGNMENT_STEPS_REPORT, TABLE_CONNECTIVITY_STEPS_REPORT, TABLE_PIPELINE_STEPS_REPORT, \
     TABLE_EDGES_HIERARCHY_POST, TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE, TABLE_MERGES_AGGREGATED, \
-    TABLE_NODES_CONNECTED
+    TABLE_NODES_CONNECTED, DIRECTORY_ANALYSIS
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.logger.log import get_logger
@@ -1238,8 +1238,8 @@ def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo:
     _save_analysis_named_tables(
         tables=report_analyser_utils.produce_hierarchy_edge_path_analysis(
             hierarchy_edges_paths=data_manager.load_table(
-                table_name="hierarchy_edges_paths",
-                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"
+                table_name="connectivity_hierarchy_edges_paths",
+                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}/{DIRECTORY_ANALYSIS}"
             ),
         ),
         dataset=section_dataset_name,

@@ -37,7 +37,7 @@ from onto_merger.data.constants import (
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
     TABLES_INPUT,
-    TABLES_OUTPUT, TABLES_INTERMEDIATE, TABLE_NODES_MERGED)
+    TABLES_OUTPUT, TABLES_INTERMEDIATE, TABLE_NODES_MERGED, DIRECTORY_ANALYSIS)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
@@ -458,4 +458,8 @@ class DataManager:
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
 
     def get_analysis_folder_path(self):
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, "analysis")
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_ANALYSIS)
+
+    def get_hierarchy_edges_paths_debug_file_path(self):
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_ANALYSIS,
+                            "connectivity_hierarchy_edges_paths.csv")

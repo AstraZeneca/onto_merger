@@ -16,6 +16,7 @@ DIRECTORY_DROPPED_MAPPINGS = "dropped_mappings"
 DIRECTORY_PROFILED_DATA = "data_profile_reports"
 DIRECTORY_DATA_TESTS = "data_tests"
 DIRECTORY_LOGS = "logs"
+DIRECTORY_ANALYSIS = "analysis"
 
 # COLUMNS
 COLUMN_DEFAULT_ID = "default_id"

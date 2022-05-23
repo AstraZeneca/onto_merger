@@ -70,13 +70,22 @@ def produce_merge_cluster_analysis(merges_aggregated: DataFrame) -> List[NamedTa
     df_nss_analysis = pd.DataFrame(nss_data, columns=["namespace", "count_occurs_multiple_times_in_cluster"]) \
         .sort_values("count_occurs_multiple_times_in_cluster", ascending=False)
 
-    return [
+    # top 10 merge clusters per NS
+    top_ten_merge_clusters_per_ns = [
+        NamedTable(f"clusters_top10_for_{ns}", df.query(f"namespace_target_id == '{ns}'", inplace=False).head(10))
+        for ns in df['namespace_target_id']
+    ]
+
+    tables = [
         NamedTable("clusters", df),
         NamedTable("cluster_size_description", df_cluster_size_describe),
         NamedTable("cluster_size_bin_freq", df_bins),
         NamedTable("many_nss_merged_to_one", df_many_nss_merged_to_one),
         NamedTable("many_nss_merged_to_one_freq", df_nss_analysis),
     ]
+    tables.extend(top_ten_merge_clusters_per_ns)
+
+    return tables
 
 
 # HIERARCHY EDGE PATHS
