@@ -1,0 +1,36 @@
+<div class="section-items" style="border: 0 white">
+    <div class="row spacing">
+        <ul class="nav nav-tabs">
+        {% for inner_subsection in subsection_data['inner_subsections'] %}
+            {% if subsection_data['inner_subsections'].index(inner_subsection) == 0 %}
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab"
+                       href="#{{ inner_subsection['link_title'] }}_{{ dataset['link_title'] }}">{{ inner_subsection['title'] }}</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link " data-bs-toggle="tab"
+                       href="#{{ inner_subsection['link_title'] }}_{{ dataset['link_title'] }}">{{ inner_subsection['title'] }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+        <div id="myTabContent_{{ subsection['link_title'] }}" class="tab-content">
+        {% for inner_subsection in subsection_data['inner_subsections'] %}
+            {% if subsection_data['inner_subsections'].index(inner_subsection) == 0 %}
+                <div class="tab-pane active" id="{{ inner_subsection['link_title'] }}_{{ dataset['link_title'] }}">
+                {% with subsection_data=inner_subsection['dataset'], template=inner_subsection['template'], link_title=inner_subsection['link_title'] %}
+                    {% set path = 'templates/' + template %}{% include path %}
+                {% endwith %}
+                </div>
+            {% else %}
+                <div class="tab-pane " id="{{ inner_subsection['link_title'] }}_{{ dataset['link_title'] }}">
+                {% with subsection_data=inner_subsection['dataset'], template=inner_subsection['template'], link_title=inner_subsection['link_title'] %}
+                    {% set path = 'templates/' + template %}{% include path %}
+                {% endwith %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+</div>

@@ -256,6 +256,25 @@ def produce_vertical_bar_chart_stacked(
         .write_image(_get_figure_filepath(file_path=file_path))
 
 
+def produce_vertical_bar_chart_cluster_size_bins(
+        analysis_table: DataFrame,
+        file_path: str,
+):
+    px.bar(
+        analysis_table,
+        x="cluster_size",
+        y="count",
+        labels={'cluster_size': 'Merge cluster size', 'count': 'Cluster count'},
+        text="count",
+        width=_WIDTH_ONE_COL_ROW,
+        height=300,
+    )\
+        .update_layout(plot_bgcolor=_COLOR_WHITE) \
+        .write_image(_get_figure_filepath(file_path=file_path))
+
+
+
+
 # HELPERS #
 def _compute_dynamic_height(y_axis_column_name: str, table: DataFrame) -> int:
     offset = 150
@@ -263,6 +282,27 @@ def _compute_dynamic_height(y_axis_column_name: str, table: DataFrame) -> int:
 
 
 # todo remove unused
+def produce_hierarchy_node_coverage_bubble_plot():
+    df = px.data.gapminder()
+
+    data = [
+        ["MEDDRA", 70000, 80000, 100],
+        ["MONDO", 20000, 30000, 100],
+        ["ORPHA", 10000, 15000, 100],
+    ]
+    df = pd.DataFrame(data, columns=["source", "nb_edges", "nb_nodes", "nb_covered_nodes"])
+
+    print(df)
+    fig = px.scatter(df,
+                     x="nb_covered_nodes",
+                     y="nb_nodes",
+                     size="nb_edges",
+                     color="source",
+                     hover_name="source",
+                     size_max=60)
+    fig.write_image("plotly_node_cov_bubble.svg")
+
+
 def produce_vertical_bar_chart_node_ns():
     df = pd.DataFrame([
         ["MEDDRA", 123455, 0.80],
@@ -296,3 +336,6 @@ def produce_vertical_bar_chart():
         .update_layout(plot_bgcolor="#fff") \
         .update_xaxes({"tickmode": "linear"})
     fig.write_image("plotly_vertical_bar.svg")
+
+
+# produce_hierarchy_node_coverage_bubble_plot()

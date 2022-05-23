@@ -235,7 +235,7 @@ class HierarchyManager:
 
         #
         self.f.write(f"{node_to_connect},{node_to_connect.split(':')[0]},{len(shortest_path)},{len(final_path)},"
-                     + f"{str(shortest_path).replace(',', '')},{str(final_path).replace(',', ''),}"
+                     + f"{str(shortest_path).replace(',', '')},{str(final_path).replace(',', '')}, "
                      + f"{index_of_first_merged_node},{first_merged_node_canonical_id}\n")
 
         # convert the path into a hierarchy edge tuple list

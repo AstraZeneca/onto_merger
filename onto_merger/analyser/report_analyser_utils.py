@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 import itertools
 
@@ -6,6 +7,7 @@ from pandas import DataFrame
 
 from onto_merger.data.data_manager import DataManager
 from onto_merger.analyser.analysis_utils import produce_table_with_namespace_column_for_node_ids
+from onto_merger.analyser import plotly_utils
 from onto_merger.analyser.constants import COLUMN_NAMESPACE_TARGET_ID, COLUMN_NAMESPACE_SOURCE_ID
 from onto_merger.alignment.hierarchy_utils import produce_named_table_nodes_connected, \
     produce_named_table_nodes_dangling
@@ -13,6 +15,7 @@ from onto_merger.data.constants import COLUMN_TARGET_ID, COLUMN_SOURCE_ID, TABLE
     TABLE_EDGES_HIERARCHY_POST, TABLE_NODES, TABLE_NODES_DOMAIN, SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, \
     TABLE_NODES_CONNECTED, TABLE_NODES_DANGLING, COLUMN_PROVENANCE
 from onto_merger.data.dataclasses import NamedTable, DataRepository
+from onto_merger.report.constants import REPORT_SECTIONS
 
 
 # HELPERS #
@@ -20,8 +23,28 @@ def _get_percentage_of(subset_count: int, total_count: int):
     return round((subset_count / total_count * 100), 2)
 
 
+# ANALYSIS
+def produce_analysis_output_file_list(data_manager: DataManager):
+    data = [
+        {
+            "section_name": _get_section_for_analysis_file_name(file_name=path.name),
+            "file_name": path.name,
+            "file_size": ""
+        }
+        for path in Path(data_manager.get_analysis_folder_path()).rglob('*.csv')
+        if path.is_file()
+    ]
+
+
+def _get_section_for_analysis_file_name(file_name: str) -> str:
+    for section_name in REPORT_SECTIONS:
+        if section_name in file_name:
+            return section_name
+    return "UNKNOWN"
+
+
 # MERGE #
-def produce_merge_cluster_analysis(merges_aggregated: DataFrame) -> List[NamedTable]:
+def produce_merge_cluster_analysis(merges_aggregated: DataFrame, data_manager: DataManager) -> List[NamedTable]:
     column_cluster_size = 'cluster_size'
     column_many_to_one_nss = 'many_to_one_nss'
     column_many_to_one_nss_size = f"{column_many_to_one_nss}_size"
@@ -47,8 +70,16 @@ def produce_merge_cluster_analysis(merges_aggregated: DataFrame) -> List[NamedTa
     # cluster size | x: size bins | y: freq
     df_bins = df[[column_cluster_size]] \
         .groupby([column_cluster_size]) \
-        .agg(size_bin=(column_cluster_size, 'count')) \
+        .agg(count=(column_cluster_size, 'count')) \
         .reset_index()
+    plotly_utils.produce_vertical_bar_chart_cluster_size_bins(
+        analysis_table=df_bins,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset="alignment",
+            analysed_table_name="merges",
+            analysis_table_suffix="cluster_size_bins",
+        )
+    )
 
     # namespaces in clusters
     df[column_many_to_one_nss] = df.apply(lambda x: set([key
@@ -104,7 +135,6 @@ def produce_hierarchy_edge_path_analysis(hierarchy_edges_paths: DataFrame) -> Li
         tables.append(
             NamedTable(f"path_lengths_description_{ns}", _describe_hierarchy_edge_path_lengths(df=df_for_ns))
         )
-
     return tables
 
 
@@ -120,7 +150,8 @@ def produce_overview_hierarchy_edge_comparison(data_manager: DataManager) -> Lis
     # input
     input_data_repo = DataRepository()
     input_data_repo.update(tables=data_manager.load_input_tables())
-    input_edges = input_data_repo.get(TABLE_EDGES_HIERARCHY).dataframe
+    input_edges = produce_table_with_namespace_column_for_node_ids(
+        table=input_data_repo.get(TABLE_EDGES_HIERARCHY).dataframe)
     input_nodes = input_data_repo.get(TABLE_NODES).dataframe
     input_nodes_ids = input_nodes[COLUMN_DEFAULT_ID].tolist()
     input_nodes_connected = produce_named_table_nodes_connected(hierarchy_edges=input_edges) \
@@ -146,6 +177,7 @@ def produce_overview_hierarchy_edge_comparison(data_manager: DataManager) -> Lis
     count_input_nodes_dangling = len(input_nodes_dangling)
     count_input_nodes_child = len(input_child_nodes)
     count_input_nodes_parent = len(input_parent_nodes)
+    count_input_sources = len(set(input_edges['namespace_target_id'].tolist()))
 
     count_output_nodes = len(output_nodes)
     count_output_nodes_connected = len(output_nodes_connected)
@@ -156,11 +188,11 @@ def produce_overview_hierarchy_edge_comparison(data_manager: DataManager) -> Lis
     # metric | IN | OUT | DIFF
     data = [
         # general
-        ["Graphs (ontologies with hierarchy)", -1, 1, -1, -1, -1, -1],
+        ["Graphs (ontologies with hierarchy)", count_input_sources, 1, "", "", "", ""],
         ["Edges", len(input_edges), len(output_edges), abs(len(input_edges) - len(output_edges)),
-         -1, -1, -1],
+         "", "", ""],
         ["Nodes", count_input_nodes, count_output_nodes, abs(count_input_nodes - count_output_nodes),
-         -1, -1, -1],
+         "", "", ""],
         _get_input_output_comparison(
             metric="Connected nodes",
             input_subset_count=count_input_nodes_connected, input_total_count=count_input_nodes,
@@ -185,7 +217,7 @@ def produce_overview_hierarchy_edge_comparison(data_manager: DataManager) -> Lis
     data_df = pd.DataFrame(data, columns=["metric",
                                           "input_count", "output_count", "diff_count",
                                           "input_percentage", "output_percentage", "diff_percentage"])
-    tables = [NamedTable("hierarchy_edge_comparison", data_df)]
+    tables = [NamedTable("general_comparison", data_df)]
     tables.extend(
         _get_hierarchy_edge_input_children_count_descriptions(
             input_hierarchy_edges=input_edges,
@@ -233,22 +265,19 @@ def _get_hierarchy_edge_input_children_count_descriptions(
 
     # split by namespace
     nss = sorted(list(set(input_edge_child_counts['namespace_target_id'].tolist())))
+    rows = [[f"output"] + output_edge_child_counts_description['output_children_count'].tolist()]
     for ns in nss:
         input_for_ns = input_edge_child_counts.query(f"namespace_target_id == '{ns}'")
         input_child_counts_description_for_ns = input_for_ns[['children_count']] \
             .describe() \
-            .reset_index(level=0).rename(columns={'children_count': f'input_{ns}_children_count'})
-        dfs = pd.merge(
-            dfs,
-            input_child_counts_description_for_ns,
-            on="index",
-            how="left"
-        )
+            .reset_index(level=0)
+        rows.append([f"input_{ns}"] + input_child_counts_description_for_ns['children_count'].tolist())
+    dfs = pd.DataFrame(rows, columns=["dataset"] + output_edge_child_counts_description['index'].tolist())
 
     return [
-        NamedTable("hierarchy_edge_output_children_counts", output_edge_child_counts),
-        NamedTable("hierarchy_edge_input_children_counts", input_edge_child_counts),
-        NamedTable("hierarchy_edge_children_count_comparison", dfs),
+        NamedTable("children_counts_output", output_edge_child_counts),
+        NamedTable("children_counts_input", input_edge_child_counts),
+        NamedTable("children_count_comparison", dfs),
     ]
 
 

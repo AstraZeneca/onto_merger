@@ -798,7 +798,7 @@ def _produce_and_save_summary_overview(
         {"metric": "Dataset (folder name)",
          "values": f"<code>{data_manager.get_project_folder_path().split('/')[-1]}</code>"},
         {"metric": "Dataset",
-         "values": f'<a href="../.." target="_blank">Link</a>'},
+         "values": '<a href="../.." target="_blank">Link</a>'},
         {"metric": "Domain", "values": config.base_config.domain_node_type},
         {"metric": "Seed ontology", "values": config.base_config.seed_ontology_name},
         {"metric": "Total runtime", "values": elapsed_time},
@@ -1100,7 +1100,7 @@ def _produce_and_save_merge_analysis(merges: DataFrame,
         analysis_table_suffix=ANALYSIS_MERGES_NSS_FOR_CANONICAL
     )
     _save_analysis_named_tables(
-        tables=report_analyser_utils.produce_merge_cluster_analysis(merges_aggregated=merges),
+        tables=report_analyser_utils.produce_merge_cluster_analysis(merges_aggregated=merges, data_manager=data_manager),
         dataset=dataset,
         analysed_table_name=table_type,
         data_manager=data_manager,
@@ -1301,7 +1301,7 @@ def _produce_overview_analysis(data_manager: DataManager,
     _save_analysis_named_tables(
         tables=report_analyser_utils.produce_overview_hierarchy_edge_comparison(data_manager=data_manager),
         dataset=section_dataset_name,
-        analysed_table_name="hierarchy_edge_comparison",
+        analysed_table_name="hierarchy_edge",
         data_manager=data_manager,
     )
 
@@ -1313,10 +1313,10 @@ def produce_report_data(data_manager: DataManager, data_repo: DataRepository) ->
     logger.info(f"Started producing report analysis...")
     data_profiling_stats, data_test_stats = \
         _produce_data_profiling_and_testing_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_input_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_output_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
+    # _produce_input_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
+    # _produce_output_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
+    # _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_overview_analysis(
         data_manager=data_manager,
         data_repo=data_repo,
@@ -1324,5 +1324,6 @@ def produce_report_data(data_manager: DataManager, data_repo: DataRepository) ->
         data_test_stats=data_test_stats,
     )
     # produce analysis data: files
-        # do overview summary total runtime & gantt LAST
+    report_analyser_utils.produce_analysis_output_file_list(data_manager=data_manager)
+    # do overview summary total runtime & gantt LAST
     logger.info(f"Finished producing report analysis.")

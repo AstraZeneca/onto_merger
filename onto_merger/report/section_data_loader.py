@@ -56,6 +56,7 @@ def _load_overview_section_data(data_manager: DataManager) -> dict:
             _produce_overview_edges_subsection(section_name=section_name, data_manager=data_manager),
             _produce_overview_config_subsection(section_name=section_name, data_manager=data_manager),
             _produce_overview_validation_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_overview_project_organisation_subsection(section_name=section_name, data_manager=data_manager),
             _produce_overview_attributions_subsection(),
         ],
         data_manager=data_manager
@@ -86,7 +87,8 @@ def _load_alignment_section_data(data_manager: DataManager) -> dict:
             _produce_runtime_info_subsection(section_name=section_name, data_manager=data_manager),
             _produce_alignment_detail_subsection(section_name=section_name, data_manager=data_manager),
             _produce_alignment_node_subsection(section_name=section_name, data_manager=data_manager),
-            _produce_merges_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_merges_subsection_main(section_name=section_name, data_manager=data_manager),
+
         ],
         data_manager=data_manager
     )
@@ -288,7 +290,7 @@ def _produce_overview_validation_subsection(section_name: str, data_manager: Dat
 
 def _produce_overview_nodes_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
-        "title": "Nodes",
+        "title": "Node analysis",
         "link_title": "nodes",
         "dataset": {
             "node_status_fig_path": _get_figure_path(section_name=section_name, table_name="node_status"),
@@ -303,12 +305,42 @@ def _produce_overview_nodes_subsection(section_name: str, data_manager: DataMana
 
 def _produce_overview_edges_subsection(section_name: str, data_manager: DataManager) -> dict:
     return {
-        "title": "Hierarchy edges",
-        "link_title": "edges",
+        "title": "Hierarchy analysis",
+        "link_title": "hierarchy_analysis",
         "dataset": {
-
+            "table_general_comparison": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="hierarchy_edge_general_comparison"
+            ),
+            "table_children_count_comparison": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="hierarchy_edge_children_count_comparison"
+            ),
         },
         "template": "subsection_content/overview-edge-summary.html"
+    }
+
+
+def _produce_overview_project_organisation_subsection(section_name: str, data_manager: DataManager) -> dict:
+    return {
+        "title": "Project organisation",
+        "link_title": "project_org",
+        "dataset": {
+            "summary_table": [
+                {"metric": '<a href="../../input" target="_blank">Input data</a>', "value": ""},
+                {"metric": '<a href="../../output/domain_ontology" target="_blank">Domain ontology</a>', "value": ""},
+                {"metric": '<a href="../intermediate/analysis" target="_blank">Analysis data</a>', "value": ""},
+                {"metric": '<a href="images" target="_blank">Analysis plots</a>', "value": ""},
+                {"metric": '<a href="data_profile_reports" target="_blank">Data profiling reports</a>', "value": ""},
+                {"metric": '<a href="data_docs" target="_blank">Data test report</a>', "value": ""},
+                {"metric": '<a href="../intermediate/data_tests" target="_blank">Data test configurations</a>',
+                 "value": ""},
+                {"metric": '<a href="../intermediate/dropped_mappings" target="_blank">Dropped mappings</a>',
+                 "value": ""},
+                {"metric": '<a href="logs" target="_blank">Pipeline logs</a>', "value": ""},
+            ]
+        },
+        "template": "subsection_content/overview-project-org.html"
     }
 
 
@@ -370,11 +402,29 @@ def _produce_alignment_node_subsection(section_name: str, data_manager: DataMana
     }
 
 
-def _produce_merges_subsection(section_name: str, data_manager: DataManager) -> dict:
+def _produce_merges_subsection_main(section_name: str, data_manager: DataManager) -> dict:
+    title = "Merge analysis"
+    link_title = "merge_analysis_main"
+    return {
+        "title": title,
+        "link_title": link_title,
+        "dataset": {
+            "title": title,
+            "link_title": link_title,
+                "inner_subsections": [
+                    _produce_merges_subsection_namespaces(section_name=section_name, data_manager=data_manager),
+                    _produce_merges_subsection_clusters(section_name=section_name, data_manager=data_manager),
+                ]
+        },
+        "template": "subsection_content/alignment-merge-analyses.html",
+    }
+
+
+def _produce_merges_subsection_namespaces(section_name: str, data_manager: DataManager) -> dict:
     table_name = "merges_nss_analysis"
     return {
-        "title": "Merge analysis",
-        "link_title": "merges",
+        "title": "Namespaces",
+        "link_title": "namespaces",
         "dataset": {
             "analysed_entity": "Merges",
             "analysis_table_template": "data_content/table_merge_analysis.html",
@@ -393,6 +443,26 @@ def _produce_merges_subsection(section_name: str, data_manager: DataManager) -> 
                                                               table_name=table_name),
         },
         "template": "subsection_content/alignment-merge-analysis.html",
+    }
+
+
+def _produce_merges_subsection_clusters(section_name: str, data_manager: DataManager) -> dict:
+    return {
+        "title": "Clusters",
+        "link_title": "cluster",
+        "dataset": {
+            "analysis_fig_path": _get_figure_path(section_name=section_name, table_name="merges_cluster_size_bins"),
+            "analysis_fig_alt_text": "Node merge cluster size bin frequency",
+            "table_analysis": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="merges_cluster_size_description"
+            ),
+            "table_analysis_2": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name="merges_many_nss_merged_to_one_freq",
+            ),
+        },
+        "template": "subsection_content/alignment-merge-analysis-clusters.html",
     }
 
 

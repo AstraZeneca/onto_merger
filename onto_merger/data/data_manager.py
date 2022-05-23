@@ -353,10 +353,10 @@ class DataManager:
         file_path = self._produce_analysis_report_path()
         with open(file_path, "w") as f:
             f.write(content)
-        self._copy_images()
+        self._copy_analysis_images_and_report_assets()
         return file_path
 
-    def _copy_images(self):
+    def _copy_analysis_images_and_report_assets(self):
         # images  from assets
         images_folder = os.path.join(self._produce_analysis_report_folder_path(), "images")
         if Path(images_folder).exists() is False:
@@ -366,7 +366,7 @@ class DataManager:
             )
         # plots from analysis output folder
         [
-            shutil.copy(
+            shutil.move(
                 os.path.join(self.get_analysis_folder_path(), figure_file),
                 os.path.join(images_folder, figure_file)
             )

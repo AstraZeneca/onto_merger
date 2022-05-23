@@ -1,0 +1,52 @@
+<table class="freq table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:22%" rowspan="2"><b>Metric</b></td>
+            <td style="width:39%" colspan="3"><b>Count</b></td>
+            <td style="width:39%" colspan="3"><b>Ratio</b></td>
+        </tr>
+        <tr>
+            <td style="width:13%"><b>Input</b></td>
+            <td style="width:13%"><b>Output</b></td>
+            <td style="width:13%"><b>Diff</b></td>
+            <td style="width:13%"><b>Input</b></td>
+            <td style="width:13%"><b>Output</b></td>
+            <td style="width:13%"><b>Diff</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if rows | length > 0 %}
+      {% for row in rows %}
+        <tr>
+            <td><b>{{ row['metric'] }}</b></td>
+            <td>{{ row['input_count'] }}</td>
+            <td>{{ row['output_count'] }}</td>
+            {% if row['diff_count'] > -1 %}
+                <td>{{ row['diff_count'] }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+            {% if row['input_percentage'] > -1 %}
+                <td>{{ row['input_percentage'] }}%</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+            {% if row['output_percentage'] > -1 %}
+                <td>{{ row['output_percentage'] }}%</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+            {% if row['diff_percentage'] > -1 %}
+                <td>{{ row['diff_percentage'] }}%</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="7">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

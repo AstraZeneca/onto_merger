@@ -1,0 +1,32 @@
+<div class="overview summary">
+    <div class="col-sm-12">
+
+        <h4 style="padding-top: 0; padding-bottom: 0px">Cluster size distribution chart</h4>
+
+        <img class="img-responsive center-img one-row"
+             style="padding-bottom: 5px"
+             src="{{ subsection_data['analysis_fig_path'] }}"
+             alt="{{ subsection_data['analysis_fig_alt_text'] }}">
+
+        <hr class="panel-separator" style="margin-bottom: 2px; margin-top: 2px">
+
+        <div class="row-cols-sm-auto" style="padding-left: 0px; padding-right: 0px">
+                <div class="col-sm-6">
+                    <h4 style="padding-top: 0; padding-bottom: 10px">Cluster size distribution info</h4>
+                    {% if subsection_data['table_analysis'] %}
+                        {% with rows=subsection_data['table_analysis'] %}
+                            {% include 'templates/data_content/table_merge_cluster_size_distribution.html' %}
+                        {% endwith %}
+                    {% endif %}
+                </div>
+                <div class="col-sm-6">
+                    <h4 style="padding-top: 0; padding-bottom: 10px">Multiple namespaces in the same cluster</h4>
+                    {% if subsection_data['table_analysis_2'] %}
+                        {% with rows=subsection_data['table_analysis_2'] %}
+                            {% include 'templates/data_content/table_merge_cluster_mutliple_nss_in_same_cluster.html' %}
+                        {% endwith %}
+                    {% endif %}
+                </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:30%"><b>Namespace</b></td>
+            <td style="width:70%"><b>Count</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if rows | length > 0 %}
+      {% for row in rows %}
+        <tr>
+          <td>{{ row['namespace'] }}</td>
+          <td>{{ row['count_occurs_multiple_times_in_cluster'] }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="2">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
