@@ -1309,9 +1309,9 @@ def produce_report_data(data_manager: DataManager, data_repo: DataRepository) ->
     logger.info(f"Started producing report analysis...")
     data_profiling_stats, data_test_stats = \
         _produce_data_profiling_and_testing_analysis(data_manager=data_manager, data_repo=data_repo)
-    # _produce_input_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
-    # _produce_output_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
-    # _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_input_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_output_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_overview_analysis(
         data_manager=data_manager,
@@ -1319,7 +1319,5 @@ def produce_report_data(data_manager: DataManager, data_repo: DataRepository) ->
         data_profiling_stats=data_profiling_stats,
         data_test_stats=data_test_stats,
     )
-    # produce analysis data: files
-    # report_analyser_utils.produce_analysis_output_file_list(data_manager=data_manager)
     # do overview summary total runtime & gantt LAST
     logger.info(f"Finished producing report analysis.")

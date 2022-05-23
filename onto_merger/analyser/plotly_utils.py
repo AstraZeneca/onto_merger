@@ -109,7 +109,7 @@ def produce_status_stacked_bar_char_edge(
         color="status",
         orientation='h',
         width=_WIDTH_ONE_COL_ROW,
-        height=100,
+        height=85,
         labels=(
             {'status': 'Status', 'status_no_freq': 'Stage', 'category': ''}
         ),

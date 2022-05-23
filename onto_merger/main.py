@@ -42,29 +42,29 @@ def main(project_folder_path: str) -> None:
     Pipeline(project_folder_path=project_folder_path).run_alignment_and_connection_process()
 
 
-# if __name__ == "__main__":
-#     arguments = docopt(__doc__, version=f"OntoMerger v. {__version__}")
-#     if arguments[VERSION_ARG]:
-#         print(f"OntoMerger v. {__version__}")
-#     elif arguments[FOLDER_PATH_ARG]:
-#         if arguments[FOLDER_PATH_ARG] in example_data_sets:
-#             main(project_folder_path=example_data_sets[arguments[FOLDER_PATH_ARG]])
-#         else:
-#             main(project_folder_path=arguments[FOLDER_PATH_ARG])
+if __name__ == "__main__":
+    arguments = docopt(__doc__, version=f"OntoMerger v. {__version__}")
+    if arguments[VERSION_ARG]:
+        print(f"OntoMerger v. {__version__}")
+    elif arguments[FOLDER_PATH_ARG]:
+        if arguments[FOLDER_PATH_ARG] in example_data_sets:
+            main(project_folder_path=example_data_sets[arguments[FOLDER_PATH_ARG]])
+        else:
+            main(project_folder_path=arguments[FOLDER_PATH_ARG])
 
-# todo
-import os
-from onto_merger.report import report_generator
-from onto_merger.analyser import report_analyser
-from onto_merger.data.data_manager import DataManager
-from onto_merger.data.dataclasses import DataRepository
-project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
-analysis_data_manager = DataManager(project_folder_path=project_folder_path,
-                                    clear_output_directory=False)
-this_data_repo = DataRepository()
-this_data_repo.update(tables=analysis_data_manager.load_input_tables())
-# this_data_repo.update(tables=analysis_data_manager.load_output_tables())
-this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
-
-report_analyser.produce_report_data(data_manager=analysis_data_manager, data_repo=this_data_repo)
-report_generator.produce_report(data_manager=analysis_data_manager)
+# # todo
+# import os
+# from onto_merger.report import report_generator
+# from onto_merger.analyser import report_analyser
+# from onto_merger.data.data_manager import DataManager
+# from onto_merger.data.dataclasses import DataRepository
+# project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
+# analysis_data_manager = DataManager(project_folder_path=project_folder_path,
+#                                     clear_output_directory=False)
+# this_data_repo = DataRepository()
+# this_data_repo.update(tables=analysis_data_manager.load_input_tables())
+# # this_data_repo.update(tables=analysis_data_manager.load_output_tables())
+# this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
+#
+# # report_analyser.produce_report_data(data_manager=analysis_data_manager, data_repo=this_data_repo)
+# report_generator.produce_report(data_manager=analysis_data_manager)
