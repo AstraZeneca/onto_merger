@@ -117,8 +117,12 @@ def _produce_hierarchy_edges_for_unmapped_nodes(
     edges_for_all_nodes = []
     connectivity_steps = []
 
-    f = open(f"/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data/hierarchy_edges_paths.csv", "w")
-    f.write("node_id,length_original_path,length_produced_path,original_path,produced_path\n")
+    # org vs produced path edge list
+    f = open(f"/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data/"
+             + f"output/intermediate/hierarchy_edges_paths.csv", "w")
+    f.write("connected_node_id,connected_node_ns,length_original_path,length_produced_path,original_path,produced_path,"
+            + "index_of_first_merged_node_in_org_path,first_merged_node_canonical_id\n")
+
     for node_namespace in connectivity_order:
         # produce the hierarchy edges for the namespace node set
         (
@@ -259,8 +263,9 @@ def _produce_hierarchy_path_for_unmapped_node(
     final_path = [node_id for node_id in pruned_path if node_id in permitted_node_ids_in_path]
 
     #
-    f.write(f"{node_to_connect},{len(shortest_path)},{len(final_path)},"
-            + f"{str(shortest_path).replace(',', '')},{str(final_path).replace(',', '')}\n")
+    f.write(f"{node_to_connect},{node_to_connect.split(':')[0]},{len(shortest_path)},{len(final_path)},"
+            + f"{str(shortest_path).replace(',', '')},{str(final_path).replace(',', ''),}"
+            + f"{index_of_first_merged_node},{first_merged_node_canonical_id}\n")
 
     # convert the path into a hierarchy edge tuple list
     edges = _convert_hierarchy_path_into_tuple_list(pruned_path=final_path)
@@ -297,19 +302,19 @@ def _produce_hierarchy_edge_table_from_edge_path_lists(edges_for_all_nodes: List
 
 
 def post_process_connectivity_results(data_repo: DataRepository) -> List[NamedTable]:
-    nodes_connected = _produce_named_table_nodes_connected(
+    nodes_connected = produce_named_table_nodes_connected(
         hierarchy_edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe
     )
     print(nodes_connected.dataframe.head())
     print(data_repo.get(TABLE_NODES_UNMAPPED).dataframe.head())
-    nodes_dangling = _produce_named_table_nodes_dangling(
-        nodes_unmapped=data_repo.get(TABLE_NODES_UNMAPPED).dataframe,
+    nodes_dangling = produce_named_table_nodes_dangling(
+        nodes_all=data_repo.get(TABLE_NODES_UNMAPPED).dataframe,
         nodes_connected=nodes_connected.dataframe,
     )
     return [nodes_connected, nodes_dangling]
 
 
-def _produce_named_table_nodes_connected(hierarchy_edges: DataFrame) -> NamedTable:
+def produce_named_table_nodes_connected(hierarchy_edges: DataFrame) -> NamedTable:
     """Produce a table containing nodes that are in an edge hierarchy.
 
     :param hierarchy_edges: The domain node hierarchy.
@@ -321,22 +326,22 @@ def _produce_named_table_nodes_connected(hierarchy_edges: DataFrame) -> NamedTab
     )
 
 
-def _produce_named_table_nodes_dangling(
-        nodes_unmapped: DataFrame, nodes_connected: DataFrame,
+def produce_named_table_nodes_dangling(
+        nodes_all: DataFrame, nodes_connected: DataFrame,
 ) -> NamedTable:
     """Produce a table containing nodes that are not merged or connected.
 
-    :param nodes_unmapped: The unmapped nodes.
-    :param nodes_connected: The domain node hierarchy.
+    :param nodes_all: The set of all nodes.
+    :param nodes_connected:  The set of all connected nodes.
     :return: The table of nodes connected that are not merged but connected.
     """
     df = pd.concat([
-        nodes_unmapped[SCHEMA_NODE_ID_LIST_TABLE],
+        nodes_all[SCHEMA_NODE_ID_LIST_TABLE],
         nodes_connected[SCHEMA_NODE_ID_LIST_TABLE],
         nodes_connected[SCHEMA_NODE_ID_LIST_TABLE],
     ]).drop_duplicates(keep=False)
     logger.info(
-        f"Out of {len(nodes_unmapped):,d} nodes, {len(df):,d} "
-        + f"({((len(df) / len(nodes_unmapped)) * 100):.2f}%) are connected."
+        f"Out of {len(nodes_all):,d} nodes, {len(df):,d} "
+        + f"({((len(df) / len(nodes_all)) * 100):.2f}%) are connected."
     )
     return NamedTable(TABLE_NODES_DANGLING, df)

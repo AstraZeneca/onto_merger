@@ -74,7 +74,7 @@ class Pipeline:
             tables=self._data_repo.get_domain_tables()
         )
 
-        # (7) PRODUCE REPORT
+        # (7) PRODUCE ANALYSIS & REPORT
         self._produce_report()
 
         self.logger.info("Finished running alignment and connection process for " + f"'{self._short_project_name}'")
@@ -206,26 +206,6 @@ class Pipeline:
         self._record_runtime(start_date_time=start_date_time, task_name="FINALISING OUTPUTS")
         self.logger.info("Finished finalising outputs.")
 
-    def _produce_report(self) -> None:
-        """Run the alignment and connectivity evaluation process.
-
-        :return:
-        """
-        self.logger.info("Started creating report....")
-
-        # move data docs to report folder
-        self._data_manager.move_data_docs_to_reports()
-
-        # save runtime stats
-        run_time_table = convert_runtime_steps_to_named_table(steps=self._runtime_data)
-        self._data_repo.update(table=run_time_table)
-        self._data_manager.save_table(table=run_time_table)
-
-        # run analysis & produce report
-        report_analyser.produce_report_data(data_manager=self._data_manager, data_repo=self._data_repo)
-        report_path = report_generator.produce_report(data_manager=self._data_manager)
-
-        self.logger.info(f"Finished producing HTML report (saved to '{report_path}'.")
 
     def _validate_and_profile_dataset(
             self, data_origin: str, data_runtime_name: str, tables: List[NamedTable]
@@ -250,6 +230,27 @@ class Pipeline:
         self._record_runtime(start_date_time=start_date_time, task_name=f"VALIDATION {data_runtime_name} DATA")
 
         self.logger.info(f"Finished validating {data_runtime_name} data.")
+
+    def _produce_report(self) -> None:
+        """Run the alignment and connectivity evaluation process.
+
+        :return:
+        """
+        self.logger.info("Started creating report....")
+
+        # move data docs to report folder
+        self._data_manager.move_data_docs_to_reports()
+
+        # save runtime stats
+        run_time_table = convert_runtime_steps_to_named_table(steps=self._runtime_data)
+        self._data_repo.update(table=run_time_table)
+        self._data_manager.save_table(table=run_time_table)
+
+        # run analysis & produce report
+        report_analyser.produce_report_data(data_manager=self._data_manager, data_repo=self._data_repo)
+        report_path = report_generator.produce_report(data_manager=self._data_manager)
+
+        self.logger.info(f"Finished producing HTML report (saved to '{report_path}'.")
 
     def _record_runtime(self, start_date_time: datetime, task_name: str) -> None:
         end_date_time = datetime.now()

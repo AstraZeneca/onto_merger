@@ -101,35 +101,6 @@ def add_namespace_column_to_loaded_tables(
     ]
 
 
-def produce_table_node_namespace_distribution(
-        node_table: DataFrame,
-) -> DataFrame:
-    """Produce a named table that shows the node ID namespaces distribution of the input table.
-
-    :param node_table: A node table.
-    :return: The analysis table showing the node ID namespaces distribution of the
-    input.
-    """
-    node_table_count = len(node_table)
-    if node_table_count == 0:
-        return pd.DataFrame([], columns=[SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE])
-
-    # count per NS, descending, with ratio of total
-    ns_column = get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
-    namespace_distribution_table = (
-        produce_table_with_namespace_column_for_node_ids(node_table)
-            .groupby([ns_column])
-            .count()
-            .reset_index()
-            .sort_values(COLUMN_DEFAULT_ID, ascending=False)
-            .rename(columns={COLUMN_DEFAULT_ID: COLUMN_COUNT, ns_column: COLUMN_NAMESPACE})
-    )
-    namespace_distribution_table[COLUMN_FREQUENCY] = namespace_distribution_table.apply(
-        lambda x: f"{((x[COLUMN_COUNT] / node_table_count) * 100):.2f}%", axis=1
-    )
-    return namespace_distribution_table[SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE]
-
-
 def filter_nodes_for_namespace(nodes: DataFrame, namespace: str) -> DataFrame:
     """Filter a given node dataframe for a namespace.
 
@@ -161,3 +132,33 @@ def produce_table_node_ids_from_edge_table(edges: DataFrame) -> DataFrame:
         [COLUMN_DEFAULT_ID]
     ]
     return pd.concat([nodes_source, nodes_target]).drop_duplicates(keep="first")
+
+
+def produce_table_node_namespace_distribution(
+        node_table: DataFrame,
+) -> DataFrame:
+    """Produce a named table that shows the node ID namespaces distribution of the input table.
+
+    :param node_table: A node table.
+    :return: The analysis table showing the node ID namespaces distribution of the
+    input.
+    """
+    node_table_count = len(node_table)
+    if node_table_count == 0:
+        return pd.DataFrame([], columns=[SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE])
+
+    # count per NS, descending, with ratio of total
+    ns_column = get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
+    namespace_distribution_table = (
+        produce_table_with_namespace_column_for_node_ids(node_table)
+            .groupby([ns_column])
+            .count()
+            .reset_index()
+            .sort_values(COLUMN_DEFAULT_ID, ascending=False)
+            .rename(columns={COLUMN_DEFAULT_ID: COLUMN_COUNT, ns_column: COLUMN_NAMESPACE})
+    )
+    namespace_distribution_table[COLUMN_FREQUENCY] = namespace_distribution_table.apply(
+        lambda x: f"{((x[COLUMN_COUNT] / node_table_count) * 100):.2f}%", axis=1
+    )
+    return namespace_distribution_table[SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE]
+
