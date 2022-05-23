@@ -2,6 +2,7 @@
 import json
 import os
 from datetime import datetime
+from pathlib import Path
 from typing import List
 
 import pandas as pd
@@ -103,6 +104,7 @@ def _load_connectivity_section_data(data_manager: DataManager) -> dict:
             _produce_runtime_info_subsection(section_name=section_name, data_manager=data_manager),
             _produce_connectivity_detail_subsection(section_name=section_name, data_manager=data_manager),
             _produce_connectivity_node_subsection(section_name=section_name, data_manager=data_manager),
+            _produce_connectivity_edge_subsection(section_name=section_name, data_manager=data_manager),
         ],
         data_manager=data_manager
     )
@@ -411,10 +413,10 @@ def _produce_merges_subsection_main(section_name: str, data_manager: DataManager
         "dataset": {
             "title": title,
             "link_title": link_title,
-                "inner_subsections": [
-                    _produce_merges_subsection_namespaces(section_name=section_name, data_manager=data_manager),
-                    _produce_merges_subsection_clusters(section_name=section_name, data_manager=data_manager),
-                ]
+            "inner_subsections": [
+                _produce_merges_subsection_namespaces(section_name=section_name, data_manager=data_manager),
+                _produce_merges_subsection_clusters(section_name=section_name, data_manager=data_manager),
+            ]
         },
         "template": "subsection_content/alignment-merge-analyses.html",
     }
@@ -511,6 +513,37 @@ def _produce_connectivity_node_subsection(section_name: str, data_manager: DataM
             ),
         },
         "template": "subsection_content/connectivity-node-analysis.html",
+    }
+
+
+def _produce_connectivity_edge_subsection(section_name: str, data_manager: DataManager) -> dict:
+    available_path_overview_table_names = ["ALL"] + [
+        path.name.split("_")[-1].replace(".csv", "")
+        for path in Path(data_manager.get_analysis_folder_path())
+            .rglob('*connectivity_hierarchy_edges_paths_path_lengths_description_*.csv')
+        if "ALL.csv" not in path.name
+    ]
+    available_path_overview_tables = [
+        {
+            "dataset_name": dataset_name,
+            "rows": data_manager.load_analysis_report_table_as_dict(
+                section_name=section_name,
+                table_name=f"hierarchy_edges_paths_path_lengths_description_{dataset_name}",
+            )
+        }
+        for dataset_name in available_path_overview_table_names
+    ]
+    return {
+        "title": "Hierarchy edge analysis",
+        "link_title": "edge_analysis",
+        "dataset": {
+            "fig_status": _get_figure_path(section_name=section_name,
+                                           table_name="edges_hierarchy_status"),
+            "fig_child_parent": _get_figure_path(section_name=section_name,
+                                                 table_name="edges_hierarchy_child_parent"),
+            "path_overview_tables": available_path_overview_tables
+        },
+        "template": "subsection_content/connectivity-edge-analysis.html",
     }
 
 

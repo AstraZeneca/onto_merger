@@ -25,7 +25,7 @@ from onto_merger.analyser.constants import TABLE_STATS, \
     ANALYSIS_CONNECTED_NSS_CHART, GANTT_CHART
 from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, COLUMN_COUNT, \
     COLUMN_PROVENANCE, COLUMN_RELATION, COLUMN_SOURCE_ID, COLUMN_TARGET_ID, \
-    DIRECTORY_INPUT, COLUMN_SOURCE_TO_TARGET, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
+    DIRECTORY_INPUT, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
     TABLE_TYPE_MAPPING, TABLES_MERGE, TABLE_TYPE_NODE, TABLE_TYPE_EDGE, DIRECTORY_INTERMEDIATE, \
     TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES, \
     TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, \
@@ -311,7 +311,7 @@ def _process_node_status_table_and_plot(
         section_dataset_name=section_dataset_name,
         data_manager=data_manager,
     )
-    plotly_utils.produce_node_status_stacked_bar_chart(
+    plotly_utils.produce_status_stacked_bar_chart(
         analysis_table=node_status_table,
         file_path=data_manager.get_analysis_figure_path(
             dataset=section_dataset_name,
@@ -406,20 +406,6 @@ def _produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame
         matrix_df = matrix_df.loc[:, (matrix_df != 0).any(axis=0)]
 
     return matrix_df
-
-
-def _produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFrame:
-    df = produce_table_with_namespace_column_pair(
-        table=produce_table_with_namespace_column_for_node_ids(table=edges)) \
-        .groupby([COLUMN_SOURCE_TO_TARGET]) \
-        .agg(count=(COLUMN_SOURCE_ID, 'count'),
-             provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
-        .reset_index() \
-        .sort_values(COLUMN_COUNT, ascending=False)
-    df["freq"] = df.apply(
-        lambda x: (round((x[COLUMN_COUNT] / len(edges))) * 100), axis=1
-    )
-    return df
 
 
 def _produce_source_to_target_analysis_for_directed_edge(edges: DataFrame) -> DataFrame:
@@ -1052,7 +1038,7 @@ def _produce_and_save_hierarchy_edge_analysis(edges: DataFrame,
                                               data_manager: DataManager) -> None:
     table_type = TABLE_EDGES_HIERARCHY
     data_manager.save_analysis_table(
-        analysis_table=_produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges),
+        analysis_table=report_analyser_utils.produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges),
         dataset=dataset,
         analysed_table_name=table_type,
         analysis_table_suffix=ANALYSIS_CONNECTED_NSS
@@ -1246,6 +1232,16 @@ def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo:
         analysed_table_name="hierarchy_edges_paths",
         data_manager=data_manager,
     )
+    _save_analysis_named_tables(
+        tables=report_analyser_utils.produce_connectivity_hierarchy_edge_overview_analysis(
+            edges_input=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+            edges_output=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
+            data_manager=data_manager,
+        ),
+        dataset=section_dataset_name,
+        analysed_table_name="hierarchy_edges_overview",
+        data_manager=data_manager,
+    )
 
 
 def _produce_data_profiling_and_testing_analysis(
@@ -1315,8 +1311,8 @@ def produce_report_data(data_manager: DataManager, data_repo: DataRepository) ->
         _produce_data_profiling_and_testing_analysis(data_manager=data_manager, data_repo=data_repo)
     # _produce_input_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
     # _produce_output_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
-    # _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
+    # _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
     _produce_overview_analysis(
         data_manager=data_manager,
         data_repo=data_repo,
@@ -1324,6 +1320,6 @@ def produce_report_data(data_manager: DataManager, data_repo: DataRepository) ->
         data_test_stats=data_test_stats,
     )
     # produce analysis data: files
-    report_analyser_utils.produce_analysis_output_file_list(data_manager=data_manager)
+    # report_analyser_utils.produce_analysis_output_file_list(data_manager=data_manager)
     # do overview summary total runtime & gantt LAST
     logger.info(f"Finished producing report analysis.")

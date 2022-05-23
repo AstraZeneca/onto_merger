@@ -1,0 +1,32 @@
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:25%"><b>Metric</b></td>
+            <td style="width:25%"><b>Original length</b></td>
+            <td style="width:25%"><b>Produced length</b></td>
+            <td style="width:25%"><b>Diff</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if rows | length > 0 %}
+      {% for row in rows %}
+        <tr>
+          <td>{{ row['index'] }}</td>
+            {% if row['length_original_path'] %}
+                <td>{{ row['length_original_path'] }}</td>
+                <td>{{ row['length_produced_path'] }}</td>
+                <td>{{ row['path_diff'] }}</td>
+            {% else %}
+                <td></td>
+                <td></td>
+                <td></td>
+            {% endif %}
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="4">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

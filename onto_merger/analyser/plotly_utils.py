@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 import pandas as pd
 from pandas import DataFrame
@@ -49,15 +49,17 @@ def produce_nodes_ns_freq_chart(
         .write_image(_get_figure_filepath(file_path=file_path))
 
 
-def produce_node_status_stacked_bar_chart(
+def produce_status_stacked_bar_chart(
         analysis_table: DataFrame,
         file_path: str,
         is_one_bar: bool,
+        showlegend: bool = False,
+        labels: Union[dict, None] = None,
 ):
     # adjust setting for 1 vs multiple bars
     if is_one_bar is True:
         showaxis = False
-        height = 50
+        height = 100
     else:
         showaxis = True
         height = 300
@@ -66,17 +68,20 @@ def produce_node_status_stacked_bar_chart(
     px.bar(
         analysis_table,
         y="category",
-        x="ratio",
-        text="status",
-        color="status_no_freq",
+        x="ratio" if "ratio" in list(analysis_table) else "count",
+        text="status" if "status" in list(analysis_table) else "status_no_freq",
+        color="status_no_freq" if "status_no_freq" in list(analysis_table) else None,
         orientation='h',
         width=_WIDTH_ONE_COL_ROW,
         height=height,
-        labels={'ratio': 'Nodes (%)', 'status_no_freq': 'Stage', 'category': ''},
+        labels=(
+            {'ratio': 'Nodes (%)', 'status_no_freq': 'Stage', 'category': ''}
+            if labels is None else labels
+        ),
     ) \
         .update_layout({
         "plot_bgcolor": _COLOR_WHITE,
-        'showlegend': False,
+        'showlegend': showlegend,
         'margin': {
             "l": 0,  # left
             "r": 0,  # right
@@ -89,6 +94,41 @@ def produce_node_status_stacked_bar_chart(
         .update_xaxes(visible=showaxis) \
         .update_yaxes(visible=showaxis) \
         .write_image(_get_figure_filepath(file_path=file_path))
+
+
+def produce_status_stacked_bar_char_edge(
+        analysis_table: DataFrame,
+        file_path: str,
+):
+    # produce image
+    px.bar(
+        analysis_table,
+        y="category",
+        x="freq",
+        text="status_no_freq",
+        color="status",
+        orientation='h',
+        width=_WIDTH_ONE_COL_ROW,
+        height=100,
+        labels=(
+            {'status': 'Status', 'status_no_freq': 'Stage', 'category': ''}
+        ),
+    ) \
+        .update_layout({
+        "plot_bgcolor": _COLOR_WHITE,
+        'showlegend': True,
+        'margin': {
+            "l": 0,  # left
+            "r": 0,  # right
+            "t": 0,  # top
+            "b": 0,  # bottom
+        }
+    }) \
+        .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
+        .update_xaxes(visible=False) \
+        .update_yaxes(visible=False) \
+        .write_image(_get_figure_filepath(file_path=file_path))
+
 
 
 def produce_mapping_type_freq_chart(
@@ -156,9 +196,9 @@ def _produce_directed_edge_stacked_bar_chart(
         y: str, x: str, text: str, color: str,
 ) -> None:
     data = _format_percentage_column_to_decimal_places(
-            analysis_table=analysis_table,
-            column_name=COLUMN_FREQ,
-        )
+        analysis_table=analysis_table,
+        column_name=COLUMN_FREQ,
+    )
     fig = px.bar(
         data,
         y=y,
@@ -250,7 +290,7 @@ def produce_vertical_bar_chart_stacked(
         text="freq",
         width=_WIDTH_ONE_COL_ROW,
         height=400,
-    )\
+    ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
         .update_xaxes({"tickmode": "linear"}) \
         .write_image(_get_figure_filepath(file_path=file_path))
@@ -268,11 +308,9 @@ def produce_vertical_bar_chart_cluster_size_bins(
         text="count",
         width=_WIDTH_ONE_COL_ROW,
         height=300,
-    )\
+    ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
         .write_image(_get_figure_filepath(file_path=file_path))
-
-
 
 
 # HELPERS #
@@ -336,6 +374,5 @@ def produce_vertical_bar_chart():
         .update_layout(plot_bgcolor="#fff") \
         .update_xaxes({"tickmode": "linear"})
     fig.write_image("plotly_vertical_bar.svg")
-
 
 # produce_hierarchy_node_coverage_bubble_plot()

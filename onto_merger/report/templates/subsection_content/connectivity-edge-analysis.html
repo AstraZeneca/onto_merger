@@ -1,0 +1,34 @@
+<div class="overview summary">
+
+    <h4 style="padding-top: 0; padding-bottom: 0">Connections</h4>
+    <div style="align-content: center">
+    <img class="img-responsive center-img one-row"
+         style="width: max-content"
+         src="{{ subsection_data['fig_status'] }}" alt="foo">
+    </div>
+    <hr class="panel-separator" style="margin-bottom: 2px; margin-top: 2px">
+
+    <h4 style="padding-top: 0; padding-bottom: 0">Child & Parent node ratio</h4>
+    <div style="align-content: center">
+    <img class="img-responsive center-img one-row"
+         style="width: max-content"
+         src="{{ subsection_data['fig_child_parent'] }}" alt="foo">
+    </div>
+    <hr class="panel-separator" style="margin-bottom: 2px; margin-top: 2px">
+
+    <h4 style="padding-top: 10px; padding-bottom: 0">Produced hierarchy path length summaries</h4>
+
+    {% if subsection_data['path_overview_tables'] %}
+        {% with tables=subsection_data['path_overview_tables'] %}
+            {% for table in tables %}
+            <div class="col-sm-6" style="padding-top: 0">
+                <p class="h4 table-title-t2">{{ table['dataset_name'] }}</p>
+                {% include 'templates/subsection_content/horizontal-rule.html' %}
+                {% with rows=table['rows'] %}
+                    {% include 'templates/data_content/table_edge_path_length_description.html'%}
+                {% endwith %}
+            </div>
+            {% endfor %}
+        {% endwith %}
+    {% endif %}
+</div>

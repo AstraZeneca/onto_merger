@@ -5,6 +5,10 @@ import itertools
 import pandas as pd
 from pandas import DataFrame
 
+from analyser.analysis_utils import produce_table_with_namespace_column_pair, \
+    produce_table_with_namespace_column_for_node_ids
+from data.constants import COLUMN_SOURCE_TO_TARGET, COLUMN_SOURCE_ID, COLUMN_PROVENANCE, COLUMN_COUNT
+
 from onto_merger.data.data_manager import DataManager
 from onto_merger.analyser.analysis_utils import produce_table_with_namespace_column_for_node_ids
 from onto_merger.analyser import plotly_utils
@@ -21,6 +25,13 @@ from onto_merger.report.constants import REPORT_SECTIONS
 # HELPERS #
 def _get_percentage_of(subset_count: int, total_count: int):
     return round((subset_count / total_count * 100), 2)
+
+
+def _apply_rounding_to_float_columns(df: DataFrame, column_names: List[str]) -> DataFrame:
+    print("!!!! ", df, " | ", list(df))
+    for column_name in column_names:
+        df[column_name] = df.apply(lambda x: (round(float(x[column_name]), 2)), axis=1)
+    return df
 
 
 # ANALYSIS
@@ -138,10 +149,83 @@ def produce_hierarchy_edge_path_analysis(hierarchy_edges_paths: DataFrame) -> Li
     return tables
 
 
+def produce_connectivity_hierarchy_edge_overview_analysis(
+        edges_input: DataFrame, edges_output: DataFrame, data_manager: DataManager,
+) -> List[NamedTable]:
+
+    seed_ns = data_manager.load_alignment_config().base_config.seed_ontology_name
+    edge_analysis_for_mapped_nss = produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges_output)
+    rows = []
+    connected_to_seed_count = 0
+    connected_other_count = 0
+    print(edge_analysis_for_mapped_nss)
+    for _, row in edge_analysis_for_mapped_nss.iterrows():
+        if row[COLUMN_NAMESPACE_TARGET_ID] == row[COLUMN_NAMESPACE_SOURCE_ID]:
+            if row[COLUMN_NAMESPACE_TARGET_ID] == seed_ns:
+                rows.append(["connectivity", "Seed", row["count"]])
+            else:
+                connected_other_count += row["count"]
+        else:
+            if row[COLUMN_NAMESPACE_TARGET_ID] == seed_ns:
+                connected_to_seed_count += row["count"]
+            else:
+                connected_other_count += row["count"]
+    rows.extend([
+            ["connectivity", "Directly to seed", connected_to_seed_count],
+            ["connectivity", "Other", connected_other_count],
+    ])
+    df = pd.DataFrame(rows, columns=["category", "status_no_freq", "count"])
+    df["freq"] = df.apply(
+        lambda x: (round((x[COLUMN_COUNT] / len(edges_output)) * 100, 2)), axis=1
+    )
+    df["status"] = df.apply(
+        lambda x: f"{x['status_no_freq']} ({x['freq']}%)", axis=1
+    )
+    print("\n\n\n!!!", df, "\n\n\n!!!")
+    plotly_utils.produce_status_stacked_bar_char_edge(
+        analysis_table=df,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset="connectivity",
+            analysed_table_name="edges_hierarchy",
+            analysis_table_suffix="status",
+        ),
+    )
+
+    #
+    output_child_nodes, output_parent_nodes = _get_leaf_and_parent_nodes(hierarchy_edges=edges_output)
+    child_parent_df = pd.DataFrame([
+        ["Node position", "Child nodes", len(output_child_nodes)],
+        ["Node position", "Parent nodes", len(output_parent_nodes)],
+    ], columns=["category", "status_no_freq", "count"])
+    child_parent_df["freq"] = child_parent_df.apply(
+        lambda x: (round((x[COLUMN_COUNT] / len(edges_output)) * 100, 2)), axis=1
+    )
+    child_parent_df["status"] = child_parent_df.apply(
+        lambda x: f"{x['status_no_freq']} ({x['freq']}%)", axis=1
+    )
+    plotly_utils.produce_status_stacked_bar_char_edge(
+        analysis_table=child_parent_df,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset="connectivity",
+            analysed_table_name="edges_hierarchy",
+            analysis_table_suffix="child_parent",
+        ),
+    )
+
+    #
+    return [
+        NamedTable("status", df),
+        NamedTable("child_parent", child_parent_df)
+    ]
+
+
 def _describe_hierarchy_edge_path_lengths(df: DataFrame) -> DataFrame:
-    df_path_size_describe = df[["length_original_path", "length_produced_path", "path_diff"]] \
+    columns = ["length_original_path", "length_produced_path", "path_diff"]
+    df_path_size_describe = df[columns] \
         .describe() \
         .reset_index(level=0)
+    # print("!!! ", type(df_path_size_describe), "| ", df_path_size_describe)
+    # df_path_size_describe = _apply_rounding_to_float_columns(df=df_path_size_describe, column_names=columns)
     return df_path_size_describe
 
 
@@ -188,7 +272,7 @@ def produce_overview_hierarchy_edge_comparison(data_manager: DataManager) -> Lis
     # metric | IN | OUT | DIFF
     data = [
         # general
-        ["Graphs (ontologies with hierarchy)", count_input_sources, 1, "", "", "", ""],
+        ["Graphs (ontologies with hierarchy)", count_input_sources, 1, abs(count_input_nodes - 1), "", "", ""],
         ["Edges", len(input_edges), len(output_edges), abs(len(input_edges) - len(output_edges)),
          "", "", ""],
         ["Nodes", count_input_nodes, count_output_nodes, abs(count_input_nodes - count_output_nodes),
@@ -250,9 +334,8 @@ def _get_leaf_and_parent_nodes(hierarchy_edges: DataFrame) -> (DataFrame, DataFr
 
 
 def _get_hierarchy_edge_input_children_count_descriptions(
-    input_hierarchy_edges: DataFrame, output_hierarchy_edges: DataFrame
+        input_hierarchy_edges: DataFrame, output_hierarchy_edges: DataFrame
 ) -> List[NamedTable]:
-
     # output
     output_edge_child_counts = _get_child_counts(hierarchy_edges=output_hierarchy_edges)
     output_edge_child_counts_description = output_edge_child_counts[['children_count']] \
@@ -261,19 +344,17 @@ def _get_hierarchy_edge_input_children_count_descriptions(
 
     # input
     input_edge_child_counts = _get_child_counts(hierarchy_edges=input_hierarchy_edges)
-    dfs = output_edge_child_counts_description
 
     # split by namespace
     nss = sorted(list(set(input_edge_child_counts['namespace_target_id'].tolist())))
-    rows = [[f"output"] + output_edge_child_counts_description['output_children_count'].tolist()]
+    rows = [["output"] + output_edge_child_counts_description['output_children_count'].tolist()]
     for ns in nss:
         input_for_ns = input_edge_child_counts.query(f"namespace_target_id == '{ns}'")
         input_child_counts_description_for_ns = input_for_ns[['children_count']] \
             .describe() \
             .reset_index(level=0)
-        rows.append([f"input_{ns}"] + input_child_counts_description_for_ns['children_count'].tolist())
+        rows.append([ns] + input_child_counts_description_for_ns['children_count'].tolist())
     dfs = pd.DataFrame(rows, columns=["dataset"] + output_edge_child_counts_description['index'].tolist())
-
     return [
         NamedTable("children_counts_output", output_edge_child_counts),
         NamedTable("children_counts_input", input_edge_child_counts),
@@ -290,4 +371,18 @@ def _get_child_counts(hierarchy_edges: DataFrame) -> DataFrame:
         .reset_index() \
         .sort_values('children_count', ascending=False)
     df = produce_table_with_namespace_column_for_node_ids(table=df)
+    return df
+
+
+def produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFrame:
+    df = produce_table_with_namespace_column_pair(
+        table=produce_table_with_namespace_column_for_node_ids(table=edges)) \
+        .groupby([COLUMN_SOURCE_TO_TARGET, COLUMN_NAMESPACE_SOURCE_ID, COLUMN_NAMESPACE_TARGET_ID]) \
+        .agg(count=(COLUMN_SOURCE_ID, 'count'),
+             provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
+        .reset_index() \
+        .sort_values(COLUMN_COUNT, ascending=False)
+    df["freq"] = df.apply(
+        lambda x: (round((x[COLUMN_COUNT] / len(edges))) * 100), axis=1
+    )
     return df
