@@ -5,7 +5,6 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
-from data.constants import COLUMN_SOURCE_ID, COLUMN_DEFAULT_ID, COLUMN_TARGET_ID
 from onto_merger.data.constants import (
     COLUMN_COUNT,
     COLUMN_DEFAULT_ID,

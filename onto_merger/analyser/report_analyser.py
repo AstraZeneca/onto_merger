@@ -33,7 +33,7 @@ from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT
     TABLE_EDGES_HIERARCHY_POST, TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE, TABLE_MERGES_AGGREGATED, \
     TABLE_NODES_CONNECTED, DIRECTORY_ANALYSIS
 from onto_merger.data.data_manager import DataManager
-from onto_merger.data.dataclasses import NamedTable, DataRepository
+from onto_merger.data.dataclasses import NamedTable, DataRepository, AlignmentConfig
 from onto_merger.logger.log import get_logger
 from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
@@ -42,6 +42,404 @@ from onto_merger.version import __version__ as onto_merger_version
 logger = get_logger(__name__)
 
 COVERED = "covered"
+
+
+class ReportAnalyser:
+    """Produce analysis data and illustrations"""
+
+    def __init__(
+            self,
+            alignment_config: AlignmentConfig,
+            data_repo: DataRepository,
+            data_manager: DataManager,
+    ):
+        """Initialise the AlignmentManager class.
+
+        :param alignment_config: The alignment process configuration dataclass.
+        :param data_repo: The data repository that stores the input tables.
+        :param data_manager: The data manager instance.
+        """
+        self._alignment_config = alignment_config
+        self._data_manager = data_manager
+        self._data_repo_input = data_repo
+
+    def produce_report_data(self) -> None:
+        pass
+
+
+# MAIN #
+def produce_report_data(data_manager: DataManager, data_repo: DataRepository) -> None:
+    logger.info(f"Started producing report analysis...")
+    data_test_stats = _produce_data_testing_analysis(data_manager=data_manager, data_repo=data_repo)
+    data_profiling_stats = _produce_data_profiling_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_input_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_output_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
+    _produce_overview_analysis(
+        data_manager=data_manager,
+        data_repo=data_repo,
+        data_profiling_stats=data_profiling_stats,
+        data_test_stats=data_test_stats,
+    )
+    # do overview summary total runtime & gantt LAST
+    logger.info(f"Finished producing report analysis.")
+
+
+# PRODUCE & SAVE for DATASET #
+def _produce_input_dataset_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
+    # analyse and save
+    section_dataset_name = SECTION_INPUT
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_input(data_manager=data_manager, data_repo=data_repo)
+    _produce_and_save_node_analysis(
+        node_tables=[
+            data_repo.get(table_name=TABLE_NODES), data_repo.get(table_name=TABLE_NODES_OBSOLETE)
+        ],
+        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
+        edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_mapping_analysis(
+        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_hierarchy_edge_analysis(
+        edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+
+
+def _produce_output_dataset_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
+    section_dataset_name = SECTION_OUTPUT
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_output(data_manager=data_manager, data_repo=data_repo)
+    _produce_and_save_node_analysis(
+        node_tables=[
+            data_repo.get(table_name=TABLE_NODES)
+        ],
+        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
+        edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_mapping_analysis(
+        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    _produce_and_save_hierarchy_edge_analysis(
+        edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+
+
+def _produce_alignment_process_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
+    # analyse and save
+    section_dataset_name = SECTION_ALIGNMENT
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_alignment(data_manager=data_manager, data_repo=data_repo)
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_MERGED).dataframe),
+        dataset=section_dataset_name,
+        analysed_table_name=TABLE_NODES_MERGED,
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
+    _produce_and_save_merge_analysis(
+        merges=data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe,
+        dataset=section_dataset_name,
+        data_manager=data_manager
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe),
+        dataset=section_dataset_name,
+        analysed_table_name=TABLE_NODES_UNMAPPED,
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
+    _produce_and_save_runtime_tables(
+        table_name=TABLE_ALIGNMENT_STEPS_REPORT,
+        section_dataset_name=section_dataset_name,
+        data_manager=data_manager,
+        data_repo=data_repo,
+    )
+    data_manager.save_analysis_table(
+        analysis_table=data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe,
+        dataset=section_dataset_name,
+        analysed_table_name="steps",
+        analysis_table_suffix="detail"
+    )
+    _produce_and_save_alignment_step_node_analysis(
+        alignment_step_report=data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe,
+        section_dataset_name=section_dataset_name,
+        data_manager=data_manager,
+    )
+
+
+def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
+    section_dataset_name = SECTION_CONNECTIVITY
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    _produce_and_save_summary_connectivity(data_manager=data_manager, data_repo=data_repo)
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(
+            nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe),
+        dataset=section_dataset_name,
+        analysed_table_name="nodes_connected",
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_node_namespace_freq(
+            nodes=data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe),
+        dataset=section_dataset_name,
+        analysed_table_name=TABLE_NODES_DANGLING,
+        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
+    )
+    _produce_and_save_runtime_tables(
+        table_name=TABLE_CONNECTIVITY_STEPS_REPORT,
+        section_dataset_name=section_dataset_name,
+        data_manager=data_manager,
+        data_repo=data_repo,
+    )
+    data_manager.save_analysis_table(
+        analysis_table=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
+        dataset=section_dataset_name,
+        analysed_table_name="steps",
+        analysis_table_suffix="detail"
+    )
+    _produce_and_save_connectivity_step_node_analysis(
+        step_report=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
+        section_dataset_name=section_dataset_name,
+        data_manager=data_manager,
+    )
+    _save_analysis_named_tables(
+        tables=report_analyser_utils.produce_hierarchy_edge_path_analysis(
+            hierarchy_edges_paths=data_manager.load_table(
+                table_name="connectivity_hierarchy_edges_paths",
+                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}/{DIRECTORY_ANALYSIS}"
+            ),
+        ),
+        dataset=section_dataset_name,
+        analysed_table_name="hierarchy_edges_paths",
+        data_manager=data_manager,
+    )
+    _save_analysis_named_tables(
+        tables=report_analyser_utils.produce_connectivity_hierarchy_edge_overview_analysis(
+            edges_input=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+            edges_output=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
+            data_manager=data_manager,
+        ),
+        dataset=section_dataset_name,
+        analysed_table_name="hierarchy_edges_overview",
+        data_manager=data_manager,
+    )
+
+
+def _produce_data_testing_analysis(
+        data_manager: DataManager, data_repo: DataRepository
+) -> (DataFrame, DataFrame):
+    logger.info(f"Producing report section '{SECTION_DATA_TESTS}' analysis...")
+    data_test_stats = _produce_data_testing_table_stats(data_manager=data_manager,
+                                                        section_name=SECTION_DATA_TESTS)
+    _produce_and_save_summary_data_tests(data_manager=data_manager,
+                                         data_repo=data_repo,
+                                         stats=data_test_stats)
+
+    return data_test_stats
+
+
+def _produce_data_profiling_analysis(
+        data_manager: DataManager, data_repo: DataRepository
+) -> (DataFrame, DataFrame):
+    logger.info(f"Producing report section '{SECTION_DATA_PROFILING}' and '{SECTION_DATA_TESTS}' analysis...")
+    data_profiling_stats = _produce_data_profiling_table_stats(data_manager=data_manager,
+                                                               section_name=SECTION_DATA_PROFILING)
+    _produce_and_save_summary_data_profiling(data_manager=data_manager,
+                                             data_repo=data_repo,
+                                             data_profiling_stats=data_profiling_stats)
+    return data_profiling_stats
+
+
+def _produce_overview_analysis(data_manager: DataManager,
+                               data_repo: DataRepository,
+                               data_profiling_stats: DataFrame,
+                               data_test_stats: DataFrame) -> DataFrame:
+    # analyse and save
+    section_dataset_name = SECTION_OVERVIEW
+    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
+    node_status_df = _produce_and_save_node_status_analyses(
+        seed_name=data_manager.load_alignment_config().base_config.seed_ontology_name,
+        data_manager=data_manager,
+        data_repo=data_repo
+    )
+    _produce_and_save_validation_overview_analyses(
+        data_manager=data_manager,
+        data_profiling_stats=data_profiling_stats,
+        data_test_stats=data_test_stats,
+    )
+    _produce_and_save_runtime_tables(
+        table_name=TABLE_PIPELINE_STEPS_REPORT,
+        section_dataset_name=section_dataset_name,
+        data_manager=data_manager,
+        data_repo=data_repo,
+    )
+    _produce_and_save_summary_overview(
+        data_manager=data_manager,
+        data_repo=data_repo,
+        node_status=node_status_df,
+    )
+    _save_analysis_named_tables(
+        tables=report_analyser_utils.produce_overview_hierarchy_edge_comparison(data_manager=data_manager),
+        dataset=section_dataset_name,
+        analysed_table_name="hierarchy_edge",
+        data_manager=data_manager,
+    )
+
+    return node_status_df
+
+
+# PRODUCE & SAVE for ENTITY #
+def _produce_and_save_node_analysis(node_tables: List[NamedTable],
+                                    mappings: DataFrame,
+                                    edges_hierarchy: DataFrame,
+                                    dataset: str,
+                                    data_manager: DataManager) -> None:
+    for table in node_tables:
+        analysis_table = _produce_node_analysis(
+            nodes=table.dataframe,
+            mappings=mappings,
+            edges_hierarchy=edges_hierarchy
+        )
+        data_manager.save_analysis_table(
+            analysis_table=analysis_table,
+            dataset=dataset,
+            analysed_table_name=table.name,
+            analysis_table_suffix=ANALYSIS_GENERAL
+        )
+        plotly_utils.produce_nodes_ns_freq_chart(
+            analysis_table=analysis_table,
+            file_path=data_manager.get_analysis_figure_path(
+                dataset=dataset,
+                analysed_table_name=table.name,
+                analysis_table_suffix=ANALYSIS_GENERAL
+            )
+        )
+
+
+def _produce_and_save_mapping_analysis(mappings: DataFrame,
+                                       dataset: str,
+                                       data_manager: DataManager) -> None:
+    table_type = TABLE_MAPPINGS
+    data_manager.save_analysis_table(
+        analysis_table=_produce_mapping_analysis_for_prov(mappings=mappings),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_PROV
+    )
+    mapping_type_analysis = _produce_mapping_analysis_for_type(mappings=mappings)
+    data_manager.save_analysis_table(
+        analysis_table=mapping_type_analysis,
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_TYPE
+    )
+    plotly_utils.produce_mapping_type_freq_chart(
+        analysis_table=mapping_type_analysis,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix="type_analysis"
+        )
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_mapping_analysis_for_mapped_nss(mappings=mappings),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_MAPPED_NSS
+    )
+    mapped_nss_heatmap_data = _produce_edges_analysis_for_mapped_or_connected_nss_heatmap(
+        edges=mappings,
+        prune=False,
+        directed_edge=False
+    )
+    data_manager.save_analysis_table(
+        analysis_table=mapped_nss_heatmap_data,
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=HEATMAP_MAPPED_NSS,
+        index=True
+    )
+    plotly_utils.produce_edge_heatmap(
+        analysis_table=mapped_nss_heatmap_data,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix=ANALYSIS_MAPPED_NSS
+        )
+    )
+
+
+def _produce_and_save_hierarchy_edge_analysis(edges: DataFrame,
+                                              dataset: str,
+                                              data_manager: DataManager) -> None:
+    table_type = TABLE_EDGES_HIERARCHY
+    data_manager.save_analysis_table(
+        analysis_table=report_analyser_utils.produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_CONNECTED_NSS
+    )
+    connected_nss = _produce_source_to_target_analysis_for_directed_edge(edges=edges)
+    data_manager.save_analysis_table(
+        analysis_table=connected_nss,
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_CONNECTED_NSS_CHART
+    )
+    plotly_utils.produce_hierarchy_nss_stacked_bar_chart(
+        analysis_table=connected_nss,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix=ANALYSIS_CONNECTED_NSS_CHART
+        )
+    )
+
+
+def _produce_and_save_merge_analysis(merges: DataFrame,
+                                     dataset: str,
+                                     data_manager: DataManager) -> None:
+    table_type = "merges"
+    merged_nss = _produce_source_to_target_analysis_for_directed_edge(edges=merges)
+    data_manager.save_analysis_table(
+        analysis_table=merged_nss,
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_MERGES_NSS
+    )
+    plotly_utils.produce_merged_nss_stacked_bar_chart(
+        analysis_table=merged_nss,
+        file_path=data_manager.get_analysis_figure_path(
+            dataset=dataset,
+            analysed_table_name=table_type,
+            analysis_table_suffix=ANALYSIS_MERGES_NSS
+        )
+    )
+    data_manager.save_analysis_table(
+        analysis_table=_produce_merge_analysis_for_merged_nss_for_canonical(merges=merges),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        analysis_table_suffix=ANALYSIS_MERGES_NSS_FOR_CANONICAL
+    )
+    _save_analysis_named_tables(
+        tables=report_analyser_utils.produce_merge_cluster_analysis(merges_aggregated=merges,
+                                                                    data_manager=data_manager),
+        dataset=dataset,
+        analysed_table_name=table_type,
+        data_manager=data_manager,
+    )
 
 
 # HELPERS todo
@@ -177,7 +575,7 @@ def _produce_and_save_node_status_analyses(
     # INPUT
     nodes_input = len(nodes_input_df)
     nodes_seed = len(nodes_input_df
-                     .query(
+        .query(
         expr=f"{get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)} == '{seed_ontology_name}'"))
     nodes_not_seed = nodes_input - nodes_seed
 
@@ -950,374 +1348,3 @@ def _produce_and_save_summary_data_profiling(data_manager: DataManager,
         analysed_table_name=TABLE_SECTION,
         analysis_table_suffix=TABLE_SUMMARY
     )
-
-
-# PRODUCE & SAVE for ENTITY #
-def _produce_and_save_node_analysis(node_tables: List[NamedTable],
-                                    mappings: DataFrame,
-                                    edges_hierarchy: DataFrame,
-                                    dataset: str,
-                                    data_manager: DataManager) -> None:
-    for table in node_tables:
-        analysis_table = _produce_node_analysis(
-            nodes=table.dataframe,
-            mappings=mappings,
-            edges_hierarchy=edges_hierarchy
-        )
-        data_manager.save_analysis_table(
-            analysis_table=analysis_table,
-            dataset=dataset,
-            analysed_table_name=table.name,
-            analysis_table_suffix=ANALYSIS_GENERAL
-        )
-        plotly_utils.produce_nodes_ns_freq_chart(
-            analysis_table=analysis_table,
-            file_path=data_manager.get_analysis_figure_path(
-                dataset=dataset,
-                analysed_table_name=table.name,
-                analysis_table_suffix=ANALYSIS_GENERAL
-            )
-        )
-
-
-def _produce_and_save_mapping_analysis(mappings: DataFrame,
-                                       dataset: str,
-                                       data_manager: DataManager) -> None:
-    table_type = TABLE_MAPPINGS
-    data_manager.save_analysis_table(
-        analysis_table=_produce_mapping_analysis_for_prov(mappings=mappings),
-        dataset=dataset,
-        analysed_table_name=table_type,
-        analysis_table_suffix=ANALYSIS_PROV
-    )
-    mapping_type_analysis = _produce_mapping_analysis_for_type(mappings=mappings)
-    data_manager.save_analysis_table(
-        analysis_table=mapping_type_analysis,
-        dataset=dataset,
-        analysed_table_name=table_type,
-        analysis_table_suffix=ANALYSIS_TYPE
-    )
-    plotly_utils.produce_mapping_type_freq_chart(
-        analysis_table=mapping_type_analysis,
-        file_path=data_manager.get_analysis_figure_path(
-            dataset=dataset,
-            analysed_table_name=table_type,
-            analysis_table_suffix="type_analysis"
-        )
-    )
-    data_manager.save_analysis_table(
-        analysis_table=_produce_mapping_analysis_for_mapped_nss(mappings=mappings),
-        dataset=dataset,
-        analysed_table_name=table_type,
-        analysis_table_suffix=ANALYSIS_MAPPED_NSS
-    )
-    mapped_nss_heatmap_data = _produce_edges_analysis_for_mapped_or_connected_nss_heatmap(
-        edges=mappings,
-        prune=False,
-        directed_edge=False
-    )
-    data_manager.save_analysis_table(
-        analysis_table=mapped_nss_heatmap_data,
-        dataset=dataset,
-        analysed_table_name=table_type,
-        analysis_table_suffix=HEATMAP_MAPPED_NSS,
-        index=True
-    )
-    plotly_utils.produce_edge_heatmap(
-        analysis_table=mapped_nss_heatmap_data,
-        file_path=data_manager.get_analysis_figure_path(
-            dataset=dataset,
-            analysed_table_name=table_type,
-            analysis_table_suffix=ANALYSIS_MAPPED_NSS
-        )
-    )
-
-
-def _produce_and_save_hierarchy_edge_analysis(edges: DataFrame,
-                                              dataset: str,
-                                              data_manager: DataManager) -> None:
-    table_type = TABLE_EDGES_HIERARCHY
-    data_manager.save_analysis_table(
-        analysis_table=report_analyser_utils.produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges),
-        dataset=dataset,
-        analysed_table_name=table_type,
-        analysis_table_suffix=ANALYSIS_CONNECTED_NSS
-    )
-    connected_nss = _produce_source_to_target_analysis_for_directed_edge(edges=edges)
-    data_manager.save_analysis_table(
-        analysis_table=connected_nss,
-        dataset=dataset,
-        analysed_table_name=table_type,
-        analysis_table_suffix=ANALYSIS_CONNECTED_NSS_CHART
-    )
-    plotly_utils.produce_hierarchy_nss_stacked_bar_chart(
-        analysis_table=connected_nss,
-        file_path=data_manager.get_analysis_figure_path(
-            dataset=dataset,
-            analysed_table_name=table_type,
-            analysis_table_suffix=ANALYSIS_CONNECTED_NSS_CHART
-        )
-    )
-
-
-def _produce_and_save_merge_analysis(merges: DataFrame,
-                                     dataset: str,
-                                     data_manager: DataManager) -> None:
-    table_type = "merges"
-    merged_nss = _produce_source_to_target_analysis_for_directed_edge(edges=merges)
-    data_manager.save_analysis_table(
-        analysis_table=merged_nss,
-        dataset=dataset,
-        analysed_table_name=table_type,
-        analysis_table_suffix=ANALYSIS_MERGES_NSS
-    )
-    plotly_utils.produce_merged_nss_stacked_bar_chart(
-        analysis_table=merged_nss,
-        file_path=data_manager.get_analysis_figure_path(
-            dataset=dataset,
-            analysed_table_name=table_type,
-            analysis_table_suffix=ANALYSIS_MERGES_NSS
-        )
-    )
-    data_manager.save_analysis_table(
-        analysis_table=_produce_merge_analysis_for_merged_nss_for_canonical(merges=merges),
-        dataset=dataset,
-        analysed_table_name=table_type,
-        analysis_table_suffix=ANALYSIS_MERGES_NSS_FOR_CANONICAL
-    )
-    _save_analysis_named_tables(
-        tables=report_analyser_utils.produce_merge_cluster_analysis(merges_aggregated=merges, data_manager=data_manager),
-        dataset=dataset,
-        analysed_table_name=table_type,
-        data_manager=data_manager,
-    )
-
-
-# PRODUCE & SAVE for DATASET #
-def _produce_input_dataset_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
-    # analyse and save
-    section_dataset_name = SECTION_INPUT
-    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
-    _produce_and_save_summary_input(data_manager=data_manager, data_repo=data_repo)
-    _produce_and_save_node_analysis(
-        node_tables=[
-            data_repo.get(table_name=TABLE_NODES), data_repo.get(table_name=TABLE_NODES_OBSOLETE)
-        ],
-        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
-        edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
-        dataset=section_dataset_name,
-        data_manager=data_manager
-    )
-    _produce_and_save_mapping_analysis(
-        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
-        dataset=section_dataset_name,
-        data_manager=data_manager
-    )
-    _produce_and_save_hierarchy_edge_analysis(
-        edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
-        dataset=section_dataset_name,
-        data_manager=data_manager
-    )
-
-
-def _produce_output_dataset_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
-    section_dataset_name = SECTION_OUTPUT
-    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
-    _produce_and_save_summary_output(data_manager=data_manager, data_repo=data_repo)
-    _produce_and_save_node_analysis(
-        node_tables=[
-            data_repo.get(table_name=TABLE_NODES)
-        ],
-        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
-        edges_hierarchy=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
-        dataset=section_dataset_name,
-        data_manager=data_manager
-    )
-    _produce_and_save_mapping_analysis(
-        mappings=data_repo.get(table_name=TABLE_MAPPINGS).dataframe,
-        dataset=section_dataset_name,
-        data_manager=data_manager
-    )
-    _produce_and_save_hierarchy_edge_analysis(
-        edges=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
-        dataset=section_dataset_name,
-        data_manager=data_manager
-    )
-
-
-def _produce_alignment_process_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
-    # analyse and save
-    section_dataset_name = SECTION_ALIGNMENT
-    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
-    _produce_and_save_summary_alignment(data_manager=data_manager, data_repo=data_repo)
-    data_manager.save_analysis_table(
-        analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_MERGED).dataframe),
-        dataset=section_dataset_name,
-        analysed_table_name=TABLE_NODES_MERGED,
-        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
-    )
-    _produce_and_save_merge_analysis(
-        merges=data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe,
-        dataset=section_dataset_name,
-        data_manager=data_manager
-    )
-    data_manager.save_analysis_table(
-        analysis_table=_produce_node_namespace_freq(nodes=data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe),
-        dataset=section_dataset_name,
-        analysed_table_name=TABLE_NODES_UNMAPPED,
-        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
-    )
-    _produce_and_save_runtime_tables(
-        table_name=TABLE_ALIGNMENT_STEPS_REPORT,
-        section_dataset_name=section_dataset_name,
-        data_manager=data_manager,
-        data_repo=data_repo,
-    )
-    data_manager.save_analysis_table(
-        analysis_table=data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe,
-        dataset=section_dataset_name,
-        analysed_table_name="steps",
-        analysis_table_suffix="detail"
-    )
-    _produce_and_save_alignment_step_node_analysis(
-        alignment_step_report=data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe,
-        section_dataset_name=section_dataset_name,
-        data_manager=data_manager,
-    )
-
-
-def _produce_connectivity_process_analysis(data_manager: DataManager, data_repo: DataRepository) -> None:
-    section_dataset_name = SECTION_CONNECTIVITY
-    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
-    _produce_and_save_summary_connectivity(data_manager=data_manager, data_repo=data_repo)
-    data_manager.save_analysis_table(
-        analysis_table=_produce_node_namespace_freq(
-            nodes=data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe),
-        dataset=section_dataset_name,
-        analysed_table_name="nodes_connected",
-        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
-    )
-    data_manager.save_analysis_table(
-        analysis_table=_produce_node_namespace_freq(
-            nodes=data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe),
-        dataset=section_dataset_name,
-        analysed_table_name=TABLE_NODES_DANGLING,
-        analysis_table_suffix=ANALYSIS_NODE_NAMESPACE_FREQ
-    )
-    _produce_and_save_runtime_tables(
-        table_name=TABLE_CONNECTIVITY_STEPS_REPORT,
-        section_dataset_name=section_dataset_name,
-        data_manager=data_manager,
-        data_repo=data_repo,
-    )
-    data_manager.save_analysis_table(
-        analysis_table=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
-        dataset=section_dataset_name,
-        analysed_table_name="steps",
-        analysis_table_suffix="detail"
-    )
-    _produce_and_save_connectivity_step_node_analysis(
-        step_report=data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
-        section_dataset_name=section_dataset_name,
-        data_manager=data_manager,
-    )
-    _save_analysis_named_tables(
-        tables=report_analyser_utils.produce_hierarchy_edge_path_analysis(
-            hierarchy_edges_paths=data_manager.load_table(
-                table_name="connectivity_hierarchy_edges_paths",
-                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}/{DIRECTORY_ANALYSIS}"
-            ),
-        ),
-        dataset=section_dataset_name,
-        analysed_table_name="hierarchy_edges_paths",
-        data_manager=data_manager,
-    )
-    _save_analysis_named_tables(
-        tables=report_analyser_utils.produce_connectivity_hierarchy_edge_overview_analysis(
-            edges_input=data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
-            edges_output=data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
-            data_manager=data_manager,
-        ),
-        dataset=section_dataset_name,
-        analysed_table_name="hierarchy_edges_overview",
-        data_manager=data_manager,
-    )
-
-
-def _produce_data_profiling_and_testing_analysis(
-        data_manager: DataManager, data_repo: DataRepository
-) -> (DataFrame, DataFrame):
-    logger.info(f"Producing report section '{SECTION_DATA_PROFILING}' and '{SECTION_DATA_TESTS}' analysis...")
-
-    # profiling
-    data_profiling_stats = _produce_data_profiling_table_stats(data_manager=data_manager,
-                                                               section_name=SECTION_DATA_PROFILING)
-    _produce_and_save_summary_data_profiling(data_manager=data_manager,
-                                             data_repo=data_repo,
-                                             data_profiling_stats=data_profiling_stats)
-
-    # data tests
-    data_test_stats = _produce_data_testing_table_stats(data_manager=data_manager,
-                                                        section_name=SECTION_DATA_TESTS)
-    _produce_and_save_summary_data_tests(data_manager=data_manager,
-                                         data_repo=data_repo,
-                                         stats=data_test_stats)
-
-    return data_profiling_stats, data_test_stats
-
-
-def _produce_overview_analysis(data_manager: DataManager,
-                               data_repo: DataRepository,
-                               data_profiling_stats: DataFrame,
-                               data_test_stats: DataFrame) -> DataFrame:
-    # analyse and save
-    section_dataset_name = SECTION_OVERVIEW
-    logger.info(f"Producing report section '{section_dataset_name}' analysis...")
-    node_status_df = _produce_and_save_node_status_analyses(
-        seed_name=data_manager.load_alignment_config().base_config.seed_ontology_name,
-        data_manager=data_manager,
-        data_repo=data_repo
-    )
-    _produce_and_save_validation_overview_analyses(
-        data_manager=data_manager,
-        data_profiling_stats=data_profiling_stats,
-        data_test_stats=data_test_stats,
-    )
-    _produce_and_save_runtime_tables(
-        table_name=TABLE_PIPELINE_STEPS_REPORT,
-        section_dataset_name=section_dataset_name,
-        data_manager=data_manager,
-        data_repo=data_repo,
-    )
-    _produce_and_save_summary_overview(
-        data_manager=data_manager,
-        data_repo=data_repo,
-        node_status=node_status_df,
-    )
-    _save_analysis_named_tables(
-        tables=report_analyser_utils.produce_overview_hierarchy_edge_comparison(data_manager=data_manager),
-        dataset=section_dataset_name,
-        analysed_table_name="hierarchy_edge",
-        data_manager=data_manager,
-    )
-
-    return node_status_df
-
-
-# MAIN #
-def produce_report_data(data_manager: DataManager, data_repo: DataRepository) -> None:
-    logger.info(f"Started producing report analysis...")
-    data_profiling_stats, data_test_stats = \
-        _produce_data_profiling_and_testing_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_input_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_output_dataset_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_alignment_process_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_connectivity_process_analysis(data_manager=data_manager, data_repo=data_repo)
-    _produce_overview_analysis(
-        data_manager=data_manager,
-        data_repo=data_repo,
-        data_profiling_stats=data_profiling_stats,
-        data_test_stats=data_test_stats,
-    )
-    # do overview summary total runtime & gantt LAST
-    logger.info(f"Finished producing report analysis.")

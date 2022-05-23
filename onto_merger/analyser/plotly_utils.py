@@ -1,13 +1,12 @@
-from typing import List, Union
+from typing import Union
 
-import pandas as pd
-from pandas import DataFrame
-import plotly.express as px
-import plotly.graph_objects as go
 import numpy as np
+import pandas as pd
+import plotly.express as px
+from pandas import DataFrame
 
 from onto_merger.analyser.constants import COLUMN_NAMESPACE, COLUMN_NAMESPACE_FREQ, \
-    COLUMN_NAMESPACE_SOURCE_ID, COLUMN_NAMESPACE_TARGET_ID, COLUMN_COUNT, COLUMN_FREQ
+    COLUMN_NAMESPACE_SOURCE_ID, COLUMN_NAMESPACE_TARGET_ID, COLUMN_FREQ
 
 _FIGURE_FORMAT = "svg"
 _COLOR_WHITE = "#fff"

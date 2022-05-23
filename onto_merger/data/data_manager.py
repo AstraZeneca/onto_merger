@@ -350,7 +350,7 @@ class DataManager:
 
     def save_merged_ontology_report(self, content) -> str:
         """Save the analysis report HTML content."""
-        file_path = self._produce_analysis_report_path()
+        file_path = self.produce_analysis_report_path()
         with open(file_path, "w") as f:
             f.write(content)
         self._copy_analysis_images_and_report_assets()
@@ -377,7 +377,7 @@ class DataManager:
         """Produce the analysis report path."""
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
 
-    def _produce_analysis_report_path(self):
+    def produce_analysis_report_path(self):
         """Produce the analysis report HTML path."""
         return os.path.join(self._produce_analysis_report_folder_path(), "index.html")
 

@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple
 import pandas as pd
 from pandas import DataFrame
 
-from data.data_manager import DataManager
+from onto_merger.data.data_manager import DataManager
 from onto_merger.analyser.analysis_utils import filter_nodes_for_namespace, produce_table_node_ids_from_edge_table
 from onto_merger.alignment import mapping_utils, networkx_utils
 from onto_merger.alignment.networkit_utils import NetworkitGraph

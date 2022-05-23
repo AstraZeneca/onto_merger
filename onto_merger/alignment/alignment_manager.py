@@ -20,8 +20,7 @@ from onto_merger.data.constants import (
     TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
-    TABLE_NODES_OBSOLETE,
-    COLUMN_DEFAULT_ID)
+    TABLE_NODES_OBSOLETE)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import (
     AlignmentConfig,

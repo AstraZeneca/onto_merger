@@ -1,23 +1,20 @@
+import itertools
 from pathlib import Path
 from typing import List
-import itertools
 
 import pandas as pd
 from pandas import DataFrame
 
-from analyser.analysis_utils import produce_table_with_namespace_column_pair, \
-    produce_table_with_namespace_column_for_node_ids
-from data.constants import COLUMN_SOURCE_TO_TARGET, COLUMN_SOURCE_ID, COLUMN_PROVENANCE, COLUMN_COUNT
-
-from onto_merger.data.data_manager import DataManager
-from onto_merger.analyser.analysis_utils import produce_table_with_namespace_column_for_node_ids
+from onto_merger.alignment.hierarchy_utils import produce_named_table_nodes_connected
 from onto_merger.analyser import plotly_utils
+from onto_merger.analyser.analysis_utils import produce_table_with_namespace_column_for_node_ids
+from onto_merger.analyser.analysis_utils import produce_table_with_namespace_column_pair
 from onto_merger.analyser.constants import COLUMN_NAMESPACE_TARGET_ID, COLUMN_NAMESPACE_SOURCE_ID
-from onto_merger.alignment.hierarchy_utils import produce_named_table_nodes_connected, \
-    produce_named_table_nodes_dangling
+from onto_merger.data.constants import COLUMN_SOURCE_TO_TARGET, COLUMN_COUNT
 from onto_merger.data.constants import COLUMN_TARGET_ID, COLUMN_SOURCE_ID, TABLE_EDGES_HIERARCHY, \
-    TABLE_EDGES_HIERARCHY_POST, TABLE_NODES, TABLE_NODES_DOMAIN, SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, \
+    TABLE_EDGES_HIERARCHY_POST, TABLE_NODES, COLUMN_DEFAULT_ID, \
     TABLE_NODES_CONNECTED, TABLE_NODES_DANGLING, COLUMN_PROVENANCE
+from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.report.constants import REPORT_SECTIONS
 
