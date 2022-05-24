@@ -85,7 +85,6 @@ class ReportAnalyser:
             section_dataset_name=SECTION_OUTPUT,
             node_tables=[
                 self._data_repo.get(table_name=TABLE_NODES_DOMAIN),
-                self._data_repo.get(table_name=TABLE_NODES_OBSOLETE)
             ],
             mappings=self._data_repo.get(table_name=TABLE_MAPPINGS_DOMAIN).dataframe,
             edges_hierarchy=self._data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
@@ -294,7 +293,10 @@ class ReportAnalyser:
             [
                 NamedTable(f"hierarchy_edge_{table.name}", table.dataframe)
                 for table in
-                (report_analyser_utils_new.produce_overview_hierarchy_edge_comparison(data_manager=self._data_manager))
+                (report_analyser_utils_new.produce_overview_hierarchy_edge_comparison(
+                    data_manager=self._data_manager,
+                    data_repo=self._data_repo,
+                ))
             ]
         )
         self._data_manager.save_analysis_named_tables(
@@ -312,7 +314,7 @@ class ReportAnalyser:
         for table in node_tables:
             # analyse
             analysis_table = report_analyser_utils_new.produce_node_analysis(
-                nodes=table.dataframe,
+                node_table=table,
                 mappings=mappings,
                 edges_hierarchy=edges_hierarchy
             )

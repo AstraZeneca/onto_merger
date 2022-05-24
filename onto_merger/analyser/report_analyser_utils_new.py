@@ -14,7 +14,8 @@ from onto_merger.analyser import analysis_utils
 from onto_merger.analyser import plotly_utils
 from onto_merger.analyser.constants import COLUMN_NAMESPACE_TARGET_ID, COLUMN_NAMESPACE_SOURCE_ID, \
     TABLE_STATS, ANALYSIS_GENERAL, COLUMN_FREQ, GANTT_CHART, TABLE_SECTION_SUMMARY
-from onto_merger.data.constants import COLUMN_SOURCE_TO_TARGET, TABLE_EDGES_HIERARCHY_POST
+from onto_merger.data.constants import COLUMN_SOURCE_TO_TARGET, TABLE_EDGES_HIERARCHY_POST, DOMAIN_SUFFIX, \
+    TABLE_NODES_DOMAIN
 from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, COLUMN_COUNT, \
     COLUMN_PROVENANCE, COLUMN_RELATION, COLUMN_SOURCE_ID, COLUMN_TARGET_ID, \
     DIRECTORY_INPUT, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
@@ -387,7 +388,7 @@ def produce_data_profiling_table_stats(
             data_manager=data_manager
         )
     )
-    intermed_df = pd.DataFrame(
+    intermediate_df = pd.DataFrame(
         _produce_data_profiling_stats_for_directory(
             tables=data_manager.load_intermediate_tables(),
             folder_path=data_manager.get_intermediate_folder_path(),
@@ -404,9 +405,9 @@ def produce_data_profiling_table_stats(
         )
     )
     return (
-        pd.concat([input_df, intermed_df, output_df]), [
+        pd.concat([input_df, intermediate_df, output_df]), [
             NamedTable(f"{DIRECTORY_INPUT}_{TABLE_STATS}", input_df),
-            NamedTable(f"{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}", intermed_df),
+            NamedTable(f"{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}", intermediate_df),
             NamedTable(f"{DIRECTORY_OUTPUT}_{TABLE_STATS}", output_df),
         ]
     )
@@ -420,7 +421,7 @@ def _produce_data_profiling_stats_for_directory(tables: List[NamedTable],
         {
             "directory": directory,
             "type": _get_table_type_for_table_name(table_name=table.name),
-            "name": f"{table.name}.csv",
+            "name": f'{table.name.replace("_domain", "")}.csv',
             "rows": len(table.dataframe),
             "columns": len(list(table.dataframe)),
             "size": _get_file_size_in_mb_for_named_table(
@@ -440,22 +441,22 @@ def _produce_data_profiling_stats_for_directory(tables: List[NamedTable],
     ]
 
 
-# NODE ANALYSIS #
+# NODE ANALYSIS # # todo
 def produce_node_analysis(
-        nodes: DataFrame, mappings: DataFrame, edges_hierarchy: DataFrame
+        node_table: NamedTable, mappings: DataFrame, edges_hierarchy: DataFrame
 ) -> NamedTable:
     node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
-        nodes=nodes, metric_name="namespace"
+        nodes=node_table.dataframe, metric_name="namespace"
     )
 
-    node_mapping_coverage_df = _produce_node_covered_by_edge_table(nodes=nodes,
+    node_mapping_coverage_df = _produce_node_covered_by_edge_table(nodes=node_table.dataframe,
                                                                    edges=mappings,
                                                                    coverage_column=COVERED)
     node_mapping_coverage_distribution_df = _produce_node_namespace_distribution_with_type(
         nodes=node_mapping_coverage_df, metric_name="mapping_coverage"
     )
 
-    node_edge_coverage_df = _produce_node_covered_by_edge_table(nodes=nodes,
+    node_edge_coverage_df = _produce_node_covered_by_edge_table(nodes=node_table.dataframe,
                                                                 edges=edges_hierarchy,
                                                                 coverage_column=COVERED)
     node_edge_coverage_distribution_df = _produce_node_namespace_distribution_with_type(
@@ -485,7 +486,7 @@ def produce_node_analysis(
 
     # add freq
     node_analysis["namespace_freq"] = node_analysis.apply(
-        lambda x: (round(x['namespace_count'] / len(nodes) * 100, 2)), axis=1
+        lambda x: (round(x['namespace_count'] / len(node_table.dataframe) * 100, 2)), axis=1
     )
     # add relative freq
     node_analysis["mapping_coverage_freq"] = node_analysis.apply(
@@ -494,7 +495,7 @@ def produce_node_analysis(
     node_analysis["edge_coverage_freq"] = node_analysis.apply(
         lambda x: (round(x['edge_coverage_count'] / x['namespace_count'] * 100, 2)), axis=1
     )
-    return NamedTable(ANALYSIS_GENERAL, node_analysis)
+    return NamedTable(f"{node_table.name.replace(DOMAIN_SUFFIX, '')}_{ANALYSIS_GENERAL}", node_analysis)
 
 
 def _produce_node_namespace_distribution_with_type(nodes: DataFrame, metric_name: str) -> DataFrame:
@@ -570,8 +571,6 @@ def produce_node_status_analyses(
     nodes_connected = len(nodes_connected_df)
     nodes_dangling = len(nodes_dangling_df)
     nodes_connected_excluding_seed = nodes_connected - nodes_seed
-    nodes_merged_to_connected_excluding_seed = 0
-    nodes_merged_to_dangling = 0
 
     # OUTPUT
     nodes_input_output_diff = nodes_input - (nodes_input - (nodes_merged_to_seed + nodes_merged_to_not_seed))
@@ -922,13 +921,13 @@ def _get_leaf_and_parent_nodes(hierarchy_edges: DataFrame) -> (DataFrame, DataFr
     return leaf_nodes, parent_nodes
 
 
-def produce_overview_hierarchy_edge_comparison(data_manager: DataManager) -> List[NamedTable]:
+def produce_overview_hierarchy_edge_comparison(
+        data_manager: DataManager, data_repo: DataRepository
+) -> List[ NamedTable]:
     # input
-    input_data_repo = DataRepository()
-    input_data_repo.update(tables=data_manager.load_input_tables())
     input_edges = analysis_utils.produce_table_with_namespace_column_for_node_ids(
-        table=input_data_repo.get(TABLE_EDGES_HIERARCHY).dataframe)
-    input_nodes = input_data_repo.get(TABLE_NODES).dataframe
+        table=data_repo.get(TABLE_EDGES_HIERARCHY).dataframe)
+    input_nodes = data_repo.get(TABLE_NODES).dataframe
     input_nodes_ids = input_nodes[COLUMN_DEFAULT_ID].tolist()
     input_nodes_connected = hierarchy_utils.produce_named_table_nodes_connected(hierarchy_edges=input_edges) \
         .dataframe.query(expr=f"{COLUMN_DEFAULT_ID} == @input_nodes_ids", inplace=False)
@@ -938,13 +937,10 @@ def produce_overview_hierarchy_edge_comparison(data_manager: DataManager) -> Lis
     input_child_nodes, input_parent_nodes = _get_leaf_and_parent_nodes(hierarchy_edges=input_edges)
 
     # output
-    output_data_repo = DataRepository()
-    output_data_repo.update(tables=data_manager.load_output_tables())
-    output_data_repo.update(tables=data_manager.load_intermediate_tables())
-    output_edges = output_data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe
-    output_nodes = output_data_repo.get(TABLE_NODES).dataframe
-    output_nodes_connected = output_data_repo.get(TABLE_NODES_CONNECTED).dataframe
-    output_nodes_dangling = output_data_repo.get(TABLE_NODES_DANGLING).dataframe
+    output_edges = data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe
+    output_nodes = data_repo.get(TABLE_NODES_DOMAIN).dataframe
+    output_nodes_connected = data_repo.get(TABLE_NODES_CONNECTED).dataframe
+    output_nodes_dangling = data_repo.get(TABLE_NODES_DANGLING).dataframe
     output_child_nodes, output_parent_nodes = _get_leaf_and_parent_nodes(hierarchy_edges=output_edges)
 
     # counts
@@ -1149,13 +1145,14 @@ def produce_merge_cluster_analysis(merges_aggregated: DataFrame, data_manager: D
 # HELPERS: FILE SIZE ANALYSIS #
 def _get_file_size_in_mb_for_named_table(table_name: str,
                                          folder_path: str) -> str:
-    f_size = os.path.getsize(os.path.abspath(f"{folder_path}/{table_name}.csv"))
+    f_size = _get_file_size_for_named_table(table_name=table_name, folder_path=folder_path)
     return f"{f_size / float(1 << 20):,.3f}MB"
 
 
 def _get_file_size_for_named_table(table_name: str,
                                    folder_path: str) -> float:
-    return os.path.getsize(os.path.abspath(f"{folder_path}/{table_name}.csv"))
+    table_name_for_file_store = table_name.replace(DOMAIN_SUFFIX, "")
+    return os.path.getsize(os.path.abspath(f"{folder_path}/{table_name_for_file_store}.csv"))
 
 
 # HELPERS: ... #
