@@ -146,10 +146,13 @@ def produce_table_node_namespace_distribution(
     if node_table_count == 0:
         return pd.DataFrame([], columns=[SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE])
 
-    # count per NS, descending, with ratio of total
     ns_column = get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)
+    if ns_column not in list(node_table):
+        node_table = produce_table_with_namespace_column_for_node_ids(node_table)
+
+    # count per NS, descending, with ratio of total
     namespace_distribution_table = (
-        produce_table_with_namespace_column_for_node_ids(node_table)
+        node_table\
             .groupby([ns_column])
             .count()
             .reset_index()

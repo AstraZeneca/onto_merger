@@ -8,14 +8,16 @@ from pandas import DataFrame
 from onto_merger.analyser.constants import COLUMN_NAMESPACE, COLUMN_NAMESPACE_FREQ, \
     COLUMN_NAMESPACE_SOURCE_ID, COLUMN_NAMESPACE_TARGET_ID, COLUMN_FREQ
 
-_FIGURE_FORMAT = "svg"
+# note svg doesnt work on static websites
+# _FIGURE_FORMAT = "svg"
+FIGURE_FORMAT = "png"
 _COLOR_WHITE = "#fff"
 _WIDTH_ONE_COL_ROW = 1100
 _WIDTH_TWO_COL_ROW = round(_WIDTH_ONE_COL_ROW / 2)
 
 
 def _get_figure_filepath(file_path: str) -> str:
-    return f"{file_path}.{_FIGURE_FORMAT}"
+    return f"{file_path}.{FIGURE_FORMAT}"
 
 
 def _format_percentage_column_to_decimal_places(analysis_table: DataFrame,

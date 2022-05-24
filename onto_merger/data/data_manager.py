@@ -5,7 +5,7 @@ import os
 import shutil
 import typing
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 import pandas as pd
 from pandas import DataFrame
@@ -44,6 +44,7 @@ from onto_merger.data.dataclasses import (
     AlignmentConfigMappingTypeGroups,
     DataRepository,
     NamedTable)
+from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
 from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)
@@ -131,7 +132,7 @@ class DataManager:
         """
         return [
             NamedTable(
-                table_name,
+                f"{table_name}{DOMAIN_SUFFIX}",
                 self.load_table(table_name=table_name,
                                 process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}"),
             )
@@ -168,6 +169,8 @@ class DataManager:
                                            rename_columns: dict = None) -> List[dict]:
         # todo fix this hack
         df = self.load_analysis_report_table(section_name=section_name, table_name=table_name)
+        if df is None:
+            return []
         if rename_columns is not None:
             df.rename(columns=rename_columns, inplace=True)
         return [
@@ -178,13 +181,16 @@ class DataManager:
             for _, row in df.iterrows()
         ]
 
-    def load_analysis_report_table(self, section_name: str, table_name: str) -> DataFrame:
+    def load_analysis_report_table(self, section_name: str, table_name: str) -> Union[DataFrame, None]:
         file_name = f"{section_name}_{table_name}.csv"
-        print(f"load_analysis_report_table {os.path.join(self.get_analysis_folder_path(), file_name)}")
+        logger.info(f"load_analysis_report_table {os.path.join(self.get_analysis_folder_path(), file_name)}")
         file_path = os.path.join(self.get_analysis_folder_path(), file_name)
-        df = pd.read_csv(file_path)
-        print(df)
-        return df
+        try:
+            df = pd.read_csv(file_path)
+            return df
+        except FileNotFoundError as e:
+            logger.error(f"Data table missing: {e}")
+        return None
 
     @staticmethod
     def get_absolute_path(path: str) -> str:
@@ -297,6 +303,19 @@ class DataManager:
             index=index
         )
 
+    def save_analysis_named_tables(self,
+                                   dataset: str,
+                                   tables: List[NamedTable],
+                                   index=False) -> None:
+        for table in tables:
+            table.dataframe.to_csv(
+                path_or_buf=os.path.join(
+                    self.get_analysis_folder_path(),
+                    f"{dataset}_{table.name}.csv"
+                ),
+                index=index
+            )
+
     @staticmethod
     def get_analysis_figure_file_name(dataset: str,
                                       analysed_table_name: str,
@@ -370,7 +389,7 @@ class DataManager:
                 os.path.join(self.get_analysis_folder_path(), figure_file),
                 os.path.join(images_folder, figure_file)
             )
-            for figure_file in os.listdir(self.get_analysis_folder_path()) if figure_file.endswith(".svg")
+            for figure_file in os.listdir(self.get_analysis_folder_path()) if figure_file.endswith(f".{FIGURE_FORMAT}") # .svg >> .png
         ]
 
     def _produce_analysis_report_folder_path(self):

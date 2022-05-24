@@ -8,6 +8,7 @@ from typing import List
 import pandas as pd
 
 from onto_merger.analyser.constants import TABLE_SECTION_SUMMARY, TABLE_STATS
+from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
 from onto_merger.data.constants import DIRECTORY_INTERMEDIATE, DIRECTORY_INPUT, DIRECTORY_OUTPUT
 from onto_merger.data.data_manager import DataManager
 from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
@@ -171,7 +172,7 @@ def _produce_runtime_info_subsection(section_name: str, data_manager: DataManage
         "title": "Processing",
         "link_title": "pipeline",
         "dataset": {
-            "gantt_img": f"images/{section_name}_pipeline_steps_report_gantt_chart.svg",
+            "gantt_img": f"images/{section_name}_pipeline_steps_report_gantt_chart.{FIGURE_FORMAT}",
             "runtime_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name="pipeline_steps_report_step_duration",
@@ -606,7 +607,7 @@ def _get_section_icon_file_name(section_name: str) -> str:
 
 
 def _get_figure_path(section_name: str, table_name: str) -> str:
-    return f"images/{section_name}_{table_name}.svg"
+    return f"images/{section_name}_{table_name}.{FIGURE_FORMAT}"
 
 
 def _get_unique_id_for_description_table(section_name: str, table_name: str) -> str:

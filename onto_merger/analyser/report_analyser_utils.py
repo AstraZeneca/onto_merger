@@ -31,26 +31,6 @@ def _apply_rounding_to_float_columns(df: DataFrame, column_names: List[str]) -> 
     return df
 
 
-# ANALYSIS
-def produce_analysis_output_file_list(data_manager: DataManager):
-    data = [
-        {
-            "section_name": _get_section_for_analysis_file_name(file_name=path.name),
-            "file_name": path.name,
-            "file_size": ""
-        }
-        for path in Path(data_manager.get_analysis_folder_path()).rglob('*.csv')
-        if path.is_file()
-    ]
-
-
-def _get_section_for_analysis_file_name(file_name: str) -> str:
-    for section_name in REPORT_SECTIONS:
-        if section_name in file_name:
-            return section_name
-    return "UNKNOWN"
-
-
 # MERGE #
 def produce_merge_cluster_analysis(merges_aggregated: DataFrame, data_manager: DataManager) -> List[NamedTable]:
     column_cluster_size = 'cluster_size'
