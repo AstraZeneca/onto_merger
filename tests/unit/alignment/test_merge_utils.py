@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 
-import analyser.analyser_tables
+from onto_merger.analyser import analysis_utils
 from onto_merger.alignment import merge_utils
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
@@ -33,7 +33,7 @@ def test_aggregate_merges(example_merges):
 
     alignment_priority_order = ["C", "E", "B", "D", "A"]
 
-    actual = merge_utils.produce_named_table_aggregated_merges(
+    actual = merge_utils._produce_named_table_aggregated_merges(
         merges=example_merges, alignment_priority_order=alignment_priority_order
     ).dataframe
 
@@ -66,7 +66,7 @@ def test_get_canonical_node_for_merge_cluster():
 
 def test_produce_named_table_merged_nodes(example_merges):
     expected = pd.DataFrame(["A:1", "B:1", "D:2"], columns=[[COLUMN_DEFAULT_ID]])
-    actual = analyser.analyser_tables.produce_named_table_merged_nodes(merges_aggregated=example_merges)
+    actual = merge_utils._produce_named_table_merged_nodes(merges_aggregated=example_merges)
     assert isinstance(actual, NamedTable)
     assert actual.name == TABLE_NODES_MERGED
     assert isinstance(actual.dataframe, DataFrame)
@@ -85,7 +85,7 @@ def test_produce_named_table_merges_with_alignment_meta_data(example_merges):
         ],
         columns=SCHEMA_MERGE_TABLE_WITH_META_DATA,
     )
-    actual = merge_utils._produce_named_table_merges_with_alignment_meta_data(
+    actual = merge_utils.produce_named_table_merges_with_alignment_meta_data(
         merges=example_merges,
         source_id=source_id,
         step_counter=step,

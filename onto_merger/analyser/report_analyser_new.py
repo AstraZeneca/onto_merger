@@ -3,8 +3,10 @@
 Produce data and figures are presented in the report.
 """
 
+from datetime import datetime
 from typing import List
 
+import pandas as pd
 from pandas import DataFrame
 
 from onto_merger.analyser import plotly_utils
@@ -20,7 +22,8 @@ from onto_merger.data.constants import DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE,
     TABLE_EDGES_HIERARCHY_POST, TABLE_MERGES_AGGREGATED, \
     TABLE_NODES_CONNECTED, DIRECTORY_ANALYSIS, TABLE_NODES_DOMAIN, TABLE_MAPPINGS_DOMAIN
 from onto_merger.data.data_manager import DataManager
-from onto_merger.data.dataclasses import NamedTable, DataRepository, AlignmentConfig
+from onto_merger.data.dataclasses import NamedTable, DataRepository, AlignmentConfig, format_datetime, RuntimeData, \
+    convert_runtime_steps_to_named_table
 from onto_merger.logger.log import get_logger
 from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
     SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
@@ -36,6 +39,7 @@ class ReportAnalyser:
             alignment_config: AlignmentConfig,
             data_repo: DataRepository,
             data_manager: DataManager,
+            runtime_data: List[RuntimeData],
     ):
         """Initialise the ReportAnalyser class.
 
@@ -46,6 +50,8 @@ class ReportAnalyser:
         self._alignment_config = alignment_config
         self._data_manager = data_manager
         self._data_repo = data_repo
+        self._runtime_data = runtime_data
+        self._start_date_time = datetime.now()
 
     # MAIN #
     def produce_report_data(self) -> None:
@@ -282,14 +288,6 @@ class ReportAnalyser:
             )
         ]
         tables.extend(
-            report_analyser_utils_new.produce_runtime_tables(
-                table_name=TABLE_PIPELINE_STEPS_REPORT,
-                section_dataset_name=section_dataset_name,
-                data_manager=self._data_manager,
-                data_repo=self._data_repo,
-            )
-        )
-        tables.extend(
             [
                 NamedTable(f"hierarchy_edge_{table.name}", table.dataframe)
                 for table in
@@ -299,6 +297,29 @@ class ReportAnalyser:
                 ))
             ]
         )
+
+        # runtime
+        end_date_time = datetime.now()
+        analysis_runtime = RuntimeData(
+                task="ANALYSIS",
+                start=format_datetime(self._start_date_time),
+                end=format_datetime(end_date_time),
+                elapsed=(end_date_time - self._start_date_time).total_seconds()
+        )
+        self._runtime_data.append(analysis_runtime)
+        run_time_table = convert_runtime_steps_to_named_table(steps=self._runtime_data)
+        self._data_repo.update(table=run_time_table)
+        self._data_manager.save_table(table=run_time_table)
+        tables.extend(
+            report_analyser_utils_new.produce_runtime_tables(
+                table_name=TABLE_PIPELINE_STEPS_REPORT,
+                section_dataset_name=section_dataset_name,
+                data_manager=self._data_manager,
+                data_repo=self._data_repo,
+            )
+        )
+
+        # save produced
         self._data_manager.save_analysis_named_tables(
             dataset=section_dataset_name,
             tables=tables

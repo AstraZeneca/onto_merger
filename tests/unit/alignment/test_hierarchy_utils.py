@@ -3,10 +3,10 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 
-import analyser.analyser_tables
+from onto_merger.analyser import analysis_utils
 from onto_merger.alignment import hierarchy_utils
 from onto_merger.alignment.networkit_utils import NetworkitGraph
-from onto_merger.analyser import get_namespace_column_name_for_column
+from onto_merger.analyser.analysis_utils import get_namespace_column_name_for_column
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,

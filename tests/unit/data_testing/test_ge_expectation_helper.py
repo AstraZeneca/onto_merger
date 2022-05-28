@@ -4,7 +4,7 @@ from typing import List
 import pytest
 from great_expectations.core import ExpectationConfiguration
 
-from onto_merger.analyser import get_namespace_column_name_for_column
+from onto_merger.analyser.analysis_utils import get_namespace_column_name_for_column
 from onto_merger.data.constants import (
     COLUMN_PROVENANCE,
     COLUMN_RELATION,

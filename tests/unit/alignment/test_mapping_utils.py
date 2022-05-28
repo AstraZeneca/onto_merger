@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 
-import analyser.analyser_tables
+from onto_merger.analyser import analysis_utils
 from onto_merger.alignment import mapping_utils
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
@@ -13,8 +13,6 @@ from onto_merger.data.constants import (
     COLUMN_TARGET_ID,
     SCHEMA_MAPPING_TABLE,
     SCHEMA_MERGE_TABLE,
-    TABLE_MAPPINGS,
-    TABLE_NODES_OBSOLETE,
     TABLE_NODES_UNMAPPED,
 )
 from onto_merger.data.dataclasses import DataRepository, NamedTable
@@ -248,7 +246,7 @@ def test_get_unmapped_nodes():
     input_nodes = pd.DataFrame(["FIZZBANG:0000001", "SNOMED:001", "FOOBAR:1234"], columns=[COLUMN_DEFAULT_ID])
 
     # run
-    actual = analyser.analyser_tables.produce_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
+    actual = analysis_utils.produce_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
 
     # expected
     expected = pd.DataFrame(["SNOMED:001"], columns=[COLUMN_DEFAULT_ID])
@@ -306,7 +304,7 @@ def test_produce_named_table_unmapped_nodes():
     input_nodes = pd.DataFrame(["FIZZBANG:0000001", "SNOMED:001", "FOOBAR:1234"], columns=[COLUMN_DEFAULT_ID])
 
     # run
-    actual = analyser.analyser_tables.produce_named_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
+    actual = analysis_utils.produce_named_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
 
     # evaluate
     assert isinstance(actual, NamedTable)

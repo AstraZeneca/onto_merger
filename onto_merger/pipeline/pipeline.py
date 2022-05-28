@@ -2,6 +2,7 @@
 from datetime import datetime
 from typing import List
 
+from onto_merger.analyser.report_analyser_new import ReportAnalyser
 from onto_merger.alignment import merge_utils, hierarchy_utils
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.alignment.hierarchy_utils import HierarchyManager
@@ -207,7 +208,6 @@ class Pipeline:
         self._record_runtime(start_date_time=start_date_time, task_name="FINALISING OUTPUTS")
         self.logger.info("Finished finalising outputs.")
 
-
     def _validate_and_profile_dataset(
             self, data_origin: str, data_runtime_name: str, tables: List[NamedTable]
     ) -> None:
@@ -238,17 +238,20 @@ class Pipeline:
         :return:
         """
         self.logger.info("Started creating report....")
-
-        # move data docs to report folder
-        self._data_manager.move_data_docs_to_reports()
-
-        # save runtime stats
         run_time_table = convert_runtime_steps_to_named_table(steps=self._runtime_data)
         self._data_repo.update(table=run_time_table)
         self._data_manager.save_table(table=run_time_table)
 
+        # move data docs to report folder
+        self._data_manager.move_data_docs_to_reports()
+
         # run analysis & produce report
-        report_analyser.produce_report_data(data_manager=self._data_manager, data_repo=self._data_repo)
+        ReportAnalyser(
+            alignment_config=self._alignment_config,
+            data_repo=self._data_repo,
+            data_manager=self._data_manager,
+            runtime_data=self._runtime_data
+        ).produce_report_data()
         report_path = report_generator.produce_report(data_manager=self._data_manager)
 
         self.logger.info(f"Finished producing HTML report (saved to '{report_path}'.")
