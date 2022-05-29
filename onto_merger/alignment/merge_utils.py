@@ -29,6 +29,7 @@ logger = get_logger(__name__)
 
 
 def post_process_alignment_results(data_repo: DataRepository,
+                                   seed_id: str,
                                    alignment_priority_order: List[str]) -> List[NamedTable]:
     # aggregate merges
     table_aggregated_merges = _produce_named_table_aggregated_merges(
@@ -39,7 +40,8 @@ def post_process_alignment_results(data_repo: DataRepository,
     table_merged_nodes = _produce_named_table_merged_nodes(merges_aggregated=table_aggregated_merges.dataframe)
     table_unmapped_nodes = _produce_named_table_unmapped_nodes(
         nodes=data_repo.get(TABLE_NODES).dataframe,
-        merged_nodes=table_merged_nodes.dataframe
+        seed_id=seed_id,
+        merges=table_aggregated_merges.dataframe
     )
 
     return [table_aggregated_merges, table_merged_nodes, table_unmapped_nodes]
@@ -100,18 +102,25 @@ def _produce_table_merged_nodes(merges: DataFrame) -> DataFrame:
         .sort_values([COLUMN_DEFAULT_ID], ascending=True)
 
 
-def _produce_named_table_unmapped_nodes(nodes: DataFrame, merged_nodes: DataFrame) -> NamedTable:
+def _produce_table_seed_nodes(nodes: DataFrame, seed_id: str) -> DataFrame:
+    df = analysis_utils.produce_table_with_namespace_column_for_node_ids(table=nodes.copy()[[COLUMN_DEFAULT_ID]])
+    df.query(
+        f"{analysis_utils.get_namespace_column_name_for_column(node_id_column=COLUMN_DEFAULT_ID)} == '{seed_id}'",
+        inplace=True)
+    logger.info(
+        f"Out of {len(nodes):,d} nodes, {len(df):,d} "
+        + f"({((len(df) / len(nodes)) * 100):.2f}%) are seed."
+    )
+    return df[[COLUMN_DEFAULT_ID]]
+
+
+def _produce_named_table_unmapped_nodes(nodes: DataFrame, seed_id: str, merges: DataFrame) -> NamedTable:
     """Produce the dataframe of unmapped node IDs.
 
     :param nodes: The set of input nodes to be filtered.
-    :param merged_nodes: The set of merges used to determine node mapped status.
     :return: The set of unmapped nodes.
     """
-    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_nodes, merged_nodes]).drop_duplicates(keep=False)
-    logger.info(
-        f"Out of {len(nodes):,d} nodes, {len(df):,d} "
-        + f"({((len(df) / len(nodes)) * 100):.2f}%) are unmapped."
-    )
+    df = produce_table_unmapped_nodes(nodes=nodes, seed_id=seed_id, merges=merges)
     return NamedTable(TABLE_NODES_UNMAPPED, df)
 
 
@@ -136,18 +145,18 @@ def produce_named_table_merges_with_alignment_meta_data(
     )
 
 
-def produce_named_table_domain_nodes(nodes: DataFrame, merged_nodes: DataFrame,) -> NamedTable:
+def produce_named_table_domain_nodes(nodes: DataFrame, merged_nodes: DataFrame, ) -> NamedTable:
     df = pd.concat([
         nodes[SCHEMA_NODE_ID_LIST_TABLE],
         merged_nodes[SCHEMA_NODE_ID_LIST_TABLE],
         merged_nodes[SCHEMA_NODE_ID_LIST_TABLE]
-    ])\
-             .drop_duplicates(keep=False)\
-             .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False)
+    ]) \
+        .drop_duplicates(keep=False) \
+        .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False)
     return NamedTable(TABLE_NODES_DOMAIN, df)
 
 
-def produce_named_table_domain_merges(merges_aggregated: DataFrame,) -> NamedTable:
+def produce_named_table_domain_merges(merges_aggregated: DataFrame, ) -> NamedTable:
     df = merges_aggregated.copy()
     df[COLUMN_RELATION] = RELATION_MERGE
     df[COLUMN_PROVENANCE] = ONTO_MERGER
@@ -155,15 +164,19 @@ def produce_named_table_domain_merges(merges_aggregated: DataFrame,) -> NamedTab
     return NamedTable(TABLE_MERGES_DOMAIN, df)
 
 
-def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
+def produce_table_unmapped_nodes(nodes: DataFrame, seed_id: str, merges: DataFrame) -> DataFrame:
     """Produce the dataframe of unmapped node IDs.
 
+    :param seed_id:
     :param merges:
     :param nodes: The set of input nodes to be filtered.
     :return: The set of unmapped nodes.
     """
     merged_nodes = _produce_table_merged_nodes(merges=merges)
-    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_nodes, merged_nodes]).drop_duplicates(keep=False)
+    seed_nodes = _produce_table_seed_nodes(nodes=nodes, seed_id=seed_id)
+    merged_and_seed_nodes = pd.concat([seed_nodes, merged_nodes])
+    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_and_seed_nodes, merged_and_seed_nodes])\
+        .drop_duplicates(keep=False)
     logger.info(
         f"Out of {len(nodes):,d} nodes, {len(df):,d} "
         + f"({((len(df) / len(nodes)) * 100):.2f}%) are unmapped."

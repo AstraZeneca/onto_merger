@@ -490,10 +490,14 @@ def produce_node_analysis(
     )
     # add relative freq
     node_analysis["mapping_coverage_freq"] = node_analysis.apply(
-        lambda x: (round(x['mapping_coverage_count'] / x['namespace_count'] * 100, 2)), axis=1
+        lambda x: (round(x['mapping_coverage_count'] / x['namespace_count'] * 100, 2))
+        if x['namespace_count'] != 0 else 0,
+        axis=1
     )
     node_analysis["edge_coverage_freq"] = node_analysis.apply(
-        lambda x: (round(x['edge_coverage_count'] / x['namespace_count'] * 100, 2)), axis=1
+        lambda x: (round(x['edge_coverage_count'] / x['namespace_count'] * 100, 2))
+        if x['namespace_count'] != 0 else 0,
+        axis=1
     )
     return NamedTable(f"{node_table.name.replace(DOMAIN_SUFFIX, '')}_{ANALYSIS_GENERAL}", node_analysis)
 

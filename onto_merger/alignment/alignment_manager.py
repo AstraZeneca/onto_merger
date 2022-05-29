@@ -120,7 +120,7 @@ class AlignmentManager:
             step_counter = start_step + sources_to_align.index(source_id) + 1
             logger.info(
                 f"* * * * * SOURCE: {source_id} | STEP: {step_counter} of "
-                + f"{len(sources_to_align)} | MAPPING: {mapping_type_group_name} "
+                + f"{len(sources_to_align) * 2} | MAPPING: {mapping_type_group_name} "
                 + "* * * * *"
             )
             (merges_for_source, alignment_step) = self._align_nodes_to_source(
@@ -148,6 +148,7 @@ class AlignmentManager:
         """
         unmapped_nodes = merge_utils.produce_table_unmapped_nodes(
             nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
+            seed_id=self._alignment_config.base_config.seed_ontology_name,
             merges=self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA).dataframe,
         )
 

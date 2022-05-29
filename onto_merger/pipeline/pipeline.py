@@ -151,6 +151,7 @@ class Pipeline:
         self._data_repo.update(
             tables=merge_utils.post_process_alignment_results(
                 data_repo=self._data_repo,
+                seed_id=self._alignment_config.base_config.seed_ontology_name,
                 alignment_priority_order=self._alignment_priority_order
             )
         )

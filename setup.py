@@ -15,6 +15,7 @@ install_requires = [
     "numpy==1.21.5",
     "docopt==0.6.2",
     "plotly-express==0.4.1",
+    "tqdm==4.64.0",
 ]
 
 setup_requires = ["pytest-runner"]

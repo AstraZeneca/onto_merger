@@ -6,6 +6,7 @@ from typing import List, Optional, Tuple
 
 import pandas as pd
 from pandas import DataFrame
+from tqdm import tqdm
 
 from onto_merger.data.data_manager import DataManager
 from onto_merger.analyser.analysis_utils import filter_nodes_for_namespace, produce_table_node_ids_from_edge_table
@@ -58,6 +59,10 @@ class HierarchyManager:
         :param data_repo: The data repository containing the input data.
         :return: The produced hierarchy edge table.
         """
+        logger.info(f"{('* ' * 20)}")
+        logger.info(f"Input nodes {len(data_repo.get(TABLE_NODES).dataframe):,d}"
+                    + f" | Unmapped nodes {len(data_repo.get(TABLE_NODES_UNMAPPED).dataframe):,d}")
+
         # (1) get the seed hierarchy as main scaffolding
         seed_hierarchy_df = _produce_table_seed_ontology_hierarchy(
             seed_ontology_name=alignment_config.base_config.seed_ontology_name,
@@ -115,11 +120,9 @@ class HierarchyManager:
         self.f.close()
 
         # edges
-        connected_nodes = [
-            node_id for node_id in unmapped_nodes[COLUMN_DEFAULT_ID].tolist() if node_id in merge_and_connectivity_map
-        ]
         new_hierarchy_edges = _produce_hierarchy_edge_table_from_edge_path_lists(
             edges_for_all_nodes=edges_for_all_nodes)
+        connected_nodes = produce_table_node_ids_from_edge_table(edges=new_hierarchy_edges)
 
         logger.info(
             f"Out of {len(unmapped_nodes):,d} unmapped nodes, "
@@ -151,7 +154,7 @@ class HierarchyManager:
             return [], {}, connectivity_step
 
         # get edges for ns
-        edges_for_ns = mapping_utils.get_mappings_for_namespace(namespace=node_namespace, edges=hierarchy_edges)
+        edges_for_ns = hierarchy_edges.query(expr=f"prov == '{node_namespace}'", inplace=False)
         connectivity_step.count_available_edges = len(edges_for_ns)
         if edges_for_ns.empty:
             connectivity_step.task_finished()
@@ -166,28 +169,29 @@ class HierarchyManager:
         connectivity_step.count_reachable_unmapped_nodes = count_unmapped
         logger.info(
             f"Reachable unmapped nodes {len(reachable_unmapped_nodes):,d} "
-            + f"({(len(reachable_unmapped_nodes) * 100) / len(unmapped_node_ids_for_namespace):.2f}%)"
+            + f"({(len(reachable_unmapped_nodes) * 100) / len(unmapped_node_ids_for_namespace):.2f}%)\n"
         )
 
         # connect each reachable node
         edges_for_namespace_nodes = []
         counter = 1
-        for node_to_connect in reachable_unmapped_nodes:
-            _progress_bar(count=counter, total=count_unmapped, status=f" Connecting {node_namespace} ")
-            counter += 1
-            if node_to_connect not in merge_and_connectivity_map:
-                edges_for_node = self._produce_hierarchy_path_for_unmapped_node(
-                    node_to_connect=node_to_connect,
-                    unmapped_node_ids=unmapped_node_ids_for_namespace,
-                    merge_and_connectivity_map_for_ns=merge_and_connectivity_map_for_ns,
-                    hierarchy_graph_for_ns=hierarchy_graph_for_ns,
-                )
-                if edges_for_node:
-                    # update result and processing data structures
-                    edges_for_namespace_nodes.extend(edges_for_node)
-                    merge_and_connectivity_map_for_ns.update(
-                        {item: item for item in list(itertools.chain(*edges_for_node))[0:-1]}
+        with tqdm(total=count_unmapped, desc=f"Connecting {node_namespace} nodes") as progress_bar:
+            for node_to_connect in reachable_unmapped_nodes:
+                counter += 1
+                if node_to_connect not in merge_and_connectivity_map:
+                    edges_for_node = self._produce_hierarchy_path_for_unmapped_node(
+                        node_to_connect=node_to_connect,
+                        unmapped_node_ids=unmapped_node_ids_for_namespace,
+                        merge_and_connectivity_map_for_ns=merge_and_connectivity_map_for_ns,
+                        hierarchy_graph_for_ns=hierarchy_graph_for_ns,
                     )
+                    if edges_for_node:
+                        # update result and processing data structures
+                        edges_for_namespace_nodes.extend(edges_for_node)
+                        merge_and_connectivity_map_for_ns.update(
+                            {item: item for item in list(itertools.chain(*edges_for_node))[0:-1]}
+                        )
+                progress_bar.update(1)
 
         # results
         connected_nodes = [
@@ -285,16 +289,6 @@ def _convert_hierarchy_path_into_tuple_list(pruned_path: List[str]) -> List[Tupl
     return [
         (pruned_path[source_index], pruned_path[source_index + 1]) for source_index in range(0, (len(pruned_path) - 1))
     ]
-
-
-def _progress_bar(count, total, status=""):
-    bar_len = 60
-    filled_len = int(round(bar_len * count / float(total)))
-    percents = round(100.1 * count / float(total), 2)
-    bar = "=" * filled_len + "-" * (bar_len - filled_len)
-    sys.stdout = sys.__stdout__
-    sys.stdout.write("[%s] %s%s ...%s\r" % (bar, percents, "%", status))
-    sys.stdout.flush()
 
 
 def _produce_hierarchy_edge_table_from_edge_path_lists(edges_for_all_nodes: List[Tuple[str, str]]) -> DataFrame:
