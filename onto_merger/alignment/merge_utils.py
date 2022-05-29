@@ -21,7 +21,7 @@ from onto_merger.data.constants import (
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_MERGED, COLUMN_DEFAULT_ID, TABLE_NODES_UNMAPPED, TABLE_NODES, SCHEMA_NODE_ID_LIST_TABLE,
     TABLE_NODES_DOMAIN, COLUMN_RELATION, COLUMN_PROVENANCE, TABLE_NAME_TO_TABLE_SCHEMA_MAP, TABLE_MERGES_DOMAIN,
-    ONTO_MERGER, RELATION_MERGE)
+    ONTO_MERGER, RELATION_MERGE, TABLE_NODES_SEED, TABLE_NODES_MERGED_TO_SEED)
 from onto_merger.data.dataclasses import DataRepository, NamedTable
 from onto_merger.logger.log import get_logger
 
@@ -38,13 +38,17 @@ def post_process_alignment_results(data_repo: DataRepository,
     )
     # nodes
     table_merged_nodes = _produce_named_table_merged_nodes(merges_aggregated=table_aggregated_merges.dataframe)
+    table_merged_to_seed_nodes = _produce_named_table_merged_to_seed_nodes(
+        merges_aggregated=table_aggregated_merges.dataframe,
+        seed_id=seed_id
+    )
     table_unmapped_nodes = _produce_named_table_unmapped_nodes(
         nodes=data_repo.get(TABLE_NODES).dataframe,
         seed_id=seed_id,
         merges=table_aggregated_merges.dataframe
     )
 
-    return [table_aggregated_merges, table_merged_nodes, table_unmapped_nodes]
+    return [table_aggregated_merges, table_merged_nodes, table_merged_to_seed_nodes, table_unmapped_nodes]
 
 
 def _produce_named_table_aggregated_merges(merges: DataFrame, alignment_priority_order: List[str]) -> NamedTable:
@@ -93,6 +97,22 @@ def _produce_named_table_merged_nodes(merges_aggregated: DataFrame) -> NamedTabl
     return NamedTable(
         name=TABLE_NODES_MERGED,
         dataframe=_produce_table_merged_nodes(merges=merges_aggregated),
+    )
+
+
+def _produce_named_table_merged_to_seed_nodes(merges_aggregated: DataFrame, seed_id: str) -> NamedTable:
+    df = analysis_utils.produce_table_with_namespace_column_for_node_ids(table=merges_aggregated.copy())
+    df.query(
+        f"{analysis_utils.get_namespace_column_name_for_column(node_id_column=COLUMN_TARGET_ID)} == '{seed_id}'",
+        inplace=True)
+    df = df.rename(columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID})
+    logger.info(
+        f"Out of {len(merges_aggregated):,d} merged nodes, {len(df):,d} "
+        + f"({((len(df) / len(merges_aggregated)) * 100):.2f}%) are merged to seed seed."
+    )
+    return NamedTable(
+        name=TABLE_NODES_MERGED_TO_SEED,
+        dataframe=df[[COLUMN_DEFAULT_ID]],
     )
 
 
@@ -175,7 +195,7 @@ def produce_table_unmapped_nodes(nodes: DataFrame, seed_id: str, merges: DataFra
     merged_nodes = _produce_table_merged_nodes(merges=merges)
     seed_nodes = _produce_table_seed_nodes(nodes=nodes, seed_id=seed_id)
     merged_and_seed_nodes = pd.concat([seed_nodes, merged_nodes])
-    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_and_seed_nodes, merged_and_seed_nodes])\
+    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merged_and_seed_nodes, merged_and_seed_nodes]) \
         .drop_duplicates(keep=False)
     logger.info(
         f"Out of {len(nodes):,d} nodes, {len(df):,d} "

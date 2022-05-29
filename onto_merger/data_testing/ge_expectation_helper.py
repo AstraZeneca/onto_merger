@@ -202,7 +202,7 @@ def produce_node_namespace_expectations(column_name: str) -> List[ExpectationCon
         produce_expectation_config_column_type_string(column_name=column_name),
         produce_expectation_config_column_values_to_not_be_null(column_name=column_name),
         produce_expectation_config_column_value_lengths_to_be_between(
-            column_name=column_name, min_value=3, max_value=15
+            column_name=column_name, min_value=2, max_value=15
         ),
         produce_expectation_config_column_values_to_match_regex(column_name=column_name, regex="^[A-Za-z][\\w]*$"),
     ]
