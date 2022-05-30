@@ -119,7 +119,6 @@ class Pipeline:
             data_runtime_name=DIRECTORY_INPUT,
             tables=self._data_repo.get_input_tables()
         )
-        print(results_df)
         errors = results_df["nb_failed_validations"].sum()
         if errors > 0:
             self.logger.error(f"The INPUT data validation found {errors} errors. Terminating process. "

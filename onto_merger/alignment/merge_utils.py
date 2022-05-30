@@ -63,14 +63,10 @@ def _produce_named_table_aggregated_merges(merges: DataFrame, alignment_priority
     canonical node.
     :return: The set of aggregated merges.
     """
-
-    # filter out seed self merges
-
-    #
     graph = networkx_utils.create_networkx_graph(edges=merges[SCHEMA_EDGE_SOURCE_TO_TARGET_IDS])
     sub_graphs = list(graph.subgraph(c) for c in connected_components(graph))
     clusters = [list(sub.nodes) for sub in sub_graphs]
-    merges_aggregated = pd.DataFrame([[i] for i in np.array(clusters)])
+    merges_aggregated = pd.DataFrame([[i] for i in np.array(clusters, dtype=object)])
     merges_aggregated.columns = [COLUMN_SOURCE_ID]
 
     # canonical node according to the priority order
