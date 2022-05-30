@@ -22,7 +22,7 @@ from onto_merger.data.constants import (
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
     TABLE_NODES_OBSOLETE, COLUMN_STEP_COUNTER, COLUMN_SOURCE_ID_ALIGNED_TO,
-    COLUMN_MAPPING_TYPE_GROUP, SCHEMA_MERGE_TABLE_WITH_META_DATA)
+    COLUMN_MAPPING_TYPE_GROUP, SCHEMA_MERGE_TABLE_WITH_META_DATA, TABLE_MAPPINGS_FOR_INPUT_NODES)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
@@ -166,7 +166,7 @@ class AlignmentManager:
         # (1) get mappings for NS
         mappings_for_ns = mapping_utils.get_mappings_for_namespace(
             namespace=source_id,
-            edges=self._data_repo_output.get(TABLE_MAPPINGS_UPDATED).dataframe,
+            edges=self._data_repo_output.get(TABLE_MAPPINGS_FOR_INPUT_NODES).dataframe,
         )
         alignment_step = AlignmentStep(
             mapping_type_group=mapping_type_group_name,
@@ -248,6 +248,15 @@ class AlignmentManager:
             mappings_obsolete_to_current_node_id=mappings_obsolete_to_current_node_id_merge_strength,
         )
         self._data_repo_output.update(table=NamedTable(name=TABLE_MAPPINGS_UPDATED, dataframe=mappings_updated))
+
+        # mappings that cover input nodes
+        mappings_for_input_nodes = mapping_utils.filter_mappings_for_input_node_set(
+            input_nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
+            mappings=mappings_updated,
+        )
+        self._data_repo_output.update(
+            table=NamedTable(name=TABLE_MAPPINGS_FOR_INPUT_NODES, dataframe=mappings_for_input_nodes)
+        )
 
         #
         mappings_obsolete_to_current_node_id_applicable = mapping_utils.get_nodes_with_updated_node_ids(

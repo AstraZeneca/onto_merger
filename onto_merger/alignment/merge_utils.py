@@ -150,7 +150,8 @@ def _produce_named_table_unmapped_nodes_post_alignment(
     df = pd.concat([
         nodes[SCHEMA_NODE_ID_LIST_TABLE],
         merged_nodes[SCHEMA_NODE_ID_LIST_TABLE],
-        seed_nodes[SCHEMA_NODE_ID_LIST_TABLE]
+        merged_nodes[SCHEMA_NODE_ID_LIST_TABLE],
+        seed_nodes[SCHEMA_NODE_ID_LIST_TABLE],
     ]).drop_duplicates(keep=False)
     df = df.sort_values([COLUMN_DEFAULT_ID], ascending=True)
     logger.info(

@@ -378,6 +378,20 @@ def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: 
     return mappings_deduplicated
 
 
+def filter_mappings_for_input_node_set(input_nodes: DataFrame, mappings: DataFrame) -> DataFrame:
+    node_ids_to_keep = list(input_nodes[COLUMN_DEFAULT_ID])
+    mapping_subset = mappings.query(
+        f"({COLUMN_SOURCE_ID} == @node_ids) and ({COLUMN_TARGET_ID} == @node_ids)",
+        local_dict={"node_ids": node_ids_to_keep},
+        inplace=False,
+    )
+    logger.info(
+        f"Found {len(mapping_subset):,d} mappings (from total {len(mappings):,d}) "
+        + f"for {len(input_nodes):,d} input_nodes."
+    )
+    return mapping_subset
+
+
 def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataFrame:
     """Filter a mapping set such that the source node IDs must belong to the specified node ID list.
 
