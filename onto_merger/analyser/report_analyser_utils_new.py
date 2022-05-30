@@ -14,8 +14,6 @@ from onto_merger.analyser import analysis_utils
 from onto_merger.analyser import plotly_utils
 from onto_merger.analyser.constants import COLUMN_NAMESPACE_TARGET_ID, COLUMN_NAMESPACE_SOURCE_ID, \
     TABLE_STATS, ANALYSIS_GENERAL, COLUMN_FREQ, GANTT_CHART, TABLE_SECTION_SUMMARY
-from onto_merger.data.constants import COLUMN_SOURCE_TO_TARGET, TABLE_EDGES_HIERARCHY_POST, DOMAIN_SUFFIX, \
-    TABLE_NODES_DOMAIN
 from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT_ID, COLUMN_COUNT, \
     COLUMN_PROVENANCE, COLUMN_RELATION, COLUMN_SOURCE_ID, COLUMN_TARGET_ID, \
     DIRECTORY_INPUT, DIRECTORY_OUTPUT, TABLES_NODE, TABLES_EDGE_HIERARCHY, TABLES_MAPPING, \
@@ -24,7 +22,9 @@ from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT
     TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, \
     TABLE_ALIGNMENT_STEPS_REPORT, TABLE_CONNECTIVITY_STEPS_REPORT, TABLE_PIPELINE_STEPS_REPORT, \
     TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE, TABLE_MERGES_AGGREGATED, \
-    TABLE_NODES_CONNECTED
+    TABLE_NODES_CONNECTED, COLUMN_SOURCE_TO_TARGET, TABLE_EDGES_HIERARCHY_POST, DOMAIN_SUFFIX, \
+    TABLE_NODES_DOMAIN, TABLE_MAPPINGS_DOMAIN, TABLE_EDGES_HIERARCHY_DOMAIN, TABLE_NODES_SEED, \
+    TABLE_NODES_MERGED_TO_SEED
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_CONNECTIVITY, SECTION_OVERVIEW, \
@@ -76,8 +76,7 @@ def produce_summary_input(data_repo: DataRepository) -> NamedTable:
 
 def produce_summary_output(data_repo: DataRepository) -> NamedTable:
     nodes_connected = data_repo.get(TABLE_NODES_CONNECTED).dataframe
-    nb_unique_nodes = (len(data_repo.get(table_name=TABLE_NODES).dataframe)
-                       - len(data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe))
+    nb_unique_nodes = data_repo.get(table_name=TABLE_NODES_DOMAIN).dataframe
     summary = [
         {"metric": "Dataset",
          "values": f'<a href="../../output/domain_ontology" target="_blank">Link</a>'},
@@ -86,14 +85,14 @@ def produce_summary_output(data_repo: DataRepository) -> NamedTable:
          "values": len(data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe)},
         {"metric": "Number of connected nodes (in hierarchy)", "values": len(nodes_connected)},
         {"metric": "Percentage of connected nodes",
-         "values": f"{round(len(nodes_connected) / nb_unique_nodes * 100, 2)}%"},
+         "values": f"{round(len(nodes_connected) / nb_unique_nodes * 100, FLOAT_ROUND_TO)}%"},
         {"metric": "Number of dangling nodes (not in hierarchy)",
          "values": f"{len(data_repo.get(TABLE_NODES_DANGLING).dataframe)}"},
         {"metric": "Percentage of dangling nodes",
-         "values": f"{round(len(data_repo.get(TABLE_NODES_DANGLING).dataframe) / nb_unique_nodes * 100, 2)}%"},
-        {"metric": "Number of mappings", "values": len(data_repo.get(table_name=TABLE_MAPPINGS).dataframe)},
+         "values": f"{round(len(data_repo.get(TABLE_NODES_DANGLING).dataframe) / nb_unique_nodes * 100, FLOAT_ROUND_TO)}%"},
+        {"metric": "Number of mappings", "values": len(data_repo.get(table_name=TABLE_MAPPINGS_DOMAIN).dataframe)},
         {"metric": "Number of hierarchy edges",
-         "values": len(data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe)},
+         "values": len(data_repo.get(table_name=TABLE_EDGES_HIERARCHY_DOMAIN).dataframe)},
     ]
     return NamedTable(
         TABLE_SECTION_SUMMARY,
@@ -103,10 +102,6 @@ def produce_summary_output(data_repo: DataRepository) -> NamedTable:
 
 def produce_summary_alignment(data_repo: DataRepository) -> NamedTable:
     steps_report = data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe
-    nodes_input = steps_report['count_unmapped_nodes'].iloc[0]
-    nodes_seed = steps_report['count_merged_nodes'].iloc[0]
-    nodes_merged = steps_report['count_merged_nodes'].sum() - nodes_seed
-    nodes_unmapped = nodes_input - nodes_seed - nodes_merged
     summary = [
         {"metric": "Process runtime",
          "values": _get_runtime_for_main_step(process_name="ALIGNMENT", data_repo=data_repo)},
@@ -114,10 +109,12 @@ def produce_summary_alignment(data_repo: DataRepository) -> NamedTable:
         {"metric": "Number of sources", "values": len(set(steps_report['source'].tolist())) - 1},
         {"metric": "Number of mapping type groups used",
          "values": len(set(steps_report['mapping_type_group'].tolist()))},
-        {"metric": "Number of input nodes", "values": nodes_input},
-        {"metric": "Number of seed nodes", "values": nodes_seed},
-        {"metric": "Number of merged nodes (excluding seed)", "values": nodes_merged},
-        {"metric": "Number of unmapped nodes", "values": nodes_unmapped},
+        {"metric": "Number of input nodes", "values": len(data_repo.get(TABLE_NODES_DANGLING).dataframe)},
+        {"metric": "Number of seed nodes", "values": len(data_repo.get(TABLE_NODES_SEED).dataframe)},
+        {"metric": "Number of merged nodes (excluding seed)",
+         "values": (len(data_repo.get(TABLE_NODES_MERGED).dataframe)
+                    - len(data_repo.get(TABLE_NODES_MERGED_TO_SEED).dataframe))},
+        {"metric": "Number of unmapped nodes", "values": len(data_repo.get(TABLE_NODES_UNMAPPED).dataframe)},
     ]
     return NamedTable(
         TABLE_SECTION_SUMMARY,
@@ -127,21 +124,20 @@ def produce_summary_alignment(data_repo: DataRepository) -> NamedTable:
 
 def produce_summary_connectivity(data_repo: DataRepository) -> NamedTable:
     steps_report = data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe
-    nodes_to_connect = len(data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe)
     nodes_connected_seed = steps_report['count_connected_nodes'].iloc[0]
     nodes_connected_not_seed = steps_report['count_connected_nodes'].sum() - nodes_connected_seed
-    edges_input_df = data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe
-    edges_input = len(edges_input_df)
     edges_seed = steps_report['count_available_edges'].iloc[0]
-    edges_output = steps_report['count_produced_edges'].sum()
+    edges_output = len(data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe)
     edges_produced = edges_output - edges_seed
     summary = [
         {"metric": "Process runtime",
          "values": _get_runtime_for_main_step(process_name="CONNECTIVITY", data_repo=data_repo)},
         {"metric": "Number of steps run", "values": len(steps_report)},
-        {"metric": "Number of nodes to connect (excluding seed)", "values": nodes_to_connect},
+        {"metric": "Number of nodes to connect (excluding seed)",
+         "values": len(data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe)},
         {"metric": "Number of connected nodes (excluding seed)", "values": nodes_connected_not_seed},
-        {"metric": "Number of input hierarchy edges", "values": edges_input},
+        {"metric": "Number of input hierarchy edges",
+         "values": len(data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe)},
         {"metric": "Number of seed hierarchy edges", "values": edges_seed},
         {"metric": "Number of produced hierarchy edges", "values": edges_produced},
     ]
@@ -212,7 +208,6 @@ def produce_validation_overview_analyses(
     for directory in [DIRECTORY_INPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_OUTPUT]:
         df = df_merged.query(expr=f"directory == '{directory}'", inplace=False)
         nb_validations = df['nb_validations'].sum()
-        nb_validations = df['nb_validations'].sum()
         nb_failed_validations = df['nb_failed_validations'].sum()
         success_ratio = f"{(nb_validations - nb_failed_validations) / nb_validations * 100:.2f}%"
         summary_data.append(
@@ -226,54 +221,28 @@ def produce_validation_overview_analyses(
     return NamedTable("data_profiling_and_tests_summary", summary_df)
 
 
-# SECTION: ALIGNMENT
-def produce_alignment_step_node_analysis_plot(
-        alignment_step_report: DataFrame,
-        section_dataset_name: str,
-        data_manager: DataManager,
-) -> None:
-    mapped_count = 0
-    data = []
-    for _, row in alignment_step_report.iterrows():
-        mapped_count += row['count_mappings']
-        data.append([row['step_counter'], mapped_count, "Mapped",
-                     f"{row['step_counter']} : {row['source']}"])
-        data.append([row['step_counter'], (row['count_unmapped_nodes'] - row['count_mappings']), "Unmapped",
-                     f"{row['step_counter']} : {row['source']}"])
-    df = pd.DataFrame(data=data, columns=["step", "count", "status", "step_name"])
-    start_unmapped = alignment_step_report["count_unmapped_nodes"].iloc[0]
-    df["freq"] = df.apply(
-        lambda x: (round((x[COLUMN_COUNT] / start_unmapped * 100), 1)), axis=1
-    )
-    plotly_utils.produce_vertical_bar_chart_stacked(
-        analysis_table=df,
-        file_path=data_manager.get_analysis_figure_path(
-            dataset=section_dataset_name,
-            analysed_table_name="step_node_analysis",
-            analysis_table_suffix="stacked_bar_chart"
-        ),
-    )
-
-
-# SECTION: CONNECTIVITY
-def produce_connectivity_step_node_analysis_plot(
+# SECTION: ALIGNMENT, CONNECTIVITY
+def produce_step_node_analysis_plot(
         step_report: DataFrame,
         section_dataset_name: str,
         data_manager: DataManager,
+        col_count_a: str,
+        col_a: str,
+        col_count_b: str,
+        col_b: str,
+        b_start_value: int,
 ) -> None:
-    connected_count = 0
-    dangling_start = step_report["count_unmapped_nodes"].sum()
+    col_step_counter = "step_counter"
+    col_source = "step_counter"
+    total_count = 0
     data = []
     for _, row in step_report.iterrows():
-        connected_count += row['count_connected_nodes']
-        data.append([row['step_counter'], connected_count, "Connected",
-                     f"{row['step_counter']} : {row['source']}"])
-        data.append([row['step_counter'], (dangling_start - connected_count), "Dangling",
-                     f"{row['step_counter']} : {row['source']}"])
+        total_count += row[col_count_a]
+        data.append([row[col_step_counter], total_count, col_a, f"{row[col_step_counter]} : {row[col_source]}"])
+        data.append([row[col_step_counter], (row[col_count_b] - row[col_count_a]), col_b,
+                     f"{row[col_step_counter]} : {row[col_source]}"])
     df = pd.DataFrame(data=data, columns=["step", "count", "status", "step_name"])
-    df["freq"] = df.apply(
-        lambda x: (round((x[COLUMN_COUNT] / dangling_start * 100), 1)), axis=1
-    )
+    df = _add_freq_column(df=df, total_count=b_start_value, column_name_count=COLUMN_COUNT)
     plotly_utils.produce_vertical_bar_chart_stacked(
         analysis_table=df,
         file_path=data_manager.get_analysis_figure_path(
@@ -445,7 +414,7 @@ def _produce_data_profiling_stats_for_directory(tables: List[NamedTable],
     ]
 
 
-# NODE ANALYSIS # # todo
+# NODE ANALYSIS #  todo
 def produce_node_analysis(
         node_table: NamedTable, mappings: DataFrame, edges_hierarchy: DataFrame
 ) -> NamedTable:
@@ -489,9 +458,8 @@ def produce_node_analysis(
         node_analysis["edge_coverage_count"] = 0
 
     # add freq
-    node_analysis["namespace_freq"] = node_analysis.apply(
-        lambda x: (round(x['namespace_count'] / len(node_table.dataframe) * 100, 2)), axis=1
-    )
+    node_analysis = _add_freq_column(df=node_analysis, total_count=len(node_table.dataframe),
+                                     column_name_count="namespace_count", freq_col_name="namespace_freq")
     # add relative freq
     node_analysis["mapping_coverage_freq"] = node_analysis.apply(
         lambda x: (round(x['mapping_coverage_count'] / x['namespace_count'] * 100, 2))
@@ -537,6 +505,7 @@ def produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
     df["namespace_freq"] = df.apply(
         lambda x: (round((x['namespace_count'] / len(nodes) * 100), FLOAT_ROUND_TO)), axis=1
     )
+
     return df
 
 
@@ -548,8 +517,6 @@ def produce_node_status_analyses(
     seed_ontology_name = data_manager.load_alignment_config().base_config.seed_ontology_name
 
     # data tables
-    steps_report_alignment = data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe
-    steps_report_connectivity = data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe
     merge_analysis_df = produce_merge_analysis_for_merged_nss_for_canonical(
         merges=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe
     )
@@ -724,9 +691,7 @@ def produce_mapping_analysis_for_type(mappings: DataFrame) -> DataFrame:
              provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
-    df["freq"] = df.apply(
-        lambda x: (round((x['count'] / len(mappings) * 100), 3)), axis=1
-    )
+    df = _add_freq_column(df=df, total_count=len(mappings), column_name_count='count')
     return df
 
 
@@ -754,9 +719,7 @@ def produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
              provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
-    df["freq"] = df.apply(
-        lambda x: (round((x['count'] / len(mappings) * 100), 2)), axis=1
-    )
+    df = _add_freq_column(df=df, total_count=len(mappings), column_name_count='count')
     return df
 
 
@@ -831,8 +794,6 @@ def _describe_hierarchy_edge_path_lengths(df: DataFrame) -> DataFrame:
     df_path_size_describe = df[columns] \
         .describe() \
         .reset_index(level=0)
-    # print("!!! ", type(df_path_size_describe), "| ", df_path_size_describe)
-    # df_path_size_describe = _apply_rounding_to_float_columns(df=df_path_size_describe, column_names=columns)
     return df_path_size_describe
 
 
@@ -861,13 +822,10 @@ def produce_connectivity_hierarchy_edge_overview_analysis(
         ["connectivity", "Other", connected_other_count],
     ])
     df = pd.DataFrame(rows, columns=["category", "status_no_freq", "count"])
-    df["freq"] = df.apply(
-        lambda x: (round((x[COLUMN_COUNT] / len(edges_output)) * 100, 2)), axis=1
-    )
+    df = _add_freq_column(df=df, total_count=len(edges_output), column_name_count=COLUMN_COUNT)
     df["status"] = df.apply(
         lambda x: f"{x['status_no_freq']} ({x['freq']}%)", axis=1
     )
-    print("\n\n\n!!!", df, "\n\n\n!!!")
     plotly_utils.produce_status_stacked_bar_char_edge(
         analysis_table=df,
         file_path=data_manager.get_analysis_figure_path(
@@ -883,9 +841,7 @@ def produce_connectivity_hierarchy_edge_overview_analysis(
         ["Node position", "Child nodes", len(output_child_nodes)],
         ["Node position", "Parent nodes", len(output_parent_nodes)],
     ], columns=["category", "status_no_freq", "count"])
-    child_parent_df["freq"] = child_parent_df.apply(
-        lambda x: (round((x[COLUMN_COUNT] / len(edges_output)) * 100, 2)), axis=1
-    )
+    child_parent_df = _add_freq_column(df=child_parent_df, total_count=len(edges_output), column_name_count=COLUMN_COUNT)
     child_parent_df["status"] = child_parent_df.apply(
         lambda x: f"{x['status_no_freq']} ({x['freq']}%)", axis=1
     )
@@ -897,8 +853,6 @@ def produce_connectivity_hierarchy_edge_overview_analysis(
             analysis_table_suffix="child_parent",
         ),
     )
-
-    #
     return [
         NamedTable("status", df),
         NamedTable("child_parent", child_parent_df)
@@ -913,9 +867,7 @@ def produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFram
              provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
-    df["freq"] = df.apply(
-        lambda x: (round((x[COLUMN_COUNT] / len(edges))) * 100), axis=1
-    )
+    df = _add_freq_column(df=df, total_count=len(edges), column_name_count=COLUMN_COUNT)
     return df
 
 
@@ -1069,9 +1021,7 @@ def produce_merge_analysis_for_merged_nss_for_canonical(merges: DataFrame) -> Da
              source_nss=(analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID), lambda x: set(x))) \
         .reset_index() \
         .sort_values(COLUMN_COUNT, ascending=False)
-    df["freq"] = df.apply(
-        lambda x: (round((x[COLUMN_COUNT] / len(merges) * 100), 3)), axis=1
-    )
+    df = _add_freq_column(df=df, total_count=len(merges), column_name_count=COLUMN_COUNT)
     return df
 
 
@@ -1196,11 +1146,6 @@ def produce_runtime_tables(
         ),
         label_replacement={}
     )
-    # support table: step duration
-    # runtime_table['elapsed_sec'] = runtime_table.apply(
-    #     lambda x: timedelta(seconds=int(x['elapsed'])),
-    #     axis=1
-    # )
     return [
         NamedTable("pipeline_steps_report_step_duration", runtime_table[["task", "elapsed_sec"]]),
         _produce_runtime_overview_named_table(runtime_table=runtime_table)
@@ -1213,9 +1158,6 @@ def _produce_runtime_overview_named_table(runtime_table: DataFrame) -> NamedTabl
         ("Total runtime", timedelta(seconds=int(runtime_table['elapsed'].sum()))),
         ("Start", runtime_table["start"].iloc[0]),
         ("End", runtime_table["end"].iloc[len(runtime_table) - 1]),
-        # ("Min runtime", timedelta(seconds=(runtime_table['elapsed'].min()))),
-        # ("Avg runtime", timedelta(seconds=(runtime_table['elapsed'].mean()))),
-        # ("Max runtime", timedelta(seconds=(runtime_table['elapsed'].max()))),
     ]
     runtime_overview_df = pd.DataFrame(runtime_overview, columns=["metric", "value"])
     return NamedTable("pipeline_steps_report_runtime_overview", runtime_overview_df)
@@ -1247,7 +1189,15 @@ def _get_percentage_of(subset_count: int, total_count: int):
 
 
 def _apply_rounding_to_float_columns(df: DataFrame, column_names: List[str]) -> DataFrame:
-    print("!!!! ", df, " | ", list(df))
     for column_name in column_names:
-        df[column_name] = df.apply(lambda x: (round(float(x[column_name]), 2)), axis=1)
+        df[column_name] = df.apply(lambda x: (round(float(x[column_name]), FLOAT_ROUND_TO)), axis=1)
+    return df
+
+
+def _add_freq_column(df: DataFrame, total_count: int, column_name_count: str, freq_col_name: str = "freq") -> DataFrame:
+    df[freq_col_name] = df.apply(
+        lambda x: (round((x[column_name_count] / total_count * 100), FLOAT_ROUND_TO))
+        if total_count != 0 else 0,
+        axis=1
+    )
     return df

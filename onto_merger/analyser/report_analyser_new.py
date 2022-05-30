@@ -160,10 +160,16 @@ class ReportAnalyser:
                 data_repo=self._data_repo,
             )
         )
-        report_analyser_utils_new.produce_alignment_step_node_analysis_plot(
-            alignment_step_report=self._data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe,
+        step_report = self._data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe
+        report_analyser_utils_new.produce_step_node_analysis_plot(
+            step_report=step_report,
             section_dataset_name=section_dataset_name,
-            data_manager=self._data_manager
+            data_manager=self._data_manager,
+            col_count_a="count_mappings",
+            col_a="Mapped",
+            col_count_b="count_unmapped_nodes",
+            col_b="Unmapped",
+            b_start_value=step_report["count_unmapped_nodes"].iloc[0],
         )
         self._data_manager.save_analysis_named_tables(
             dataset=section_dataset_name,
@@ -221,10 +227,16 @@ class ReportAnalyser:
                 )
             ]
         )
-        report_analyser_utils_new.produce_connectivity_step_node_analysis_plot(
-            step_report=self._data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe,
+        step_report = self._data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe
+        report_analyser_utils_new.produce_step_node_analysis_plot(
+            step_report=step_report,
             section_dataset_name=section_dataset_name,
             data_manager=self._data_manager,
+            col_count_a="count_connected_nodes",
+            col_a="Connected",
+            col_count_b="count_unmapped_nodes",
+            col_b="Dangling",
+            b_start_value=step_report["count_unmapped_nodes"].sum(),
         )
         self._data_manager.save_analysis_named_tables(
             dataset=section_dataset_name,
