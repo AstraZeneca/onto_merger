@@ -8,6 +8,7 @@ from pandas import DataFrame
 from onto_merger.analyser.analysis_utils import (
     get_namespace_column_name_for_column,
     produce_table_with_namespace_column_for_node_ids,
+    produce_table_node_ids_from_edge_table,
 )
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
@@ -40,6 +41,25 @@ def get_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
     ]
     logger.info(
         f"Found {len(mapping_subset)} 'internal_node_reassignment' mappings from total " + f"{len(mappings)} mappings."
+    )
+    return mapping_subset
+
+
+def filter_out_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
+    """Filter a mapping set so each remaining mapping is between nodes of the same ontology.
+
+    :param mappings: The input mapping set ot be filtered.
+    :return: The internal code re-assigment mappings table.
+    """
+    query = (
+        f"{get_namespace_column_name_for_column(COLUMN_SOURCE_ID)} != "
+        + f"{get_namespace_column_name_for_column(COLUMN_TARGET_ID)}"
+    )
+    mapping_subset = produce_table_with_namespace_column_for_node_ids(table=mappings).query(expr=query, inplace=False)[
+        SCHEMA_MAPPING_TABLE
+    ]
+    logger.info(
+        f"Filtered out {len(mappings) - len(mapping_subset)} mappings from total " + f"{len(mappings)} mappings."
     )
     return mapping_subset
 
@@ -99,16 +119,37 @@ def get_mappings_with_updated_node_ids(
     mappings.
     :return: The updated mapping set.
     """
-    # todo implement
-    # remove internal from mapping set >> these are oriented so need to check
-    # the list of IDs
-    # df = get_mappings_internal_node_reassignment(mappings=mappings)
-    #
-    # # remap mapping set >> update_mappings_with_current_node_ids
+    # internal mappings that would apply
+    node_ids_in_mappings = produce_table_node_ids_from_edge_table(edges=mappings)[COLUMN_DEFAULT_ID].tolist()
+    mappings_obsolete_to_current_node_id_applicable = mappings_obsolete_to_current_node_id.query(
+        expr=(f"{COLUMN_SOURCE_ID} == @node_ids_in_mappings"),
+        local_dict={"node_ids_in_mappings": node_ids_in_mappings},
+        inplace=False,
+    )
+    logger.info(f"Out of {len(mappings_obsolete_to_current_node_id)} obsolete_to_current_node_id mappings, "
+                + f"{len(mappings_obsolete_to_current_node_id_applicable)} can be applied to mappings.")
 
-    mappings_update = mappings.copy()
+    mappings_updated = filter_out_mappings_internal_node_reassignment(mappings=mappings)
+    mappings_updated = update_mappings_with_current_node_ids(
+        mappings_internal_obsolete_to_current_node_id=mappings_obsolete_to_current_node_id_applicable,
+        mappings=mappings_updated,
+    )
 
-    return mappings_update
+    return mappings_updated
+
+def get_nodes_with_updated_node_ids(
+    nodes: DataFrame, mappings_obsolete_to_current_node_id: DataFrame
+) -> DataFrame:
+    # internal mappings that would apply
+    mappings_obsolete_to_current_node_id_applicable = mappings_obsolete_to_current_node_id.query(
+        expr=(f"{COLUMN_SOURCE_ID} == @node_ids_in_mappings"),
+        local_dict={"node_ids_in_mappings": nodes[COLUMN_DEFAULT_ID].tolist()},
+        inplace=False,
+    )
+    logger.info(f"Out of {len(mappings_obsolete_to_current_node_id)} obsolete_to_current_node_id mappings, "
+                + f"{len(mappings_obsolete_to_current_node_id_applicable)} can be applied to nodes.")
+
+    return mappings_obsolete_to_current_node_id_applicable
 
 
 def add_comparison_column_for_reoriented_mappings(mappings: DataFrame):

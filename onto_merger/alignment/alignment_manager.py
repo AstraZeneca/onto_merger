@@ -3,6 +3,7 @@
 from typing import List, Tuple
 
 from pandas import DataFrame
+import pandas as pd
 
 from onto_merger.alignment import mapping_utils, merge_utils
 from onto_merger.analyser import analysis_utils
@@ -20,7 +21,8 @@ from onto_merger.data.constants import (
     TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
-    TABLE_NODES_OBSOLETE)
+    TABLE_NODES_OBSOLETE, COLUMN_STEP_COUNTER, COLUMN_SOURCE_ID_ALIGNED_TO,
+    COLUMN_MAPPING_TYPE_GROUP, SCHEMA_MERGE_TABLE_WITH_META_DATA)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
@@ -92,6 +94,16 @@ class AlignmentManager:
             start_step=len(source_alignment_order)
         )
 
+        # remove self merges
+        all_merges = self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA).dataframe
+        filtered_merges = pd.concat([
+            all_merges,
+            self._data_repo_output.get("SEED_MERGES").dataframe]).drop_duplicates(keep=False)
+        self._data_repo_output.update(
+            table=NamedTable(TABLE_MERGES_WITH_META_DATA, filtered_merges)
+        )
+        logger.info(f"Filtered out seed self merges ({len(all_merges):,d} -> {len(filtered_merges):,d})")
+
         # save meta data
         self._data_repo_output.update(
             table=convert_alignment_steps_to_named_table(alignment_steps=self._alignment_steps)
@@ -148,7 +160,6 @@ class AlignmentManager:
         """
         unmapped_nodes = merge_utils.produce_table_unmapped_nodes(
             nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
-            seed_id=self._alignment_config.base_config.seed_ontology_name,
             merges=self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA).dataframe,
         )
 
@@ -229,14 +240,6 @@ class AlignmentManager:
             permitted_mapping_relations=self._alignment_config.mapping_type_groups.equivalence,
             mappings=mappings_obsolete_to_current_node_id,
         )
-        mappings_obsolete_to_current_node_id_merge_strength[COLUMN_RELATION] = RELATION_MERGE
-        mappings_obsolete_to_current_node_id_merge_strength[COLUMN_PROVENANCE] = ONTO_MERGER
-        self._data_repo_output.update(
-            table=NamedTable(
-                name=TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
-                dataframe=mappings_obsolete_to_current_node_id_merge_strength[SCHEMA_HIERARCHY_EDGE_TABLE],
-            )
-        )
 
         # get the mappings without the internal code reassignment and update
         # any obsolete node IDs
@@ -245,6 +248,31 @@ class AlignmentManager:
             mappings_obsolete_to_current_node_id=mappings_obsolete_to_current_node_id_merge_strength,
         )
         self._data_repo_output.update(table=NamedTable(name=TABLE_MAPPINGS_UPDATED, dataframe=mappings_updated))
+
+        #
+        mappings_obsolete_to_current_node_id_applicable = mapping_utils.get_nodes_with_updated_node_ids(
+            nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
+            mappings_obsolete_to_current_node_id=mappings_obsolete_to_current_node_id_merge_strength,
+        )
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_RELATION] = RELATION_MERGE
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_PROVENANCE] = ONTO_MERGER
+        self._data_repo_output.update(
+            table=NamedTable(
+                name=TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
+                dataframe=mappings_obsolete_to_current_node_id_applicable[SCHEMA_HIERARCHY_EDGE_TABLE],
+            )
+        )
+
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_STEP_COUNTER] = 0
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_SOURCE_ID_ALIGNED_TO] = "INTERNAL"
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_MAPPING_TYPE_GROUP] = MAPPING_TYPE_GROUP_EQV
+        self._data_repo_output.update(
+            table=DataManager.merge_tables_of_same_type(
+                tables=[NamedTable(TABLE_MERGES_WITH_META_DATA,
+                                   mappings_obsolete_to_current_node_id_applicable[SCHEMA_MERGE_TABLE_WITH_META_DATA]),
+                        self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA)]
+            )
+        )
 
         logger.info("Finished pre-processing mappings.")
 
@@ -265,6 +293,7 @@ class AlignmentManager:
             nodes_obsolete=self._data_repo_input.get(TABLE_NODES_OBSOLETE).dataframe,
         )
         self._data_repo_output.update(table=self_merges_for_seed_nodes)
+        self._data_repo_output.update(table=NamedTable("SEED_MERGES", self_merges_for_seed_nodes.dataframe))
 
         # record start step meta data
         step = AlignmentStep(

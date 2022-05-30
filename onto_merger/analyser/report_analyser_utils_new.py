@@ -357,6 +357,10 @@ def _produce_ge_validation_analysis(data_manager: DataManager, ) -> dict:
     return data_dic
 
 
+def produce_ge_validation_analysis_as_table(data_manager: DataManager, ) -> DataFrame:
+    return pd.DataFrame(_produce_ge_validation_analysis(data_manager=data_manager).values())
+
+
 def _produce_data_test_stats_for_directory(tables: List[str],
                                            directory: str,
                                            ge_validation_report_map: dict,

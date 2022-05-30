@@ -194,9 +194,11 @@ class HierarchyManager:
                 progress_bar.update(1)
 
         # results
-        connected_nodes = [
-            node_id for node_id in unmapped_node_ids_for_namespace if node_id in merge_and_connectivity_map_for_ns
-        ]
+        connected_nodes = produce_table_node_ids_from_edge_table(
+            edges=_produce_hierarchy_edge_table_from_edge_path_lists(
+                edges_for_all_nodes=edges_for_namespace_nodes
+            )
+        )
         connectivity_step.count_connected_nodes = len(connected_nodes)
         connectivity_step.count_produced_edges = len(edges_for_namespace_nodes)
         logger.info(

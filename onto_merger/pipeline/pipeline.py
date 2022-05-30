@@ -2,6 +2,8 @@
 from datetime import datetime
 from typing import List
 
+from pandas import DataFrame
+
 from onto_merger.analyser.report_analyser_new import ReportAnalyser
 from onto_merger.alignment import merge_utils, hierarchy_utils
 from onto_merger.alignment.alignment_manager import AlignmentManager
@@ -112,11 +114,18 @@ class Pipeline:
         )
 
         # profile input tables
-        self._validate_and_profile_dataset(
+        results_df = self._validate_and_profile_dataset(
             data_origin=DIRECTORY_INPUT,
             data_runtime_name=DIRECTORY_INPUT,
             tables=self._data_repo.get_input_tables()
         )
+        print(results_df)
+        errors = results_df["nb_failed_validations"].sum()
+        if errors > 0:
+            self.logger.error(f"The INPUT data validation found {errors} errors. Terminating process. "
+                              + f"Please resolve the errors, or force skipping errors in the config (see report "
+                              + f"'{self._data_manager.get_ge_data_docs_index_path_for_input()}').")
+            raise Exception
 
         self.logger.info("Finished processing input data.")
 
@@ -135,6 +144,7 @@ class Pipeline:
             data_manager=self._data_manager,
         ).align_nodes()
         self._data_repo.update(tables=alignment_results.get_intermediate_tables())
+        self._data_manager.save_tables(tables=alignment_results.get_intermediate_tables())
         self._alignment_priority_order.extend(source_alignment_order)
         self._record_runtime(start_date_time=start_date_time, task_name="ALIGNMENT")
         self.logger.info("Finished aligning nodes.")
@@ -148,13 +158,13 @@ class Pipeline:
         """
         self.logger.info("Started aggregating merges...")
         start_date_time = datetime.now()
-        self._data_repo.update(
-            tables=merge_utils.post_process_alignment_results(
-                data_repo=self._data_repo,
-                seed_id=self._alignment_config.base_config.seed_ontology_name,
-                alignment_priority_order=self._alignment_priority_order
-            )
+        tables = merge_utils.post_process_alignment_results(
+            data_repo=self._data_repo,
+            seed_id=self._alignment_config.base_config.seed_ontology_name,
+            alignment_priority_order=self._alignment_priority_order
         )
+        self._data_repo.update(tables=tables)
+        self._data_manager.save_tables(tables=tables)
         self._record_runtime(start_date_time=start_date_time, task_name="ALIGNMENT postprocessing")
         self.logger.info("Finished aggregating merges.")
 
@@ -211,7 +221,7 @@ class Pipeline:
 
     def _validate_and_profile_dataset(
             self, data_origin: str, data_runtime_name: str, tables: List[NamedTable]
-    ) -> None:
+    ) -> DataFrame:
         """Profile and validate a dataset.
 
         :return:
@@ -225,13 +235,15 @@ class Pipeline:
 
         # run data tests
         start_date_time = datetime.now()
-        GERunner(
+        results_df = GERunner(
             alignment_config=self._alignment_config,
             ge_base_directory=self._data_manager.get_data_tests_path(),
+            data_manager=self._data_manager,
         ).run_ge_tests(named_tables=tables, data_origin=data_origin)
         self._record_runtime(start_date_time=start_date_time, task_name=f"VALIDATION {data_runtime_name} DATA")
 
         self.logger.info(f"Finished validating {data_runtime_name} data.")
+        return results_df
 
     def _produce_report(self) -> None:
         """Run the alignment and connectivity evaluation process.
