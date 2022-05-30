@@ -49,6 +49,8 @@ def produce_table_with_namespace_column_for_node_ids(table: DataFrame) -> DataFr
     :param table: The table to be appended with namespace column(s).
     :return: A new table with a corresponding namespace column for all node ID columns.
     """
+    if len(table) == 0:
+        return table
     table_copy = table.copy()
     table_node_id_columns = sorted([col_name for col_name in NODE_ID_COLUMNS if col_name in list(table_copy)])
     for node_id_column in table_node_id_columns:
@@ -67,6 +69,8 @@ def produce_table_with_namespace_column_pair(table: DataFrame) -> DataFrame:
     :return: The same table if it is a node table, a new table with the appended
     column if it is an edge table.
     """
+    if len(table) == 0:
+        return table
     if COLUMN_TARGET_ID not in list(table):
         return table
     if COLUMN_SOURCE_TO_TARGET in list(table):

@@ -280,10 +280,13 @@ def _produce_edges_hierarchy_subsection(section_name: str, data_manager: DataMan
 
 # SECTION: OVERVIEW #
 def _produce_overview_config_subsection(data_manager: DataManager) -> dict:
+    project_name = str(data_manager.get_project_folder_path().split("/")[-1])
+    p_name_max = 25
     return {
         TITLE: "Configuration", LINK_TITLE: "configuration",
         DATASET: {
-            "dataset_id": data_manager.get_project_folder_path().split("/")[-1],
+            "dataset_id": f"{project_name[0:p_name_max] if len(project_name) > p_name_max + 1 else project_name}"
+                          + f"{'...' if len(project_name) > p_name_max else '' }",
             "config_json": json.dumps(data_manager.load_alignment_config().as_dict, indent=4),
         },
         TEMPLATE: "subsection_content/overview-configuration.html"

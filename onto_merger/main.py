@@ -52,16 +52,18 @@ if __name__ == "__main__":
         else:
             main(project_folder_path=arguments[FOLDER_PATH_ARG])
 
-# todo
-
+# # todo
+#
 # import os
+# from typing import List
 # from onto_merger.report import report_generator
-# from onto_merger.analyser.report_analyser_new import ReportAnalyser
+# from onto_merger.analyser.report_analyser import ReportAnalyser
 # from onto_merger.data.data_manager import DataManager
-# from onto_merger.data.dataclasses import DataRepository
+# from onto_merger.data.dataclasses import DataRepository, RuntimeData
 # from onto_merger.logger.log import setup_logger
 #
-# project_folder_path = os.path.abspath("/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data")
+# project_folder_path = os.path.abspath(
+#     "/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease_full_background_knowledge")
 # analysis_data_manager = DataManager(project_folder_path=project_folder_path,
 #                                     clear_output_directory=False)
 # setup_logger(
@@ -74,9 +76,27 @@ if __name__ == "__main__":
 # this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
 # print(this_data_repo.get_repo_summary())
 #
-# ReportAnalyser(
+#
+# def convert_runtime_data() -> List[RuntimeData]:
+#     rd = analysis_data_manager.load_table("pipeline_steps_report", "output/intermediate")
+#     rdl = [
+#         RuntimeData(
+#             task=r["task"],
+#             start=r["start"],
+#             end=r["end"],
+#             elapsed=r["elapsed"],
+#         )
+#         for _, r in rd.iterrows()
+#     ][0:-1]
+#     return rdl
+#
+#
+# ra = ReportAnalyser(
 #     alignment_config=analysis_data_manager.load_alignment_config(),
 #     data_repo=this_data_repo,
-#     data_manager=analysis_data_manager
-# ).produce_report_data()
+#     data_manager=analysis_data_manager,
+#     runtime_data=convert_runtime_data(),
+# )
+#
+# ra.produce_report_data()
 # report_generator.produce_report(data_manager=analysis_data_manager)

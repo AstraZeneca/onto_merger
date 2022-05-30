@@ -24,7 +24,7 @@ from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT
     TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE, TABLE_MERGES_AGGREGATED, \
     TABLE_NODES_CONNECTED, COLUMN_SOURCE_TO_TARGET, TABLE_EDGES_HIERARCHY_POST, DOMAIN_SUFFIX, \
     TABLE_NODES_DOMAIN, TABLE_MAPPINGS_DOMAIN, TABLE_EDGES_HIERARCHY_DOMAIN, TABLE_NODES_SEED, \
-    TABLE_NODES_MERGED_TO_SEED
+    TABLE_NODES_MERGED_TO_SEED, TABLE_TYPE_MERGE, DIRECTORY_DOMAIN
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_CONNECTIVITY, SECTION_OVERVIEW, \
@@ -163,7 +163,7 @@ def produce_summary_data_tests(data_repo: DataRepository,
          "values": stats.query(expr=f"directory == '{DIRECTORY_INTERMEDIATE}'", inplace=False)
          ['nb_failed_validations'].sum()},
         {"metric": "Number of failed tests (output data)",
-         "values": stats.query(expr=f"directory == '{DIRECTORY_OUTPUT}'", inplace=False)
+         "values": stats.query(expr=f"directory == '{DIRECTORY_DOMAIN}'", inplace=False)
          ['nb_failed_validations'].sum()},
         {"metric": "Total failed tests", "values": stats['nb_failed_validations'].sum()},
         {"metric": "Great Expectations package version", "values": f"<code>{stats['ge_version'].iloc[0]}</code>"},
@@ -773,6 +773,8 @@ def produce_source_to_target_analysis_for_directed_edge(edges: DataFrame) -> Dat
 # HIERARCHY ANALYSIS #
 def produce_hierarchy_edge_path_analysis(hierarchy_edges_paths: DataFrame) -> List[NamedTable]:
     # compute path diff
+    if len(hierarchy_edges_paths) == 0:
+        return []
     df = hierarchy_edges_paths[["connected_node_ns", "length_original_path", "length_produced_path"]].copy()
     df["path_diff"] = df.apply(lambda x: (x["length_original_path"] - x["length_produced_path"]), axis=1)
 
@@ -1122,7 +1124,7 @@ def _get_table_type_for_table_name(table_name: str) -> str:
     elif table_name in TABLES_MAPPING:
         return TABLE_TYPE_MAPPING
     elif table_name in TABLES_MERGE:
-        return TABLE_TYPE_MAPPING
+        return TABLE_TYPE_MERGE
 
 
 # RUNTIME ANALYSIS #

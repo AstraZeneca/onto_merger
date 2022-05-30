@@ -149,6 +149,7 @@ class DataRepository:
         return summary_df
 
 
+@dataclass_json
 @dataclass
 class RuntimeData:
     """Represent an pipeline step metadata as a dataclass."""

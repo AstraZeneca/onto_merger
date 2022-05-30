@@ -305,8 +305,6 @@ def post_process_connectivity_results(data_repo: DataRepository) -> List[NamedTa
     nodes_connected = produce_named_table_nodes_connected(
         hierarchy_edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe
     )
-    print(nodes_connected.dataframe.head())
-    print(data_repo.get(TABLE_NODES_UNMAPPED).dataframe.head())
     nodes_dangling = produce_named_table_nodes_dangling(
         nodes_all=data_repo.get(TABLE_NODES_UNMAPPED).dataframe,
         nodes_connected=nodes_connected.dataframe,
@@ -320,10 +318,11 @@ def produce_named_table_nodes_connected(hierarchy_edges: DataFrame) -> NamedTabl
     :param hierarchy_edges: The domain node hierarchy.
     :return: The table of nodes connected that are not merged but connected.
     """
-    return NamedTable(
-        TABLE_NODES_CONNECTED,
-        produce_table_node_ids_from_edge_table(edges=hierarchy_edges)[SCHEMA_NODE_ID_LIST_TABLE]
+    df = produce_table_node_ids_from_edge_table(edges=hierarchy_edges)[SCHEMA_NODE_ID_LIST_TABLE]
+    logger.info(
+        f"There are {len(df):,d} connected nodes (hierarchy edges = {len(hierarchy_edges):,d})."
     )
+    return NamedTable(TABLE_NODES_CONNECTED, df)
 
 
 def produce_named_table_nodes_dangling(
@@ -342,6 +341,6 @@ def produce_named_table_nodes_dangling(
     ]).drop_duplicates(keep=False)
     logger.info(
         f"Out of {len(nodes_all):,d} nodes, {len(df):,d} "
-        + f"({((len(df) / len(nodes_all)) * 100):.2f}%) are connected."
+        + f"({((len(df) / len(nodes_all)) * 100):.2f}%) are dangling."
     )
     return NamedTable(TABLE_NODES_DANGLING, df)

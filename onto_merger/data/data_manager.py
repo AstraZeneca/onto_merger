@@ -66,6 +66,7 @@ class DataManager:
             self._clear_output_directory()
         self._create_output_directory_structure()
 
+    # CONFIG #
     def load_alignment_config(self) -> AlignmentConfig:
         """Parse the alignment configuration file into an AlignmentConfig dataclass.
 
@@ -100,6 +101,27 @@ class DataManager:
         )
         return alignment_config
 
+    # DIRECTORY STRUCTURE #
+    def _create_output_directory_structure(self):
+        """Produce the empty directory structure for the output files.."""
+        directory_paths = [
+            self.get_analysis_folder_path(),
+            self._get_profiled_report_directory_path(),
+            self.get_data_tests_path(),
+            self.get_dropped_mappings_path(),
+            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS),
+            self.get_domain_ontology_folder_path(),
+        ]
+        for directory_path in directory_paths:
+            Path(directory_path).mkdir(parents=True, exist_ok=True)
+
+    def _clear_output_directory(self):
+        """Delete the output folder and its contents."""
+        output_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT)
+        if os.path.exists(output_path):
+            shutil.rmtree(output_path, ignore_errors=True)
+
+    # LOADING #
     def load_table(self, table_name: str, process_directory: str) -> DataFrame:
         """Load a table as a data frame.
 
@@ -192,74 +214,7 @@ class DataManager:
             logger.error(f"Data table missing: {e}")
         return None
 
-    @staticmethod
-    def get_absolute_path(path: str) -> str:
-        """Return the absolute path for a path."""
-        return os.path.abspath(path)
-
-    def get_table_path(self, process_directory: str, table_name: str) -> str:
-        """Produce a path (in the appropriate project sub folder) for a given table.
-
-        :param process_directory: The process directory (input or output).
-        :param table_name: The name of the table.
-        :return: The project folder path of the given table.
-        """
-        return os.path.join(self._project_folder_path, process_directory, f"{table_name}.csv")
-
-    def _get_profiled_report_directory_path(self) -> str:
-        """Produce the path for the Pandas profile reports directory."""
-        return os.path.join(
-            self._project_folder_path,
-            DIRECTORY_OUTPUT,
-            DIRECTORY_REPORT,
-            DIRECTORY_PROFILED_DATA,
-        )
-
-    def get_data_tests_path(self) -> str:
-        """Produce the path for data test directory."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DATA_TESTS)
-
-    def get_domain_ontology_path(self) -> str:
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
-
-    def get_dropped_mappings_path(self) -> str:
-        """Produce the path for a dropped mapping."""
-        return os.path.join(
-            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DROPPED_MAPPINGS
-        )
-
-    def get_profiled_table_report_path(self, table_name: str, relative_path=False) -> str:
-        """Produce the path for the Pandas profile report HTML."""
-        table_html = f"{table_name}_report.html"
-        if relative_path is True:
-            return os.path.join(DIRECTORY_PROFILED_DATA, table_html)
-        return os.path.join(self._get_profiled_report_directory_path(), table_html)
-
-    def get_log_file_path(self) -> str:
-        """Produce the path for log file."""
-        return os.path.join(
-            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS, FILE_NAME_LOG
-        )
-
-    def _create_output_directory_structure(self):
-        """Produce the empty directory structure for the output files.."""
-        directory_paths = [
-            self.get_analysis_folder_path(),
-            self._get_profiled_report_directory_path(),
-            self.get_data_tests_path(),
-            self.get_dropped_mappings_path(),
-            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS),
-            self.get_domain_ontology_folder_path(),
-        ]
-        for directory_path in directory_paths:
-            Path(directory_path).mkdir(parents=True, exist_ok=True)
-
-    def _clear_output_directory(self):
-        """Delete the output folder and its contents."""
-        output_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT)
-        if os.path.exists(output_path):
-            shutil.rmtree(output_path, ignore_errors=True)
-
+    # SAVING #
     def save_table(
             self, table: NamedTable, process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"
     ) -> None:
@@ -316,91 +271,9 @@ class DataManager:
                 index=index
             )
 
-    @staticmethod
-    def get_analysis_figure_file_name(dataset: str,
-                                      analysed_table_name: str,
-                                      analysis_table_suffix: str) -> str:
-        return f"{dataset}_{analysed_table_name}_{analysis_table_suffix}"
-
-    def get_analysis_figure_path(self,
-                                 dataset: str,
-                                 analysed_table_name: str,
-                                 analysis_table_suffix: str) -> str:
-        return os.path.join(
-            self.get_analysis_folder_path(),
-            self.get_analysis_figure_file_name(
-                dataset=dataset,
-                analysed_table_name=analysed_table_name,
-                analysis_table_suffix=analysis_table_suffix
-            )
-        )
-
-    @staticmethod
-    def produce_domain_ontology_tables(data_repo: DataRepository) -> List[NamedTable]:
-        """Produce the domain ontology files with minimal data.
-
-        Tables used in the pipeline may contain inferred column values, e.g. node ID
-         namespaces and process (alignment and connectivity) meta data.
-
-        :param data_repo: The data repository containing the files.
-        :return: The finalised (i.e. domain ontology) tables.
-        """
-        return [
-            merge_utils.produce_named_table_domain_nodes(
-                nodes=data_repo.get(TABLE_NODES).dataframe,
-                merged_nodes=data_repo.get(TABLE_NODES_MERGED).dataframe,
-            ),
-            merge_utils.produce_named_table_domain_merges(
-                merges_aggregated=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe)
-            ,
-            NamedTable(
-                name=TABLE_MAPPINGS_DOMAIN,
-                dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)
-                    .dataframe[SCHEMA_MAPPING_TABLE]
-                    .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
-            ),
-            NamedTable(
-                name=TABLE_EDGES_HIERARCHY_DOMAIN,
-                dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST)
-                    .dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
-                    .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False),
-            ),
-        ]
-
-    def save_merged_ontology_report(self, content) -> str:
-        """Save the analysis report HTML content."""
-        file_path = self.produce_analysis_report_path()
-        with open(file_path, "w") as f:
-            f.write(content)
-        self._copy_analysis_images_and_report_assets()
-        return file_path
-
-    def _copy_analysis_images_and_report_assets(self):
-        # images  from assets
-        images_folder = os.path.join(self._produce_analysis_report_folder_path(), "images")
-        if Path(images_folder).exists() is False:
-            shutil.copytree(
-                os.path.abspath("../../onto_merger/onto_merger/report/templates/images"),
-                images_folder
-            )
-        # plots from analysis output folder
-        [
-            shutil.move(
-                os.path.join(self.get_analysis_folder_path(), figure_file),
-                os.path.join(images_folder, figure_file)
-            )
-            for figure_file in os.listdir(self.get_analysis_folder_path()) if figure_file.endswith(f".{FIGURE_FORMAT}") # .svg >> .png
-        ]
-
-    def _produce_analysis_report_folder_path(self):
-        """Produce the analysis report path."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
-
-    def produce_analysis_report_path(self):
-        """Produce the analysis report HTML path."""
-        return os.path.join(self._produce_analysis_report_folder_path(), "index.html")
-
-    def save_dropped_mappings_table(self, table: DataFrame, step_count: int, source_id: str, mapping_type: str) -> None:
+    def save_dropped_mappings_table(
+            self, table: DataFrame, step_count: int, source_id: str, mapping_type: str
+    ) -> None:
         """Save a dropped mapping dataframe as a CSV, with meta data in the file name.
 
         :param table: The dataframe to be saved.
@@ -418,40 +291,40 @@ class DataManager:
                 index=False,
             )
 
+    def save_merged_ontology_report(self, content) -> str:
+        """Save the analysis report HTML content."""
+        file_path = self.produce_analysis_report_path()
+        with open(file_path, "w") as f:
+            f.write(content)
+        self._copy_analysis_images_and_report_assets()
+        return file_path
+
+    # COPY & MOVE #
+    def _copy_analysis_images_and_report_assets(self):
+        # images  from assets
+        images_folder = os.path.join(self._produce_analysis_report_folder_path(), "images")
+        if Path(images_folder).exists() is False:
+            shutil.copytree(
+                os.path.abspath("../../onto_merger/onto_merger/report/templates/images"),
+                images_folder
+            )
+        # plots from analysis output folder
+        [
+            shutil.move(
+                os.path.join(self.get_analysis_folder_path(), figure_file),
+                os.path.join(images_folder, figure_file)
+            )
+            for figure_file in os.listdir(self.get_analysis_folder_path()) if figure_file.endswith(f".{FIGURE_FORMAT}")
+            # .svg >> .png
+        ]
+
     def move_data_docs_to_reports(self) -> None:
         """Move the data doc files to the report folder."""
         from_path = os.path.join(self.get_data_tests_path(), "uncommitted/data_docs")
         to_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "data_docs")
         shutil.copytree(from_path, to_path)
 
-    @staticmethod
-    def merge_tables_of_same_type(tables: List[NamedTable]) -> NamedTable:
-        """Merge a list of named tables (that must be the same type) into a single named table.
-
-        :param tables: The list of named tables.
-        :return:
-        """
-        return NamedTable(
-            tables[0].name,
-            pd.concat([table.dataframe for table in tables]).drop_duplicates(keep="first"),
-        )
-
-    @staticmethod
-    def produce_empty_merge_table() -> NamedTable:
-        """Produce an empty named merge table."""
-        return NamedTable(
-            name=TABLE_MERGES_WITH_META_DATA,
-            dataframe=pd.DataFrame([], columns=list(SCHEMA_MERGE_TABLE_WITH_META_DATA)),
-        )
-
-    @staticmethod
-    def produce_empty_hierarchy_table() -> NamedTable:
-        """Produce an empty hierarchy edge table."""
-        return NamedTable(
-            name=TABLE_EDGES_HIERARCHY,
-            dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
-        )
-
+    # PATHS #
     def get_project_folder_path(self) -> str:
         return str(self._project_folder_path)
 
@@ -485,3 +358,140 @@ class DataManager:
     def get_hierarchy_edges_paths_debug_file_path(self):
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_ANALYSIS,
                             "connectivity_hierarchy_edges_paths.csv")
+
+    @staticmethod
+    def get_absolute_path(path: str) -> str:
+        """Return the absolute path for a path."""
+        return os.path.abspath(path)
+
+    def get_table_path(self, process_directory: str, table_name: str) -> str:
+        """Produce a path (in the appropriate project sub folder) for a given table.
+
+        :param process_directory: The process directory (input or output).
+        :param table_name: The name of the table.
+        :return: The project folder path of the given table.
+        """
+        return os.path.join(self._project_folder_path, process_directory, f"{table_name}.csv")
+
+    def _get_profiled_report_directory_path(self) -> str:
+        """Produce the path for the Pandas profile reports directory."""
+        return os.path.join(
+            self._project_folder_path,
+            DIRECTORY_OUTPUT,
+            DIRECTORY_REPORT,
+            DIRECTORY_PROFILED_DATA,
+        )
+
+    def get_data_tests_path(self) -> str:
+        """Produce the path for data test directory."""
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DATA_TESTS)
+
+    def get_domain_ontology_path(self) -> str:
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
+
+    def get_dropped_mappings_path(self) -> str:
+        """Produce the path for a dropped mapping."""
+        return os.path.join(
+            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DROPPED_MAPPINGS
+        )
+
+    def get_profiled_table_report_path(self, table_name: str, relative_path=False) -> str:
+        """Produce the path for the Pandas profile report HTML."""
+        table_html = f"{table_name}_report.html"
+        if relative_path is True:
+            return os.path.join(DIRECTORY_PROFILED_DATA, table_html)
+        return os.path.join(self._get_profiled_report_directory_path(), table_html)
+
+    def get_log_file_path(self) -> str:
+        """Produce the path for log file."""
+        return os.path.join(
+            self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS, FILE_NAME_LOG
+        )
+
+    @staticmethod
+    def get_analysis_figure_file_name(dataset: str,
+                                      analysed_table_name: str,
+                                      analysis_table_suffix: str) -> str:
+        return f"{dataset}_{analysed_table_name}_{analysis_table_suffix}"
+
+    def get_analysis_figure_path(self,
+                                 dataset: str,
+                                 analysed_table_name: str,
+                                 analysis_table_suffix: str) -> str:
+        return os.path.join(
+            self.get_analysis_folder_path(),
+            self.get_analysis_figure_file_name(
+                dataset=dataset,
+                analysed_table_name=analysed_table_name,
+                analysis_table_suffix=analysis_table_suffix
+            )
+        )
+
+    def _produce_analysis_report_folder_path(self):
+        """Produce the analysis report path."""
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
+
+    def produce_analysis_report_path(self):
+        """Produce the analysis report HTML path."""
+        return os.path.join(self._produce_analysis_report_folder_path(), "index.html")
+
+    # TABLES #
+    @staticmethod
+    def merge_tables_of_same_type(tables: List[NamedTable]) -> NamedTable:
+        """Merge a list of named tables (that must be the same type) into a single named table.
+
+        :param tables: The list of named tables.
+        :return:
+        """
+        return NamedTable(
+            tables[0].name,
+            pd.concat([table.dataframe for table in tables]).drop_duplicates(keep="first"),
+        )
+
+    @staticmethod
+    def produce_empty_merge_table() -> NamedTable:
+        """Produce an empty named merge table."""
+        return NamedTable(
+            name=TABLE_MERGES_WITH_META_DATA,
+            dataframe=pd.DataFrame([], columns=list(SCHEMA_MERGE_TABLE_WITH_META_DATA)),
+        )
+
+    @staticmethod
+    def produce_empty_hierarchy_table() -> NamedTable:
+        """Produce an empty hierarchy edge table."""
+        return NamedTable(
+            name=TABLE_EDGES_HIERARCHY,
+            dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
+        )
+
+    @staticmethod
+    def produce_domain_ontology_tables(data_repo: DataRepository) -> List[NamedTable]:
+        """Produce the domain ontology files with minimal data.
+
+        Tables used in the pipeline may contain inferred column values, e.g. node ID
+         namespaces and process (alignment and connectivity) meta data.
+
+        :param data_repo: The data repository containing the files.
+        :return: The finalised (i.e. domain ontology) tables.
+        """
+        return [
+            merge_utils.produce_named_table_domain_nodes(
+                nodes=data_repo.get(TABLE_NODES).dataframe,
+                merged_nodes=data_repo.get(TABLE_NODES_MERGED).dataframe,
+            ),
+            merge_utils.produce_named_table_domain_merges(
+                merges_aggregated=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe)
+            ,
+            NamedTable(
+                name=TABLE_MAPPINGS_DOMAIN,
+                dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)
+                    .dataframe[SCHEMA_MAPPING_TABLE]
+                    .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
+            ),
+            NamedTable(
+                name=TABLE_EDGES_HIERARCHY_DOMAIN,
+                dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST)
+                    .dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
+                    .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False),
+            ),
+        ]

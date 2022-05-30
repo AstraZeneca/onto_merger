@@ -151,14 +151,14 @@ span.badge.bg-primary.output {
 span.badge.bg-primary.node {
     background-color: cornflowerblue;
 }
-span.badge.bg-primary.node_obsolete {
-    background-color: dodgerblue;
-}
 span.badge.bg-primary.mapping {
-    background-color: dimgray;
+    background-color: darkblue;
+}
+span.badge.bg-primary.merge {
+    background-color: green;
 }
 span.badge.bg-primary.edge {
-    background-color: darkgreen;
+    background-color: red;
 }
 span.badge.bg-primary.label {
     border-radius: 0.25em;
