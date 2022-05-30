@@ -314,6 +314,7 @@ class AlignmentManager:
                 ),
             )
         step.count_mappings = len(self_merges_for_seed_nodes.dataframe)
+        step.count_merged_nodes = step.count_mappings
         step.task_finished()
         self._alignment_steps.append(
             step

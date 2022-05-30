@@ -141,7 +141,7 @@ def get_nodes_with_updated_node_ids(
     nodes: DataFrame, mappings_obsolete_to_current_node_id: DataFrame
 ) -> DataFrame:
     # internal mappings that would apply
-    mappings_obsolete_to_current_node_id_applicable = mappings_obsolete_to_current_node_id.query(
+    mappings_obsolete_to_current_node_id_applicable = mappings_obsolete_to_current_node_id.copy().query(
         expr=(f"{COLUMN_SOURCE_ID} == @node_ids_in_mappings"),
         local_dict={"node_ids_in_mappings": nodes[COLUMN_DEFAULT_ID].tolist()},
         inplace=False,
