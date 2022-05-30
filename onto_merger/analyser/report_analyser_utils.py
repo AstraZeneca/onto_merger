@@ -24,7 +24,8 @@ from onto_merger.data.constants import SCHEMA_NODE_ID_LIST_TABLE, COLUMN_DEFAULT
     TABLES_DOMAIN, TABLES_INPUT, TABLES_INTERMEDIATE, TABLE_MERGES_AGGREGATED, \
     TABLE_NODES_CONNECTED, COLUMN_SOURCE_TO_TARGET, TABLE_EDGES_HIERARCHY_POST, DOMAIN_SUFFIX, \
     TABLE_NODES_DOMAIN, TABLE_MAPPINGS_DOMAIN, TABLE_EDGES_HIERARCHY_DOMAIN, TABLE_NODES_SEED, \
-    TABLE_NODES_MERGED_TO_SEED, TABLE_TYPE_MERGE, DIRECTORY_DOMAIN
+    TABLE_NODES_MERGED_TO_SEED, TABLE_TYPE_MERGE, DIRECTORY_DOMAIN, TABLE_NODES_MERGED_TO_OTHER, \
+    TABLE_NODES_CONNECTED_EXC_SEED
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import NamedTable, DataRepository
 from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_CONNECTIVITY, SECTION_OVERVIEW, \
@@ -421,14 +422,12 @@ def produce_node_analysis(
     node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
         nodes=node_table.dataframe, metric_name="namespace"
     )
-
     node_mapping_coverage_df = _produce_node_covered_by_edge_table(nodes=node_table.dataframe,
                                                                    edges=mappings,
                                                                    coverage_column=COVERED)
     node_mapping_coverage_distribution_df = _produce_node_namespace_distribution_with_type(
         nodes=node_mapping_coverage_df, metric_name="mapping_coverage"
     )
-
     node_edge_coverage_df = _produce_node_covered_by_edge_table(nodes=node_table.dataframe,
                                                                 edges=edges_hierarchy,
                                                                 coverage_column=COVERED)
@@ -513,42 +512,26 @@ def produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
 def produce_node_status_analyses(
         seed_name: str, data_manager: DataManager, data_repo: DataRepository,
 ) -> DataFrame:
-    # assume seed is all connected
-    seed_ontology_name = data_manager.load_alignment_config().base_config.seed_ontology_name
-
-    # data tables
-    merge_analysis_df = produce_merge_analysis_for_merged_nss_for_canonical(
-        merges=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe
-    )
-    nodes_input_df = analysis_utils.produce_table_with_namespace_column_for_node_ids(
-        table=data_repo.get(table_name=TABLE_NODES).dataframe
-    )
-    nodes_merged_df = data_repo.get(table_name=TABLE_NODES_MERGED).dataframe
-    nodes_connected_df = data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe
-    nodes_dangling_df = data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe
-
     # INPUT
-    nodes_input = len(nodes_input_df)
-    nodes_seed = len(nodes_input_df
-        .query(
-        expr=f"{analysis_utils.get_namespace_column_name_for_column(COLUMN_DEFAULT_ID)} == '{seed_ontology_name}'"))
+    nodes_input = len(data_repo.get(table_name=TABLE_NODES).dataframe)
+    nodes_seed = len(data_repo.get(table_name=TABLE_NODES_SEED).dataframe)
     nodes_not_seed = nodes_input - nodes_seed
 
     # ALIGNMENT
-    nodes_merged_total = len(nodes_merged_df)
-    nodes_merged_to_seed = merge_analysis_df \
-        .query(expr=f'{COLUMN_NAMESPACE_TARGET_ID} == "{seed_name}"', inplace=False)['count'].sum()
-    nodes_merged_to_not_seed = nodes_merged_total - nodes_merged_to_seed
-    nodes_unmapped = nodes_input - nodes_seed - nodes_merged_total
+    nodes_merged_total = len(data_repo.get(table_name=TABLE_NODES_MERGED).dataframe)
     nodes_aligned = nodes_seed + nodes_merged_total
+    nodes_merged_to_seed = len(data_repo.get(TABLE_NODES_MERGED_TO_SEED).dataframe)
+    nodes_merged_to_not_seed = len(data_repo.get(TABLE_NODES_MERGED_TO_OTHER).dataframe)
+    nodes_unmapped = len(data_repo.get(TABLE_NODES_UNMAPPED).dataframe)
 
     # CONNECTIVITY
-    nodes_connected = len(nodes_connected_df)
-    nodes_dangling = len(nodes_dangling_df)
-    nodes_connected_excluding_seed = nodes_connected - nodes_seed
+    nodes_connected = len(data_repo.get(table_name=TABLE_NODES_CONNECTED).dataframe)
+    nodes_dangling = len(data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe)
+    nodes_connected_excluding_seed = len(data_repo.get(table_name=TABLE_NODES_CONNECTED_EXC_SEED).dataframe)
 
     # OUTPUT
-    nodes_input_output_diff = nodes_input - (nodes_input - (nodes_merged_to_seed + nodes_merged_to_not_seed))
+    nodes_input_output_diff = nodes_input - (nodes_input - nodes_merged_total)
+    nodes_unique = nodes_input - nodes_merged_total
 
     # INPUT:    | Seed | Others |
     input_data = [
@@ -578,7 +561,7 @@ def produce_node_status_analyses(
 
     # CON:      | Seed | Merged and Connected | Connected | Dangling |
     connectivity_data = [
-        [SECTION_CONNECTIVITY, nodes_aligned, "Aligned"],
+        [SECTION_CONNECTIVITY, (nodes_seed + nodes_merged_to_seed), "Seed + merged to seed"],
         [SECTION_CONNECTIVITY, nodes_connected_excluding_seed, "Connected"],
         [SECTION_CONNECTIVITY, nodes_dangling, "Dangling"],
     ]
@@ -614,17 +597,19 @@ def produce_node_status_analyses(
 
     # overview status
     overview_node_status_table = [
-        [SECTION_INPUT, nodes_input, "<b>Input nodes</b>"],
-        [SECTION_INPUT, nodes_seed, "Seed nodes"],
-        [SECTION_INPUT, nodes_not_seed, "Nodes excluding seed"],
-        [SECTION_ALIGNMENT, nodes_aligned, "<b>Aligned nodes(seed + merged)</b>"],
-        [SECTION_ALIGNMENT, nodes_merged_to_seed, "Nodes merged to seed"],
-        [SECTION_ALIGNMENT, nodes_merged_to_not_seed, "Nodes Merged to other than seed"],
-        [SECTION_ALIGNMENT, nodes_unmapped, "Unmapped nodes"],
-        [SECTION_CONNECTIVITY, nodes_aligned, "<b>Connected nodes (seed + other connected)</b>"],
-        [SECTION_CONNECTIVITY, nodes_connected_excluding_seed, "\tConnected nodes (excluding seed + merged to seed)"],
-        [SECTION_CONNECTIVITY, nodes_dangling, "Dangling nodes (not connected or merged)"],
-        [SECTION_OUTPUT, nodes_input_output_diff, "<b>Input & Output node diff</b>"],
+        [SECTION_INPUT, nodes_input, "<b>Input</b>"],
+        [SECTION_INPUT, nodes_seed, "Seed"],
+        [SECTION_INPUT, nodes_not_seed, "Other"],
+        [SECTION_ALIGNMENT, nodes_aligned, "<b>Aligned (Seed + Merged)</b>"],
+        [SECTION_ALIGNMENT, nodes_merged_to_seed, "Merged to Seed"],
+        [SECTION_ALIGNMENT, nodes_merged_to_not_seed, "Merged to Other"],
+        [SECTION_ALIGNMENT, nodes_unmapped, "<b>Unmapped</b>"],
+        [SECTION_CONNECTIVITY, (nodes_seed + nodes_merged_to_seed + nodes_connected_excluding_seed),
+         "<b>Connected (Seed + Merged to Seed + Connected)</b>"],
+        [SECTION_CONNECTIVITY, nodes_connected_excluding_seed, "Connected"],
+        [SECTION_CONNECTIVITY, nodes_dangling, "<b>Dangling</b>"],
+        [SECTION_OUTPUT, nodes_input_output_diff, "<b>Input & Output Diff </b>"],
+        [SECTION_OUTPUT, nodes_unique, "Unique"],
     ]
     _produce_and_save_node_status_table(
         data=overview_node_status_table,
@@ -675,8 +660,8 @@ def _process_node_status_table_and_plot(
 
 
 def _add_ratio_to_node_status_table(node_status_table: DataFrame, total_count: int) -> DataFrame:
-    node_status_table["ratio"] = node_status_table.apply(
-        lambda x: (round((x['count'] / total_count * 100), 3)), axis=1
+    node_status_table = _add_freq_column(
+        df=node_status_table, total_count=total_count, column_name_count=COLUMN_COUNT, freq_col_name="ratio"
     )
     node_status_table["status"] = node_status_table.apply(
         lambda x: f"{x['status_no_freq']} ({x['ratio']:.1f}%)", axis=1

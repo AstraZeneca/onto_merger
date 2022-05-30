@@ -26,8 +26,8 @@ from onto_merger.data.constants import (
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MERGES_AGGREGATED,
     TABLE_NODES,
-    TABLE_NODES_UNMAPPED, TABLE_NODES_CONNECTED, SCHEMA_NODE_ID_LIST_TABLE, TABLE_NODES_DANGLING
-)
+    TABLE_NODES_UNMAPPED, TABLE_NODES_CONNECTED, SCHEMA_NODE_ID_LIST_TABLE, TABLE_NODES_DANGLING,
+    TABLE_NODES_SEED, TABLE_NODES_CONNECTED_EXC_SEED)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     ConnectivityStep,
@@ -305,11 +305,15 @@ def post_process_connectivity_results(data_repo: DataRepository) -> List[NamedTa
     nodes_connected = produce_named_table_nodes_connected(
         hierarchy_edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe
     )
+    nodes_connected_excluding_seed = _produce_named_table_nodes_connected_excluding_seed(
+        nodes_connected=nodes_connected.dataframe,
+        nodes_seed=data_repo.get(TABLE_NODES_SEED).dataframe,
+    )
     nodes_dangling = produce_named_table_nodes_dangling(
         nodes_all=data_repo.get(TABLE_NODES_UNMAPPED).dataframe,
         nodes_connected=nodes_connected.dataframe,
     )
-    return [nodes_connected, nodes_dangling]
+    return [nodes_connected, nodes_dangling, nodes_connected_excluding_seed]
 
 
 def produce_named_table_nodes_connected(hierarchy_edges: DataFrame) -> NamedTable:
@@ -323,6 +327,16 @@ def produce_named_table_nodes_connected(hierarchy_edges: DataFrame) -> NamedTabl
         f"There are {len(df):,d} connected nodes (hierarchy edges = {len(hierarchy_edges):,d})."
     )
     return NamedTable(TABLE_NODES_CONNECTED, df)
+
+
+def _produce_named_table_nodes_connected_excluding_seed(
+        nodes_connected: DataFrame, nodes_seed: DataFrame,
+) -> NamedTable:
+    df = pd.concat([nodes_connected, nodes_seed, nodes_seed]).drop_duplicates(keep=False)
+    logger.info(
+        f"There are {len(nodes_connected):,d} connected nodes, {len(df):,d} excluding seed)."
+    )
+    return NamedTable(TABLE_NODES_CONNECTED_EXC_SEED, df)
 
 
 def produce_named_table_nodes_dangling(

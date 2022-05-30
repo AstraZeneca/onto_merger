@@ -62,8 +62,10 @@ if __name__ == "__main__":
 # from onto_merger.data.dataclasses import DataRepository, RuntimeData
 # from onto_merger.logger.log import setup_logger
 #
+# # project_folder_path = os.path.abspath(
+# #     "/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease_full_background_knowledge")
 # project_folder_path = os.path.abspath(
-#     "/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease_full_background_knowledge")
+#     "/Users/kmnb265/Documents/GitHub/onto_merger/tests/test_data/")
 # analysis_data_manager = DataManager(project_folder_path=project_folder_path,
 #                                     clear_output_directory=False)
 # setup_logger(
@@ -74,7 +76,7 @@ if __name__ == "__main__":
 # this_data_repo.update(tables=analysis_data_manager.load_input_tables())
 # this_data_repo.update(tables=analysis_data_manager.load_output_tables())
 # this_data_repo.update(tables=analysis_data_manager.load_intermediate_tables())
-# print(this_data_repo.get_repo_summary())
+# # print(this_data_repo.get_repo_summary())
 #
 #
 # def convert_runtime_data() -> List[RuntimeData]:
