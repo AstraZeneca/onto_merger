@@ -4,7 +4,7 @@ from typing import List
 
 from pandas import DataFrame
 
-from onto_merger.analyser.report_analyser_new import ReportAnalyser
+from onto_merger.analyser.report_analyser import ReportAnalyser
 from onto_merger.alignment import merge_utils, hierarchy_utils
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.alignment.hierarchy_utils import HierarchyManager
