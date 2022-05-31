@@ -124,7 +124,10 @@ class Pipeline:
             self.logger.error(f"The INPUT data validation found {errors} errors. Terminating process. "
                               + f"Please resolve the errors, or force skipping errors in the config (see report "
                               + f"'{self._data_manager.get_ge_data_docs_index_path_for_input()}').")
-            raise Exception
+            if self._alignment_config.base_config.force_through_failed_validation is False:
+                raise Exception
+            else:
+                self.logger.info("Process will carry on due 'force_through_failed_validation' is ON")
 
         self.logger.info("Finished processing input data.")
 

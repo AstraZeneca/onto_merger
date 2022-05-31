@@ -103,9 +103,11 @@ class ReportAnalyser:
             edges_hierarchy: DataFrame,
     ) -> None:
         logger.info(f"Producing report section '{section_dataset_name}' analysis...")
-        tables = [
-            report_analyser_utils.produce_summary_input(data_repo=self._data_repo),
-        ]
+        tables = []
+        if section_dataset_name == SECTION_INPUT:
+            tables.append(report_analyser_utils.produce_summary_input(data_repo=self._data_repo))
+        if section_dataset_name == SECTION_OUTPUT:
+            tables.append(report_analyser_utils.produce_summary_output(data_repo=self._data_repo))
         tables.extend(
             self._produce_node_analyses(
                 node_tables=node_tables,

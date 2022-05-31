@@ -77,20 +77,16 @@ def produce_summary_input(data_repo: DataRepository) -> NamedTable:
 
 def produce_summary_output(data_repo: DataRepository) -> NamedTable:
     nodes_connected = data_repo.get(TABLE_NODES_CONNECTED).dataframe
-    nb_unique_nodes = data_repo.get(table_name=TABLE_NODES_DOMAIN).dataframe
+    nb_unique_nodes = len(data_repo.get(table_name=TABLE_NODES_DOMAIN).dataframe)
     summary = [
         {"metric": "Dataset",
          "values": f'<a href="../../output/domain_ontology" target="_blank">Link</a>'},
         {"metric": "Number of unique nodes", "values": nb_unique_nodes},
         {"metric": "Number of merged nodes",
-         "values": len(data_repo.get(table_name=TABLE_MERGES_AGGREGATED).dataframe)},
+         "values": len(data_repo.get(table_name=TABLE_NODES_MERGED).dataframe)},
         {"metric": "Number of connected nodes (in hierarchy)", "values": len(nodes_connected)},
-        {"metric": "Percentage of connected nodes",
-         "values": f"{round(len(nodes_connected) / nb_unique_nodes * 100, FLOAT_ROUND_TO)}%"},
         {"metric": "Number of dangling nodes (not in hierarchy)",
          "values": f"{len(data_repo.get(TABLE_NODES_DANGLING).dataframe)}"},
-        {"metric": "Percentage of dangling nodes",
-         "values": f"{round(len(data_repo.get(TABLE_NODES_DANGLING).dataframe) / nb_unique_nodes * 100, FLOAT_ROUND_TO)}%"},
         {"metric": "Number of mappings", "values": len(data_repo.get(table_name=TABLE_MAPPINGS_DOMAIN).dataframe)},
         {"metric": "Number of hierarchy edges",
          "values": len(data_repo.get(table_name=TABLE_EDGES_HIERARCHY_DOMAIN).dataframe)},
@@ -598,18 +594,18 @@ def produce_node_status_analyses(
     # overview status
     overview_node_status_table = [
         [SECTION_INPUT, nodes_input, "<b>Input</b>"],
-        [SECTION_INPUT, nodes_seed, "Seed"],
-        [SECTION_INPUT, nodes_not_seed, "Other"],
+        [SECTION_INPUT, nodes_seed, "<i>Seed</i>"],
+        [SECTION_INPUT, nodes_not_seed, "<i>Other</i>"],
         [SECTION_ALIGNMENT, nodes_aligned, "<b>Aligned (Seed + Merged)</b>"],
-        [SECTION_ALIGNMENT, nodes_merged_to_seed, "Merged to Seed"],
-        [SECTION_ALIGNMENT, nodes_merged_to_not_seed, "Merged to Other"],
+        [SECTION_ALIGNMENT, nodes_merged_to_seed, "<i>Merged to Seed</i>"],
+        [SECTION_ALIGNMENT, nodes_merged_to_not_seed, "<i>Merged to Other</i>"],
         [SECTION_ALIGNMENT, nodes_unmapped, "<b>Unmapped</b>"],
         [SECTION_CONNECTIVITY, (nodes_seed + nodes_merged_to_seed + nodes_connected_excluding_seed),
          "<b>Connected (Seed + Merged to Seed + Connected)</b>"],
-        [SECTION_CONNECTIVITY, nodes_connected_excluding_seed, "Connected"],
+        [SECTION_CONNECTIVITY, nodes_connected_excluding_seed, "<i>Connected</i>"],
         [SECTION_CONNECTIVITY, nodes_dangling, "<b>Dangling</b>"],
-        [SECTION_OUTPUT, nodes_input_output_diff, "<b>Input & Output Diff </b>"],
-        [SECTION_OUTPUT, nodes_unique, "Unique"],
+        [SECTION_OUTPUT, nodes_input_output_diff, "<b>Input & Output Diff</b>"],
+        [SECTION_OUTPUT, nodes_unique, "<b>Unique</b>"],
     ]
     _produce_and_save_node_status_table(
         data=overview_node_status_table,
@@ -907,7 +903,7 @@ def produce_overview_hierarchy_edge_comparison(
     # metric | IN | OUT | DIFF
     data = [
         # general
-        ["Graphs (ontologies with hierarchy)", count_input_sources, 1, abs(count_input_nodes - 1), "", "", ""],
+        ["Graphs (ontologies with hierarchy)", count_input_sources, 1, abs(count_input_sources - 1), "", "", ""],
         ["Edges", len(input_edges), len(output_edges), abs(len(input_edges) - len(output_edges)),
          "", "", ""],
         ["Nodes", count_input_nodes, count_output_nodes, abs(count_input_nodes - count_output_nodes),

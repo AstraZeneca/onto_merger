@@ -8,6 +8,7 @@ schema = {
     "properties": {
         "domain_node_type": {"type": "string"},
         "seed_ontology_name": {"type": "string"},
+        "force_through_failed_validation": {"type": "bool"},
         "mappings": {
             "type": "object",
             "required": ["type_groups"],

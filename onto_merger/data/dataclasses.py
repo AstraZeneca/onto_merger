@@ -53,6 +53,7 @@ class AlignmentConfigBase:
 
     domain_node_type: str
     seed_ontology_name: str
+    force_through_failed_validation: bool = False
 
 
 @dataclass

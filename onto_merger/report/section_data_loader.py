@@ -351,7 +351,7 @@ def _produce_overview_project_organisation_subsection() -> dict:
                 {METRIC: '<a href="../intermediate/analysis" target="_blank">Analysis data</a>', "value": ""},
                 {METRIC: '<a href="images" target="_blank">Analysis plots</a>', "value": ""},
                 {METRIC: '<a href="data_profile_reports" target="_blank">Data profiling reports</a>', "value": ""},
-                {METRIC: '<a href="data_docs" target="_blank">Data test report</a>', "value": ""},
+                {METRIC: '<a href="data_docs/local_site" target="_blank">Data test report</a>', "value": ""},
                 {METRIC: '<a href="../intermediate/data_tests" target="_blank">Data test configurations</a>',
                  "value": ""},
                 {METRIC: '<a href="../intermediate/dropped_mappings" target="_blank">Dropped mappings</a>',
