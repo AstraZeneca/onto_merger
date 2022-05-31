@@ -6,7 +6,7 @@
     <meta name="description" content="Alignment and connectivity report">
     <meta name="generator" content="OntoMerger v0.1.0" />
     <meta name="url" content="https://github.com/AstraZeneca/onto_merger">
-    <meta name="date" content="2022/05/28 23:47:29">
+    <meta name="date" content="2022/05/31 01:50:06">
     <title>OntoMerger Report</title>
     <style>
     /*!
@@ -174,14 +174,14 @@ span.badge.bg-primary.output {
 span.badge.bg-primary.node {
     background-color: cornflowerblue;
 }
-span.badge.bg-primary.node_obsolete {
-    background-color: dodgerblue;
-}
 span.badge.bg-primary.mapping {
-    background-color: dimgray;
+    background-color: darkblue;
+}
+span.badge.bg-primary.merge {
+    background-color: green;
 }
 span.badge.bg-primary.edge {
-    background-color: darkgreen;
+    background-color: red;
 }
 span.badge.bg-primary.label {
     border-radius: 0.25em;
@@ -330,7 +330,7 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Dataset (folder name)</td>
-          <td><code>bikg_2022-02-28-4.27.0_disease</code></td>
+          <td><code>bikg_2022-02-28-4.27.0_disease_full_background_knowledge</code></td>
         </tr>
       
         <tr>
@@ -350,7 +350,7 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Total runtime</td>
-          <td>0:02:19</td>
+          <td>0:22:30</td>
         </tr>
       
         <tr>
@@ -415,17 +415,17 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Total runtime</td>
-          <td>0:21:03</td>
+          <td>0:25:48</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Start</td>
-          <td>2022-05-28 23:26:23</td>
+          <td>2022-05-31 01:24:06</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">End</td>
-          <td>2022-05-28 23:47:29</td>
+          <td>2022-05-31 01:50:06</td>
         </tr>
       
     
@@ -464,57 +464,57 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>PROFILING input DATA</td>
-          <td>2.41 sec</td>
+          <td>5.53 sec</td>
         </tr>
       
         <tr>
           <td>VALIDATION input DATA</td>
-          <td>13.57 sec</td>
+          <td>23.23 sec</td>
         </tr>
       
         <tr>
           <td>ALIGNMENT</td>
-          <td>20.60 sec</td>
+          <td>29.71 sec</td>
         </tr>
       
         <tr>
           <td>ALIGNMENT postprocessing</td>
-          <td>3.47 sec</td>
+          <td>3.11 sec</td>
         </tr>
       
         <tr>
           <td>CONNECTIVITY</td>
-          <td>11.29 sec</td>
+          <td>1121.38 sec</td>
         </tr>
       
         <tr>
           <td>FINALISING OUTPUTS</td>
-          <td>5.98 sec</td>
+          <td>22.83 sec</td>
         </tr>
       
         <tr>
           <td>PROFILING intermediate DATA</td>
-          <td>12.85 sec</td>
+          <td>16.19 sec</td>
         </tr>
       
         <tr>
           <td>VALIDATION intermediate DATA</td>
-          <td>47.27 sec</td>
+          <td>101.89 sec</td>
         </tr>
       
         <tr>
           <td>PROFILING output DATA</td>
-          <td>4.73 sec</td>
+          <td>4.36 sec</td>
         </tr>
       
         <tr>
           <td>VALIDATION output DATA</td>
-          <td>17.16 sec</td>
+          <td>22.29 sec</td>
         </tr>
       
         <tr>
           <td>ANALYSIS</td>
-          <td>1123.87 sec</td>
+          <td>198.07 sec</td>
         </tr>
       
     
@@ -562,7 +562,7 @@ span.badge.bg-primary.label {
             <td style="text-align:center">
                 <span class="badge bg-primary input">input</span>
             </td>
-            <td><b>Input nodes</b></td>
+            <td><b>Input</b></td>
             <td>187717</td>
             <td>100.0%</td>
         </tr>
@@ -571,90 +571,99 @@ span.badge.bg-primary.label {
             <td style="text-align:center">
                 <span class="badge bg-primary input">input</span>
             </td>
-            <td>Seed nodes</td>
+            <td><i>Seed</i></td>
             <td>22109</td>
-            <td>11.778%</td>
+            <td>11.78%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary input">input</span>
             </td>
-            <td>Nodes excluding seed</td>
+            <td><i>Other</i></td>
             <td>165608</td>
-            <td>88.222%</td>
+            <td>88.22%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary alignment">alignment</span>
             </td>
-            <td><b>Aligned nodes(seed + merged)</b></td>
-            <td>94911</td>
-            <td>50.561%</td>
+            <td><b>Aligned (Seed + Merged)</b></td>
+            <td>57805</td>
+            <td>30.79%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary alignment">alignment</span>
             </td>
-            <td>Nodes merged to seed</td>
-            <td>31296</td>
-            <td>16.672%</td>
+            <td><i>Merged to Seed</i></td>
+            <td>34333</td>
+            <td>18.29%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary alignment">alignment</span>
             </td>
-            <td>Nodes Merged to other than seed</td>
-            <td>41506</td>
-            <td>22.111%</td>
+            <td><i>Merged to Other</i></td>
+            <td>1363</td>
+            <td>0.73%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary alignment">alignment</span>
             </td>
-            <td>Unmapped nodes</td>
-            <td>92806</td>
-            <td>49.439%</td>
+            <td><b>Unmapped</b></td>
+            <td>129912</td>
+            <td>69.21%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary connectivity">connectivity</span>
             </td>
-            <td><b>Connected nodes (seed + other connected)</b></td>
-            <td>94911</td>
-            <td>50.561%</td>
+            <td><b>Connected (Seed + Merged to Seed + Connected)</b></td>
+            <td>77182</td>
+            <td>41.12%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary connectivity">connectivity</span>
             </td>
-            <td>	Connected nodes (excluding seed + merged to seed)</td>
-            <td>508</td>
-            <td>0.271%</td>
+            <td><i>Connected</i></td>
+            <td>20740</td>
+            <td>11.05%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary connectivity">connectivity</span>
             </td>
-            <td>Dangling nodes (not connected or merged)</td>
-            <td>130832</td>
-            <td>69.696%</td>
+            <td><b>Dangling</b></td>
+            <td>109172</td>
+            <td>58.16%</td>
         </tr>
       
         <tr>
             <td style="text-align:center">
                 <span class="badge bg-primary output">output</span>
             </td>
-            <td><b>Input & Output node diff</b></td>
-            <td>72802</td>
-            <td>38.783%</td>
+            <td><b>Input & Output Diff</b></td>
+            <td>35696</td>
+            <td>19.02%</td>
+        </tr>
+      
+        <tr>
+            <td style="text-align:center">
+                <span class="badge bg-primary output">output</span>
+            </td>
+            <td><b>Unique</b></td>
+            <td>152021</td>
+            <td>80.98%</td>
         </tr>
       
     
@@ -696,10 +705,10 @@ span.badge.bg-primary.label {
       
         <tr>
             <td><b>Graphs (ontologies with hierarchy)</b></td>
-            <td>3</td>
+            <td>10</td>
             <td>1</td>
             
-                <td>187716</td>
+                <td>9</td>
             
             
                 <td></td>
@@ -714,10 +723,10 @@ span.badge.bg-primary.label {
       
         <tr>
             <td><b>Edges</b></td>
-            <td>38812</td>
-            <td>38331</td>
+            <td>272824</td>
+            <td>60621</td>
             
-                <td>481</td>
+                <td>212203</td>
             
             
                 <td></td>
@@ -733,9 +742,9 @@ span.badge.bg-primary.label {
         <tr>
             <td><b>Nodes</b></td>
             <td>187717</td>
-            <td>153449</td>
+            <td>152021</td>
             
-                <td>34268</td>
+                <td>35696</td>
             
             
                 <td></td>
@@ -750,73 +759,73 @@ span.badge.bg-primary.label {
       
         <tr>
             <td><b>Connected nodes</b></td>
-            <td>23328</td>
-            <td>22617</td>
+            <td>159827</td>
+            <td>42606</td>
             
-                <td>711</td>
-            
-            
-                <td>12.43%</td>
+                <td>117221</td>
             
             
-                <td>14.74%</td>
+                <td>85.14%</td>
             
             
-                <td>2.31%</td>
+                <td>28.03%</td>
+            
+            
+                <td>57.11%</td>
             
         </tr>
       
         <tr>
             <td><b>Dangling nodes</b></td>
-            <td>164389</td>
-            <td>130832</td>
+            <td>27890</td>
+            <td>109172</td>
             
-                <td>33557</td>
-            
-            
-                <td>87.57%</td>
+                <td>81282</td>
             
             
-                <td>85.26%</td>
+                <td>14.86%</td>
             
             
-                <td>2.31%</td>
+                <td>71.81%</td>
+            
+            
+                <td>56.95%</td>
             
         </tr>
       
         <tr>
             <td><b>Child nodes</b></td>
-            <td>16627</td>
-            <td>16146</td>
+            <td>168427</td>
+            <td>32481</td>
             
-                <td>481</td>
-            
-            
-                <td>71.27%</td>
+                <td>135946</td>
             
             
-                <td>71.39%</td>
+                <td>105.38%</td>
             
             
-                <td>0.12%</td>
+                <td>76.24%</td>
+            
+            
+                <td>29.14%</td>
             
         </tr>
       
         <tr>
             <td><b>Parent nodes</b></td>
-            <td>6701</td>
-            <td>6471</td>
+            <td>53155</td>
+            <td>10125</td>
             
-                <td>230</td>
-            
-            
-                <td>28.73%</td>
+                <td>43030</td>
             
             
-                <td>28.61%</td>
+                <td>33.26%</td>
             
             
-                <td>0.12%</td>
+                <td>23.76%</td>
+            
+            
+                <td>9.5%</td>
             
         </tr>
       
@@ -850,50 +859,134 @@ span.badge.bg-primary.label {
       
         <tr>
             <td><b>output</b></td>
-            <td>6471.0</td>
-            <td>5.923504867872045</td>
-            <td>26.78512336791734</td>
+            <td>10125.0</td>
+            <td>5.775901234567901</td>
+            <td>22.015009875274057</td>
             <td>1.0</td>
             <td>2.0</td>
             <td>3.0</td>
+            <td>6.0</td>
+            <td>1694.0</td>
+        </tr>
+      
+        <tr>
+            <td><b>DOID</b></td>
+            <td>2307.0</td>
+            <td>6.491547464239272</td>
+            <td>35.68515708100085</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>3.0</td>
             <td>5.0</td>
-            <td>1666.0</td>
+            <td>1279.0</td>
+        </tr>
+      
+        <tr>
+            <td><b>EFO</b></td>
+            <td>1154.0</td>
+            <td>5.711438474870017</td>
+            <td>14.612986804835812</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>3.0</td>
+            <td>5.0</td>
+            <td>374.0</td>
+        </tr>
+      
+        <tr>
+            <td><b>HP</b></td>
+            <td>26.0</td>
+            <td>1.0769230769230769</td>
+            <td>0.271746488194703</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>2.0</td>
+        </tr>
+      
+        <tr>
+            <td><b>ICD10CM</b></td>
+            <td>23082.0</td>
+            <td>4.151286716922277</td>
+            <td>2.625141866388312</td>
+            <td>1.0</td>
+            <td>3.0</td>
+            <td>3.0</td>
+            <td>4.0</td>
+            <td>34.0</td>
         </tr>
       
         <tr>
             <td><b>MEDDRA</b></td>
-            <td>68.0</td>
-            <td>11.573529411764708</td>
-            <td>17.680680219634443</td>
+            <td>16359.0</td>
+            <td>5.481386392811297</td>
+            <td>11.28043446076044</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>2.0</td>
+            <td>5.0</td>
+            <td>300.0</td>
+        </tr>
+      
+        <tr>
+            <td><b>MESH</b></td>
+            <td>1949.0</td>
+            <td>4.048742945100051</td>
+            <td>5.633956224659867</td>
+            <td>1.0</td>
             <td>1.0</td>
             <td>2.0</td>
             <td>4.0</td>
-            <td>13.0</td>
-            <td>89.0</td>
+            <td>65.0</td>
         </tr>
       
         <tr>
             <td><b>MONDO</b></td>
-            <td>6370.0</td>
-            <td>5.899058084772371</td>
-            <td>26.89482809095233</td>
+            <td>6490.0</td>
+            <td>6.76502311248074</td>
+            <td>31.05579035196608</td>
             <td>1.0</td>
             <td>2.0</td>
             <td>3.0</td>
-            <td>5.0</td>
-            <td>1666.0</td>
+            <td>6.0</td>
+            <td>1680.0</td>
         </tr>
       
         <tr>
             <td><b>ORPHANET</b></td>
-            <td>263.0</td>
-            <td>1.703422053231939</td>
-            <td>1.431471404625291</td>
-            <td>1.0</td>
-            <td>1.0</td>
+            <td>1783.0</td>
+            <td>6.518227706113292</td>
+            <td>15.662675141633516</td>
             <td>1.0</td>
             <td>2.0</td>
-            <td>12.0</td>
+            <td>3.0</td>
+            <td>6.0</td>
+            <td>316.0</td>
+        </tr>
+      
+        <tr>
+            <td><b>OWL_THING</b></td>
+            <td>4.0</td>
+            <td>43.75</td>
+            <td>55.3255516616569</td>
+            <td>1.0</td>
+            <td>16.75</td>
+            <td>24.5</td>
+            <td>51.5</td>
+            <td>125.0</td>
+        </tr>
+      
+        <tr>
+            <td><b>UBERON</b></td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>nan</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>1.0</td>
+            <td>1.0</td>
         </tr>
       
     
@@ -911,7 +1004,7 @@ span.badge.bg-primary.label {
                 <div class="tab-pane " id="configuration_overview">
                 
                     <div class="col-sm-6">
-    <p class="h4 table-title">Dataset <code>bikg_2022-02-28-4.27.0_disease</code>
+    <p class="h4 table-title">Dataset <code>bikg_2022-02-28-4.27.0_di...</code>
         configuration JSON</p>
     <table class="table table-condensed" style="margin-bottom: 0px; padding-bottom: 0px">
     <thead><tr><td style="width:100%"></td></tr></thead>
@@ -925,7 +1018,11 @@ span.badge.bg-primary.label {
             "equivalence": [
                 "equivalent_to",
                 "merge",
-                "alexion_orphanet_omim_exact"
+                "alexion_orphanet_omim_exact",
+                "cui",
+                "exact_match",
+                "alternative_id",
+                "equivalent_class"
             ],
             "database_reference": [
                 "database_cross_reference",
@@ -989,26 +1086,26 @@ span.badge.bg-primary.label {
       
         <tr>
             
-                <td style="text-align:center"><img class="status_check" src="images/delete.png" alt="Status check failed"></td>
+                <td style="text-align:center"><img class="status_check" src="images/check.png" alt="Status check passed"></td>
             
             <td><code>input</code></td>
             <td>4</td>
-            <td>382376</td>
-            <td>12.47MB</td>
+            <td>904717</td>
+            <td>34.84MB</td>
             <td>86.0</td>
-            <td>97.67%</td>
+            <td>100.00%</td>
         </tr>
       
         <tr>
             
-                <td style="text-align:center"><img class="status_check" src="images/delete.png" alt="Status check failed"></td>
+                <td style="text-align:center"><img class="status_check" src="images/check.png" alt="Status check passed"></td>
             
             <td><code>intermediate</code></td>
-            <td>9</td>
-            <td>742064</td>
-            <td>33.74MB</td>
-            <td>193.0</td>
-            <td>98.45%</td>
+            <td>14</td>
+            <td>1098080</td>
+            <td>55.96MB</td>
+            <td>272.0</td>
+            <td>100.00%</td>
         </tr>
       
         <tr>
@@ -1017,8 +1114,8 @@ span.badge.bg-primary.label {
             
             <td><code>output</code></td>
             <td>4</td>
-            <td>420302</td>
-            <td>15.23MB</td>
+            <td>684123</td>
+            <td>25.04MB</td>
             <td>0.0</td>
             <td>nan%</td>
         </tr>
@@ -1049,47 +1146,47 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;"><a href="../../input" target="_blank">Input data</a></td>
-          <td><built-in method values of dict object at 0x7f936ba1c690></td>
+          <td><built-in method values of dict object at 0x7fb5737bf6e0></td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;"><a href="../../output/domain_ontology" target="_blank">Domain ontology</a></td>
-          <td><built-in method values of dict object at 0x7f9351814c80></td>
+          <td><built-in method values of dict object at 0x7fb5737bf5f0></td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;"><a href="../intermediate/analysis" target="_blank">Analysis data</a></td>
-          <td><built-in method values of dict object at 0x7f938e2f4d20></td>
+          <td><built-in method values of dict object at 0x7fb560122320></td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;"><a href="images" target="_blank">Analysis plots</a></td>
-          <td><built-in method values of dict object at 0x7f939e8b4500></td>
+          <td><built-in method values of dict object at 0x7fb5737bf370></td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;"><a href="data_profile_reports" target="_blank">Data profiling reports</a></td>
-          <td><built-in method values of dict object at 0x7f938c6450f0></td>
+          <td><built-in method values of dict object at 0x7fafecc78be0></td>
         </tr>
       
         <tr>
-          <td style="font-weight: bold;"><a href="data_docs" target="_blank">Data test report</a></td>
-          <td><built-in method values of dict object at 0x7f937a4e1c30></td>
+          <td style="font-weight: bold;"><a href="data_docs/local_site" target="_blank">Data test report</a></td>
+          <td><built-in method values of dict object at 0x7fb5801c2aa0></td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;"><a href="../intermediate/data_tests" target="_blank">Data test configurations</a></td>
-          <td><built-in method values of dict object at 0x7f93489ea870></td>
+          <td><built-in method values of dict object at 0x7fb573e10be0></td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;"><a href="../intermediate/dropped_mappings" target="_blank">Dropped mappings</a></td>
-          <td><built-in method values of dict object at 0x7f936ba1cbe0></td>
+          <td><built-in method values of dict object at 0x7fb5737bf780></td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;"><a href="logs" target="_blank">Pipeline logs</a></td>
-          <td><built-in method values of dict object at 0x7f939e8b4550></td>
+          <td><built-in method values of dict object at 0x7fb275b855f0></td>
         </tr>
       
     
@@ -1278,17 +1375,17 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Number of obsolete nodes</td>
-          <td>127</td>
+          <td>4787</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of mappings</td>
-          <td>155720</td>
+          <td>439389</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of hierarchy edges</td>
-          <td>38812</td>
+          <td>272824</td>
         </tr>
       
     
@@ -1349,13 +1446,13 @@ span.badge.bg-primary.label {
         <tr>
           <td>Seed</td>
           <td>22109</td>
-          <td>11.778%</td>
+          <td>11.78%</td>
         </tr>
       
         <tr>
           <td>Other input</td>
           <td>165608</td>
-          <td>88.222%</td>
+          <td>88.22%</td>
         </tr>
       
     
@@ -1386,47 +1483,47 @@ span.badge.bg-primary.label {
           <td>MEDDRA</td>
           <td>74993</td>
           <td>39.95%</td>
-          <td>2.11%</td>
-          <td>1.11%</td>
+          <td>11.65%</td>
+          <td>99.57%</td>
         </tr>
       
         <tr>
           <td>ICD10CM</td>
           <td>47386</td>
           <td>25.24%</td>
+          <td>99.98%</td>
           <td>99.97%</td>
-          <td>0.0%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>22109</td>
           <td>11.78%</td>
-          <td>96.85%</td>
-          <td>98.89%</td>
+          <td>98.66%</td>
+          <td>99.14%</td>
         </tr>
       
         <tr>
           <td>MESH</td>
           <td>11633</td>
           <td>6.2%</td>
-          <td>67.32%</td>
-          <td>0.0%</td>
+          <td>72.54%</td>
+          <td>42.05%</td>
         </tr>
       
         <tr>
           <td>ORPHANET</td>
           <td>9571</td>
           <td>5.1%</td>
-          <td>90.11%</td>
-          <td>6.59%</td>
+          <td>94.72%</td>
+          <td>61.12%</td>
         </tr>
       
         <tr>
           <td>OMIM</td>
           <td>7720</td>
           <td>4.11%</td>
-          <td>85.6%</td>
+          <td>86.48%</td>
           <td>0.0%</td>
         </tr>
       
@@ -1434,7 +1531,7 @@ span.badge.bg-primary.label {
           <td>UMLS</td>
           <td>5771</td>
           <td>3.07%</td>
-          <td>37.76%</td>
+          <td>39.7%</td>
           <td>0.0%</td>
         </tr>
       
@@ -1442,16 +1539,16 @@ span.badge.bg-primary.label {
           <td>EFO</td>
           <td>4742</td>
           <td>2.53%</td>
-          <td>52.87%</td>
-          <td>0.0%</td>
+          <td>57.51%</td>
+          <td>64.13%</td>
         </tr>
       
         <tr>
           <td>DOID</td>
           <td>2084</td>
           <td>1.11%</td>
-          <td>98.66%</td>
-          <td>0.0%</td>
+          <td>99.71%</td>
+          <td>99.9%</td>
         </tr>
       
         <tr>
@@ -1467,7 +1564,7 @@ span.badge.bg-primary.label {
           <td>214</td>
           <td>0.11%</td>
           <td>86.45%</td>
-          <td>0.0%</td>
+          <td>0.47%</td>
         </tr>
       
         <tr>
@@ -1490,7 +1587,7 @@ span.badge.bg-primary.label {
           <td>SNOMED</td>
           <td>37</td>
           <td>0.02%</td>
-          <td>59.46%</td>
+          <td>78.38%</td>
           <td>0.0%</td>
         </tr>
       
@@ -1599,11 +1696,59 @@ span.badge.bg-primary.label {
     
       
         <tr>
+          <td>DOID</td>
+          <td>2451</td>
+          <td>51.2%</td>
+          <td>14.81%</td>
+          <td>0.0%</td>
+        </tr>
+      
+        <tr>
           <td>MONDO</td>
-          <td>127</td>
+          <td>2314</td>
+          <td>48.34%</td>
+          <td>33.71%</td>
+          <td>5.06%</td>
+        </tr>
+      
+        <tr>
+          <td>HP</td>
+          <td>14</td>
+          <td>0.29%</td>
+          <td>71.43%</td>
+          <td>42.86%</td>
+        </tr>
+      
+        <tr>
+          <td>BTO</td>
+          <td>3</td>
+          <td>0.06%</td>
           <td>100.0%</td>
           <td>0.0%</td>
+        </tr>
+      
+        <tr>
+          <td>FBbt</td>
+          <td>2</td>
+          <td>0.04%</td>
           <td>0.0%</td>
+          <td>0.0%</td>
+        </tr>
+      
+        <tr>
+          <td>UBERON</td>
+          <td>2</td>
+          <td>0.04%</td>
+          <td>50.0%</td>
+          <td>100.0%</td>
+        </tr>
+      
+        <tr>
+          <td>NCBI</td>
+          <td>1</td>
+          <td>0.02%</td>
+          <td>100.0%</td>
+          <td>100.0%</td>
         </tr>
       
     
@@ -1713,137 +1858,801 @@ span.badge.bg-primary.label {
         <tr>
           <td>{'ICD10CM', 'UMLS'}</td>
           <td>58370</td>
-          <td>37.48%</td>
+          <td>13.28%</td>
           <td>{'database_cross_reference'}</td>
           <td>{'ICD10CM'}</td>
         </tr>
       
         <tr>
-          <td>{'UMLS', 'MONDO'}</td>
-          <td>16968</td>
-          <td>10.9%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
-        </tr>
-      
-        <tr>
-          <td>{'OMIM', 'MONDO'}</td>
-          <td>13710</td>
-          <td>8.8%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'MONDO', 'UMLS'}</td>
+          <td>53461</td>
+          <td>12.17%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'ORPHANET', 'MONDO'}</td>
-          <td>11916</td>
-          <td>7.65%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>37156</td>
+          <td>8.46%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
-          <td>{'ICD10', 'MONDO'}</td>
-          <td>11494</td>
-          <td>7.38%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'OMIM', 'MONDO'}</td>
+          <td>33044</td>
+          <td>7.52%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'DOID', 'MONDO'}</td>
-          <td>9841</td>
-          <td>6.32%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
-        </tr>
-      
-        <tr>
-          <td>{'SNOMED', 'MONDO'}</td>
-          <td>9261</td>
-          <td>5.95%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>31017</td>
+          <td>7.06%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'MESH', 'MONDO'}</td>
-          <td>8237</td>
-          <td>5.29%</td>
-          <td>{'equivalent_to', 'xref'}</td>
+          <td>25189</td>
+          <td>5.73%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIT', 'MONDO'}</td>
+          <td>23023</td>
+          <td>5.24%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMED', 'MONDO'}</td>
+          <td>18289</td>
+          <td>4.16%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
           <td>{'MONDO'}</td>
         </tr>
       
         <tr>
-          <td>{'MONDO', 'NCIT'}</td>
-          <td>7415</td>
-          <td>4.76%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'MONDO', 'ICD10'}</td>
+          <td>13955</td>
+          <td>3.18%</td>
+          <td>{'xref', 'equivalent_to'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'SCTID'}</td>
+          <td>10379</td>
+          <td>2.36%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'OMIM', 'ORPHANET'}</td>
-          <td>3455</td>
-          <td>2.22%</td>
-          <td>{'alexion_orphanet_omim_exact'}</td>
-          <td>{'ALEXION_ORPHANET_OMIM_MAPPINGS'}</td>
+          <td>10160</td>
+          <td>2.31%</td>
+          <td>{'alexion_orphanet_omim_exact', 'xref', 'exact_match'}</td>
+          <td>{'ALEXION_ORPHANET_OMIM_MAPPINGS', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'MONDO', 'EFO'}</td>
-          <td>2846</td>
-          <td>1.83%</td>
-          <td>{'equivalent_to', 'xref'}</td>
+          <td>8325</td>
+          <td>1.89%</td>
+          <td>{'xref', 'equivalent_to'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'UMLS'}</td>
+          <td>6886</td>
+          <td>1.57%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'ICD9'}</td>
+          <td>6729</td>
+          <td>1.53%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'SNOMED'}</td>
+          <td>6592</td>
+          <td>1.5%</td>
+          <td>{'xref'}</td>
+          <td>{'MEDDRA'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'GARD'}</td>
+          <td>6303</td>
+          <td>1.43%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIM', 'DOID'}</td>
+          <td>5493</td>
+          <td>1.25%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'UMLS'}</td>
+          <td>5353</td>
+          <td>1.22%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'ICD10'}</td>
+          <td>5281</td>
+          <td>1.2%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'SNOMED'}</td>
+          <td>5091</td>
+          <td>1.16%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCI', 'DOID'}</td>
+          <td>4754</td>
+          <td>1.08%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ORPHANET'}</td>
+          <td>3918</td>
+          <td>0.89%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'MESH'}</td>
+          <td>3846</td>
+          <td>0.88%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICD10CM'}</td>
+          <td>3663</td>
+          <td>0.83%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'SCTID'}</td>
+          <td>3091</td>
+          <td>0.7%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UMLS', 'EFO'}</td>
+          <td>3072</td>
+          <td>0.7%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'GARD'}</td>
+          <td>2968</td>
+          <td>0.68%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MESH', 'ORPHANET'}</td>
+          <td>2890</td>
+          <td>0.66%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIT', 'EFO'}</td>
+          <td>2852</td>
+          <td>0.65%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'MONDO'}</td>
+          <td>2791</td>
+          <td>0.64%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'EFO'}</td>
+          <td>2779</td>
+          <td>0.63%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10', 'EFO'}</td>
+          <td>2292</td>
+          <td>0.52%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICD9CM'}</td>
+          <td>2271</td>
+          <td>0.52%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MESH', 'EFO'}</td>
+          <td>2122</td>
+          <td>0.48%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'GARD'}</td>
+          <td>2015</td>
+          <td>0.46%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD9', 'EFO'}</td>
+          <td>1939</td>
+          <td>0.44%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SCTID', 'EFO'}</td>
+          <td>1926</td>
+          <td>0.44%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'EFO'}</td>
+          <td>1815</td>
+          <td>0.41%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID'}</td>
+          <td>1696</td>
+          <td>0.39%</td>
+          <td>{'alternative_id', 'xref'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'COHD', 'MONDO'}</td>
+          <td>1594</td>
+          <td>0.36%</td>
+          <td>{'xref'}</td>
           <td>{'MONDO'}</td>
         </tr>
       
         <tr>
-          <td>{'MONDO', 'MEDDRA'}</td>
-          <td>1464</td>
-          <td>0.94%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'NCIT', 'ORPHANET'}</td>
+          <td>1112</td>
+          <td>0.25%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIM', 'EFO'}</td>
+          <td>979</td>
+          <td>0.22%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'EFO'}</td>
+          <td>965</td>
+          <td>0.22%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICDO', 'MONDO'}</td>
+          <td>951</td>
+          <td>0.22%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'ICD9'}</td>
+          <td>910</td>
+          <td>0.21%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'ORPHANET'}</td>
+          <td>842</td>
+          <td>0.19%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'EFO'}</td>
+          <td>838</td>
+          <td>0.19%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET'}</td>
+          <td>752</td>
+          <td>0.17%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT', 'EFO'}</td>
+          <td>720</td>
+          <td>0.16%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'HP'}</td>
+          <td>680</td>
+          <td>0.15%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'ONCOTREE'}</td>
+          <td>680</td>
+          <td>0.15%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIt', 'EFO'}</td>
+          <td>668</td>
+          <td>0.15%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIMPS', 'MONDO'}</td>
+          <td>624</td>
+          <td>0.14%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'GARD', 'EFO'}</td>
+          <td>563</td>
+          <td>0.13%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'MONDO', 'UK_BIOBANK'}</td>
           <td>427</td>
-          <td>0.27%</td>
-          <td>{'merge'}</td>
-          <td>{'UK_BIOBANK'}</td>
-        </tr>
-      
-        <tr>
-          <td>{'UK_BIOBANK', 'MEDDRA'}</td>
-          <td>154</td>
           <td>0.1%</td>
           <td>{'merge'}</td>
           <td>{'UK_BIOBANK'}</td>
         </tr>
       
         <tr>
+          <td>{'SNOMED', 'EFO'}</td>
+          <td>378</td>
+          <td>0.09%</td>
+          <td>{'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICDO', 'EFO'}</td>
+          <td>326</td>
+          <td>0.07%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIMPS', 'ORPHANET'}</td>
+          <td>321</td>
+          <td>0.07%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ONCOTREE', 'EFO'}</td>
+          <td>291</td>
+          <td>0.07%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
           <td>{'MONDO'}</td>
-          <td>127</td>
-          <td>0.08%</td>
-          <td>{'equivalent_to', 'xref'}</td>
+          <td>243</td>
+          <td>0.06%</td>
+          <td>{'alternative_id', 'xref', 'equivalent_to'}</td>
           <td>{'MONDO'}</td>
         </tr>
       
         <tr>
-          <td>{'ICD10CM', 'MONDO'}</td>
-          <td>12</td>
-          <td>0.01%</td>
+          <td>{'HP', 'EFO'}</td>
+          <td>205</td>
+          <td>0.05%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DC', 'MONDO'}</td>
+          <td>184</td>
+          <td>0.04%</td>
           <td>{'xref'}</td>
           <td>{'MONDO'}</td>
         </tr>
       
         <tr>
-          <td>{'ICD10CM', 'UK_BIOBANK'}</td>
-          <td>7</td>
-          <td>0.0%</td>
+          <td>{'MEDDRA', 'UK_BIOBANK'}</td>
+          <td>154</td>
+          <td>0.04%</td>
           <td>{'merge'}</td>
           <td>{'UK_BIOBANK'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'HP'}</td>
+          <td>86</td>
+          <td>0.02%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'GTR', 'MONDO'}</td>
+          <td>79</td>
+          <td>0.02%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HGNC', 'MONDO'}</td>
+          <td>61</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMED', 'ORPHANET'}</td>
+          <td>61</td>
+          <td>0.01%</td>
+          <td>{'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICDO'}</td>
+          <td>60</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'COHD', 'EFO'}</td>
+          <td>52</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'KEGG', 'MONDO'}</td>
+          <td>51</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'CSP', 'MONDO'}</td>
+          <td>51</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'DOID'}</td>
+          <td>41</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'KEGG', 'DOID'}</td>
+          <td>41</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIMPS', 'EFO'}</td>
+          <td>40</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'MEDGEN'}</td>
+          <td>31</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'PMID'}</td>
+          <td>30</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'GTR', 'ORPHANET'}</td>
+          <td>27</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UMLS', 'HP'}</td>
+          <td>24</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NIFSTD', 'MONDO'}</td>
+          <td>22</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'CSP', 'EFO'}</td>
+          <td>20</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'PMID', 'EFO'}</td>
+          <td>19</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT_US', 'HP'}</td>
+          <td>18</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'KEGG', 'EFO'}</td>
+          <td>18</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'PMID'}</td>
+          <td>18</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SCTID_2010_1_31', 'MONDO'}</td>
+          <td>16</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SCTID_2010_1_31', 'EFO'}</td>
+          <td>16</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HGNC', 'ORPHANET'}</td>
+          <td>15</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NIFSTD', 'EFO'}</td>
+          <td>15</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10CM', 'MONDO'}</td>
+          <td>15</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIt', 'ORPHANET'}</td>
+          <td>14</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICDO', 'ORPHANET'}</td>
+          <td>13</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICD9'}</td>
+          <td>11</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'SNOMEDCT'}</td>
+          <td>9</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'ONCOTREE'}</td>
+          <td>9</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HP'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'alternative_id'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HGNC', 'EFO'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'GTR', 'EFO'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICD10'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MSH', 'HP'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORCID', 'MONDO'}</td>
+          <td>7</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
@@ -1855,11 +2664,155 @@ span.badge.bg-primary.label {
         </tr>
       
         <tr>
-          <td>{'MP', 'MONDO'}</td>
-          <td>3</td>
+          <td>{'SNOMEDCT', 'ORPHANET'}</td>
+          <td>7</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10CM', 'UK_BIOBANK'}</td>
+          <td>7</td>
+          <td>0.0%</td>
+          <td>{'merge'}</td>
+          <td>{'UK_BIOBANK'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIm', 'EFO'}</td>
+          <td>7</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD9CM', 'EFO'}</td>
+          <td>6</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'MFOMD'}</td>
+          <td>6</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'SCTID'}</td>
+          <td>5</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DC', 'ORPHANET'}</td>
+          <td>5</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'OMOP'}</td>
+          <td>5</td>
           <td>0.0%</td>
           <td>{'xref'}</td>
           <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MP', 'EFO'}</td>
+          <td>5</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MP', 'MONDO'}</td>
+          <td>4</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MESH', 'HP'}</td>
+          <td>4</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'KEGG', 'ORPHANET'}</td>
+          <td>4</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD11', 'MONDO'}</td>
+          <td>4</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'NCIt'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'CSP', 'ORPHANET'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'MEDGEN'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'Wikidata', 'MONDO'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SCDO', 'MONDO'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UMLS', 'UK_BIOBANK'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'merge'}</td>
+          <td>{'UK_BIOBANK'}</td>
         </tr>
       
         <tr>
@@ -1871,11 +2824,339 @@ span.badge.bg-primary.label {
         </tr>
       
         <tr>
-          <td>{'UMLS', 'UK_BIOBANK'}</td>
+          <td>{'OGMS', 'MONDO'}</td>
           <td>3</td>
           <td>0.0%</td>
-          <td>{'merge'}</td>
-          <td>{'UK_BIOBANK'}</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIT', 'DOID'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HP', 'ICD10'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NDFRT', 'MONDO'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIt', 'HP'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10CM', 'ORPHANET'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'CL', 'BTO'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT', 'HP'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'HP'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'IDO', 'EFO'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'HP'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ISBN', 'EFO'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'Reactome'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'COHD', 'ORPHANET'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UBERON', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT_US', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'TAO', 'UBERON'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UBERON', 'ZFA'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UniProt', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UBERON', 'AAO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'BTO', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'PATO', 'MONDO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'DERMO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DERMO', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'EV', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HP', 'Fyler'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10CM', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD9CM', 'MONDO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD9CM', 'ORPHANET'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'IDO', 'MONDO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDGEN', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'MPATH'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIM', 'HP'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'MTH'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MTH', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MedlinePlus', 'HP'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCBI', 'SNOMEDCT'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCI', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OBI', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OBI', 'MONDO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OGMS', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'Wikidata', 'ORPHANET'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
         </tr>
       
     
@@ -1971,24 +3252,227 @@ span.badge.bg-primary.label {
     
       
         <tr>
-          <td>MONDO to MONDO</td>
-          <td>37577</td>
-          <td>100%</td>
-          <td>{'TEST_DATA'}</td>
+          <td>ICD10CM to ICD10CM</td>
+          <td>95820</td>
+          <td>35.12%</td>
+          <td>{'ICD10CM'}</td>
         </tr>
       
         <tr>
           <td>MEDDRA to MEDDRA</td>
-          <td>787</td>
-          <td>0%</td>
-          <td>{'TEST_DATA'}</td>
+          <td>89670</td>
+          <td>32.87%</td>
+          <td>{'MEDDRA'}</td>
+        </tr>
+      
+        <tr>
+          <td>MONDO to MONDO</td>
+          <td>40447</td>
+          <td>14.83%</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>DOID to DOID</td>
+          <td>14969</td>
+          <td>5.49%</td>
+          <td>{'DOID'}</td>
         </tr>
       
         <tr>
           <td>ORPHANET to ORPHANET</td>
-          <td>448</td>
-          <td>0%</td>
-          <td>{'TEST_DATA'}</td>
+          <td>10233</td>
+          <td>3.75%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>MESH to MESH</td>
+          <td>7891</td>
+          <td>2.89%</td>
+          <td>{'MESH'}</td>
+        </tr>
+      
+        <tr>
+          <td>EFO to EFO</td>
+          <td>3507</td>
+          <td>1.29%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>ORPHANET to MONDO</td>
+          <td>3475</td>
+          <td>1.27%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>EFO to MONDO</td>
+          <td>2120</td>
+          <td>0.78%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>MONDO to EFO</td>
+          <td>2086</td>
+          <td>0.76%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>MONDO to ORPHANET</td>
+          <td>1070</td>
+          <td>0.39%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>ORPHANET to EFO</td>
+          <td>976</td>
+          <td>0.36%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>EFO to ORPHANET</td>
+          <td>314</td>
+          <td>0.12%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>MONDO to OWL_THING</td>
+          <td>117</td>
+          <td>0.04%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>MEDDRA to OWL_THING</td>
+          <td>27</td>
+          <td>0.01%</td>
+          <td>{'MEDDRA'}</td>
+        </tr>
+      
+        <tr>
+          <td>HP to HP</td>
+          <td>25</td>
+          <td>0.01%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>ICD10CM to OWL_THING</td>
+          <td>22</td>
+          <td>0.01%</td>
+          <td>{'ICD10CM'}</td>
+        </tr>
+      
+        <tr>
+          <td>HP to EFO</td>
+          <td>17</td>
+          <td>0.01%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>HP to OWL_THING</td>
+          <td>6</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>DOID to MONDO</td>
+          <td>6</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>EFO to DOID</td>
+          <td>5</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>DOID to ORPHANET</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>NCIT to EFO</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>EFO to HP</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>MONDO to DOID</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>DOID to EFO</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>HP to ORPHANET</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>HP to MONDO</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>MESH to OWL_THING</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'MESH'}</td>
+        </tr>
+      
+        <tr>
+          <td>NCBI to OWL_THING</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>UBERON to OWL_THING</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>UBERON to UBERON</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'EFO'}</td>
         </tr>
       
     
@@ -2129,7 +3613,7 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Process runtime</td>
-          <td>0:00:24</td>
+          <td>0:00:32</td>
         </tr>
       
         <tr>
@@ -2149,22 +3633,22 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Number of input nodes</td>
-          <td>187717</td>
+          <td>109172</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of seed nodes</td>
-          <td>0</td>
+          <td>22109</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of merged nodes (excluding seed)</td>
-          <td>73288</td>
+          <td>1363</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of unmapped nodes</td>
-          <td>114429</td>
+          <td>129912</td>
         </tr>
       
     
@@ -2231,17 +3715,17 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Total runtime</td>
-          <td>0:00:11</td>
+          <td>0:00:10</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Start</td>
-          <td>2022-05-28 23:26:41</td>
+          <td>2022-05-31 01:24:48</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">End</td>
-          <td>2022-05-28 23:27:02</td>
+          <td>2022-05-31 01:25:14</td>
         </tr>
       
     
@@ -2280,57 +3764,57 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>Aligning MONDO equivalence</td>
-          <td>2.16 sec</td>
+          <td>2.11 sec</td>
         </tr>
       
         <tr>
           <td>Aligning MEDDRA equivalence</td>
-          <td>0.08 sec</td>
+          <td>0.11 sec</td>
         </tr>
       
         <tr>
           <td>Aligning ICD10CM equivalence</td>
-          <td>0.10 sec</td>
+          <td>0.07 sec</td>
         </tr>
       
         <tr>
           <td>Aligning MESH equivalence</td>
-          <td>0.29 sec</td>
+          <td>0.49 sec</td>
         </tr>
       
         <tr>
           <td>Aligning ORPHANET equivalence</td>
-          <td>0.41 sec</td>
+          <td>0.62 sec</td>
         </tr>
       
         <tr>
           <td>Aligning OMIM equivalence</td>
-          <td>0.41 sec</td>
+          <td>0.46 sec</td>
         </tr>
       
         <tr>
           <td>Aligning UMLS equivalence</td>
-          <td>0.56 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning EFO equivalence</td>
-          <td>0.13 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning DOID equivalence</td>
-          <td>0.35 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning UK_BIOBANK equivalence</td>
           <td>0.14 sec</td>
         </tr>
       
         <tr>
+          <td>Aligning EFO equivalence</td>
+          <td>0.16 sec</td>
+        </tr>
+      
+        <tr>
+          <td>Aligning DOID equivalence</td>
+          <td>0.19 sec</td>
+        </tr>
+      
+        <tr>
+          <td>Aligning UK_BIOBANK equivalence</td>
+          <td>0.08 sec</td>
+        </tr>
+      
+        <tr>
           <td>Aligning NCIT equivalence</td>
-          <td>0.34 sec</td>
+          <td>0.08 sec</td>
         </tr>
       
         <tr>
@@ -2345,7 +3829,7 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>Aligning SNOMED equivalence</td>
-          <td>0.41 sec</td>
+          <td>0.07 sec</td>
         </tr>
       
         <tr>
@@ -2360,82 +3844,82 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>Aligning MONDO database_reference</td>
-          <td>0.68 sec</td>
+          <td>1.44 sec</td>
         </tr>
       
         <tr>
           <td>Aligning MEDDRA database_reference</td>
-          <td>0.11 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning ICD10CM database_reference</td>
-          <td>1.48 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning MESH database_reference</td>
-          <td>0.07 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning ORPHANET database_reference</td>
-          <td>0.14 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning OMIM database_reference</td>
           <td>0.18 sec</td>
         </tr>
       
         <tr>
+          <td>Aligning ICD10CM database_reference</td>
+          <td>0.24 sec</td>
+        </tr>
+      
+        <tr>
+          <td>Aligning MESH database_reference</td>
+          <td>0.48 sec</td>
+        </tr>
+      
+        <tr>
+          <td>Aligning ORPHANET database_reference</td>
+          <td>1.18 sec</td>
+        </tr>
+      
+        <tr>
+          <td>Aligning OMIM database_reference</td>
+          <td>0.60 sec</td>
+        </tr>
+      
+        <tr>
           <td>Aligning UMLS database_reference</td>
-          <td>2.25 sec</td>
+          <td>0.33 sec</td>
         </tr>
       
         <tr>
           <td>Aligning EFO database_reference</td>
-          <td>0.05 sec</td>
+          <td>0.38 sec</td>
         </tr>
       
         <tr>
           <td>Aligning DOID database_reference</td>
-          <td>0.06 sec</td>
+          <td>0.35 sec</td>
         </tr>
       
         <tr>
           <td>Aligning UK_BIOBANK database_reference</td>
-          <td>0.05 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning NCIT database_reference</td>
           <td>0.07 sec</td>
         </tr>
       
         <tr>
+          <td>Aligning NCIT database_reference</td>
+          <td>0.09 sec</td>
+        </tr>
+      
+        <tr>
           <td>Aligning BOWES_2012 database_reference</td>
-          <td>0.05 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning CHEBI database_reference</td>
-          <td>0.05 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning SNOMED database_reference</td>
-          <td>0.06 sec</td>
-        </tr>
-      
-        <tr>
-          <td>Aligning MP database_reference</td>
           <td>0.08 sec</td>
         </tr>
       
         <tr>
+          <td>Aligning CHEBI database_reference</td>
+          <td>0.18 sec</td>
+        </tr>
+      
+        <tr>
+          <td>Aligning SNOMED database_reference</td>
+          <td>0.12 sec</td>
+        </tr>
+      
+        <tr>
+          <td>Aligning MP database_reference</td>
+          <td>0.12 sec</td>
+        </tr>
+      
+        <tr>
           <td>Aligning NCI database_reference</td>
-          <td>0.06 sec</td>
+          <td>0.19 sec</td>
         </tr>
       
     
@@ -2487,8 +3971,8 @@ span.badge.bg-primary.label {
             <td>equivalence</td>
             <td>INITIALISATION</td>
             <td>187717</td>
-            <td>0</td>
-            <td>22108</td>
+            <td>22031</td>
+            <td>22031</td>
             <td>0</td>
         </tr>
       
@@ -2496,27 +3980,27 @@ span.badge.bg-primary.label {
             <td>1</td>
             <td>equivalence</td>
             <td>MONDO</td>
-            <td>165609</td>
-            <td>29176</td>
-            <td>29178</td>
-            <td>2</td>
+            <td>165686</td>
+            <td>30359</td>
+            <td>30586</td>
+            <td>227</td>
         </tr>
       
         <tr>
             <td>2</td>
             <td>equivalence</td>
             <td>MEDDRA</td>
-            <td>136433</td>
-            <td>154</td>
-            <td>154</td>
-            <td>0</td>
+            <td>135327</td>
+            <td>163</td>
+            <td>165</td>
+            <td>2</td>
         </tr>
       
         <tr>
             <td>3</td>
             <td>equivalence</td>
             <td>ICD10CM</td>
-            <td>136279</td>
+            <td>135164</td>
             <td>7</td>
             <td>7</td>
             <td>0</td>
@@ -2526,9 +4010,9 @@ span.badge.bg-primary.label {
             <td>4</td>
             <td>equivalence</td>
             <td>MESH</td>
-            <td>136272</td>
-            <td>3</td>
-            <td>3</td>
+            <td>135157</td>
+            <td>25</td>
+            <td>25</td>
             <td>0</td>
         </tr>
       
@@ -2536,9 +4020,9 @@ span.badge.bg-primary.label {
             <td>5</td>
             <td>equivalence</td>
             <td>ORPHANET</td>
-            <td>136269</td>
-            <td>8</td>
-            <td>8</td>
+            <td>135132</td>
+            <td>77</td>
+            <td>77</td>
             <td>0</td>
         </tr>
       
@@ -2546,9 +4030,9 @@ span.badge.bg-primary.label {
             <td>6</td>
             <td>equivalence</td>
             <td>OMIM</td>
-            <td>136261</td>
-            <td>33</td>
-            <td>33</td>
+            <td>135055</td>
+            <td>48</td>
+            <td>48</td>
             <td>0</td>
         </tr>
       
@@ -2556,9 +4040,9 @@ span.badge.bg-primary.label {
             <td>7</td>
             <td>equivalence</td>
             <td>UMLS</td>
-            <td>136228</td>
-            <td>3</td>
-            <td>3</td>
+            <td>135007</td>
+            <td>5</td>
+            <td>5</td>
             <td>0</td>
         </tr>
       
@@ -2566,19 +4050,19 @@ span.badge.bg-primary.label {
             <td>8</td>
             <td>equivalence</td>
             <td>EFO</td>
-            <td>136225</td>
-            <td>7</td>
-            <td>7</td>
-            <td>0</td>
+            <td>135002</td>
+            <td>11</td>
+            <td>13</td>
+            <td>2</td>
         </tr>
       
         <tr>
             <td>9</td>
             <td>equivalence</td>
             <td>DOID</td>
-            <td>136218</td>
-            <td>0</td>
-            <td>0</td>
+            <td>134991</td>
+            <td>21</td>
+            <td>21</td>
             <td>0</td>
         </tr>
       
@@ -2586,7 +4070,7 @@ span.badge.bg-primary.label {
             <td>10</td>
             <td>equivalence</td>
             <td>UK_BIOBANK</td>
-            <td>136218</td>
+            <td>134970</td>
             <td>168</td>
             <td>174</td>
             <td>6</td>
@@ -2596,9 +4080,9 @@ span.badge.bg-primary.label {
             <td>11</td>
             <td>equivalence</td>
             <td>NCIT</td>
-            <td>136050</td>
-            <td>0</td>
-            <td>0</td>
+            <td>134802</td>
+            <td>2</td>
+            <td>2</td>
             <td>0</td>
         </tr>
       
@@ -2606,7 +4090,7 @@ span.badge.bg-primary.label {
             <td>12</td>
             <td>equivalence</td>
             <td>BOWES_2012</td>
-            <td>136050</td>
+            <td>134800</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2616,7 +4100,7 @@ span.badge.bg-primary.label {
             <td>13</td>
             <td>equivalence</td>
             <td>CHEBI</td>
-            <td>136050</td>
+            <td>134800</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2626,7 +4110,7 @@ span.badge.bg-primary.label {
             <td>14</td>
             <td>equivalence</td>
             <td>SNOMED</td>
-            <td>136050</td>
+            <td>134800</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2636,7 +4120,7 @@ span.badge.bg-primary.label {
             <td>15</td>
             <td>equivalence</td>
             <td>MP</td>
-            <td>136050</td>
+            <td>134800</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2646,7 +4130,7 @@ span.badge.bg-primary.label {
             <td>16</td>
             <td>equivalence</td>
             <td>NCI</td>
-            <td>136050</td>
+            <td>134800</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2656,97 +4140,97 @@ span.badge.bg-primary.label {
             <td>17</td>
             <td>database_reference</td>
             <td>MONDO</td>
-            <td>136050</td>
-            <td>1539</td>
-            <td>1659</td>
-            <td>120</td>
+            <td>134800</td>
+            <td>654</td>
+            <td>855</td>
+            <td>201</td>
         </tr>
       
         <tr>
             <td>18</td>
             <td>database_reference</td>
             <td>MEDDRA</td>
-            <td>134511</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>134197</td>
+            <td>40</td>
+            <td>85</td>
+            <td>45</td>
         </tr>
       
         <tr>
             <td>19</td>
             <td>database_reference</td>
             <td>ICD10CM</td>
-            <td>134511</td>
-            <td>840</td>
-            <td>1327</td>
-            <td>487</td>
+            <td>134157</td>
+            <td>831</td>
+            <td>1303</td>
+            <td>472</td>
         </tr>
       
         <tr>
             <td>20</td>
             <td>database_reference</td>
             <td>MESH</td>
-            <td>133671</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>133326</td>
+            <td>28</td>
+            <td>34</td>
+            <td>6</td>
         </tr>
       
         <tr>
             <td>21</td>
             <td>database_reference</td>
             <td>ORPHANET</td>
-            <td>133671</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>133298</td>
+            <td>325</td>
+            <td>369</td>
+            <td>44</td>
         </tr>
       
         <tr>
             <td>22</td>
             <td>database_reference</td>
             <td>OMIM</td>
-            <td>133671</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>132974</td>
+            <td>4</td>
+            <td>24</td>
+            <td>20</td>
         </tr>
       
         <tr>
             <td>23</td>
             <td>database_reference</td>
             <td>UMLS</td>
-            <td>133671</td>
-            <td>41350</td>
-            <td>58320</td>
-            <td>16970</td>
+            <td>132970</td>
+            <td>1856</td>
+            <td>2301</td>
+            <td>445</td>
         </tr>
       
         <tr>
             <td>24</td>
             <td>database_reference</td>
             <td>EFO</td>
-            <td>92321</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>131114</td>
+            <td>1066</td>
+            <td>1085</td>
+            <td>19</td>
         </tr>
       
         <tr>
             <td>25</td>
             <td>database_reference</td>
             <td>DOID</td>
-            <td>92321</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>130048</td>
+            <td>821</td>
+            <td>992</td>
+            <td>171</td>
         </tr>
       
         <tr>
             <td>26</td>
             <td>database_reference</td>
             <td>UK_BIOBANK</td>
-            <td>92321</td>
+            <td>129227</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2756,7 +4240,7 @@ span.badge.bg-primary.label {
             <td>27</td>
             <td>database_reference</td>
             <td>NCIT</td>
-            <td>92321</td>
+            <td>129227</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2766,7 +4250,7 @@ span.badge.bg-primary.label {
             <td>28</td>
             <td>database_reference</td>
             <td>BOWES_2012</td>
-            <td>92321</td>
+            <td>129227</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2776,7 +4260,7 @@ span.badge.bg-primary.label {
             <td>29</td>
             <td>database_reference</td>
             <td>CHEBI</td>
-            <td>92321</td>
+            <td>129227</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2786,9 +4270,9 @@ span.badge.bg-primary.label {
             <td>30</td>
             <td>database_reference</td>
             <td>SNOMED</td>
-            <td>92321</td>
-            <td>0</td>
-            <td>0</td>
+            <td>129227</td>
+            <td>90</td>
+            <td>90</td>
             <td>0</td>
         </tr>
       
@@ -2796,7 +4280,7 @@ span.badge.bg-primary.label {
             <td>31</td>
             <td>database_reference</td>
             <td>MP</td>
-            <td>92321</td>
+            <td>129137</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2806,7 +4290,7 @@ span.badge.bg-primary.label {
             <td>32</td>
             <td>database_reference</td>
             <td>NCI</td>
-            <td>92321</td>
+            <td>129137</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -2915,25 +4399,25 @@ span.badge.bg-primary.label {
         <tr>
           <td>Seed</td>
           <td>22109</td>
-          <td>11.778%</td>
+          <td>11.78%</td>
         </tr>
       
         <tr>
           <td>Merged to seed</td>
-          <td>31296</td>
-          <td>16.672%</td>
+          <td>34333</td>
+          <td>18.29%</td>
         </tr>
       
         <tr>
           <td>Merged</td>
-          <td>41506</td>
-          <td>22.111%</td>
+          <td>1363</td>
+          <td>0.73%</td>
         </tr>
       
         <tr>
           <td>Unmapped</td>
-          <td>92806</td>
-          <td>49.439%</td>
+          <td>129912</td>
+          <td>69.21%</td>
         </tr>
       
     
@@ -2958,69 +4442,69 @@ span.badge.bg-primary.label {
     
       
         <tr>
-          <td>UMLS</td>
-          <td>40669</td>
-          <td>55.86%</td>
-        </tr>
-      
-        <tr>
           <td>ORPHANET</td>
-          <td>8602</td>
-          <td>11.82%</td>
+          <td>8629</td>
+          <td>24.17%</td>
         </tr>
       
         <tr>
           <td>MESH</td>
-          <td>7827</td>
-          <td>10.75%</td>
+          <td>8219</td>
+          <td>23.02%</td>
         </tr>
       
         <tr>
           <td>OMIM</td>
-          <td>6602</td>
-          <td>9.07%</td>
-        </tr>
-      
-        <tr>
-          <td>EFO</td>
-          <td>2500</td>
-          <td>3.43%</td>
-        </tr>
-      
-        <tr>
-          <td>ICD10CM</td>
-          <td>2333</td>
-          <td>3.2%</td>
-        </tr>
-      
-        <tr>
-          <td>DOID</td>
-          <td>2056</td>
-          <td>2.82%</td>
+          <td>6565</td>
+          <td>18.39%</td>
         </tr>
       
         <tr>
           <td>MEDDRA</td>
-          <td>1405</td>
-          <td>1.93%</td>
+          <td>2716</td>
+          <td>7.61%</td>
+        </tr>
+      
+        <tr>
+          <td>EFO</td>
+          <td>2706</td>
+          <td>7.58%</td>
+        </tr>
+      
+        <tr>
+          <td>UMLS</td>
+          <td>2257</td>
+          <td>6.32%</td>
+        </tr>
+      
+        <tr>
+          <td>DOID</td>
+          <td>2071</td>
+          <td>5.8%</td>
+        </tr>
+      
+        <tr>
+          <td>ICD10CM</td>
+          <td>1719</td>
+          <td>4.82%</td>
         </tr>
       
         <tr>
           <td>UK_BIOBANK</td>
-          <td>601</td>
-          <td>0.83%</td>
+          <td>600</td>
+          <td>1.68%</td>
         </tr>
       
         <tr>
           <td>NCIT</td>
           <td>185</td>
-          <td>0.25%</td>
+          <td>0.52%</td>
         </tr>
       
         <tr>
           <td>SNOMED</td>
-          <td>22</td>
-          <td>0.03%</td>
+          <td>29</td>
+          <td>0.08%</td>
         </tr>
       
     
@@ -3043,68 +4527,62 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>MEDDRA</td>
-          <td>73588</td>
-          <td>47.96%</td>
+          <td>72277</td>
+          <td>55.64%</td>
         </tr>
       
         <tr>
           <td>ICD10CM</td>
-          <td>45053</td>
-          <td>29.36%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO</td>
-          <td>22109</td>
-          <td>14.41%</td>
-        </tr>
-      
-        <tr>
-          <td>MESH</td>
-          <td>3806</td>
-          <td>2.48%</td>
+          <td>45667</td>
+          <td>35.15%</td>
         </tr>
       
         <tr>
           <td>UMLS</td>
-          <td>3631</td>
-          <td>2.37%</td>
+          <td>3514</td>
+          <td>2.7%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>3414</td>
+          <td>2.63%</td>
         </tr>
       
         <tr>
           <td>EFO</td>
-          <td>2242</td>
-          <td>1.46%</td>
+          <td>2036</td>
+          <td>1.57%</td>
         </tr>
       
         <tr>
           <td>OMIM</td>
-          <td>1123</td>
-          <td>0.73%</td>
+          <td>1155</td>
+          <td>0.89%</td>
         </tr>
       
         <tr>
           <td>ORPHANET</td>
-          <td>969</td>
-          <td>0.63%</td>
+          <td>942</td>
+          <td>0.73%</td>
         </tr>
       
         <tr>
           <td>UK_BIOBANK</td>
-          <td>611</td>
-          <td>0.4%</td>
+          <td>612</td>
+          <td>0.47%</td>
         </tr>
       
         <tr>
           <td>BOWES_2012</td>
           <td>196</td>
-          <td>0.13%</td>
+          <td>0.15%</td>
         </tr>
       
         <tr>
           <td>CHEBI</td>
           <td>46</td>
-          <td>0.03%</td>
+          <td>0.04%</td>
         </tr>
       
         <tr>
@@ -3115,13 +4593,13 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>DOID</td>
-          <td>28</td>
-          <td>0.02%</td>
+          <td>13</td>
+          <td>0.01%</td>
         </tr>
       
         <tr>
           <td>SNOMED</td>
-          <td>15</td>
+          <td>8</td>
           <td>0.01%</td>
         </tr>
       
@@ -3196,52 +4674,52 @@ span.badge.bg-primary.label {
     
       
         <tr>
-          <td>ICD10CM</td>
-          <td>{'ICD10CM', 'UMLS', 'UK_BIOBANK'}</td>
-          <td>41328</td>
-          <td>56.768%</td>
+          <td>MONDO</td>
+          <td>{'MESH', 'ORPHANET', 'UMLS', 'ICD10CM', 'NCIT', 'OMIM', 'UK_BIOBANK', 'EFO', 'MEDDRA', 'DOID', 'SNOMED'}</td>
+          <td>34333</td>
+          <td>96.18%</td>
         </tr>
       
         <tr>
-          <td>MONDO</td>
-          <td>{'DOID', 'UK_BIOBANK', 'ORPHANET', 'ICD10CM', 'MEDDRA', 'OMIM', 'MESH', 'UMLS', 'SNOMED', 'EFO', 'NCIT'}</td>
-          <td>31296</td>
-          <td>42.988%</td>
+          <td>ICD10CM</td>
+          <td>{'DOID', 'ICD10CM', 'UK_BIOBANK', 'UMLS'}</td>
+          <td>1098</td>
+          <td>3.08%</td>
         </tr>
       
         <tr>
           <td>MEDDRA</td>
-          <td>{'UK_BIOBANK'}</td>
-          <td>154</td>
-          <td>0.212%</td>
+          <td>{'MESH', 'ORPHANET', 'OMIM', 'UK_BIOBANK', 'EFO', 'MEDDRA', 'SNOMED'}</td>
+          <td>203</td>
+          <td>0.57%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>{'MESH', 'ORPHANET', 'UMLS', 'OMIM', 'UK_BIOBANK', 'EFO', 'DOID'}</td>
+          <td>32</td>
+          <td>0.09%</td>
         </tr>
       
         <tr>
           <td>ORPHANET</td>
           <td>{'OMIM'}</td>
-          <td>11</td>
-          <td>0.015%</td>
+          <td>21</td>
+          <td>0.06%</td>
         </tr>
       
         <tr>
           <td>EFO</td>
           <td>{'UK_BIOBANK'}</td>
-          <td>7</td>
-          <td>0.01%</td>
-        </tr>
-      
-        <tr>
-          <td>MESH</td>
-          <td>{'UK_BIOBANK'}</td>
-          <td>3</td>
-          <td>0.004%</td>
+          <td>6</td>
+          <td>0.02%</td>
         </tr>
       
         <tr>
           <td>UMLS</td>
           <td>{'UK_BIOBANK'}</td>
           <td>3</td>
-          <td>0.004%</td>
+          <td>0.01%</td>
         </tr>
       
     
@@ -3265,121 +4743,191 @@ span.badge.bg-primary.label {
     
       
         <tr>
-          <td>ICD10CM</td>
-          <td>UMLS</td>
-          <td>39555</td>
-          <td>54.33%</td>
-        </tr>
-      
-        <tr>
           <td>MONDO</td>
           <td>ORPHANET</td>
-          <td>8602</td>
-          <td>11.82%</td>
+          <td>8620</td>
+          <td>24.15%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>MESH</td>
-          <td>7827</td>
-          <td>10.75%</td>
+          <td>8212</td>
+          <td>23.0%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>OMIM</td>
-          <td>6591</td>
-          <td>9.05%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO</td>
-          <td>EFO</td>
-          <td>2500</td>
-          <td>3.43%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO</td>
-          <td>DOID</td>
-          <td>2056</td>
-          <td>2.82%</td>
-        </tr>
-      
-        <tr>
-          <td>ICD10CM</td>
-          <td>ICD10CM</td>
-          <td>1766</td>
-          <td>2.43%</td>
+          <td>6535</td>
+          <td>18.31%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>MEDDRA</td>
-          <td>1405</td>
-          <td>1.93%</td>
+          <td>2708</td>
+          <td>7.59%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
-          <td>UMLS</td>
-          <td>1114</td>
-          <td>1.53%</td>
+          <td>EFO</td>
+          <td>2677</td>
+          <td>7.5%</td>
+        </tr>
+      
+        <tr>
+          <td>MONDO</td>
+          <td>DOID</td>
+          <td>2059</td>
+          <td>5.77%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>ICD10CM</td>
-          <td>567</td>
-          <td>0.78%</td>
+          <td>1562</td>
+          <td>4.38%</td>
+        </tr>
+      
+        <tr>
+          <td>MONDO</td>
+          <td>UMLS</td>
+          <td>1326</td>
+          <td>3.71%</td>
+        </tr>
+      
+        <tr>
+          <td>ICD10CM</td>
+          <td>UMLS</td>
+          <td>927</td>
+          <td>2.6%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>UK_BIOBANK</td>
-          <td>427</td>
-          <td>0.59%</td>
+          <td>426</td>
+          <td>1.19%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>NCIT</td>
           <td>185</td>
-          <td>0.25%</td>
+          <td>0.52%</td>
+        </tr>
+      
+        <tr>
+          <td>ICD10CM</td>
+          <td>ICD10CM</td>
+          <td>157</td>
+          <td>0.44%</td>
         </tr>
       
         <tr>
           <td>MEDDRA</td>
           <td>UK_BIOBANK</td>
-          <td>154</td>
-          <td>0.21%</td>
+          <td>155</td>
+          <td>0.43%</td>
+        </tr>
+      
+        <tr>
+          <td>MEDDRA</td>
+          <td>EFO</td>
+          <td>26</td>
+          <td>0.07%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>SNOMED</td>
-          <td>22</td>
-          <td>0.03%</td>
+          <td>23</td>
+          <td>0.06%</td>
         </tr>
       
         <tr>
           <td>ORPHANET</td>
           <td>OMIM</td>
-          <td>11</td>
-          <td>0.01%</td>
+          <td>21</td>
+          <td>0.06%</td>
         </tr>
       
         <tr>
-          <td>EFO</td>
-          <td>UK_BIOBANK</td>
+          <td>MEDDRA</td>
+          <td>MEDDRA</td>
+          <td>8</td>
+          <td>0.02%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>OMIM</td>
+          <td>8</td>
+          <td>0.02%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>ORPHANET</td>
           <td>7</td>
-          <td>0.01%</td>
+          <td>0.02%</td>
         </tr>
       
         <tr>
           <td>ICD10CM</td>
           <td>UK_BIOBANK</td>
           <td>7</td>
+          <td>0.02%</td>
+        </tr>
+      
+        <tr>
+          <td>ICD10CM</td>
+          <td>DOID</td>
+          <td>7</td>
+          <td>0.02%</td>
+        </tr>
+      
+        <tr>
+          <td>MEDDRA</td>
+          <td>SNOMED</td>
+          <td>6</td>
+          <td>0.02%</td>
+        </tr>
+      
+        <tr>
+          <td>EFO</td>
+          <td>UK_BIOBANK</td>
+          <td>6</td>
+          <td>0.02%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>DOID</td>
+          <td>5</td>
+          <td>0.01%</td>
+        </tr>
+      
+        <tr>
+          <td>MEDDRA</td>
+          <td>MESH</td>
+          <td>5</td>
+          <td>0.01%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>UMLS</td>
+          <td>4</td>
+          <td>0.01%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>EFO</td>
+          <td>3</td>
           <td>0.01%</td>
         </tr>
       
@@ -3387,13 +4935,34 @@ span.badge.bg-primary.label {
           <td>MESH</td>
           <td>UK_BIOBANK</td>
           <td>3</td>
-          <td>0.0%</td>
+          <td>0.01%</td>
         </tr>
       
         <tr>
           <td>UMLS</td>
           <td>UK_BIOBANK</td>
           <td>3</td>
+          <td>0.01%</td>
+        </tr>
+      
+        <tr>
+          <td>MEDDRA</td>
+          <td>ORPHANET</td>
+          <td>2</td>
+          <td>0.01%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>MESH</td>
+          <td>2</td>
+          <td>0.01%</td>
+        </tr>
+      
+        <tr>
+          <td>MEDDRA</td>
+          <td>OMIM</td>
+          <td>1</td>
           <td>0.0%</td>
         </tr>
       
@@ -3479,6 +5048,62 @@ span.badge.bg-primary.label {
         <div class="row-cols-sm-auto" style="padding-left: 0px; padding-right: 0px">
                 <div class="col-sm-6">
                     <h4 style="padding-top: 0; padding-bottom: 10px">Cluster size distribution info</h4>
+                    
+                        
+                            <table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:30%"><b>Metric</b></td>
+            <td style="width:70%"><b>Cluster Size </b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td>count</td>
+          <td>17925.0</td>
+        </tr>
+      
+        <tr>
+          <td>mean</td>
+          <td>2.9914086471408647</td>
+        </tr>
+      
+        <tr>
+          <td>std</td>
+          <td>1.5374278110695023</td>
+        </tr>
+      
+        <tr>
+          <td>min</td>
+          <td>2.0</td>
+        </tr>
+      
+        <tr>
+          <td>25%</td>
+          <td>2.0</td>
+        </tr>
+      
+        <tr>
+          <td>50%</td>
+          <td>2.0</td>
+        </tr>
+      
+        <tr>
+          <td>75%</td>
+          <td>3.0</td>
+        </tr>
+      
+        <tr>
+          <td>max</td>
+          <td>37.0</td>
+        </tr>
+      
+    
+    </tbody>
+</table>
+                        
                     
                 </div>
                 <div class="col-sm-6">
@@ -3575,7 +5200,7 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Process runtime</td>
-          <td>0:00:11</td>
+          <td>0:18:41</td>
         </tr>
       
         <tr>
@@ -3585,27 +5210,27 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Number of nodes to connect (excluding seed)</td>
-          <td>153449</td>
+          <td>129912</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of connected nodes (excluding seed)</td>
-          <td>200</td>
+          <td>16276</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of input hierarchy edges</td>
-          <td>38812</td>
+          <td>272824</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of seed hierarchy edges</td>
-          <td>787</td>
+          <td>89697</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of produced hierarchy edges</td>
-          <td>-33</td>
+          <td>-29076</td>
         </tr>
       
     
@@ -3669,17 +5294,17 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Total runtime</td>
-          <td>0:00:05</td>
+          <td>0:18:35</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Start</td>
-          <td>2022-05-28 23:27:09</td>
+          <td>2022-05-31 01:25:22</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">End</td>
-          <td>2022-05-28 23:27:16</td>
+          <td>2022-05-31 01:44:00</td>
         </tr>
       
     
@@ -3713,22 +5338,22 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>Connecting MEDDRA</td>
-          <td>4.32 sec</td>
+          <td>646.45 sec</td>
         </tr>
       
         <tr>
           <td>Connecting ICD10CM</td>
-          <td>0.01 sec</td>
+          <td>427.22 sec</td>
         </tr>
       
         <tr>
           <td>Connecting MESH</td>
-          <td>0.01 sec</td>
+          <td>7.00 sec</td>
         </tr>
       
         <tr>
           <td>Connecting ORPHANET</td>
-          <td>1.17 sec</td>
+          <td>0.01 sec</td>
         </tr>
       
         <tr>
@@ -3743,12 +5368,12 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>Connecting EFO</td>
-          <td>0.02 sec</td>
+          <td>31.21 sec</td>
         </tr>
       
         <tr>
           <td>Connecting DOID</td>
-          <td>0.01 sec</td>
+          <td>3.59 sec</td>
         </tr>
       
         <tr>
@@ -3833,47 +5458,47 @@ span.badge.bg-primary.label {
         <tr>
             <td></td>
             <td>MEDDRA</td>
-            <td>73588</td>
-            <td>787</td>
-            <td>554</td>
-            <td>787</td>
-            <td>554</td>
+            <td>72277</td>
+            <td>71956</td>
+            <td>6510</td>
+            <td>89697</td>
+            <td>5483</td>
         </tr>
       
         <tr>
             <td></td>
             <td>ICD10CM</td>
-            <td>45053</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>45667</td>
+            <td>45654</td>
+            <td>14081</td>
+            <td>95842</td>
+            <td>13594</td>
         </tr>
       
         <tr>
             <td></td>
             <td>MESH</td>
-            <td>3806</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>3414</td>
+            <td>1611</td>
+            <td>1610</td>
+            <td>7892</td>
+            <td>1264</td>
         </tr>
       
         <tr>
             <td></td>
             <td>ORPHANET</td>
-            <td>969</td>
-            <td>448</td>
-            <td>200</td>
-            <td>448</td>
-            <td>200</td>
+            <td>942</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
         </tr>
       
         <tr>
             <td></td>
             <td>OMIM</td>
-            <td>1123</td>
+            <td>1155</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -3883,7 +5508,7 @@ span.badge.bg-primary.label {
         <tr>
             <td></td>
             <td>UMLS</td>
-            <td>3631</td>
+            <td>3514</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -3893,27 +5518,27 @@ span.badge.bg-primary.label {
         <tr>
             <td></td>
             <td>EFO</td>
-            <td>2242</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>2036</td>
+            <td>422</td>
+            <td>567</td>
+            <td>26315</td>
+            <td>379</td>
         </tr>
       
         <tr>
             <td></td>
             <td>DOID</td>
-            <td>28</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>13</td>
+            <td>11</td>
+            <td>18</td>
+            <td>14969</td>
+            <td>9</td>
         </tr>
       
         <tr>
             <td></td>
             <td>UK_BIOBANK</td>
-            <td>611</td>
+            <td>612</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -3953,7 +5578,7 @@ span.badge.bg-primary.label {
         <tr>
             <td></td>
             <td>SNOMED</td>
-            <td>15</td>
+            <td>8</td>
             <td>0</td>
             <td>0</td>
             <td>0</td>
@@ -4081,21 +5706,21 @@ span.badge.bg-primary.label {
     
       
         <tr>
-          <td>Aligned</td>
-          <td>94911</td>
-          <td>50.561%</td>
+          <td>Seed + merged to seed</td>
+          <td>56442</td>
+          <td>30.07%</td>
         </tr>
       
         <tr>
           <td>Connected</td>
-          <td>508</td>
-          <td>0.271%</td>
+          <td>20740</td>
+          <td>11.05%</td>
         </tr>
       
         <tr>
           <td>Dangling</td>
-          <td>130832</td>
-          <td>69.696%</td>
+          <td>109172</td>
+          <td>58.16%</td>
         </tr>
       
     
@@ -4122,20 +5747,38 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>MONDO</td>
-          <td>21863</td>
-          <td>96.67%</td>
+          <td>21866</td>
+          <td>51.32%</td>
+        </tr>
+      
+        <tr>
+          <td>ICD10CM</td>
+          <td>13600</td>
+          <td>31.92%</td>
         </tr>
       
         <tr>
           <td>MEDDRA</td>
-          <td>554</td>
-          <td>2.45%</td>
+          <td>5488</td>
+          <td>12.88%</td>
         </tr>
       
         <tr>
-          <td>ORPHANET</td>
-          <td>200</td>
-          <td>0.88%</td>
+          <td>MESH</td>
+          <td>1264</td>
+          <td>2.97%</td>
+        </tr>
+      
+        <tr>
+          <td>EFO</td>
+          <td>379</td>
+          <td>0.89%</td>
+        </tr>
+      
+        <tr>
+          <td>DOID</td>
+          <td>9</td>
+          <td>0.02%</td>
         </tr>
       
     
@@ -4158,62 +5801,56 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>MEDDRA</td>
-          <td>73034</td>
-          <td>55.82%</td>
+          <td>66789</td>
+          <td>61.18%</td>
         </tr>
       
         <tr>
           <td>ICD10CM</td>
-          <td>45053</td>
-          <td>34.44%</td>
-        </tr>
-      
-        <tr>
-          <td>MESH</td>
-          <td>3806</td>
-          <td>2.91%</td>
+          <td>32067</td>
+          <td>29.37%</td>
         </tr>
       
         <tr>
           <td>UMLS</td>
-          <td>3631</td>
-          <td>2.78%</td>
+          <td>3514</td>
+          <td>3.22%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>2150</td>
+          <td>1.97%</td>
         </tr>
       
         <tr>
           <td>EFO</td>
-          <td>2242</td>
-          <td>1.71%</td>
+          <td>1657</td>
+          <td>1.52%</td>
         </tr>
       
         <tr>
           <td>OMIM</td>
-          <td>1123</td>
-          <td>0.86%</td>
+          <td>1155</td>
+          <td>1.06%</td>
         </tr>
       
         <tr>
           <td>ORPHANET</td>
-          <td>769</td>
-          <td>0.59%</td>
+          <td>942</td>
+          <td>0.86%</td>
         </tr>
       
         <tr>
           <td>UK_BIOBANK</td>
-          <td>611</td>
-          <td>0.47%</td>
-        </tr>
-      
-        <tr>
-          <td>MONDO</td>
-          <td>246</td>
-          <td>0.19%</td>
+          <td>612</td>
+          <td>0.56%</td>
         </tr>
       
         <tr>
           <td>BOWES_2012</td>
           <td>196</td>
-          <td>0.15%</td>
+          <td>0.18%</td>
         </tr>
       
         <tr>
@@ -4225,19 +5862,19 @@ span.badge.bg-primary.label {
         <tr>
           <td>NCIT</td>
           <td>29</td>
-          <td>0.02%</td>
-        </tr>
-      
-        <tr>
-          <td>DOID</td>
-          <td>28</td>
-          <td>0.02%</td>
+          <td>0.03%</td>
         </tr>
       
         <tr>
           <td>SNOMED</td>
-          <td>15</td>
+          <td>8</td>
           <td>0.01%</td>
+        </tr>
+      
+        <tr>
+          <td>DOID</td>
+          <td>4</td>
+          <td>0.0%</td>
         </tr>
       
         <tr>
@@ -4310,27 +5947,27 @@ span.badge.bg-primary.label {
         <tr>
           <td>count</td>
             
-                <td>692.0</td>
-                <td>692.0</td>
-                <td>692.0</td>
+                <td>20727.0</td>
+                <td>20727.0</td>
+                <td>20727.0</td>
             
         </tr>
       
         <tr>
           <td>mean</td>
             
-                <td>3.1690751445086707</td>
-                <td>2.0895953757225434</td>
-                <td>1.079479768786127</td>
+                <td>6.133835094321417</td>
+                <td>2.0000964924977085</td>
+                <td>4.133738601823708</td>
             
         </tr>
       
         <tr>
           <td>std</td>
             
-                <td>0.445622230536162</td>
-                <td>0.4572064655119568</td>
-                <td>0.5573202016035593</td>
+                <td>0.8547041737150746</td>
+                <td>0.1486534184007642</td>
+                <td>0.8550014797838467</td>
             
         </tr>
       
@@ -4346,36 +5983,36 @@ span.badge.bg-primary.label {
         <tr>
           <td>25%</td>
             
-                <td>3.0</td>
+                <td>6.0</td>
                 <td>2.0</td>
-                <td>1.0</td>
+                <td>4.0</td>
             
         </tr>
       
         <tr>
           <td>50%</td>
             
-                <td>3.0</td>
+                <td>6.0</td>
                 <td>2.0</td>
-                <td>1.0</td>
+                <td>4.0</td>
             
         </tr>
       
         <tr>
           <td>75%</td>
             
-                <td>3.0</td>
+                <td>7.0</td>
                 <td>2.0</td>
-                <td>1.0</td>
+                <td>5.0</td>
             
         </tr>
       
         <tr>
           <td>max</td>
             
-                <td>7.0</td>
+                <td>11.0</td>
                 <td>5.0</td>
-                <td>5.0</td>
+                <td>9.0</td>
             
         </tr>
       
@@ -4386,7 +6023,7 @@ span.badge.bg-primary.label {
             </div>
             
             <div class="col-sm-6" style="padding-top: 0">
-                <p class="h4 table-title-t2">ORPHANET</p>
+                <p class="h4 table-title-t2">ICD10CM</p>
                 <table class="table table-condensed" style="margin-bottom: 0px; padding-bottom: 0px">
     <thead><tr><td style="width:100%"></td></tr></thead>
     <tbody><tr><td></td></tr></tbody>
@@ -4407,27 +6044,124 @@ span.badge.bg-primary.label {
         <tr>
           <td>count</td>
             
-                <td>152.0</td>
-                <td>152.0</td>
-                <td>152.0</td>
+                <td>13594.0</td>
+                <td>13594.0</td>
+                <td>13594.0</td>
             
         </tr>
       
         <tr>
           <td>mean</td>
             
-                <td>3.4276315789473686</td>
-                <td>2.3157894736842106</td>
-                <td>1.111842105263158</td>
+                <td>6.269530675297926</td>
+                <td>2.0</td>
+                <td>4.269530675297926</td>
             
         </tr>
       
         <tr>
           <td>std</td>
             
-                <td>0.7150415510013516</td>
-                <td>0.8490045018295675</td>
-                <td>1.0003267155375066</td>
+                <td>0.9127476039179572</td>
+                <td>0.0469789135490811</td>
+                <td>0.9127476039179572</td>
+            
+        </tr>
+      
+        <tr>
+          <td>min</td>
+            
+                <td>3.0</td>
+                <td>1.0</td>
+                <td>1.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>25%</td>
+            
+                <td>6.0</td>
+                <td>2.0</td>
+                <td>4.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>50%</td>
+            
+                <td>6.0</td>
+                <td>2.0</td>
+                <td>4.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>75%</td>
+            
+                <td>7.0</td>
+                <td>2.0</td>
+                <td>5.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>max</td>
+            
+                <td>8.0</td>
+                <td>3.0</td>
+                <td>6.0</td>
+            
+        </tr>
+      
+    
+    </tbody>
+</table>
+                
+            </div>
+            
+            <div class="col-sm-6" style="padding-top: 0">
+                <p class="h4 table-title-t2">MESH</p>
+                <table class="table table-condensed" style="margin-bottom: 0px; padding-bottom: 0px">
+    <thead><tr><td style="width:100%"></td></tr></thead>
+    <tbody><tr><td></td></tr></tbody>
+</table>
+                
+                    <table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:25%"><b>Metric</b></td>
+            <td style="width:25%"><b>Original length</b></td>
+            <td style="width:25%"><b>Produced length</b></td>
+            <td style="width:25%"><b>Diff</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td>count</td>
+            
+                <td>1262.0</td>
+                <td>1262.0</td>
+                <td>1262.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>mean</td>
+            
+                <td>5.789223454833597</td>
+                <td>2.0015847860538827</td>
+                <td>3.7876386687797146</td>
+            
+        </tr>
+      
+        <tr>
+          <td>std</td>
+            
+                <td>1.1987084772662804</td>
+                <td>0.486125361518737</td>
+                <td>1.2017325462821615</td>
             
         </tr>
       
@@ -4443,14 +6177,190 @@ span.badge.bg-primary.label {
         <tr>
           <td>25%</td>
             
-                <td>3.0</td>
+                <td>5.0</td>
                 <td>2.0</td>
-                <td>0.0</td>
+                <td>3.0</td>
             
         </tr>
       
         <tr>
           <td>50%</td>
+            
+                <td>6.0</td>
+                <td>2.0</td>
+                <td>4.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>75%</td>
+            
+                <td>6.0</td>
+                <td>2.0</td>
+                <td>4.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>max</td>
+            
+                <td>11.0</td>
+                <td>5.0</td>
+                <td>9.0</td>
+            
+        </tr>
+      
+    
+    </tbody>
+</table>
+                
+            </div>
+            
+            <div class="col-sm-6" style="padding-top: 0">
+                <p class="h4 table-title-t2">DOID</p>
+                <table class="table table-condensed" style="margin-bottom: 0px; padding-bottom: 0px">
+    <thead><tr><td style="width:100%"></td></tr></thead>
+    <tbody><tr><td></td></tr></tbody>
+</table>
+                
+                    <table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:25%"><b>Metric</b></td>
+            <td style="width:25%"><b>Original length</b></td>
+            <td style="width:25%"><b>Produced length</b></td>
+            <td style="width:25%"><b>Diff</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td>count</td>
+            
+                <td>9.0</td>
+                <td>9.0</td>
+                <td>9.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>mean</td>
+            
+                <td>6.111111111111111</td>
+                <td>2.0</td>
+                <td>4.111111111111111</td>
+            
+        </tr>
+      
+        <tr>
+          <td>std</td>
+            
+                <td>1.2692955176439846</td>
+                <td>0.0</td>
+                <td>1.2692955176439846</td>
+            
+        </tr>
+      
+        <tr>
+          <td>min</td>
+            
+                <td>5.0</td>
+                <td>2.0</td>
+                <td>3.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>25%</td>
+            
+                <td>5.0</td>
+                <td>2.0</td>
+                <td>3.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>50%</td>
+            
+                <td>6.0</td>
+                <td>2.0</td>
+                <td>4.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>75%</td>
+            
+                <td>7.0</td>
+                <td>2.0</td>
+                <td>5.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>max</td>
+            
+                <td>8.0</td>
+                <td>2.0</td>
+                <td>6.0</td>
+            
+        </tr>
+      
+    
+    </tbody>
+</table>
+                
+            </div>
+            
+            <div class="col-sm-6" style="padding-top: 0">
+                <p class="h4 table-title-t2">EFO</p>
+                <table class="table table-condensed" style="margin-bottom: 0px; padding-bottom: 0px">
+    <thead><tr><td style="width:100%"></td></tr></thead>
+    <tbody><tr><td></td></tr></tbody>
+</table>
+                
+                    <table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:25%"><b>Metric</b></td>
+            <td style="width:25%"><b>Original length</b></td>
+            <td style="width:25%"><b>Produced length</b></td>
+            <td style="width:25%"><b>Diff</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    
+      
+        <tr>
+          <td>count</td>
+            
+                <td>379.0</td>
+                <td>379.0</td>
+                <td>379.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>mean</td>
+            
+                <td>4.883905013192612</td>
+                <td>2.0</td>
+                <td>2.8839050131926123</td>
+            
+        </tr>
+      
+        <tr>
+          <td>std</td>
+            
+                <td>1.2774932263360883</td>
+                <td>0.0</td>
+                <td>1.2774932263360883</td>
+            
+        </tr>
+      
+        <tr>
+          <td>min</td>
             
                 <td>3.0</td>
                 <td>2.0</td>
@@ -4459,20 +6369,38 @@ span.badge.bg-primary.label {
         </tr>
       
         <tr>
-          <td>75%</td>
+          <td>25%</td>
             
                 <td>4.0</td>
-                <td>3.0</td>
                 <td>2.0</td>
+                <td>2.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>50%</td>
+            
+                <td>5.0</td>
+                <td>2.0</td>
+                <td>3.0</td>
+            
+        </tr>
+      
+        <tr>
+          <td>75%</td>
+            
+                <td>5.0</td>
+                <td>2.0</td>
+                <td>3.0</td>
             
         </tr>
       
         <tr>
           <td>max</td>
             
+                <td>9.0</td>
+                <td>2.0</td>
                 <td>7.0</td>
-                <td>5.0</td>
-                <td>5.0</td>
             
         </tr>
       
@@ -4504,72 +6432,72 @@ span.badge.bg-primary.label {
         <tr>
           <td>count</td>
             
-                <td>540.0</td>
-                <td>540.0</td>
-                <td>540.0</td>
+                <td>5483.0</td>
+                <td>5483.0</td>
+                <td>5483.0</td>
             
         </tr>
       
         <tr>
           <td>mean</td>
             
-                <td>3.096296296296296</td>
-                <td>2.025925925925926</td>
-                <td>1.0703703703703704</td>
+                <td>5.96315885464162</td>
+                <td>2.0</td>
+                <td>3.96315885464162</td>
             
         </tr>
       
         <tr>
           <td>std</td>
             
-                <td>0.2952706773437882</td>
-                <td>0.2180918983720015</td>
-                <td>0.3427649387001069</td>
+                <td>0.201489387112244</td>
+                <td>0.1539934186988321</td>
+                <td>0.2014893871122483</td>
             
         </tr>
       
         <tr>
           <td>min</td>
             
-                <td>3.0</td>
+                <td>4.0</td>
                 <td>1.0</td>
-                <td>0.0</td>
+                <td>2.0</td>
             
         </tr>
       
         <tr>
           <td>25%</td>
             
-                <td>3.0</td>
+                <td>6.0</td>
                 <td>2.0</td>
-                <td>1.0</td>
+                <td>4.0</td>
             
         </tr>
       
         <tr>
           <td>50%</td>
             
-                <td>3.0</td>
+                <td>6.0</td>
                 <td>2.0</td>
-                <td>1.0</td>
+                <td>4.0</td>
             
         </tr>
       
         <tr>
           <td>75%</td>
             
-                <td>3.0</td>
+                <td>6.0</td>
                 <td>2.0</td>
-                <td>1.0</td>
+                <td>4.0</td>
             
         </tr>
       
         <tr>
           <td>max</td>
             
+                <td>6.0</td>
                 <td>4.0</td>
                 <td>4.0</td>
-                <td>2.0</td>
             
         </tr>
       
@@ -4655,27 +6583,37 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Dataset</td>
-          <td><a href="../../input" target="_blank">Link</a></td>
+          <td><a href="../../output/domain_ontology" target="_blank">Link</a></td>
         </tr>
       
         <tr>
-          <td style="font-weight: bold;">Number of nodes</td>
-          <td>187717</td>
+          <td style="font-weight: bold;">Number of unique nodes</td>
+          <td>152021</td>
         </tr>
       
         <tr>
-          <td style="font-weight: bold;">Number of obsolete nodes</td>
-          <td>127</td>
+          <td style="font-weight: bold;">Number of merged nodes</td>
+          <td>35696</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of connected nodes (in hierarchy)</td>
+          <td>42606</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of dangling nodes (not in hierarchy)</td>
+          <td>109172</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of mappings</td>
-          <td>155720</td>
+          <td>435867</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of hierarchy edges</td>
-          <td>38812</td>
+          <td>60621</td>
         </tr>
       
     
@@ -4739,20 +6677,20 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>Connected</td>
-          <td>22617</td>
-          <td>12.048%</td>
+          <td>42606</td>
+          <td>22.7%</td>
         </tr>
       
         <tr>
           <td>Dangling</td>
-          <td>130832</td>
-          <td>69.696%</td>
+          <td>109172</td>
+          <td>58.16%</td>
         </tr>
       
         <tr>
           <td>Diff from Input</td>
-          <td>72802</td>
-          <td>38.783%</td>
+          <td>35696</td>
+          <td>19.02%</td>
         </tr>
       
     
@@ -4781,73 +6719,73 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>MEDDRA</td>
-          <td>73588</td>
-          <td>47.96%</td>
-          <td>0.24%</td>
-          <td>0.75%</td>
+          <td>72277</td>
+          <td>47.54%</td>
+          <td>8.33%</td>
+          <td>7.59%</td>
         </tr>
       
         <tr>
           <td>ICD10CM</td>
-          <td>45053</td>
-          <td>29.36%</td>
-          <td>99.97%</td>
-          <td>0.0%</td>
+          <td>45667</td>
+          <td>30.04%</td>
+          <td>99.98%</td>
+          <td>29.78%</td>
         </tr>
       
         <tr>
           <td>MONDO</td>
           <td>22109</td>
-          <td>14.41%</td>
-          <td>96.85%</td>
-          <td>98.89%</td>
-        </tr>
-      
-        <tr>
-          <td>MESH</td>
-          <td>3806</td>
-          <td>2.48%</td>
-          <td>0.11%</td>
-          <td>0.0%</td>
+          <td>14.54%</td>
+          <td>98.65%</td>
+          <td>98.9%</td>
         </tr>
       
         <tr>
           <td>UMLS</td>
-          <td>3631</td>
-          <td>2.37%</td>
-          <td>1.07%</td>
+          <td>3514</td>
+          <td>2.31%</td>
+          <td>0.97%</td>
           <td>0.0%</td>
+        </tr>
+      
+        <tr>
+          <td>MESH</td>
+          <td>3414</td>
+          <td>2.25%</td>
+          <td>6.44%</td>
+          <td>37.02%</td>
         </tr>
       
         <tr>
           <td>EFO</td>
-          <td>2242</td>
-          <td>1.46%</td>
-          <td>0.31%</td>
-          <td>0.0%</td>
+          <td>2036</td>
+          <td>1.34%</td>
+          <td>1.03%</td>
+          <td>18.61%</td>
         </tr>
       
         <tr>
           <td>OMIM</td>
-          <td>1123</td>
-          <td>0.73%</td>
-          <td>0.98%</td>
+          <td>1155</td>
+          <td>0.76%</td>
+          <td>9.61%</td>
           <td>0.0%</td>
         </tr>
       
         <tr>
           <td>ORPHANET</td>
-          <td>969</td>
-          <td>0.63%</td>
-          <td>2.27%</td>
-          <td>20.64%</td>
+          <td>942</td>
+          <td>0.62%</td>
+          <td>45.12%</td>
+          <td>0.0%</td>
         </tr>
       
         <tr>
           <td>UK_BIOBANK</td>
-          <td>611</td>
+          <td>612</td>
           <td>0.4%</td>
-          <td>0.0%</td>
+          <td>0.16%</td>
           <td>0.0%</td>
         </tr>
       
@@ -4877,15 +6815,15 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>DOID</td>
-          <td>28</td>
-          <td>0.02%</td>
-          <td>0.0%</td>
-          <td>0.0%</td>
+          <td>13</td>
+          <td>0.01%</td>
+          <td>38.46%</td>
+          <td>69.23%</td>
         </tr>
       
         <tr>
           <td>SNOMED</td>
-          <td>15</td>
+          <td>8</td>
           <td>0.01%</td>
           <td>0.0%</td>
           <td>0.0%</td>
@@ -5014,137 +6952,753 @@ span.badge.bg-primary.label {
         <tr>
           <td>{'ICD10CM', 'UMLS'}</td>
           <td>58370</td>
-          <td>37.48%</td>
+          <td>13.39%</td>
           <td>{'database_cross_reference'}</td>
           <td>{'ICD10CM'}</td>
         </tr>
       
         <tr>
-          <td>{'UMLS', 'MONDO'}</td>
-          <td>16968</td>
-          <td>10.9%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
-        </tr>
-      
-        <tr>
-          <td>{'OMIM', 'MONDO'}</td>
-          <td>13710</td>
-          <td>8.8%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'MONDO', 'UMLS'}</td>
+          <td>53461</td>
+          <td>12.27%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'ORPHANET', 'MONDO'}</td>
-          <td>11916</td>
-          <td>7.65%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>37156</td>
+          <td>8.52%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
-          <td>{'ICD10', 'MONDO'}</td>
-          <td>11494</td>
-          <td>7.38%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'OMIM', 'MONDO'}</td>
+          <td>33044</td>
+          <td>7.58%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'DOID', 'MONDO'}</td>
-          <td>9841</td>
-          <td>6.32%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
-        </tr>
-      
-        <tr>
-          <td>{'SNOMED', 'MONDO'}</td>
-          <td>9261</td>
-          <td>5.95%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>31026</td>
+          <td>7.12%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'MESH', 'MONDO'}</td>
-          <td>8237</td>
-          <td>5.29%</td>
-          <td>{'equivalent_to', 'xref'}</td>
+          <td>25189</td>
+          <td>5.78%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIT', 'MONDO'}</td>
+          <td>23023</td>
+          <td>5.28%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMED', 'MONDO'}</td>
+          <td>18289</td>
+          <td>4.2%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
           <td>{'MONDO'}</td>
         </tr>
       
         <tr>
-          <td>{'MONDO', 'NCIT'}</td>
-          <td>7415</td>
-          <td>4.76%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'MONDO', 'ICD10'}</td>
+          <td>13955</td>
+          <td>3.2%</td>
+          <td>{'xref', 'equivalent_to'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'SCTID'}</td>
+          <td>10379</td>
+          <td>2.38%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'OMIM', 'ORPHANET'}</td>
-          <td>3455</td>
-          <td>2.22%</td>
-          <td>{'alexion_orphanet_omim_exact'}</td>
-          <td>{'ALEXION_ORPHANET_OMIM_MAPPINGS'}</td>
+          <td>10160</td>
+          <td>2.33%</td>
+          <td>{'alexion_orphanet_omim_exact', 'xref', 'exact_match'}</td>
+          <td>{'ALEXION_ORPHANET_OMIM_MAPPINGS', 'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'MONDO', 'EFO'}</td>
-          <td>2846</td>
-          <td>1.83%</td>
-          <td>{'equivalent_to', 'xref'}</td>
+          <td>8325</td>
+          <td>1.91%</td>
+          <td>{'xref', 'equivalent_to'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'UMLS'}</td>
+          <td>6886</td>
+          <td>1.58%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'ICD9'}</td>
+          <td>6729</td>
+          <td>1.54%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'SNOMED'}</td>
+          <td>6592</td>
+          <td>1.51%</td>
+          <td>{'xref'}</td>
+          <td>{'MEDDRA'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'GARD'}</td>
+          <td>6303</td>
+          <td>1.45%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIM', 'DOID'}</td>
+          <td>5493</td>
+          <td>1.26%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'UMLS'}</td>
+          <td>5353</td>
+          <td>1.23%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'ICD10'}</td>
+          <td>5281</td>
+          <td>1.21%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'SNOMED'}</td>
+          <td>5091</td>
+          <td>1.17%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCI', 'DOID'}</td>
+          <td>4754</td>
+          <td>1.09%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ORPHANET'}</td>
+          <td>3919</td>
+          <td>0.9%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'MESH'}</td>
+          <td>3846</td>
+          <td>0.88%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICD10CM'}</td>
+          <td>3663</td>
+          <td>0.84%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'SCTID'}</td>
+          <td>3091</td>
+          <td>0.71%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UMLS', 'EFO'}</td>
+          <td>3072</td>
+          <td>0.7%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'GARD'}</td>
+          <td>2968</td>
+          <td>0.68%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MESH', 'ORPHANET'}</td>
+          <td>2890</td>
+          <td>0.66%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIT', 'EFO'}</td>
+          <td>2852</td>
+          <td>0.65%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'MONDO'}</td>
+          <td>2791</td>
+          <td>0.64%</td>
+          <td>{'equivalent_to', 'xref', 'exact_match'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'EFO'}</td>
+          <td>2784</td>
+          <td>0.64%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10', 'EFO'}</td>
+          <td>2292</td>
+          <td>0.53%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICD9CM'}</td>
+          <td>2271</td>
+          <td>0.52%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MESH', 'EFO'}</td>
+          <td>2122</td>
+          <td>0.49%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'GARD'}</td>
+          <td>2015</td>
+          <td>0.46%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD9', 'EFO'}</td>
+          <td>1939</td>
+          <td>0.44%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SCTID', 'EFO'}</td>
+          <td>1926</td>
+          <td>0.44%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'EFO'}</td>
+          <td>1815</td>
+          <td>0.42%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'COHD', 'MONDO'}</td>
+          <td>1594</td>
+          <td>0.37%</td>
+          <td>{'xref'}</td>
           <td>{'MONDO'}</td>
         </tr>
       
         <tr>
-          <td>{'MONDO', 'MEDDRA'}</td>
-          <td>1464</td>
-          <td>0.94%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'NCIT', 'ORPHANET'}</td>
+          <td>1112</td>
+          <td>0.26%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIM', 'EFO'}</td>
+          <td>979</td>
+          <td>0.22%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'EFO'}</td>
+          <td>965</td>
+          <td>0.22%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICDO', 'MONDO'}</td>
+          <td>951</td>
+          <td>0.22%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'ICD9'}</td>
+          <td>910</td>
+          <td>0.21%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'ORPHANET'}</td>
+          <td>842</td>
+          <td>0.19%</td>
+          <td>{'xref', 'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT', 'EFO'}</td>
+          <td>720</td>
+          <td>0.17%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'HP'}</td>
+          <td>680</td>
+          <td>0.16%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'ONCOTREE'}</td>
+          <td>680</td>
+          <td>0.16%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIt', 'EFO'}</td>
+          <td>668</td>
+          <td>0.15%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIMPS', 'MONDO'}</td>
+          <td>624</td>
+          <td>0.14%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'GARD', 'EFO'}</td>
+          <td>563</td>
+          <td>0.13%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
         </tr>
       
         <tr>
           <td>{'MONDO', 'UK_BIOBANK'}</td>
           <td>427</td>
-          <td>0.27%</td>
-          <td>{'merge'}</td>
-          <td>{'UK_BIOBANK'}</td>
-        </tr>
-      
-        <tr>
-          <td>{'UK_BIOBANK', 'MEDDRA'}</td>
-          <td>154</td>
           <td>0.1%</td>
           <td>{'merge'}</td>
           <td>{'UK_BIOBANK'}</td>
         </tr>
       
         <tr>
-          <td>{'MONDO'}</td>
-          <td>127</td>
-          <td>0.08%</td>
-          <td>{'equivalent_to', 'xref'}</td>
-          <td>{'MONDO'}</td>
+          <td>{'SNOMED', 'EFO'}</td>
+          <td>378</td>
+          <td>0.09%</td>
+          <td>{'exact_match'}</td>
+          <td>{'EFO'}</td>
         </tr>
       
         <tr>
-          <td>{'ICD10CM', 'MONDO'}</td>
-          <td>12</td>
-          <td>0.01%</td>
+          <td>{'ICDO', 'EFO'}</td>
+          <td>326</td>
+          <td>0.07%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIMPS', 'ORPHANET'}</td>
+          <td>321</td>
+          <td>0.07%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ONCOTREE', 'EFO'}</td>
+          <td>291</td>
+          <td>0.07%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HP', 'EFO'}</td>
+          <td>205</td>
+          <td>0.05%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DC', 'MONDO'}</td>
+          <td>184</td>
+          <td>0.04%</td>
           <td>{'xref'}</td>
           <td>{'MONDO'}</td>
         </tr>
       
         <tr>
-          <td>{'ICD10CM', 'UK_BIOBANK'}</td>
-          <td>7</td>
-          <td>0.0%</td>
+          <td>{'MEDDRA', 'UK_BIOBANK'}</td>
+          <td>154</td>
+          <td>0.04%</td>
           <td>{'merge'}</td>
           <td>{'UK_BIOBANK'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'HP'}</td>
+          <td>86</td>
+          <td>0.02%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'GTR', 'MONDO'}</td>
+          <td>79</td>
+          <td>0.02%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMED', 'ORPHANET'}</td>
+          <td>61</td>
+          <td>0.01%</td>
+          <td>{'exact_match'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HGNC', 'MONDO'}</td>
+          <td>61</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICDO'}</td>
+          <td>60</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'COHD', 'EFO'}</td>
+          <td>52</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'KEGG', 'MONDO'}</td>
+          <td>51</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'CSP', 'MONDO'}</td>
+          <td>51</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'KEGG', 'DOID'}</td>
+          <td>41</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'DOID'}</td>
+          <td>41</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'DOID'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIMPS', 'EFO'}</td>
+          <td>40</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'MEDGEN'}</td>
+          <td>31</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'PMID'}</td>
+          <td>30</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'GTR', 'ORPHANET'}</td>
+          <td>27</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UMLS', 'HP'}</td>
+          <td>24</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NIFSTD', 'MONDO'}</td>
+          <td>22</td>
+          <td>0.01%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'CSP', 'EFO'}</td>
+          <td>20</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'PMID', 'EFO'}</td>
+          <td>19</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'PMID'}</td>
+          <td>18</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT_US', 'HP'}</td>
+          <td>18</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'KEGG', 'EFO'}</td>
+          <td>18</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SCTID_2010_1_31', 'EFO'}</td>
+          <td>16</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SCTID_2010_1_31', 'MONDO'}</td>
+          <td>16</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NIFSTD', 'EFO'}</td>
+          <td>15</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10CM', 'MONDO'}</td>
+          <td>15</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HGNC', 'ORPHANET'}</td>
+          <td>15</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIt', 'ORPHANET'}</td>
+          <td>14</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICDO', 'ORPHANET'}</td>
+          <td>13</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICD9'}</td>
+          <td>11</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'ONCOTREE'}</td>
+          <td>9</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'SNOMEDCT'}</td>
+          <td>9</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HGNC', 'EFO'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'ICD10'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MSH', 'HP'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'GTR', 'EFO'}</td>
+          <td>8</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
         </tr>
       
         <tr>
@@ -5156,11 +7710,139 @@ span.badge.bg-primary.label {
         </tr>
       
         <tr>
-          <td>{'MP', 'MONDO'}</td>
-          <td>3</td>
+          <td>{'NCIm', 'EFO'}</td>
+          <td>7</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT', 'ORPHANET'}</td>
+          <td>7</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10CM', 'UK_BIOBANK'}</td>
+          <td>7</td>
+          <td>0.0%</td>
+          <td>{'merge'}</td>
+          <td>{'UK_BIOBANK'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORCID', 'MONDO'}</td>
+          <td>7</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'MFOMD'}</td>
+          <td>6</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD9CM', 'EFO'}</td>
+          <td>6</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'SCTID'}</td>
+          <td>5</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MP', 'EFO'}</td>
+          <td>5</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DC', 'ORPHANET'}</td>
+          <td>5</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'OMOP'}</td>
+          <td>5</td>
           <td>0.0%</td>
           <td>{'xref'}</td>
           <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MESH', 'HP'}</td>
+          <td>4</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD11', 'MONDO'}</td>
+          <td>4</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'KEGG', 'ORPHANET'}</td>
+          <td>4</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MP', 'MONDO'}</td>
+          <td>4</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'NCIt'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HP', 'ICD10'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ORPHANET', 'MEDGEN'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
         </tr>
       
         <tr>
@@ -5177,6 +7859,358 @@ span.badge.bg-primary.label {
           <td>0.0%</td>
           <td>{'merge'}</td>
           <td>{'UK_BIOBANK'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SCDO', 'MONDO'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'Wikidata', 'MONDO'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OGMS', 'MONDO'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'CSP', 'ORPHANET'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIT', 'DOID'}</td>
+          <td>3</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'IDO', 'EFO'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'COHD', 'ORPHANET'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10CM', 'ORPHANET'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DOID', 'HP'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NDFRT', 'MONDO'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCIt', 'HP'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDDRA', 'HP'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'CL', 'BTO'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'Reactome'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO', 'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT', 'HP'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ISBN', 'EFO'}</td>
+          <td>2</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UBERON', 'ZFA'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UBERON', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UBERON', 'AAO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'UniProt', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'TAO', 'UBERON'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'SNOMEDCT_US', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'BTO', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'PATO', 'MONDO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'DERMO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'DERMO', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'EV', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'HP', 'Fyler'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD10CM', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD9CM', 'MONDO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'ICD9CM', 'ORPHANET'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'IDO', 'MONDO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MEDGEN', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'MPATH'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OMIM', 'HP'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MONDO', 'MTH'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MTH', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'MedlinePlus', 'HP'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCBI', 'SNOMEDCT'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'NCI', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OBI', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OBI', 'MONDO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'MONDO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'OGMS', 'EFO'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
+        </tr>
+      
+        <tr>
+          <td>{'Wikidata', 'ORPHANET'}</td>
+          <td>1</td>
+          <td>0.0%</td>
+          <td>{'xref'}</td>
+          <td>{'EFO'}</td>
         </tr>
       
     
@@ -5273,36 +8307,71 @@ span.badge.bg-primary.label {
       
         <tr>
           <td>MONDO to MONDO</td>
-          <td>37577</td>
-          <td>100%</td>
-          <td>{'TEST_DATA'}</td>
+          <td>39892</td>
+          <td>65.81%</td>
+          <td>{'MONDO', 'EFO'}</td>
         </tr>
       
         <tr>
-          <td>MEDDRA to MEDDRA</td>
-          <td>540</td>
-          <td>0%</td>
-          <td>{'ONTO_MERGER'}</td>
-        </tr>
-      
-        <tr>
-          <td>ORPHANET to ORPHANET</td>
-          <td>152</td>
-          <td>0%</td>
-          <td>{'ONTO_MERGER'}</td>
-        </tr>
-      
-        <tr>
-          <td>ORPHANET to MONDO</td>
-          <td>48</td>
-          <td>0%</td>
+          <td>ICD10CM to ICD10CM</td>
+          <td>11326</td>
+          <td>18.68%</td>
           <td>{'ONTO_MERGER'}</td>
         </tr>
       
         <tr>
           <td>MEDDRA to MONDO</td>
-          <td>14</td>
-          <td>0%</td>
+          <td>5003</td>
+          <td>8.25%</td>
+          <td>{'ONTO_MERGER'}</td>
+        </tr>
+      
+        <tr>
+          <td>ICD10CM to MONDO</td>
+          <td>2268</td>
+          <td>3.74%</td>
+          <td>{'ONTO_MERGER'}</td>
+        </tr>
+      
+        <tr>
+          <td>MESH to MONDO</td>
+          <td>788</td>
+          <td>1.3%</td>
+          <td>{'ONTO_MERGER'}</td>
+        </tr>
+      
+        <tr>
+          <td>MEDDRA to MEDDRA</td>
+          <td>480</td>
+          <td>0.79%</td>
+          <td>{'ONTO_MERGER'}</td>
+        </tr>
+      
+        <tr>
+          <td>MESH to MESH</td>
+          <td>476</td>
+          <td>0.79%</td>
+          <td>{'ONTO_MERGER'}</td>
+        </tr>
+      
+        <tr>
+          <td>EFO to MONDO</td>
+          <td>364</td>
+          <td>0.6%</td>
+          <td>{'ONTO_MERGER'}</td>
+        </tr>
+      
+        <tr>
+          <td>EFO to MEDDRA</td>
+          <td>15</td>
+          <td>0.02%</td>
+          <td>{'ONTO_MERGER'}</td>
+        </tr>
+      
+        <tr>
+          <td>DOID to MONDO</td>
+          <td>9</td>
+          <td>0.01%</td>
           <td>{'ONTO_MERGER'}</td>
         </tr>
       
@@ -5437,7 +8506,7 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Process runtime</td>
-          <td>0:00:19</td>
+          <td>0:00:26</td>
         </tr>
       
         <tr>
@@ -5447,17 +8516,17 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Number of tables profiled</td>
-          <td>17</td>
+          <td>22</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of rows profiled</td>
-          <td>1544742</td>
+          <td>2686920</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Total file size</td>
-          <td>61.437MB</td>
+          <td>115.837MB</td>
         </tr>
       
         <tr>
@@ -5531,8 +8600,8 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary node">node</span></td>
             <td><code>nodes_obsolete.csv</code></td>
             
-                <td>127</td>
-                <td>0.002MB</td>
+                <td>4787</td>
+                <td>0.056MB</td>
             
             <td><a href="data_profile_reports/nodes_obsolete_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5541,8 +8610,8 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary mapping">mapping</span></td>
             <td><code>mappings.csv</code></td>
             
-                <td>155720</td>
-                <td>7.782MB</td>
+                <td>439389</td>
+                <td>18.367MB</td>
             
             <td><a href="data_profile_reports/mappings_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5551,8 +8620,8 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary edge">edge</span></td>
             <td><code>edges_hierarchy.csv</code></td>
             
-                <td>38812</td>
-                <td>2.003MB</td>
+                <td>272824</td>
+                <td>13.738MB</td>
             
             <td><a href="data_profile_reports/edges_hierarchy_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5586,10 +8655,20 @@ span.badge.bg-primary.label {
       
         <tr>
             <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_seed.csv</code></td>
+            
+                <td>22109</td>
+                <td>0.422MB</td>
+            
+            <td><a href="data_profile_reports/nodes_seed_report.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
             <td><code>nodes_unmapped.csv</code></td>
             
-                <td>153449</td>
-                <td>3.267MB</td>
+                <td>129912</td>
+                <td>2.818MB</td>
             
             <td><a href="data_profile_reports/nodes_unmapped_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5598,28 +8677,58 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary node">node</span></td>
             <td><code>nodes_merged.csv</code></td>
             
-                <td>72802</td>
-                <td>1.347MB</td>
+                <td>35696</td>
+                <td>0.676MB</td>
             
             <td><a href="data_profile_reports/nodes_merged_report.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
             <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_merged_to_seed.csv</code></td>
+            
+                <td>34333</td>
+                <td>0.649MB</td>
+            
+            <td><a href="data_profile_reports/nodes_merged_to_seed_report.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_merged_to_other.csv</code></td>
+            
+                <td>1363</td>
+                <td>0.027MB</td>
+            
+            <td><a href="data_profile_reports/nodes_merged_to_other_report.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
             <td><code>nodes_connected.csv</code></td>
             
-                <td>22617</td>
-                <td>0.434MB</td>
+                <td>42606</td>
+                <td>0.867MB</td>
             
             <td><a href="data_profile_reports/nodes_connected_report.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
             <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_connected_excluding_seed.csv</code></td>
+            
+                <td>20740</td>
+                <td>0.450MB</td>
+            
+            <td><a href="data_profile_reports/nodes_connected_excluding_seed_report.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
             <td><code>nodes_dangling.csv</code></td>
             
-                <td>130832</td>
-                <td>2.833MB</td>
+                <td>109172</td>
+                <td>2.368MB</td>
             
             <td><a href="data_profile_reports/nodes_dangling_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5628,28 +8737,28 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary edge">edge</span></td>
             <td><code>edges_hierarchy_post.csv</code></td>
             
-                <td>38331</td>
-                <td>2.969MB</td>
+                <td>60621</td>
+                <td>4.698MB</td>
             
             <td><a href="data_profile_reports/edges_hierarchy_post_report.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
-            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><span class="badge bg-primary merge">merge</span></td>
             <td><code>merges_with_meta_data.csv</code></td>
             
-                <td>95396</td>
-                <td>7.033MB</td>
+                <td>36549</td>
+                <td>2.730MB</td>
             
             <td><a href="data_profile_reports/merges_with_meta_data_report.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
-            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><span class="badge bg-primary merge">merge</span></td>
             <td><code>merges_aggregated.csv</code></td>
             
-                <td>72802</td>
-                <td>3.959MB</td>
+                <td>35696</td>
+                <td>1.882MB</td>
             
             <td><a href="data_profile_reports/merges_aggregated_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5658,18 +8767,28 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary mapping">mapping</span></td>
             <td><code>mappings_updated.csv</code></td>
             
-                <td>155720</td>
-                <td>11.893MB</td>
+                <td>435785</td>
+                <td>29.440MB</td>
             
             <td><a href="data_profile_reports/mappings_updated_report.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
             <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>mappings_for_input_nodes.csv</code></td>
+            
+                <td>133496</td>
+                <td>8.928MB</td>
+            
+            <td><a href="data_profile_reports/mappings_for_input_nodes_report.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
             <td><code>mappings_obsolete_to_current.csv</code></td>
             
-                <td>115</td>
-                <td>0.008MB</td>
+                <td>2</td>
+                <td>0.000MB</td>
             
             <td><a href="data_profile_reports/mappings_obsolete_to_current_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5705,8 +8824,8 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary node">node</span></td>
             <td><code>nodes.csv</code></td>
             
-                <td>153449</td>
-                <td>2.239MB</td>
+                <td>152021</td>
+                <td>2.219MB</td>
             
             <td><a href="data_profile_reports/nodes_domain_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5715,18 +8834,18 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary mapping">mapping</span></td>
             <td><code>mappings.csv</code></td>
             
-                <td>155720</td>
-                <td>7.782MB</td>
+                <td>435785</td>
+                <td>18.235MB</td>
             
             <td><a href="data_profile_reports/mappings_domain_report.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
-            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><span class="badge bg-primary merge">merge</span></td>
             <td><code>merges.csv</code></td>
             
-                <td>72802</td>
-                <td>3.228MB</td>
+                <td>35696</td>
+                <td>1.551MB</td>
             
             <td><a href="data_profile_reports/merges_domain_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5735,8 +8854,8 @@ span.badge.bg-primary.label {
             <td><span class="badge bg-primary edge">edge</span></td>
             <td><code>edges_hierarchy.csv</code></td>
             
-                <td>38331</td>
-                <td>1.978MB</td>
+                <td>60621</td>
+                <td>3.035MB</td>
             
             <td><a href="data_profile_reports/edges_hierarchy_domain_report.html" target="_blank">Link</a></td>
         </tr>
@@ -5818,7 +8937,7 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Process runtime</td>
-          <td>0:01:17</td>
+          <td>0:02:27</td>
         </tr>
       
         <tr>
@@ -5828,32 +8947,32 @@ span.badge.bg-primary.label {
       
         <tr>
           <td style="font-weight: bold;">Number of tables tested</td>
-          <td>17</td>
+          <td>22</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of data tests run</td>
-          <td>348</td>
+          <td>427</td>
         </tr>
       
         <tr>
           <td style="font-weight: bold;">Number of failed tests (input data)</td>
-          <td>2</td>
-        </tr>
-      
-        <tr>
-          <td style="font-weight: bold;">Number of failed tests (intermediate data)</td>
-          <td>3</td>
-        </tr>
-      
-        <tr>
-          <td style="font-weight: bold;">Number of failed tests (output data)</td>
           <td>0</td>
         </tr>
       
         <tr>
+          <td style="font-weight: bold;">Number of failed tests (intermediate data)</td>
+          <td>0</td>
+        </tr>
+      
+        <tr>
+          <td style="font-weight: bold;">Number of failed tests (output data)</td>
+          <td>1</td>
+        </tr>
+      
+        <tr>
           <td style="font-weight: bold;">Total failed tests</td>
-          <td>6</td>
+          <td>1</td>
         </tr>
       
         <tr>
@@ -5920,9 +9039,9 @@ span.badge.bg-primary.label {
             <td><code>nodes.csv</code></td>
             
                 <td>12</td>
-                <td>91.66666666666666</td>
+                <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/nodes_table/__none__/20220528T232633.673947Z/e78b97003cef381050feafa16638744c.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/nodes_table/__none__/20220531T012429.973109Z/e78b97003cef381050feafa16638744c.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -5932,7 +9051,7 @@ span.badge.bg-primary.label {
                 <td>12</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/nodes_obsolete_table/__none__/20220528T232635.270324Z/15472abaaed9cb9b9af3ec9568b12da7.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/nodes_obsolete_table/__none__/20220531T012431.986243Z/15472abaaed9cb9b9af3ec9568b12da7.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -5940,9 +9059,9 @@ span.badge.bg-primary.label {
             <td><code>mappings.csv</code></td>
             
                 <td>31</td>
-                <td>96.7741935483871</td>
+                <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/mappings_table/__none__/20220528T232636.576470Z/28d859e50c34b64f80451f3093bcd896.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/mappings_table/__none__/20220531T012433.441834Z/28d859e50c34b64f80451f3093bcd896.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -5952,7 +9071,7 @@ span.badge.bg-primary.label {
                 <td>31</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/edges_hierarchy_table/__none__/20220528T232639.277668Z/625eadba9ccaa6b032289f29e62ddade.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/edges_hierarchy_table/__none__/20220531T012440.487052Z/625eadba9ccaa6b032289f29e62ddade.html" target="_blank">Link</a></td>
         </tr>
       
     
@@ -5984,12 +9103,22 @@ span.badge.bg-primary.label {
       
         <tr>
             <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_seed.csv</code></td>
+            
+                <td>12</td>
+                <td>100.0</td>
+            
+            <td><a href="data_docs/local_site/validations/nodes_seed_table/__none__/20220531T014523.604709Z/87ec812f47b15b9dbf4c996e9cba3249.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
             <td><code>nodes_unmapped.csv</code></td>
             
                 <td>12</td>
-                <td>91.66666666666666</td>
+                <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/nodes_unmapped_table/__none__/20220528T232757.346310Z/1800465361cedc87e04ad05f1e2b9c76.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/nodes_unmapped_table/__none__/20220531T014527.330180Z/1800465361cedc87e04ad05f1e2b9c76.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -5999,7 +9128,27 @@ span.badge.bg-primary.label {
                 <td>12</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/nodes_merged_table/__none__/20220528T232759.357320Z/80bf758adafb7e083519bc709e20cf3b.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/nodes_merged_table/__none__/20220531T014530.372251Z/80bf758adafb7e083519bc709e20cf3b.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_merged_to_seed.csv</code></td>
+            
+                <td>12</td>
+                <td>100.0</td>
+            
+            <td><a href="data_docs/local_site/validations/nodes_merged_to_seed_table/__none__/20220531T014533.120785Z/fc7b178891615fc1a32971cc63a96174.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_merged_to_other.csv</code></td>
+            
+                <td>12</td>
+                <td>100.0</td>
+            
+            <td><a href="data_docs/local_site/validations/nodes_merged_to_other_table/__none__/20220531T014535.346079Z/57e656876dcca3dbbba3b9170e7d9b23.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -6009,7 +9158,17 @@ span.badge.bg-primary.label {
                 <td>12</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/nodes_connected_table/__none__/20220528T232800.859273Z/3a244397315dbbf6c66726da2760ecd2.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/nodes_connected_table/__none__/20220531T014537.188188Z/3a244397315dbbf6c66726da2760ecd2.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary node">node</span></td>
+            <td><code>nodes_connected_excluding_seed.csv</code></td>
+            
+                <td>12</td>
+                <td>100.0</td>
+            
+            <td><a href="data_docs/local_site/validations/nodes_connected_excluding_seed_table/__none__/20220531T014539.567626Z/c490f1e9c83d9fc22374d14fb0f20bcb.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -6017,9 +9176,9 @@ span.badge.bg-primary.label {
             <td><code>nodes_dangling.csv</code></td>
             
                 <td>12</td>
-                <td>91.66666666666666</td>
+                <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/nodes_dangling_table/__none__/20220528T232802.204777Z/3f1d021431ea460d9897fb437bfec1d1.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/nodes_dangling_table/__none__/20220531T014542.045863Z/3f1d021431ea460d9897fb437bfec1d1.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -6029,27 +9188,27 @@ span.badge.bg-primary.label {
                 <td>31</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/edges_hierarchy_post_table/__none__/20220528T232803.798294Z/be18440cd34363ed1c63ca3e0fef2bb1.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/edges_hierarchy_post_table/__none__/20220531T014544.569975Z/be18440cd34363ed1c63ca3e0fef2bb1.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
-            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><span class="badge bg-primary merge">merge</span></td>
             <td><code>merges_with_meta_data.csv</code></td>
             
                 <td>26</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/merges_with_meta_data_table/__none__/20220528T232805.620780Z/cb4525b4f113747c5649d0d8e9aba16c.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/merges_with_meta_data_table/__none__/20220531T014547.900897Z/cb4525b4f113747c5649d0d8e9aba16c.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
-            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><span class="badge bg-primary merge">merge</span></td>
             <td><code>merges_aggregated.csv</code></td>
             
                 <td>26</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/merges_aggregated_table/__none__/20220528T232808.156270Z/e953db51e67893a980cb41aaccf24ace.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/merges_aggregated_table/__none__/20220531T014550.772044Z/e953db51e67893a980cb41aaccf24ace.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -6057,9 +9216,19 @@ span.badge.bg-primary.label {
             <td><code>mappings_updated.csv</code></td>
             
                 <td>31</td>
-                <td>96.7741935483871</td>
+                <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/mappings_updated_table/__none__/20220528T232810.343186Z/d3dc362ad9ce646c377872db0b8bd86d.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/mappings_updated_table/__none__/20220531T014553.556352Z/d3dc362ad9ce646c377872db0b8bd86d.html" target="_blank">Link</a></td>
+        </tr>
+      
+        <tr>
+            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><code>mappings_for_input_nodes.csv</code></td>
+            
+                <td>31</td>
+                <td>100.0</td>
+            
+            <td><a href="data_docs/local_site/validations/mappings_for_input_nodes_table/__none__/20220531T014602.573691Z/9f005e8c5446e66a675987ad67830449.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -6069,7 +9238,7 @@ span.badge.bg-primary.label {
                 <td>31</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/mappings_obsolete_to_current_table/__none__/20220528T232813.560996Z/38051fcd5968316dd98365913a42c383.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/mappings_obsolete_to_current_table/__none__/20220531T014606.817315Z/38051fcd5968316dd98365913a42c383.html" target="_blank">Link</a></td>
         </tr>
       
     
@@ -6106,7 +9275,7 @@ span.badge.bg-primary.label {
                 <td>7</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/nodes_domain_table/__none__/20220528T232833.625148Z/7896b7c522346100cceefc80cd9da6db.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/nodes_domain_table/__none__/20220531T014633.618450Z/7896b7c522346100cceefc80cd9da6db.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -6116,17 +9285,17 @@ span.badge.bg-primary.label {
                 <td>20</td>
                 <td>95.0</td>
             
-            <td><a href="data_docs/local_site/validations/mappings_domain_table/__none__/20220528T232836.151870Z/8463eb796cc4ce36e6d7d1b4f8ea8227.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/mappings_domain_table/__none__/20220531T014636.110307Z/8463eb796cc4ce36e6d7d1b4f8ea8227.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
-            <td><span class="badge bg-primary mapping">mapping</span></td>
+            <td><span class="badge bg-primary merge">merge</span></td>
             <td><code>merges.csv</code></td>
             
                 <td>22</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/merges_domain_table/__none__/20220528T232839.343310Z/3ea223d545c9c2077f9d8e82f363bf38.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/merges_domain_table/__none__/20220531T014641.269467Z/3ea223d545c9c2077f9d8e82f363bf38.html" target="_blank">Link</a></td>
         </tr>
       
         <tr>
@@ -6136,7 +9305,7 @@ span.badge.bg-primary.label {
                 <td>20</td>
                 <td>100.0</td>
             
-            <td><a href="data_docs/local_site/validations/edges_hierarchy_domain_table/__none__/20220528T232841.406692Z/894501d8f1f6c565e1ae828230799a73.html" target="_blank">Link</a></td>
+            <td><a href="data_docs/local_site/validations/edges_hierarchy_domain_table/__none__/20220531T014643.401137Z/894501d8f1f6c565e1ae828230799a73.html" target="_blank">Link</a></td>
         </tr>
       
     
@@ -6161,7 +9330,7 @@ span.badge.bg-primary.label {
             <p class="text-muted text-center">
                 Report generated by
                 <a href="https://github.com/AstraZeneca/onto_merger" target="_blank">OntoMerger</a>
-                at 2022/05/28 23:47:29.
+                at 2022/05/31 01:50:06.
             </p>
         </div>
     </div>
