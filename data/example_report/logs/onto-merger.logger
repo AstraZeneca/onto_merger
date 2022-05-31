@@ -1,0 +1,506 @@
+2022-05-28 23:26:23 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started running alignment and connection process for 'bikg_2022-02-28-4.27.0_disease'
+2022-05-28 23:26:23 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started validating alignment config...
+2022-05-28 23:26:23 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished validating alignment config.
+2022-05-28 23:26:23 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started processing input data...
+2022-05-28 23:26:23 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes' with 187,717 row(s).
+2022-05-28 23:26:23 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes_obsolete' with 127 row(s).
+2022-05-28 23:26:23 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'mappings' with 155,720 row(s).
+2022-05-28 23:26:23 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'edges_hierarchy' with 38,812 row(s).
+2022-05-28 23:26:25 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started validating input data...
+2022-05-28 23:26:25 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Starting Pandas profiling for 4 tables: '['nodes', 'nodes_obsolete', 'mappings', 'edges_hierarchy']'
+2022-05-28 23:26:25 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'nodes'
+2022-05-28 23:26:26 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'nodes_obsolete'
+2022-05-28 23:26:26 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'mappings'
+2022-05-28 23:26:27 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'edges_hierarchy'
+2022-05-28 23:26:28 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Finished Pandas profiling for tables '['nodes', 'nodes_obsolete', 'mappings', 'edges_hierarchy']'.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished validating input data.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished processing input data.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started aligning nodes...
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Starting to preprocess mappings...
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 127 'internal_node_reassignment' mappings from total 155720 mappings.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 115 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 127 mappings.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished pre-processing mappings.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Produced 22,108 self merges for seed source 'MONDO'.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: MONDO | STEP: 1 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 165,609 (88.22%) are unmapped.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 93,721 edges (mapping or hierarchy edges) for namespace 'MONDO' from total 155,720.
+2022-05-28 23:26:41 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 71,867 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 93,721 mappings.
+2022-05-28 23:26:43 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 71,867 output size: 71,867.
+2022-05-28 23:26:43 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 29,178 mappings (from total 71,867) for 165,609 nodes.
+2022-05-28 23:26:43 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 29176 one_or_many_source_to_one_target mappings from 29178 mappings.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 2 one_or_many_source_to_one_target mappings from 29178 mappings.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto MONDO, mapped 29,176 nodes.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: MEDDRA | STEP: 2 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,433 (72.68%) are unmapped.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 1,618 edges (mapping or hierarchy edges) for namespace 'MEDDRA' from total 155,720.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 158 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 1,618 mappings.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 158 output size: 158.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 154 mappings (from total 158) for 136,433 nodes.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 154 one_or_many_source_to_one_target mappings from 154 mappings.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 154 mappings.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto MEDDRA, mapped 154 nodes.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: ICD10CM | STEP: 3 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,279 (72.60%) are unmapped.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 58,389 edges (mapping or hierarchy edges) for namespace 'ICD10CM' from total 155,720.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 7 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 58,389 mappings.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 7 output size: 7.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 7 mappings (from total 7) for 136,279 nodes.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 7 one_or_many_source_to_one_target mappings from 7 mappings.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 7 mappings.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto ICD10CM, mapped 7 nodes.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: MESH | STEP: 4 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,272 (72.59%) are unmapped.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 8,240 edges (mapping or hierarchy edges) for namespace 'MESH' from total 155,720.
+2022-05-28 23:26:44 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 7,852 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 8,240 mappings.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 7,852 output size: 7,852.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 3 mappings (from total 7,852) for 136,272 nodes.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 3 one_or_many_source_to_one_target mappings from 3 mappings.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 3 mappings.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto MESH, mapped 3 nodes.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: ORPHANET | STEP: 5 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,269 (72.59%) are unmapped.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 15,371 edges (mapping or hierarchy edges) for namespace 'ORPHANET' from total 155,720.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 12,250 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 15,371 mappings.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 12,250 output size: 12,250.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 8 mappings (from total 12,250) for 136,269 nodes.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 8 one_or_many_source_to_one_target mappings from 8 mappings.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 8 mappings.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto ORPHANET, mapped 8 nodes.
+2022-05-28 23:26:45 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: OMIM | STEP: 6 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,261 (72.59%) are unmapped.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 17,165 edges (mapping or hierarchy edges) for namespace 'OMIM' from total 155,720.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 12,391 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 17,165 mappings.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 12,391 output size: 12,391.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 33 mappings (from total 12,391) for 136,261 nodes.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 33 one_or_many_source_to_one_target mappings from 33 mappings.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 33 mappings.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto OMIM, mapped 33 nodes.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: UMLS | STEP: 7 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,228 (72.57%) are unmapped.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 75,341 edges (mapping or hierarchy edges) for namespace 'UMLS' from total 155,720.
+2022-05-28 23:26:46 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 16,230 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 75,341 mappings.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 16,230 output size: 16,230.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 3 mappings (from total 16,230) for 136,228 nodes.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 3 one_or_many_source_to_one_target mappings from 3 mappings.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 3 mappings.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto UMLS, mapped 3 nodes.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: EFO | STEP: 8 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,225 (72.57%) are unmapped.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 2,853 edges (mapping or hierarchy edges) for namespace 'EFO' from total 155,720.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 2,839 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 2,853 mappings.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 2,839 output size: 2,839.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 7 mappings (from total 2,839) for 136,225 nodes.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 7 one_or_many_source_to_one_target mappings from 7 mappings.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 7 mappings.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto EFO, mapped 7 nodes.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: DOID | STEP: 9 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,218 (72.57%) are unmapped.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 9,841 edges (mapping or hierarchy edges) for namespace 'DOID' from total 155,720.
+2022-05-28 23:26:47 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 9,770 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 9,841 mappings.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 9,770 output size: 9,770.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 9,770) for 136,218 nodes.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto DOID, mapped 0 nodes.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: UK_BIOBANK | STEP: 10 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,218 (72.57%) are unmapped.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 601 edges (mapping or hierarchy edges) for namespace 'UK_BIOBANK' from total 155,720.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 601 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 601 mappings.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 601 output size: 601.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 174 mappings (from total 601) for 136,218 nodes.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 168 one_or_many_source_to_one_target mappings from 174 mappings.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 6 one_or_many_source_to_one_target mappings from 174 mappings.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto UK_BIOBANK, mapped 168 nodes.
+2022-05-28 23:26:48 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: NCIT | STEP: 11 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,050 (72.48%) are unmapped.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 7,415 edges (mapping or hierarchy edges) for namespace 'NCIT' from total 155,720.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 6,857 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 7,415 mappings.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 6,857 output size: 6,857.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 6,857) for 136,050 nodes.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto NCIT, mapped 0 nodes.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: BOWES_2012 | STEP: 12 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,050 (72.48%) are unmapped.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'BOWES_2012' from total 155,720.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 0 mappings.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 0 output size: 0.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 0) for 136,050 nodes.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto BOWES_2012, mapped 0 nodes.
+2022-05-28 23:26:49 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: CHEBI | STEP: 13 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,050 (72.48%) are unmapped.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'CHEBI' from total 155,720.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 0 mappings.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 0 output size: 0.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 0) for 136,050 nodes.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto CHEBI, mapped 0 nodes.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: SNOMED | STEP: 14 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,050 (72.48%) are unmapped.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 9,261 edges (mapping or hierarchy edges) for namespace 'SNOMED' from total 155,720.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 8,953 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 9,261 mappings.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 8,953 output size: 8,953.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 8,953) for 136,050 nodes.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto SNOMED, mapped 0 nodes.
+2022-05-28 23:26:50 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: MP | STEP: 15 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,050 (72.48%) are unmapped.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 3 edges (mapping or hierarchy edges) for namespace 'MP' from total 155,720.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 3 mappings.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 0 output size: 0.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 0) for 136,050 nodes.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto MP, mapped 0 nodes.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: NCI | STEP: 16 of 16 | MAPPING: equivalence * * * * *
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,050 (72.48%) are unmapped.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'NCI' from total 155,720.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 for relation(s) '['equivalent_to', 'merge', 'alexion_orphanet_omim_exact']' from 0 mappings.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'equivalence' mappings, input size: 0 output size: 0.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 0) for 136,050 nodes.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto NCI, mapped 0 nodes.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: MONDO | STEP: 17 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 136,050 (72.48%) are unmapped.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 93,721 edges (mapping or hierarchy edges) for namespace 'MONDO' from total 155,720.
+2022-05-28 23:26:51 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 21,854 for relation(s) '['database_cross_reference', 'xref']' from 93,721 mappings.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 21,854 output size: 21,854.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 1,659 mappings (from total 21,854) for 136,050 nodes.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 1539 one_or_many_source_to_one_target mappings from 1659 mappings.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 120 one_or_many_source_to_one_target mappings from 1659 mappings.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto MONDO, mapped 1,539 nodes.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: MEDDRA | STEP: 18 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 134,511 (71.66%) are unmapped.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 1,618 edges (mapping or hierarchy edges) for namespace 'MEDDRA' from total 155,720.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 1,460 for relation(s) '['database_cross_reference', 'xref']' from 1,618 mappings.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 1,460 output size: 1,460.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 1,460) for 134,511 nodes.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:52 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto MEDDRA, mapped 0 nodes.
+2022-05-28 23:26:53 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: ICD10CM | STEP: 19 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:53 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 134,511 (71.66%) are unmapped.
+2022-05-28 23:26:53 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 58,389 edges (mapping or hierarchy edges) for namespace 'ICD10CM' from total 155,720.
+2022-05-28 23:26:53 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 58,382 for relation(s) '['database_cross_reference', 'xref']' from 58,389 mappings.
+2022-05-28 23:26:54 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 58,382 output size: 58,382.
+2022-05-28 23:26:54 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 1,327 mappings (from total 58,382) for 134,511 nodes.
+2022-05-28 23:26:54 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 840 one_or_many_source_to_one_target mappings from 1327 mappings.
+2022-05-28 23:26:54 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 487 one_or_many_source_to_one_target mappings from 1327 mappings.
+2022-05-28 23:26:54 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto ICD10CM, mapped 840 nodes.
+2022-05-28 23:26:54 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: MESH | STEP: 20 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 133,671 (71.21%) are unmapped.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 8,240 edges (mapping or hierarchy edges) for namespace 'MESH' from total 155,720.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 388 for relation(s) '['database_cross_reference', 'xref']' from 8,240 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 388 output size: 388.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 388) for 133,671 nodes.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto MESH, mapped 0 nodes.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: ORPHANET | STEP: 21 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 133,671 (71.21%) are unmapped.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 15,371 edges (mapping or hierarchy edges) for namespace 'ORPHANET' from total 155,720.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 3,121 for relation(s) '['database_cross_reference', 'xref']' from 15,371 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 3,121 output size: 3,121.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 3,121) for 133,671 nodes.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto ORPHANET, mapped 0 nodes.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: OMIM | STEP: 22 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 133,671 (71.21%) are unmapped.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 17,165 edges (mapping or hierarchy edges) for namespace 'OMIM' from total 155,720.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 4,774 for relation(s) '['database_cross_reference', 'xref']' from 17,165 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 4,774 output size: 4,774.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 4,774) for 133,671 nodes.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:55 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto OMIM, mapped 0 nodes.
+2022-05-28 23:26:56 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: UMLS | STEP: 23 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:56 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 133,671 (71.21%) are unmapped.
+2022-05-28 23:26:56 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 75,341 edges (mapping or hierarchy edges) for namespace 'UMLS' from total 155,720.
+2022-05-28 23:26:56 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 59,111 for relation(s) '['database_cross_reference', 'xref']' from 75,341 mappings.
+2022-05-28 23:26:57 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 59,111 output size: 59,111.
+2022-05-28 23:26:57 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 58,320 mappings (from total 59,111) for 133,671 nodes.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 41350 one_or_many_source_to_one_target mappings from 58320 mappings.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 16970 one_or_many_source_to_one_target mappings from 58320 mappings.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto UMLS, mapped 41,350 nodes.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: EFO | STEP: 24 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 2,853 edges (mapping or hierarchy edges) for namespace 'EFO' from total 155,720.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 14 for relation(s) '['database_cross_reference', 'xref']' from 2,853 mappings.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 14 output size: 14.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 14) for 92,321 nodes.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto EFO, mapped 0 nodes.
+2022-05-28 23:26:58 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: DOID | STEP: 25 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 9,841 edges (mapping or hierarchy edges) for namespace 'DOID' from total 155,720.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 71 for relation(s) '['database_cross_reference', 'xref']' from 9,841 mappings.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 71 output size: 71.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 71) for 92,321 nodes.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto DOID, mapped 0 nodes.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: UK_BIOBANK | STEP: 26 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 601 edges (mapping or hierarchy edges) for namespace 'UK_BIOBANK' from total 155,720.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 for relation(s) '['database_cross_reference', 'xref']' from 601 mappings.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 0 output size: 0.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 0) for 92,321 nodes.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto UK_BIOBANK, mapped 0 nodes.
+2022-05-28 23:26:59 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: NCIT | STEP: 27 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 7,415 edges (mapping or hierarchy edges) for namespace 'NCIT' from total 155,720.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 558 for relation(s) '['database_cross_reference', 'xref']' from 7,415 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 558 output size: 558.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 558) for 92,321 nodes.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto NCIT, mapped 0 nodes.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: BOWES_2012 | STEP: 28 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'BOWES_2012' from total 155,720.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 for relation(s) '['database_cross_reference', 'xref']' from 0 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 0 output size: 0.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 0) for 92,321 nodes.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto BOWES_2012, mapped 0 nodes.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: CHEBI | STEP: 29 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'CHEBI' from total 155,720.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 for relation(s) '['database_cross_reference', 'xref']' from 0 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 0 output size: 0.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 0) for 92,321 nodes.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:00 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto CHEBI, mapped 0 nodes.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: SNOMED | STEP: 30 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 9,261 edges (mapping or hierarchy edges) for namespace 'SNOMED' from total 155,720.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 308 for relation(s) '['database_cross_reference', 'xref']' from 9,261 mappings.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 308 output size: 308.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 308) for 92,321 nodes.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto SNOMED, mapped 0 nodes.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: MP | STEP: 31 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 3 edges (mapping or hierarchy edges) for namespace 'MP' from total 155,720.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 3 for relation(s) '['database_cross_reference', 'xref']' from 3 mappings.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 3 output size: 3.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 3) for 92,321 nodes.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto MP, mapped 0 nodes.
+2022-05-28 23:27:01 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - * * * * * SOURCE: NCI | STEP: 32 of 16 | MAPPING: database_reference * * * * *
+2022-05-28 23:27:02 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 92,321 (49.18%) are unmapped.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'NCI' from total 155,720.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 for relation(s) '['database_cross_reference', 'xref']' from 0 mappings.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Deduplicated 'database_reference' mappings, input size: 0 output size: 0.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 mappings (from total 0) for 92,321 nodes.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 one_or_many_source_to_one_target mappings from 0 mappings.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.alignment.alignment_manager - INFO - Finished aligning nodes onto NCI, mapped 0 nodes.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished aligning nodes.
+2022-05-28 23:27:02 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started aggregating merges...
+2022-05-28 23:27:05 - OntoMerger.onto_merger.alignment.merge_utils - INFO - Out of 187,717 nodes, 153,449 (81.74%) are unmapped.
+2022-05-28 23:27:05 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished aggregating merges.
+2022-05-28 23:27:05 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started connecting nodes...
+2022-05-28 23:27:05 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 22,109 nodes for namespace MONDO from total 187,717 nodes.
+2022-05-28 23:27:09 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 73,588 nodes for namespace MEDDRA from total 153,449 nodes.
+2022-05-28 23:27:09 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for MEDDRA (73,588 unmapped, 47.96% of total) * * *
+2022-05-28 23:27:09 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 787 edges (mapping or hierarchy edges) for namespace 'MEDDRA' from total 38,812.
+2022-05-28 23:27:09 - OntoMerger.onto_merger.alignment.networkit_utils - INFO - Started initialising hierarchy graph from 787 edges...
+2022-05-28 23:27:09 - OntoMerger.onto_merger.alignment.networkit_utils - INFO - Producing node ID lookup maps..
+2022-05-28 23:27:09 - OntoMerger.onto_merger.alignment.networkit_utils - INFO - Adding edges..
+2022-05-28 23:27:09 - OntoMerger.onto_merger.alignment.networkit_utils - INFO - Hierarchy graph initialised with 834 nodes (47 possible root(s)) and 787 edges
+2022-05-28 23:27:10 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - Reachable unmapped nodes 787 (1.07%)
+2022-05-28 23:27:13 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - Out of 73,588 unmapped nodes of 'MEDDRA', 554 are now connected, via 554 hierarchy edges.
+2022-05-28 23:27:13 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 45,053 nodes for namespace ICD10CM from total 153,449 nodes.
+2022-05-28 23:27:13 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for ICD10CM (45,053 unmapped, 29.36% of total) * * *
+2022-05-28 23:27:13 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'ICD10CM' from total 38,812.
+2022-05-28 23:27:13 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 3,806 nodes for namespace MESH from total 153,449 nodes.
+2022-05-28 23:27:13 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for MESH (3,806 unmapped, 2.48% of total) * * *
+2022-05-28 23:27:13 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'MESH' from total 38,812.
+2022-05-28 23:27:14 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 969 nodes for namespace ORPHANET from total 153,449 nodes.
+2022-05-28 23:27:14 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for ORPHANET (969 unmapped, 0.63% of total) * * *
+2022-05-28 23:27:14 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 448 edges (mapping or hierarchy edges) for namespace 'ORPHANET' from total 38,812.
+2022-05-28 23:27:14 - OntoMerger.onto_merger.alignment.networkit_utils - INFO - Started initialising hierarchy graph from 448 edges...
+2022-05-28 23:27:14 - OntoMerger.onto_merger.alignment.networkit_utils - INFO - Producing node ID lookup maps..
+2022-05-28 23:27:14 - OntoMerger.onto_merger.alignment.networkit_utils - INFO - Adding edges..
+2022-05-28 23:27:14 - OntoMerger.onto_merger.alignment.networkit_utils - INFO - Hierarchy graph initialised with 631 nodes (183 possible root(s)) and 448 edges
+2022-05-28 23:27:14 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - Reachable unmapped nodes 448 (46.23%)
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - Out of 969 unmapped nodes of 'ORPHANET', 200 are now connected, via 200 hierarchy edges.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 1,123 nodes for namespace OMIM from total 153,449 nodes.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for OMIM (1,123 unmapped, 0.73% of total) * * *
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'OMIM' from total 38,812.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 3,631 nodes for namespace UMLS from total 153,449 nodes.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for UMLS (3,631 unmapped, 2.37% of total) * * *
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'UMLS' from total 38,812.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 2,242 nodes for namespace EFO from total 153,449 nodes.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for EFO (2,242 unmapped, 1.46% of total) * * *
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'EFO' from total 38,812.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 28 nodes for namespace DOID from total 153,449 nodes.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for DOID (28 unmapped, 0.02% of total) * * *
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'DOID' from total 38,812.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 611 nodes for namespace UK_BIOBANK from total 153,449 nodes.
+2022-05-28 23:27:15 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for UK_BIOBANK (611 unmapped, 0.40% of total) * * *
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'UK_BIOBANK' from total 38,812.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 29 nodes for namespace NCIT from total 153,449 nodes.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for NCIT (29 unmapped, 0.02% of total) * * *
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'NCIT' from total 38,812.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 196 nodes for namespace BOWES_2012 from total 153,449 nodes.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for BOWES_2012 (196 unmapped, 0.13% of total) * * *
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'BOWES_2012' from total 38,812.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 46 nodes for namespace CHEBI from total 153,449 nodes.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for CHEBI (46 unmapped, 0.03% of total) * * *
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'CHEBI' from total 38,812.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 15 nodes for namespace SNOMED from total 153,449 nodes.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for SNOMED (15 unmapped, 0.01% of total) * * *
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'SNOMED' from total 38,812.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 2 nodes for namespace MP from total 153,449 nodes.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for MP (2 unmapped, 0.00% of total) * * *
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'MP' from total 38,812.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.analyser.analysis_utils - INFO - Found 1 nodes for namespace NCI from total 153,449 nodes.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - * * * Connectivity for NCI (1 unmapped, 0.00% of total) * * *
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.mapping_utils - INFO - Found 0 edges (mapping or hierarchy edges) for namespace 'NCI' from total 38,812.
+2022-05-28 23:27:16 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - Out of 153,449 unmapped nodes, 754 are now connected, via 754 hierarchy edges.
+2022-05-28 23:27:17 - OntoMerger.onto_merger.alignment.hierarchy_utils - INFO - Out of 153,449 nodes, 130,832 (85.26%) are connected.
+2022-05-28 23:27:17 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished connecting nodes.
+2022-05-28 23:27:17 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started finalising outputs...
+2022-05-28 23:27:19 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'nodes_unmapped.csv' with 153,449 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/nodes_unmapped.csv.
+2022-05-28 23:27:20 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'nodes_merged.csv' with 72,802 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/nodes_merged.csv.
+2022-05-28 23:27:20 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'nodes_connected.csv' with 22,617 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/nodes_connected.csv.
+2022-05-28 23:27:20 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'nodes_dangling.csv' with 130,832 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/nodes_dangling.csv.
+2022-05-28 23:27:20 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'edges_hierarchy_post.csv' with 38,331 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/edges_hierarchy_post.csv.
+2022-05-28 23:27:20 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'merges_with_meta_data.csv' with 95,396 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/merges_with_meta_data.csv.
+2022-05-28 23:27:20 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'merges_aggregated.csv' with 72,802 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/merges_aggregated.csv.
+2022-05-28 23:27:21 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'mappings_updated.csv' with 155,720 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/mappings_updated.csv.
+2022-05-28 23:27:21 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'mappings_obsolete_to_current.csv' with 115 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/mappings_obsolete_to_current.csv.
+2022-05-28 23:27:21 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'alignment_steps_report.csv' with 33 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/alignment_steps_report.csv.
+2022-05-28 23:27:21 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'connectivity_steps_report.csv' with 15 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/connectivity_steps_report.csv.
+2022-05-28 23:27:22 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'nodes.csv' with 153,449 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/domain_ontology/nodes.csv.
+2022-05-28 23:27:22 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'merges.csv' with 72,802 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/domain_ontology/merges.csv.
+2022-05-28 23:27:22 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'mappings.csv' with 155,720 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/domain_ontology/mappings.csv.
+2022-05-28 23:27:22 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'edges_hierarchy.csv' with 38,331 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/domain_ontology/edges_hierarchy.csv.
+2022-05-28 23:27:23 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished finalising outputs.
+2022-05-28 23:27:23 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started validating intermediate data...
+2022-05-28 23:27:23 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Starting Pandas profiling for 11 tables: '['nodes_unmapped', 'nodes_merged', 'nodes_connected', 'nodes_dangling', 'edges_hierarchy_post', 'merges_with_meta_data', 'merges_aggregated', 'mappings_updated', 'mappings_obsolete_to_current', 'alignment_steps_report', 'connectivity_steps_report']'
+2022-05-28 23:27:23 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'nodes_unmapped'
+2022-05-28 23:27:24 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'nodes_merged'
+2022-05-28 23:27:25 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'nodes_connected'
+2022-05-28 23:27:25 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'nodes_dangling'
+2022-05-28 23:27:26 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'edges_hierarchy_post'
+2022-05-28 23:27:27 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'merges_with_meta_data'
+2022-05-28 23:27:29 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'merges_aggregated'
+2022-05-28 23:27:30 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'mappings_updated'
+2022-05-28 23:27:31 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'mappings_obsolete_to_current'
+2022-05-28 23:27:31 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'alignment_steps_report'
+2022-05-28 23:27:33 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'connectivity_steps_report'
+2022-05-28 23:27:35 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Finished Pandas profiling for tables '['nodes_unmapped', 'nodes_merged', 'nodes_connected', 'nodes_dangling', 'edges_hierarchy_post', 'merges_with_meta_data', 'merges_aggregated', 'mappings_updated', 'mappings_obsolete_to_current', 'alignment_steps_report', 'connectivity_steps_report']'.
+2022-05-28 23:28:23 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished validating intermediate data.
+2022-05-28 23:28:23 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started validating output data...
+2022-05-28 23:28:23 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Starting Pandas profiling for 4 tables: '['nodes_domain', 'mappings_domain', 'merges_domain', 'edges_hierarchy_domain']'
+2022-05-28 23:28:23 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'nodes_domain'
+2022-05-28 23:28:24 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'mappings_domain'
+2022-05-28 23:28:25 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'merges_domain'
+2022-05-28 23:28:26 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Profiling table 'edges_hierarchy_domain'
+2022-05-28 23:28:27 - OntoMerger.onto_merger.analyser.pandas_profiler - INFO - Finished Pandas profiling for tables '['nodes_domain', 'mappings_domain', 'merges_domain', 'edges_hierarchy_domain']'.
+2022-05-28 23:28:45 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished validating output data.
+2022-05-28 23:28:45 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Started creating report....
+2022-05-28 23:28:45 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'pipeline_steps_report.csv' with 11 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/pipeline_steps_report.csv.
+2022-05-28 23:28:45 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Started producing report analysis...
+2022-05-28 23:28:45 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Producing report section 'input' analysis...
+2022-05-28 23:28:53 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Producing report section 'output' analysis...
+2022-05-28 23:28:59 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Producing report section 'alignment' analysis...
+2022-05-28 23:47:24 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Producing report section 'connectivity' analysis...
+2022-05-28 23:47:24 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'connectivity_hierarchy_edges_paths' with 692 row(s).
+2022-05-28 23:47:24 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded configuration JSON from '/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/input/config.json'
+2022-05-28 23:47:24 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Producing report section 'data_tests' analysis...
+2022-05-28 23:47:25 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Producing report section 'data_profiling' analysis...
+2022-05-28 23:47:25 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes' with 187,717 row(s).
+2022-05-28 23:47:25 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes_obsolete' with 127 row(s).
+2022-05-28 23:47:25 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'mappings' with 155,720 row(s).
+2022-05-28 23:47:25 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'edges_hierarchy' with 38,812 row(s).
+2022-05-28 23:47:25 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes_unmapped' with 153,449 row(s).
+2022-05-28 23:47:25 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes_merged' with 72,802 row(s).
+2022-05-28 23:47:25 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes_connected' with 22,617 row(s).
+2022-05-28 23:47:26 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes_dangling' with 130,832 row(s).
+2022-05-28 23:47:26 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'edges_hierarchy_post' with 38,331 row(s).
+2022-05-28 23:47:26 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'merges_with_meta_data' with 95,396 row(s).
+2022-05-28 23:47:26 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'merges_aggregated' with 72,802 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'mappings_updated' with 155,720 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'mappings_obsolete_to_current' with 115 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'alignment_steps_report' with 33 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'connectivity_steps_report' with 15 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'pipeline_steps_report' with 11 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'nodes' with 153,449 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'mappings' with 155,720 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'merges' with 72,802 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded table 'edges_hierarchy' with 38,331 row(s).
+2022-05-28 23:47:27 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Producing report section 'overview' analysis...
+2022-05-28 23:47:27 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded configuration JSON from '/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/input/config.json'
+2022-05-28 23:47:28 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded configuration JSON from '/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/input/config.json'
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - Saving table 'pipeline_steps_report.csv' with 12 row(s) to /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/pipeline_steps_report.csv.
+2022-05-28 23:47:29 - OntoMerger.onto_merger.analyser.report_analyser_new - INFO - Finished producing report analysis.
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/overview_pipeline_steps_report_step_duration.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/overview_pipeline_steps_report_runtime_overview.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/overview_node_status.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/overview_hierarchy_edge_general_comparison.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/overview_hierarchy_edge_children_count_comparison.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - Loaded configuration JSON from '/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/input/config.json'
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/overview_data_profiling_and_tests_summary.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/overview_section_summary.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/input_node_status.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/input_nodes_general_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/input_node_status.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/input_nodes_obsolete_general_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/input_mappings_mapped_nss_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/input_edges_hierarchy_connected_nss_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/input_section_summary.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/output_node_status.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/output_nodes_general_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/output_mappings_mapped_nss_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/output_edges_hierarchy_connected_nss_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/output_section_summary.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_pipeline_steps_report_step_duration.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_pipeline_steps_report_runtime_overview.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_steps_detail.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_node_status.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_nodes_merged_ns_freq_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_nodes_unmapped_ns_freq_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_merges_nss_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_merges_nss_canonical_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_merges_cluster_size_description.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - ERROR - Data table missing: [Errno 2] No such file or directory: '/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_merges_cluster_size_description.csv'
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_merges_many_nss_merged_to_one_freq.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - ERROR - Data table missing: [Errno 2] No such file or directory: '/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_merges_many_nss_merged_to_one_freq.csv'
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/alignment_section_summary.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_pipeline_steps_report_step_duration.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_pipeline_steps_report_runtime_overview.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_steps_detail.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_node_status.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_nodes_connected_ns_freq_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_nodes_dangling_ns_freq_analysis.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_hierarchy_edges_paths_path_lengths_description_ALL.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_hierarchy_edges_paths_path_lengths_description_ORPHANET.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_hierarchy_edges_paths_path_lengths_description_MEDDRA.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/connectivity_section_summary.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/data_profiling_input_table_stats.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/data_profiling_intermediate_table_stats.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/data_profiling_output_table_stats.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/data_profiling_section_summary.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/data_tests_input_table_stats.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/data_tests_intermediate_table_stats.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/data_tests_output_table_stats.csv
+2022-05-28 23:47:29 - OntoMerger.onto_merger.data.data_manager - INFO - load_analysis_report_table /Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/intermediate/analysis/data_tests_section_summary.csv
+2022-05-28 23:47:30 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished producing HTML report (saved to '/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease/output/report/index.html'.
+2022-05-28 23:47:30 - OntoMerger.onto_merger.pipeline.pipeline - INFO - Finished running alignment and connection process for 'bikg_2022-02-28-4.27.0_disease'
