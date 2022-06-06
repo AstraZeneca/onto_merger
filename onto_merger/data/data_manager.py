@@ -10,6 +10,7 @@ from typing import List, Union
 import pandas as pd
 from pandas import DataFrame
 
+from onto_merger.alignment import merge_utils
 from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
 from onto_merger.data.constants import (
     DIRECTORY_DATA_TESTS,
@@ -35,7 +36,7 @@ from onto_merger.data.constants import (
     TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES_WITH_META_DATA,
     TABLES_INPUT,
-    TABLES_OUTPUT, TABLES_INTERMEDIATE, DIRECTORY_ANALYSIS)
+    TABLES_OUTPUT, TABLES_INTERMEDIATE, DIRECTORY_ANALYSIS, TABLE_NODES, TABLE_NODES_MERGED, TABLE_MERGES_AGGREGATED)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
@@ -288,31 +289,31 @@ class DataManager:
                 index=False,
             )
 
-    def save_merged_ontology_report(self, content) -> str:
+    def save_merged_ontology_report(self, content: str, template_search_path: str) -> str:
         """Save the analysis report HTML content."""
         file_path = self.produce_analysis_report_path()
         with open(file_path, "w") as f:
             f.write(content)
-        self._copy_analysis_images_and_report_assets()
+        self._copy_analysis_images_and_report_assets(template_search_path=template_search_path)
         return file_path
 
     # COPY & MOVE #
-    def _copy_analysis_images_and_report_assets(self):
+    def _copy_analysis_images_and_report_assets(self, template_search_path: str):
         # images  from assets
-        images_folder = os.path.join(self._produce_analysis_report_folder_path(), "images")
-        if Path(images_folder).exists() is False:
+        images_folder_to_path = os.path.join(self._produce_analysis_report_folder_path(), "images")
+
+        if Path(images_folder_to_path).exists() is False:
             shutil.copytree(
-                os.path.abspath("../../onto_merger/onto_merger/report/templates/images"),
-                images_folder
+                os.path.abspath(os.path.join(f"{template_search_path}/templates/images")),
+                images_folder_to_path
             )
         # plots from analysis output folder
         [
             shutil.move(
                 os.path.join(self.get_analysis_folder_path(), figure_file),
-                os.path.join(images_folder, figure_file)
+                os.path.join(images_folder_to_path, figure_file)
             )
             for figure_file in os.listdir(self.get_analysis_folder_path()) if figure_file.endswith(f".{FIGURE_FORMAT}")
-            # .svg >> .png
         ]
 
     def move_data_docs_to_reports(self) -> None:
@@ -472,6 +473,13 @@ class DataManager:
         :return: The finalised (i.e. domain ontology) tables.
         """
         return [
+            merge_utils.produce_named_table_domain_nodes(
+                nodes=data_repo.get(TABLE_NODES).dataframe,
+                merged_nodes=data_repo.get(TABLE_NODES_MERGED).dataframe,
+            ),
+            merge_utils.produce_named_table_domain_merges(
+                merges_aggregated=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe)
+            ,
             NamedTable(
                 name=TABLE_MAPPINGS_DOMAIN,
                 dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)
@@ -485,3 +493,9 @@ class DataManager:
                     .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False),
             ),
         ]
+
+    @staticmethod
+    def get_file_system_loader_path() -> str:
+        if "tox.ini" in os.listdir("."):
+            return "onto_merger/report"
+        return "../../onto_merger/onto_merger/report"

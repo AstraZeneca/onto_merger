@@ -42,6 +42,8 @@ def data_repo() -> DataRepository:
 @typing.no_type_check
 @pytest.fixture()
 def data_manager() -> DataManager:
+    if os.path.exists(TEST_FOLDER_OUTPUT_PATH) & os.path.isdir(TEST_FOLDER_OUTPUT_PATH):
+        shutil.rmtree(TEST_FOLDER_OUTPUT_PATH)
     yield DataManager(project_folder_path=TEST_FOLDER_PATH)
     if os.path.exists(TEST_FOLDER_OUTPUT_PATH) & os.path.isdir(TEST_FOLDER_OUTPUT_PATH):
         shutil.rmtree(TEST_FOLDER_OUTPUT_PATH)
