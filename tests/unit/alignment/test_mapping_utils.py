@@ -1,10 +1,8 @@
 """Tests for the mapping_utils."""
 import numpy as np
 import pandas as pd
-import pytest
 from pandas import DataFrame
 
-from onto_merger.analyser import analysis_utils
 from onto_merger.alignment import mapping_utils
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
@@ -12,11 +10,7 @@ from onto_merger.data.constants import (
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
     SCHEMA_MAPPING_TABLE,
-    SCHEMA_MERGE_TABLE,
-    TABLE_NODES_UNMAPPED,
 )
-from onto_merger.data.dataclasses import DataRepository, NamedTable
-from tests.fixtures import data_repo
 
 
 def test_get_mappings_internal_node_reassignment():
@@ -237,25 +231,6 @@ def test_update_mappings_with_current_node_ids():
     assert np.array_equal(actual.values, expected.values) is True
 
 
-def test_get_unmapped_nodes():
-    # input
-    input_merges = pd.DataFrame(
-        [("FOOBAR:1234", "MONDO:0000123"), ("FIZZBANG:0000001", "MONDO:0000456")],
-        columns=SCHEMA_MERGE_TABLE,
-    )
-    input_nodes = pd.DataFrame(["FIZZBANG:0000001", "SNOMED:001", "FOOBAR:1234"], columns=[COLUMN_DEFAULT_ID])
-
-    # run
-    actual = analysis_utils.produce_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
-
-    # expected
-    expected = pd.DataFrame(["SNOMED:001"], columns=[COLUMN_DEFAULT_ID])
-
-    # evaluate
-    assert isinstance(actual, DataFrame)
-    assert np.array_equal(actual.values, expected.values) is True
-
-
 def test_get_mappings_with_updated_node_ids():
     pass
 
@@ -293,23 +268,6 @@ def test_deduplicate_mappings_for_type_group():
     actual = mapping_utils.deduplicate_mappings_for_type_group(mapping_type_group_name="eqv", mappings=input_mappings)
     assert isinstance(actual, DataFrame)
     assert np.array_equal(actual.values, expected.values) is True
-
-
-def test_produce_named_table_unmapped_nodes():
-    # input
-    input_merges = pd.DataFrame(
-        [("FOOBAR:1234", "MONDO:0000123"), ("FIZZBANG:0000001", "MONDO:0000456")],
-        columns=SCHEMA_MERGE_TABLE,
-    )
-    input_nodes = pd.DataFrame(["FIZZBANG:0000001", "SNOMED:001", "FOOBAR:1234"], columns=[COLUMN_DEFAULT_ID])
-
-    # run
-    actual = analysis_utils.produce_named_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
-
-    # evaluate
-    assert isinstance(actual, NamedTable)
-    assert actual.name == TABLE_NODES_UNMAPPED
-    assert isinstance(actual.dataframe, DataFrame)
 
 
 def test_produce_self_merges_for_seed_nodes():

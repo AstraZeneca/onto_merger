@@ -14,6 +14,7 @@ from onto_merger.data.constants import (
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_MERGED,
+    SCHEMA_MERGE_TABLE,
 )
 from onto_merger.data.dataclasses import NamedTable
 
@@ -95,12 +96,20 @@ def test_produce_named_table_merges_with_alignment_meta_data(example_merges):
     assert np.array_equal(actual.dataframe.values, expected.values) is True
 
 
-# def test_produce_table_nodes_only_connected():
-#     hierarchy_edges = pd.DataFrame([("FOO:001", "SNOMED:001")], columns=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS)
-#     merges = pd.DataFrame([("SNOMED:001", "SNOMED:001")], columns=SCHEMA_MERGE_TABLE)
-#     expected = pd.DataFrame(["FOO:001"], columns=[COLUMN_DEFAULT_ID])
-#     actual = merge_utils.produce_named_table_nodes_only_connected(hierarchy_edges=hierarchy_edges,
-#                                                                                merges_aggregated=merges)
-#     assert isinstance(actual, NamedTable)
-#     assert isinstance(actual.dataframe, DataFrame)
-#     assert np.array_equal(actual.dataframe.values, expected.values) is True
+def test_produce_table_unmapped_nodes():
+    # input
+    input_merges = pd.DataFrame(
+        [("FOOBAR:1234", "MONDO:0000123"), ("FIZZBANG:0000001", "MONDO:0000456")],
+        columns=SCHEMA_MERGE_TABLE,
+    )
+    input_nodes = pd.DataFrame(["FIZZBANG:0000001", "SNOMED:001", "FOOBAR:1234"], columns=[COLUMN_DEFAULT_ID])
+
+    # run
+    actual = merge_utils.produce_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
+
+    # expected
+    expected = pd.DataFrame(["SNOMED:001"], columns=[COLUMN_DEFAULT_ID])
+
+    # evaluate
+    assert isinstance(actual, DataFrame)
+    assert np.array_equal(actual.values, expected.values) is True
