@@ -62,16 +62,7 @@ def test_convert_config_json_to_dataclass(data_manager: DataManager):
                 ],
                 "database_reference": ["database_cross_reference", "xref"],
                 "label_match": [],
-            },
-            "directionality": {
-                "uni": ["merge"],
-                "symmetric": [
-                    "equivalent_to",
-                    "alexion_orphanet_omim_exact",
-                    "database_cross_reference",
-                    "xref",
-                ],
-            },
+            }
         },
     }
     actual = data_manager.convert_config_json_to_dataclass(config_json=config_json_dic)
@@ -134,18 +125,6 @@ def test_save_table(data_manager: DataManager, loaded_table_mappings: NamedTable
     assert os.path.isfile(expected_path2) is True
     assert os.stat(expected_path2).st_size > 0
     Path(expected_path2).unlink()
-
-
-def test_save_merged_ontology_report(data_manager: DataManager):
-    actual = data_manager.save_merged_ontology_report(
-        content="foo bar fizz bang",
-    )
-    expected_path = os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_REPORT, "index.html")
-    assert os.path.exists(expected_path) is True
-    assert os.path.isfile(expected_path) is True
-    assert os.stat(expected_path).st_size > 0
-    assert isinstance(actual, str)
-    assert actual == expected_path
 
 
 def test_save_dropped_mappings_table(data_manager: DataManager):

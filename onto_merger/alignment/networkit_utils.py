@@ -60,7 +60,7 @@ class NetworkitGraph:
             a_star = nk.distance.AStar(self.graph, self.search_heuristic, node_index, root_node_index)
             a_star.run()
             path = a_star.getPath()
-            if path:
+            if path or (self.graph.hasEdge(node_index, root_node_index)):
                 return [node_index] + path + [root_node_index]
         return []
 
@@ -73,7 +73,7 @@ class NetworkitGraph:
         :return: The network x graph.
         """
         graph = nk.Graph(len(node_id_to_index), weighted=False, directed=True)
-        with tqdm(total=len(edges), desc=f"Adding edges to Networkx graph") as progress_bar:
+        with tqdm(total=len(edges), desc=f"Adding edges to Networkit graph") as progress_bar:
             for _, row in edges.iterrows():
                 graph.addEdge(node_id_to_index[row[COLUMN_SOURCE_ID]], node_id_to_index[row[COLUMN_TARGET_ID]])
                 progress_bar.update(1)
