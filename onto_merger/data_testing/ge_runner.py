@@ -2,7 +2,7 @@
 import logging
 import os
 import sys
-from typing import List
+from typing import List, Union
 
 from great_expectations.core import ExpectationSuite
 from pandas import DataFrame
@@ -42,7 +42,8 @@ class GERunner:
         """Initialise the class.
 
         :param alignment_config: The alignment process configuration dataclass.
-        :param ge_base_directory: The base directory where the data tests outputs will
+        :param ge_base_directory: The base directory of the validation framework.
+        :param data_manager: The data manager instance.
         be stored.
         """
         self._alignment_config = alignment_config
@@ -50,7 +51,7 @@ class GERunner:
         self._ge_context = produce_ge_context(ge_base_directory=self._ge_base_directory)
         self._data_manager = data_manager
 
-    def run_ge_tests(self, named_tables: List[NamedTable], data_origin: str) -> DataFrame:
+    def run_ge_tests(self, named_tables: List[NamedTable], data_origin: str) -> Union[DataFrame, None]:
         """Run data tests for a list of named tables.
 
         :param data_origin: The origin of the tested data (INPUT|INTERMEDIATE|DOMAIN_ONTOLOGY).
@@ -61,7 +62,7 @@ class GERunner:
         block_print()
         if len(named_tables) == 0:
             enable_print()
-            return
+            return None
         logger.info("Started Great Expectations data tests...")
 
         # for table, i.e. nodes edges and mappings

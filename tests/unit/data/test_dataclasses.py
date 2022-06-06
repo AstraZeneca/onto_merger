@@ -1,4 +1,5 @@
 """Tests for the data classes."""
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -8,12 +9,13 @@ from onto_merger.data.constants import (
     SCHEMA_DATA_REPO_SUMMARY,
     SCHEMA_MAPPING_TABLE,
     TABLE_MAPPINGS,
-)
+    SCHEMA_ALIGNMENT_STEPS_TABLE, TABLE_ALIGNMENT_STEPS_REPORT)
 from onto_merger.data.dataclasses import (
     AlignmentConfigMappingTypeGroups,
     AlignmentStep,
     DataRepository,
     NamedTable,
+    convert_alignment_steps_to_named_table,
 )
 
 
@@ -90,3 +92,35 @@ def test_data_repository_dataclass():
     print(exp_repo_summary)
     assert isinstance(result_repo_summary, DataFrame)
     assert np.array_equal(result_repo_summary.values, exp_repo_summary.values) is True
+
+
+def test_convert_alignment_steps_to_named_table():
+    SCHEMA_NO_DATES: List[str] = SCHEMA_ALIGNMENT_STEPS_TABLE[0:8]
+
+    input_data = [
+        AlignmentStep(
+            mapping_type_group="eqv",
+            source="FOO",
+            step_counter=1,
+            count_unmapped_nodes=100,
+        ),
+        AlignmentStep(
+            mapping_type_group="eqv",
+            source="BAR",
+            step_counter=2,
+            count_unmapped_nodes=90,
+        ),
+    ]
+    actual = convert_alignment_steps_to_named_table(alignment_steps=input_data)
+    expected = pd.DataFrame(
+        [("eqv", "FOO", 1, 100, 0, 0, 0, "Aligning FOO eqv", "2022-06-06 09:37:36", "2022-06-06", "09:37:36.604905", 0),
+         ("eqv", "BAR", 2, 90, 0, 0, 0, "Aligning BAR eqv", "2022-06-06 09:37:36", "2022-06-06", "09:37:36.604935", 0)],
+        columns=SCHEMA_ALIGNMENT_STEPS_TABLE,
+    )
+    print(actual.dataframe, "\n\n")
+    print(expected, "\n\n")
+
+    assert isinstance(actual, NamedTable)
+    assert actual.name == TABLE_ALIGNMENT_STEPS_REPORT
+    assert isinstance(actual.dataframe, DataFrame)
+    assert np.array_equal(actual.dataframe[SCHEMA_NO_DATES].values, expected[SCHEMA_NO_DATES].values) is True

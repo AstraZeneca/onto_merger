@@ -137,6 +137,7 @@ def get_mappings_with_updated_node_ids(
 
     return mappings_updated
 
+
 def get_nodes_with_updated_node_ids(
     nodes: DataFrame, mappings_obsolete_to_current_node_id: DataFrame
 ) -> DataFrame:

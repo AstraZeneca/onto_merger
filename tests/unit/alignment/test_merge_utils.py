@@ -5,7 +5,6 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 
-from onto_merger.analyser import analysis_utils
 from onto_merger.alignment import merge_utils
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
@@ -13,7 +12,6 @@ from onto_merger.data.constants import (
     COLUMN_TARGET_ID,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
-    TABLE_MERGES,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_MERGED,
 )
@@ -95,3 +93,14 @@ def test_produce_named_table_merges_with_alignment_meta_data(example_merges):
     assert actual.name == TABLE_MERGES_WITH_META_DATA
     assert isinstance(actual.dataframe, DataFrame)
     assert np.array_equal(actual.dataframe.values, expected.values) is True
+
+
+# def test_produce_table_nodes_only_connected():
+#     hierarchy_edges = pd.DataFrame([("FOO:001", "SNOMED:001")], columns=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS)
+#     merges = pd.DataFrame([("SNOMED:001", "SNOMED:001")], columns=SCHEMA_MERGE_TABLE)
+#     expected = pd.DataFrame(["FOO:001"], columns=[COLUMN_DEFAULT_ID])
+#     actual = merge_utils.produce_named_table_nodes_only_connected(hierarchy_edges=hierarchy_edges,
+#                                                                                merges_aggregated=merges)
+#     assert isinstance(actual, NamedTable)
+#     assert isinstance(actual.dataframe, DataFrame)
+#     assert np.array_equal(actual.dataframe.values, expected.values) is True

@@ -1,17 +1,15 @@
 """Methods to produce node hierarchy and analyse node connectivity status."""
 
 import itertools
-import sys
 from typing import List, Optional, Tuple
 
 import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
 
-from onto_merger.data.data_manager import DataManager
-from onto_merger.analyser.analysis_utils import filter_nodes_for_namespace, produce_table_node_ids_from_edge_table
-from onto_merger.alignment import mapping_utils, networkx_utils
+from onto_merger.alignment import networkx_utils
 from onto_merger.alignment.networkit_utils import NetworkitGraph
+from onto_merger.analyser.analysis_utils import filter_nodes_for_namespace, produce_table_node_ids_from_edge_table
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     COLUMN_PROVENANCE,
@@ -28,6 +26,7 @@ from onto_merger.data.constants import (
     TABLE_NODES,
     TABLE_NODES_UNMAPPED, TABLE_NODES_CONNECTED, SCHEMA_NODE_ID_LIST_TABLE, TABLE_NODES_DANGLING,
     TABLE_NODES_SEED, TABLE_NODES_CONNECTED_EXC_SEED)
+from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     ConnectivityStep,
