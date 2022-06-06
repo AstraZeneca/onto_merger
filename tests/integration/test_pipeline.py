@@ -1,21 +1,18 @@
 """Tests for the Pipeline class."""
 import os
 import shutil
-import pytest
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
-from onto_merger.data import DataManager
 from onto_merger.data.constants import (
-    DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
-    DIRECTORY_DROPPED_MAPPINGS,
     DIRECTORY_INTERMEDIATE,
     DIRECTORY_OUTPUT,
     DIRECTORY_REPORT,
 )
-from onto_merger.pipeline import Pipeline
+from onto_merger.pipeline.pipeline import Pipeline
 from tests.fixtures import TEST_FOLDER_OUTPUT_PATH, TEST_FOLDER_PATH, data_manager
 
 
@@ -96,7 +93,7 @@ def test_run_alignment_and_connection_process_invalid():
 
 
 def test_produce_report_data(
-        data_manager: DataManager
+        data_manager
 ) -> None:
     # check report
     report_path = os.path.join(

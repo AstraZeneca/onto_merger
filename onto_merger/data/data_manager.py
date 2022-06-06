@@ -10,7 +10,7 @@ from typing import List, Union
 import pandas as pd
 from pandas import DataFrame
 
-from onto_merger.alignment import merge_utils
+from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
 from onto_merger.data.constants import (
     DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
@@ -33,25 +33,22 @@ from onto_merger.data.constants import (
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MAPPINGS_DOMAIN,
     TABLE_MAPPINGS_UPDATED,
-    TABLE_MERGES_AGGREGATED,
     TABLE_MERGES_WITH_META_DATA,
-    TABLE_NODES,
     TABLES_INPUT,
-    TABLES_OUTPUT, TABLES_INTERMEDIATE, TABLE_NODES_MERGED, DIRECTORY_ANALYSIS)
+    TABLES_OUTPUT, TABLES_INTERMEDIATE, DIRECTORY_ANALYSIS)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
     AlignmentConfigMappingTypeGroups,
     DataRepository,
     NamedTable)
-from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
 from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)
 
 
 class DataManager:
-    """Class to provide methods for performing file operations: loading and saving data frames, JSONs, and deleting files.
+    """Performs file operations: loading and saving data frames, JSONs, and deleting files.
 
     Note: in the future this can be extend to split between Pandas and Spark operations.
     """
@@ -475,13 +472,6 @@ class DataManager:
         :return: The finalised (i.e. domain ontology) tables.
         """
         return [
-            merge_utils.produce_named_table_domain_nodes(
-                nodes=data_repo.get(TABLE_NODES).dataframe,
-                merged_nodes=data_repo.get(TABLE_NODES_MERGED).dataframe,
-            ),
-            merge_utils.produce_named_table_domain_merges(
-                merges_aggregated=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe)
-            ,
             NamedTable(
                 name=TABLE_MAPPINGS_DOMAIN,
                 dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)

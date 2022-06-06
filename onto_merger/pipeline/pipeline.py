@@ -13,7 +13,7 @@ from onto_merger.analyser import analysis_utils, pandas_profiler, report_analyse
 from onto_merger.data.constants import (
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_INPUT,
-    DIRECTORY_INTERMEDIATE)
+    DIRECTORY_INTERMEDIATE, TABLE_NODES, TABLE_NODES_MERGED, TABLE_MERGES_AGGREGATED)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository, RuntimeData, convert_runtime_steps_to_named_table, \
     format_datetime, NamedTable
@@ -203,6 +203,18 @@ class Pipeline:
         """
         self.logger.info("Started finalising outputs...")
         start_date_time = datetime.now()
+
+        self._data_repo.update(
+            tables=[
+                merge_utils.produce_named_table_domain_nodes(
+                    nodes=self._data_repo.get(TABLE_NODES).dataframe,
+                    merged_nodes=self._data_repo.get(TABLE_NODES_MERGED).dataframe,
+                ),
+                merge_utils.produce_named_table_domain_merges(
+                    merges_aggregated=self._data_repo.get(TABLE_MERGES_AGGREGATED).dataframe)
+                ,
+            ]
+        )
 
         #  add NS to all outputs
         self._data_repo.update(
