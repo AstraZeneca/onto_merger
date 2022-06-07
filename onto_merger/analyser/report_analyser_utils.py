@@ -279,6 +279,12 @@ def produce_summary_data_profiling(data_repo: DataRepository,
 def produce_validation_overview_analyses(
         data_profiling_stats: DataFrame,
         data_test_stats: DataFrame) -> NamedTable:
+    """Produce overview section validation summary analysis.
+
+    :param data_profiling_stats: The analysis of the data profiling.
+    :param data_test_stats: The analysis of the data testing.
+    :return: The summary as a named table.
+    """
     df_merged = pd.merge(
         data_profiling_stats[['directory', 'type', 'name', 'rows', 'columns', 'size_float']],
         data_test_stats[['directory', 'type', 'name', 'nb_validations', 'nb_failed_validations']],
@@ -338,6 +344,11 @@ def produce_step_node_analysis_plot(
 def produce_data_testing_table_stats(
         data_manager: DataManager
 ) -> (DataFrame, List[NamedTable]):
+    """Produce the data testing analysis.
+
+    :param data_manager: The data manager instance.
+    :return: The merged analysis and one table each for input, intermediate and output data sets.
+    """
     validation_analysis = _produce_ge_validation_analysis(data_manager=data_manager)
     ge_validation_report_map = _produce_ge_validation_report_map(
         validation_folder=data_manager.get_ge_data_docs_validations_folder_path(),
@@ -350,7 +361,7 @@ def produce_data_testing_table_stats(
             directory=DIRECTORY_INPUT,
         )
     )
-    intermed_df = pd.DataFrame(
+    intermediate_df = pd.DataFrame(
         _produce_data_test_stats_for_directory(
             tables=TABLES_INTERMEDIATE,
             ge_validation_report_map=ge_validation_report_map,
@@ -367,9 +378,9 @@ def produce_data_testing_table_stats(
         )
     )
     return (
-        pd.concat([input_df, intermed_df, output_df]), [
+        pd.concat([input_df, intermediate_df, output_df]), [
             NamedTable(f"{DIRECTORY_INPUT}_{TABLE_STATS}", input_df),
-            NamedTable(f"{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}", intermed_df),
+            NamedTable(f"{DIRECTORY_INTERMEDIATE}_{TABLE_STATS}", intermediate_df),
             NamedTable(f"{DIRECTORY_OUTPUT}_{TABLE_STATS}", output_df),
         ]
     )
@@ -408,6 +419,11 @@ def _produce_ge_validation_analysis(data_manager: DataManager, ) -> dict:
 
 
 def produce_ge_validation_analysis_as_table(data_manager: DataManager, ) -> DataFrame:
+    """Produce the data test result aggregation table
+
+    :param data_manager: The data manager instance.
+    :return: The aggregated result table.
+    """
     return pd.DataFrame(_produce_ge_validation_analysis(data_manager=data_manager).values())
 
 
@@ -432,8 +448,13 @@ def _produce_data_test_stats_for_directory(tables: List[str],
 
 # SECTION: DATA PROFILING
 def produce_data_profiling_table_stats(
-        data_manager: DataManager, section_name: str
+        data_manager: DataManager
 ) -> (DataFrame, List[NamedTable]):
+    """Produce the data profiling analysis.
+
+    :param data_manager: The data manager instance.
+    :return: The merged analysis and one table each for input, intermediate and output data sets.
+    """
     input_df = pd.DataFrame(
         _produce_data_profiling_stats_for_directory(
             tables=data_manager.load_input_tables(),
@@ -495,10 +516,17 @@ def _produce_data_profiling_stats_for_directory(tables: List[NamedTable],
     ]
 
 
-# NODE ANALYSIS #  todo
-def produce_node_analysis(
+# NODE ANALYSIS #
+def produce_node_analyses(
         node_table: NamedTable, mappings: DataFrame, edges_hierarchy: DataFrame
 ) -> NamedTable:
+    """Produce the node analysis tables (namespace frequency, mapping and hierarchy coverage).
+
+    :param node_table: The node table used for analysis.
+    :param mappings: The mapping table used for analysis.
+    :param edges_hierarchy: The hierarchy edge table used for analysis.
+    :return: The analysis result table.
+    """
     node_namespace_distribution_df = _produce_node_namespace_distribution_with_type(
         nodes=node_table.dataframe, metric_name="namespace"
     )
@@ -578,6 +606,11 @@ def _produce_node_covered_by_edge_table(nodes: DataFrame,
 
 
 def produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
+    """Produce a node namespace analysis table.
+
+    :param nodes: The nodes to be analysed.
+    :return: The analysis result table.
+    """
     df = _produce_node_namespace_distribution_with_type(
         nodes=nodes, metric_name="namespace"
     )
@@ -590,8 +623,15 @@ def produce_node_namespace_freq(nodes: DataFrame) -> DataFrame:
 
 # NODE STATUS ANALYSIS #
 def produce_node_status_analyses(
-        seed_name: str, data_manager: DataManager, data_repo: DataRepository,
+        data_manager: DataManager, data_repo: DataRepository,
 ) -> DataFrame:
+    """Produce the node status analysis tables.
+
+    :param data_manager: The data manager instance.
+    :param data_repo: The data repository containing the produced tables.
+    :return: The analysis result table.
+    """
+
     # INPUT
     nodes_input = len(data_repo.get(table_name=TABLE_NODES).dataframe)
     nodes_seed = len(data_repo.get(table_name=TABLE_NODES_SEED).dataframe)
@@ -751,6 +791,11 @@ def _add_ratio_to_node_status_table(node_status_table: DataFrame, total_count: i
 
 # MAPPING ANALYSIS #
 def produce_mapping_analysis_for_type(mappings: DataFrame) -> DataFrame:
+    """Produce a mapping type analysis table.
+
+    :param mappings: The mappings to be analysed.
+    :return: The analysis result table.
+    """
     df = mappings[[COLUMN_RELATION, COLUMN_PROVENANCE, COLUMN_SOURCE_ID]].groupby([COLUMN_RELATION]) \
         .agg(count=(COLUMN_SOURCE_ID, 'count'),
              provs=(COLUMN_PROVENANCE, lambda x: set(x))) \
@@ -761,6 +806,11 @@ def produce_mapping_analysis_for_type(mappings: DataFrame) -> DataFrame:
 
 
 def produce_mapping_analysis_for_prov(mappings: DataFrame) -> DataFrame:
+    """Produce a mapping provenance analysis table.
+
+    :param mappings: The mappings to be analysed.
+    :return: The analysis result table.
+    """
     df = mappings[[COLUMN_RELATION, COLUMN_PROVENANCE, COLUMN_SOURCE_ID]].groupby([COLUMN_PROVENANCE]) \
         .agg(count=(COLUMN_SOURCE_ID, 'count'),
              relations=(COLUMN_RELATION, lambda x: set(x))) \
@@ -770,6 +820,12 @@ def produce_mapping_analysis_for_prov(mappings: DataFrame) -> DataFrame:
 
 
 def produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
+    """Produce a mapped namespace type analysis table.
+
+    :param mappings: The mappings to be analysed.
+    :return: The analysis result table.
+    """
+
     col_nss_set = 'nss_set'
     df = analysis_utils.produce_table_with_namespace_column_for_node_ids(table=mappings)
     df[col_nss_set] = df.apply(
@@ -792,6 +848,14 @@ def produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
 def produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
                                                                prune: bool = False,
                                                                directed_edge: bool = False) -> DataFrame:
+    """Produce a edge analysis table.
+
+    :param directed_edge: True for hierarchy, false for symmetric mappings.
+    :param prune: If true 0 values are removed to shrink the table and the corresponding chart.
+    :param edges: The edges to be analysed.
+    :return: The analysis result table.
+    """
+
     cols = [analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
             analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID)]
     df = analysis_utils.produce_table_with_namespace_column_for_node_ids(table=edges)
@@ -821,6 +885,11 @@ def produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
 
 
 def produce_source_to_target_analysis_for_directed_edge(edges: DataFrame) -> DataFrame:
+    """Produce a source to target analysis for a directed edge (hierarchy or asymmetric mapping).
+
+    :param edges: The edges to be analysed.
+    :return: The analysis result table.
+    """
     cols = [analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
             analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID)]
     df = analysis_utils.produce_table_with_namespace_column_pair(
@@ -837,6 +906,11 @@ def produce_source_to_target_analysis_for_directed_edge(edges: DataFrame) -> Dat
 
 # HIERARCHY ANALYSIS #
 def produce_hierarchy_edge_path_analysis(hierarchy_edges_paths: DataFrame) -> List[NamedTable]:
+    """Produce hierarchy edge path (length) analysis.
+
+    :param hierarchy_edges_paths: The edges to be analysed.
+    :return: The analysis result tables.
+    """
     # compute path diff
     if len(hierarchy_edges_paths) == 0:
         return []
@@ -864,11 +938,17 @@ def _describe_hierarchy_edge_path_lengths(df: DataFrame) -> DataFrame:
     return df_path_size_describe
 
 
-def produce_connectivity_hierarchy_edge_overview_analysis(
-        edges_input: DataFrame, edges_output: DataFrame, data_manager: DataManager,
+def produce_connectivity_hierarchy_edge_overview_analyses(
+        edges_output: DataFrame, data_manager: DataManager,
 ) -> List[NamedTable]:
+    """Produce the domain ontology hierarchy edge analyses.
+
+    :param edges_output: The domain ontology hierarchy edges to be analysed.
+    :param data_manager: The data manager instance.
+    :return: The analysis result tables.
+    """
     seed_ns = data_manager.load_alignment_config().base_config.seed_ontology_name
-    edge_analysis_for_mapped_nss = produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges_output)
+    edge_analysis_for_mapped_nss = produce_hierarchy_edge_analysis_for_connected_nss(edges=edges_output)
     rows = []
     connected_to_seed_count = 0
     connected_other_count = 0
@@ -928,7 +1008,12 @@ def produce_connectivity_hierarchy_edge_overview_analysis(
     ]
 
 
-def produce_hierarchy_edge_analysis_for_mapped_nss(edges: DataFrame) -> DataFrame:
+def produce_hierarchy_edge_analysis_for_connected_nss(edges: DataFrame) -> DataFrame:
+    """Produce hierarchy edge connected namespace analysis.
+
+    :param edges_output: The hierarchy edges to be analysed.
+    :return: The analysis result tables.
+    """
     df = analysis_utils.produce_table_with_namespace_column_pair(
         table=analysis_utils.produce_table_with_namespace_column_for_node_ids(table=edges)) \
         .groupby([COLUMN_SOURCE_TO_TARGET, COLUMN_NAMESPACE_SOURCE_ID, COLUMN_NAMESPACE_TARGET_ID]) \
@@ -951,8 +1036,14 @@ def _get_leaf_and_parent_nodes(hierarchy_edges: DataFrame) -> (DataFrame, DataFr
 
 
 def produce_overview_hierarchy_edge_comparison(
-        data_manager: DataManager, data_repo: DataRepository
-) -> List[ NamedTable]:
+        data_repo: DataRepository
+) -> List[NamedTable]:
+    """Produce a comaparison of input and output hierarchy edges.
+
+    :param data_repo: The data repository containing the produced tables.
+    :return: The analysis result tables.
+    """
+
     # input
     input_edges = analysis_utils.produce_table_with_namespace_column_for_node_ids(
         table=data_repo.get(TABLE_EDGES_HIERARCHY).dataframe)
@@ -1088,6 +1179,11 @@ def _get_input_output_comparison(metric: str,
 
 # MERGE ANALYSIS #
 def produce_merge_analysis_for_merged_nss_for_canonical(merges: DataFrame) -> DataFrame:
+    """Produce analysis for the merged namespaces grouped by the canonical namespace.
+
+    :param merges: The merges to be analysed.
+    :return: The analysis result table.
+    """
     df = analysis_utils.produce_table_with_namespace_column_pair(
         table=analysis_utils.produce_table_with_namespace_column_for_node_ids(table=merges)) \
         .groupby([analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID)]) \
@@ -1100,6 +1196,12 @@ def produce_merge_analysis_for_merged_nss_for_canonical(merges: DataFrame) -> Da
 
 
 def produce_merge_cluster_analysis(merges_aggregated: DataFrame, data_manager: DataManager) -> List[NamedTable]:
+    """Produce the merge cluster size analysis.
+
+    :param merges_aggregated: The merges with canonical node IDs.
+    :param data_manager: The data manager instance.
+    :return: The analysis result tables
+    """
     column_cluster_size = 'cluster_size'
     column_many_to_one_nss = 'many_to_one_nss'
     column_many_to_one_nss_size = f"{column_many_to_one_nss}_size"
@@ -1206,6 +1308,15 @@ def produce_runtime_tables(
         data_manager: DataManager,
         data_repo: DataRepository,
 ) -> List[NamedTable]:
+    """Produce the runtime table analysis table and figure.
+
+    :param table_name: The runtime table name.
+    :param section_dataset_name: The report section.
+    :param data_manager: The data manager instance.
+    :param data_repo: The data repository containing the produced tables.
+    :return: The analysis result tables.
+    """
+
     # table
     runtime_table = _add_elapsed_seconds_column_to_runtime(
         runtime=data_repo.get(table_name=table_name).dataframe

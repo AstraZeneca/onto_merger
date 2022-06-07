@@ -253,8 +253,7 @@ class ReportAnalyser:
                 NamedTable(f"hierarchy_edges_overview_{table.name}", table.dataframe)
                 for table in
                 (
-                    report_analyser_utils.produce_connectivity_hierarchy_edge_overview_analysis(
-                        edges_input=self._data_repo.get(table_name=TABLE_EDGES_HIERARCHY).dataframe,
+                    report_analyser_utils.produce_connectivity_hierarchy_edge_overview_analyses(
                         edges_output=self._data_repo.get(table_name=TABLE_EDGES_HIERARCHY_POST).dataframe,
                         data_manager=self._data_manager,
                     )
@@ -297,8 +296,7 @@ class ReportAnalyser:
         section_dataset_name = SECTION_DATA_PROFILING
         logger.info(f"Producing report section '{section_dataset_name}' analysis...")
         merged_profiling_stats, dataset_profiling_tables = report_analyser_utils.produce_data_profiling_table_stats(
-            data_manager=self._data_manager,
-            section_name=section_dataset_name
+            data_manager=self._data_manager
         )
         tables = dataset_profiling_tables + [
             report_analyser_utils.produce_summary_data_profiling(data_repo=self._data_repo,
@@ -317,7 +315,6 @@ class ReportAnalyser:
         logger.info(f"Producing report section '{section_dataset_name}' analysis...")
 
         node_status_df = report_analyser_utils.produce_node_status_analyses(
-            seed_name=self._alignment_config.base_config.seed_ontology_name,
             data_manager=self._data_manager,
             data_repo=self._data_repo
         )
@@ -337,7 +334,6 @@ class ReportAnalyser:
                 NamedTable(f"hierarchy_edge_{table.name}", table.dataframe)
                 for table in
                 (report_analyser_utils.produce_overview_hierarchy_edge_comparison(
-                    data_manager=self._data_manager,
                     data_repo=self._data_repo,
                 ))
             ]
@@ -379,7 +375,7 @@ class ReportAnalyser:
         tables = []
         for table in node_tables:
             # analyse
-            analysis_table = report_analyser_utils.produce_node_analysis(
+            analysis_table = report_analyser_utils.produce_node_analyses(
                 node_table=table,
                 mappings=mappings,
                 edges_hierarchy=edges_hierarchy
@@ -445,7 +441,7 @@ class ReportAnalyser:
         connected_nss = report_analyser_utils.produce_source_to_target_analysis_for_directed_edge(edges=edges)
         tables = [
             NamedTable(f"{table_type}_{ANALYSIS_CONNECTED_NSS}",
-                       report_analyser_utils.produce_hierarchy_edge_analysis_for_mapped_nss(edges=edges)),
+                       report_analyser_utils.produce_hierarchy_edge_analysis_for_connected_nss(edges=edges)),
             NamedTable(f"{table_type}_{ANALYSIS_CONNECTED_NSS_CHART}", connected_nss),
 
         ]
