@@ -98,7 +98,7 @@ class DataManager:
         :param config_json: The alignment configuration as a dictionary.
         :return: The AlignmentConfig dataclass.
         """
-        image_format = "png"
+        image_format = "html"
         if "image_format" in config_json:
             image_format = config_json.get("image_format")
         mapping_config: dict = config_json["mappings"]
