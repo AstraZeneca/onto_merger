@@ -33,7 +33,6 @@ jobs:
          pip install nbconvert
          pip install markupsafe==2.0.1
          python setup.py install
-         sudo chmod +x /usr/share/miniconda/envs/__setup_conda/lib/python3.8/site-packages
       - name: Run code quality tests
         run: |
           tox -e flake8
@@ -45,10 +44,14 @@ jobs:
           pip install -e .[test]
       - name: Run test-suite
         run: |
+          sudo chmod +x /usr/share/miniconda/envs
+          sudo chmod +x /home/runner/work/onto_merger/onto_merger
           python -m pytest
       - name: Generate coverage report
         if: success()
         run: |
+          sudo chmod +x /usr/share/miniconda/envs
+          sudo chmod +x /home/runner/work/onto_merger/onto_merger
           pip install coverage
           coverage run -m pytest
           coverage xml

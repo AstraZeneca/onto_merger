@@ -6,4 +6,3 @@ cd docs
 make html
 cd ..
 open -a "Google Chrome" build/html/index.html
-#open -a "Google Chrome" build/html/notes/data_testing.html
