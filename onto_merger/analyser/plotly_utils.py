@@ -19,16 +19,6 @@ _WIDTH_ONE_COL_ROW = 1100
 _WIDTH_TWO_COL_ROW = round(_WIDTH_ONE_COL_ROW / 2)
 
 
-def _format_percentage_column_to_decimal_places(
-        analysis_table: DataFrame, column_name: str, decimal: int = 2
-) -> DataFrame:
-    analysis_table[column_name] = analysis_table.apply(
-        lambda x: round(x[column_name], decimal),
-        axis=1,
-    )
-    return analysis_table
-
-
 def produce_nodes_ns_freq_chart(
         analysis_table: DataFrame,
         file_path: str,
@@ -116,7 +106,7 @@ def produce_status_stacked_bar_chart(
         .update_yaxes(visible=showaxis)
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path)
+        fig.write_html(file_path, include_plotlyjs=False)
     else:
         fig.write_image(file_path)
 
@@ -192,7 +182,7 @@ def produce_mapping_type_freq_chart(
         .update_yaxes(autorange="reversed")
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path)
+        fig.write_html(file_path, include_plotlyjs=False)
     else:
         fig.write_image(file_path)
 
@@ -289,7 +279,7 @@ def _produce_directed_edge_stacked_bar_chart(
     )
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path)
+        fig.write_html(file_path, include_plotlyjs=False)
     else:
         fig.write_image(file_path)
 
@@ -314,7 +304,7 @@ def produce_edge_heatmap(
         .update_layout(plot_bgcolor=_COLOR_WHITE)
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path)
+        fig.write_html(file_path, include_plotlyjs=False)
     else:
         fig.write_image(file_path)
 
@@ -355,7 +345,7 @@ def produce_gantt_chart(
         .update_yaxes(autorange="reversed")
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path)
+        fig.write_html(file_path, include_plotlyjs=False)
     else:
         fig.write_image(file_path)
 
@@ -384,7 +374,7 @@ def produce_vertical_bar_chart_stacked(
         .update_xaxes({"tickmode": "linear"})
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path)
+        fig.write_html(file_path, include_plotlyjs=False)
     else:
         fig.write_image(file_path)
 
@@ -411,7 +401,7 @@ def produce_vertical_bar_chart_cluster_size_bins(
         .update_layout(plot_bgcolor=_COLOR_WHITE)
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path)
+        fig.write_html(file_path, include_plotlyjs=False)
     else:
         fig.write_image(file_path)
 
@@ -420,3 +410,14 @@ def produce_vertical_bar_chart_cluster_size_bins(
 def _compute_dynamic_height(y_axis_column_name: str, table: DataFrame) -> int:
     offset = 150
     return offset + (len(set(table[y_axis_column_name].tolist())) * 50)
+
+
+def _format_percentage_column_to_decimal_places(
+        analysis_table: DataFrame, column_name: str, decimal: int = 2
+) -> DataFrame:
+    analysis_table[column_name] = analysis_table.apply(
+        lambda x: round(x[column_name], decimal),
+        axis=1,
+    )
+    return analysis_table
+
