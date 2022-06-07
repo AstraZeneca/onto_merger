@@ -71,7 +71,7 @@ def perform_evaluation_for_pipeline_run():
     assert actual_outputs_report == expected_outputs_report
     check_report_data()
 
-    # shutil.rmtree(TEST_FOLDER_OUTPUT_PATH)
+    shutil.rmtree(TEST_FOLDER_OUTPUT_PATH)
 
 
 def test_run_alignment_and_connection_process():

@@ -16,8 +16,6 @@ def test_validate_configuration_fail():
 def test_validate_configuration_pass(data_manager):
     config = data_manager.load_alignment_config()
 
-    print("!!!! ", config.image_format)
-
     actual = validate_alignment_configuration(alignment_config=config.as_dict)
 
     assert isinstance(actual, bool)
