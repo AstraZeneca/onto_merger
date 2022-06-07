@@ -14,14 +14,9 @@ from onto_merger.analyser.constants import (
     COLUMN_NAMESPACE_TARGET_ID,
 )
 
-FIGURE_FORMAT = "png"  # svg doesnt work on static websites
 _COLOR_WHITE = "#fff"
 _WIDTH_ONE_COL_ROW = 1100
 _WIDTH_TWO_COL_ROW = round(_WIDTH_ONE_COL_ROW / 2)
-
-
-def _get_figure_filepath(file_path: str) -> str:
-    return f"{file_path}.{FIGURE_FORMAT}"
 
 
 def _format_percentage_column_to_decimal_places(
@@ -57,7 +52,7 @@ def produce_nodes_ns_freq_chart(
     ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
         .update_yaxes(autorange="reversed") \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 def produce_status_stacked_bar_chart(
@@ -115,7 +110,7 @@ def produce_status_stacked_bar_chart(
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
         .update_xaxes(visible=showaxis) \
         .update_yaxes(visible=showaxis) \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 def produce_status_stacked_bar_chart_edge(
@@ -157,7 +152,7 @@ def produce_status_stacked_bar_chart_edge(
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
         .update_xaxes(visible=False) \
         .update_yaxes(visible=False) \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 def produce_mapping_type_freq_chart(
@@ -183,7 +178,7 @@ def produce_mapping_type_freq_chart(
     ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
         .update_yaxes(autorange="reversed") \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 def produce_merged_nss_stacked_bar_chart(
@@ -276,7 +271,7 @@ def _produce_directed_edge_stacked_bar_chart(
         textfont_size=14,
         textfont_color="white"
     ) \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 def produce_edge_heatmap(
@@ -297,7 +292,7 @@ def produce_edge_heatmap(
     ) \
         .update_xaxes(side="top") \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 def produce_gantt_chart(
@@ -334,7 +329,7 @@ def produce_gantt_chart(
         }
     ) \
         .update_yaxes(autorange="reversed") \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 def produce_vertical_bar_chart_stacked(
@@ -359,7 +354,7 @@ def produce_vertical_bar_chart_stacked(
     ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
         .update_xaxes({"tickmode": "linear"}) \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 def produce_vertical_bar_chart_cluster_size_bins(
@@ -382,7 +377,7 @@ def produce_vertical_bar_chart_cluster_size_bins(
         height=300,
     ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
-        .write_image(_get_figure_filepath(file_path=file_path))
+        .write_image(file_path)
 
 
 # HELPERS #

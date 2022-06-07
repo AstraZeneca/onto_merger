@@ -44,14 +44,10 @@ jobs:
           pip install -e .[test]
       - name: Run test-suite
         run: |
-          sudo chmod +x /usr/share/miniconda/envs/__setup_conda/lib/python3.8/site-packages/kaleido-0.2.1-py3.8-linux-x86_64.egg/kaleido/executable/kaleido
-          sudo chmod +x /home/runner/work/onto_merger/onto_merger/*
           python -m pytest
       - name: Generate coverage report
         if: success()
         run: |
-          sudo chmod +x /usr/share/miniconda/envs/__setup_conda/lib/python3.8/site-packages/kaleido-0.2.1-py3.8-linux-x86_64.egg/kaleido/executable/kaleido
-          sudo chmod +x /home/runner/work/onto_merger/onto_merger/*
           pip install coverage
           coverage run -m pytest
           coverage xml
