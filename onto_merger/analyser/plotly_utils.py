@@ -39,7 +39,7 @@ def produce_nodes_ns_freq_chart(
     :param file_path: The path to save the figure.
     :return:
     """
-    px.bar(
+    fig = px.bar(
         _format_percentage_column_to_decimal_places(
             analysis_table=analysis_table,
             column_name=COLUMN_NAMESPACE_FREQ,
@@ -51,8 +51,12 @@ def produce_nodes_ns_freq_chart(
         labels={COLUMN_NAMESPACE: 'Node Origin', COLUMN_NAMESPACE_FREQ: 'Frequency (%)'}
     ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
-        .update_yaxes(autorange="reversed") \
-        .write_image(file_path)
+        .update_yaxes(autorange="reversed")
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 def produce_status_stacked_bar_chart(
@@ -80,7 +84,7 @@ def produce_status_stacked_bar_chart(
         height = 300
 
     # produce image
-    px.bar(
+    fig = px.bar(
         analysis_table,
         y="category",
         x="ratio" if "ratio" in list(analysis_table) else "count",
@@ -109,8 +113,12 @@ def produce_status_stacked_bar_chart(
         .update_yaxes(autorange="reversed") \
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
         .update_xaxes(visible=showaxis) \
-        .update_yaxes(visible=showaxis) \
-        .write_image(file_path)
+        .update_yaxes(visible=showaxis)
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 def produce_status_stacked_bar_chart_edge(
@@ -124,7 +132,7 @@ def produce_status_stacked_bar_chart_edge(
     :return:
     """
     # produce image
-    px.bar(
+    fig = px.bar(
         analysis_table,
         y="category",
         x="freq",
@@ -151,8 +159,12 @@ def produce_status_stacked_bar_chart_edge(
     ) \
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
         .update_xaxes(visible=False) \
-        .update_yaxes(visible=False) \
-        .write_image(file_path)
+        .update_yaxes(visible=False)
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 def produce_mapping_type_freq_chart(
@@ -165,7 +177,7 @@ def produce_mapping_type_freq_chart(
     :param file_path: The path to save the figure.
     :return:
     """
-    px.bar(
+    fig = px.bar(
         _format_percentage_column_to_decimal_places(
             analysis_table=analysis_table,
             column_name=COLUMN_FREQ,
@@ -177,8 +189,12 @@ def produce_mapping_type_freq_chart(
         labels={'relation': '', COLUMN_FREQ: 'Frequency (%)'}
     ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
-        .update_yaxes(autorange="reversed") \
-        .write_image(file_path)
+        .update_yaxes(autorange="reversed")
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 def produce_merged_nss_stacked_bar_chart(
@@ -270,8 +286,12 @@ def _produce_directed_edge_stacked_bar_chart(
         textposition='inside',
         textfont_size=14,
         textfont_color="white"
-    ) \
-        .write_image(file_path)
+    )
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 def produce_edge_heatmap(
@@ -285,14 +305,18 @@ def produce_edge_heatmap(
     """
     data = analysis_table.copy()
     data = data[list(data.columns)].replace({'0': np.nan, 0: np.nan})
-    px.imshow(
+    fig = px.imshow(
         data,
         text_auto=True,
         color_continuous_scale="blues"
     ) \
         .update_xaxes(side="top") \
-        .update_layout(plot_bgcolor=_COLOR_WHITE) \
-        .write_image(file_path)
+        .update_layout(plot_bgcolor=_COLOR_WHITE)
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 def produce_gantt_chart(
@@ -305,7 +329,7 @@ def produce_gantt_chart(
     :param file_path: The path to save the figure.
     :return:
     """
-    px.timeline(
+    fig = px.timeline(
         analysis_table,
         x_start="start",
         x_end="end",
@@ -328,8 +352,12 @@ def produce_gantt_chart(
             }
         }
     ) \
-        .update_yaxes(autorange="reversed") \
-        .write_image(file_path)
+        .update_yaxes(autorange="reversed")
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 def produce_vertical_bar_chart_stacked(
@@ -342,7 +370,7 @@ def produce_vertical_bar_chart_stacked(
     :param file_path: The path to save the figure.
     :return:
     """
-    px.bar(
+    fig = px.bar(
         analysis_table,
         x="step_name",
         y="freq",
@@ -353,8 +381,12 @@ def produce_vertical_bar_chart_stacked(
         height=400,
     ) \
         .update_layout(plot_bgcolor=_COLOR_WHITE) \
-        .update_xaxes({"tickmode": "linear"}) \
-        .write_image(file_path)
+        .update_xaxes({"tickmode": "linear"})
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 def produce_vertical_bar_chart_cluster_size_bins(
@@ -367,7 +399,7 @@ def produce_vertical_bar_chart_cluster_size_bins(
     :param file_path: The path to save the figure.
     :return:
     """
-    px.bar(
+    fig = px.bar(
         analysis_table,
         x="cluster_size",
         y="count",
@@ -376,8 +408,12 @@ def produce_vertical_bar_chart_cluster_size_bins(
         width=_WIDTH_ONE_COL_ROW,
         height=300,
     ) \
-        .update_layout(plot_bgcolor=_COLOR_WHITE) \
-        .write_image(file_path)
+        .update_layout(plot_bgcolor=_COLOR_WHITE)
+
+    if file_path.endswith(".html"):
+        fig.write_html(file_path)
+    else:
+        fig.write_image(file_path)
 
 
 # HELPERS #
