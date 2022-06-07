@@ -384,42 +384,90 @@ class DataManager:
 
     # PATHS #
     def get_project_folder_path(self) -> str:
+        """Produce the project folder absolute path.
+
+        :return: The path as a string.
+        """
         return str(self._project_folder_path)
 
     def get_input_folder_path(self) -> str:
+        """Produce the input data folder absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self._project_folder_path, DIRECTORY_INPUT)
 
     def get_domain_ontology_folder_path(self) -> str:
+        """Produce the output data (i.e. domain ontology) folder absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
 
     def get_intermediate_folder_path(self) -> str:
+        """Produce the intermediate data folder absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE)
 
     def get_ge_data_docs_folder_path(self):
+        """Produce the data docs folder (post copy to reports) absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "data_docs")
 
     def get_ge_data_docs_validations_folder_path(self):
+        """Produce the data validation configuration JSON folder absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self.get_ge_data_docs_folder_path(), "local_site/validations")
 
     def get_ge_data_docs_index_path_for_input(self):
+        """Produce the data docs HTML report main page absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self.get_data_tests_path(), "uncommitted/data_docs/local_site/index.html")
 
     def get_ge_json_validations_folder_path(self):
+        """Produce the data validation result JSONs folder absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self.get_data_tests_path(), "uncommitted/validations")
 
     def get_output_report_folder_path(self):
+        """Produce the HTML report folder absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
 
     def get_analysis_folder_path(self):
+        """Produce the analysis data folder absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_ANALYSIS)
 
     def get_hierarchy_edges_paths_debug_file_path(self):
+        """Produce the hierarchy edge debug file absolute path.
+
+        :return: The path as a string.
+        """
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_ANALYSIS,
                             "connectivity_hierarchy_edges_paths.csv")
 
     @staticmethod
     def get_absolute_path(path: str) -> str:
-        """Return the absolute path for a path."""
+        """Return the absolute path for a path.
+
+        :param path: The input path as a string.
+        :return: The absolute pathas a string.
+        """
         return os.path.abspath(path)
 
     def get_table_path(self, process_directory: str, table_name: str) -> str:
