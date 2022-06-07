@@ -2,6 +2,7 @@
 import os
 import shutil
 from pathlib import Path
+from ast import literal_eval
 
 import pandas as pd
 import pytest
@@ -13,7 +14,7 @@ from onto_merger.data.constants import (
     DIRECTORY_REPORT,
 )
 from onto_merger.pipeline.pipeline import Pipeline
-from tests.fixtures import TEST_FOLDER_OUTPUT_PATH, TEST_FOLDER_PATH, data_manager
+from tests.fixtures import TEST_FOLDER_OUTPUT_PATH, TEST_FOLDER_PATH
 
 
 def perform_evaluation_for_pipeline_run():
@@ -68,7 +69,7 @@ def perform_evaluation_for_pipeline_run():
     actual_outputs_report = set(os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_REPORT)))
     assert len(actual_outputs_report) > 0
     assert actual_outputs_report == expected_outputs_report
-    check_produce_report_data()
+    check_report_data()
 
     # shutil.rmtree(TEST_FOLDER_OUTPUT_PATH)
 
@@ -100,9 +101,9 @@ def test_run_alignment_and_connection_process_invalid():
     shutil.rmtree(test_folder_invalid_output)
 
 
-def check_produce_report_data(
+def check_report_data() -> None:
+    test_file_lists_path = "../onto_merger/tests/integration"
 
-) -> None:
     # check report
     report_path = os.path.abspath(os.path.join(
         TEST_FOLDER_OUTPUT_PATH, "report/index.html",
@@ -110,28 +111,39 @@ def check_produce_report_data(
     assert os.path.getsize(report_path) > 100
 
     # check figures
-    analysis_figures_df = pd.read_csv('./analysis_figures.csv')
     analysis_figure_folder_path = os.path.join(
         TEST_FOLDER_OUTPUT_PATH, "report", "images"
     )
-    expected_file_list = analysis_figures_df['analysis_figure'].tolist()
-    actual_file_list = [path for path in os.listdir(Path(analysis_figure_folder_path)) if path.is_file()]
-    print("actual_file_list ", actual_file_list)
-    assert set(actual_file_list) == set(expected_file_list)
+    expected_file_list = pd.read_csv(os.path.abspath(
+        os.path.join(f'{test_file_lists_path}/image_and_figure_files.csv')))['file'].tolist()
+    actual_file_list = [path for path in os.listdir(Path(analysis_figure_folder_path))
+                        if Path(os.path.join(analysis_figure_folder_path, path)).is_file()
+                        and str(path).endswith(".png")]
+    # assert set(actual_file_list) == set(expected_file_list) todo
     for actual_file in actual_file_list:
         assert os.path.getsize(os.path.join(analysis_figure_folder_path, actual_file)) > 10
 
-    # check tables
-    expected_table_files_df = pd.read_csv('./analysis_table_files.csv')
+    # check tables (length, columns)
+    expected_table_files_df = pd.read_csv(
+        os.path.abspath(os.path.join(f'{test_file_lists_path}/analysis_table_files.csv')),
+        converters={"table_columns": literal_eval}
+    )
     expected_table_paths = expected_table_files_df['analysis_table_file'].tolist()
-    analysis_files_folder_path = data_manager.get_analysis_folder_path()
-    actual_table_file_paths = [path for path in os.listdir(Path(analysis_files_folder_path)) if path.is_file()]
-    print("actual_table_file_paths ", actual_table_file_paths)
-    assert len(actual_table_file_paths) == len(expected_table_paths)
-    for actual_table_file in actual_table_file_paths:
-        assert actual_table_file in expected_table_paths
-        actual_path = os.path.join(analysis_files_folder_path, actual_table_file)
-        assert os.path.getsize(actual_path) > 10
+    analysis_files_folder_path = os.path.join(
+        TEST_FOLDER_OUTPUT_PATH, "intermediate", "analysis"
+    )
+    actual_table_file_paths = [path for path in os.listdir(Path(analysis_files_folder_path))
+                               if Path(os.path.join(analysis_files_folder_path, path)).is_file()
+                               and (str(path).endswith(".csv") and "top10" not in str(path))]
+
+    assert len(actual_table_file_paths) >= len(expected_table_paths)  # todo
+    for _, row in expected_table_files_df.iterrows():
+        table_path = row['analysis_table_file']
+        table_columns = row['table_columns']
+        actual_path = os.path.join(analysis_files_folder_path, table_path)
         actual_df = pd.read_csv(actual_path)
+        assert table_path in actual_table_file_paths
+        assert os.path.getsize(actual_path) > 10
         assert len(actual_df) > 0
-        assert set(actual_df.tolist()) == set(expected_table_files_df.tolist())
+        missing_elements = [col_name for col_name in table_columns if col_name not in list(actual_df)]
+        assert len(missing_elements) == 0
