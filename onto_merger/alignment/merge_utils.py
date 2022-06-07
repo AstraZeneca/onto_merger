@@ -51,7 +51,6 @@ def post_process_alignment_results(data_repo: DataRepository,
     :param alignment_priority_order: The alignment priority order.
     :return: The produced named tables.
     """
-
     # aggregate merges
     table_aggregated_merges = _produce_named_table_aggregated_merges(
         merges=data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,

@@ -71,9 +71,8 @@ def _produce_section(title: str, section_name: str, subsections: List[dict], dat
         TITLE: title,
         LINK_TITLE: section_name,
         LOGO: _get_section_icon_file_name(section_name=section_name),
-        SUBSECTIONS: [
-                         _produce_section_summary_subsection(section_name=section_name, data_manager=data_manager),
-                     ] + subsections
+        SUBSECTIONS:
+            [_produce_section_summary_subsection(section_name=section_name, data_manager=data_manager)] + subsections
     }
 
 
@@ -642,5 +641,5 @@ def _get_figure_path(section_name: str, table_name: str) -> str:
 
 
 def _get_unique_id_for_description_table(section_name: str, table_name: str) -> str:
-    """Unique IDs are used in the toggle javascript."""
+    """Produce unique IDs that are used in the toggle javascript."""
     return f"{section_name}_{table_name}_description"

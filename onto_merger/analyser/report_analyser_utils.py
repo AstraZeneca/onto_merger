@@ -319,6 +319,18 @@ def produce_step_node_analysis_plot(
         col_b: str,
         b_start_value: int,
 ) -> None:
+    """Produce alignment or connectivity step analysis plot.
+
+    :param step_report: The report table to be analysed.
+    :param section_dataset_name: The section where the plot will be displayed.
+    :param data_manager: The data manager instance.
+    :param col_count_a:
+    :param col_a:
+    :param col_count_b:
+    :param col_b:
+    :param b_start_value:
+    :return:
+    """
     col_step_counter = "step_counter"
     col_source = "step_counter"
     total_count = 0
@@ -419,7 +431,7 @@ def _produce_ge_validation_analysis(data_manager: DataManager, ) -> dict:
 
 
 def produce_ge_validation_analysis_as_table(data_manager: DataManager, ) -> DataFrame:
-    """Produce the data test result aggregation table
+    """Produce the data test result aggregation table.
 
     :param data_manager: The data manager instance.
     :return: The aggregated result table.
@@ -631,7 +643,6 @@ def produce_node_status_analyses(
     :param data_repo: The data repository containing the produced tables.
     :return: The analysis result table.
     """
-
     # INPUT
     nodes_input = len(data_repo.get(table_name=TABLE_NODES).dataframe)
     nodes_seed = len(data_repo.get(table_name=TABLE_NODES_SEED).dataframe)
@@ -825,7 +836,6 @@ def produce_mapping_analysis_for_mapped_nss(mappings: DataFrame) -> DataFrame:
     :param mappings: The mappings to be analysed.
     :return: The analysis result table.
     """
-
     col_nss_set = 'nss_set'
     df = analysis_utils.produce_table_with_namespace_column_for_node_ids(table=mappings)
     df[col_nss_set] = df.apply(
@@ -855,7 +865,6 @@ def produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
     :param edges: The edges to be analysed.
     :return: The analysis result table.
     """
-
     cols = [analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
             analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID)]
     df = analysis_utils.produce_table_with_namespace_column_for_node_ids(table=edges)
@@ -1043,7 +1052,6 @@ def produce_overview_hierarchy_edge_comparison(
     :param data_repo: The data repository containing the produced tables.
     :return: The analysis result tables.
     """
-
     # input
     input_edges = analysis_utils.produce_table_with_namespace_column_for_node_ids(
         table=data_repo.get(TABLE_EDGES_HIERARCHY).dataframe)
@@ -1316,7 +1324,6 @@ def produce_runtime_tables(
     :param data_repo: The data repository containing the produced tables.
     :return: The analysis result tables.
     """
-
     # table
     runtime_table = _add_elapsed_seconds_column_to_runtime(
         runtime=data_repo.get(table_name=table_name).dataframe

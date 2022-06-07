@@ -314,7 +314,7 @@ class ReportAnalyser:
         section_dataset_name = SECTION_OVERVIEW
         logger.info(f"Producing report section '{section_dataset_name}' analysis...")
 
-        node_status_df = report_analyser_utils.produce_node_status_analyses(
+        report_analyser_utils.produce_node_status_analyses(
             data_manager=self._data_manager,
             data_repo=self._data_repo
         )

@@ -48,7 +48,7 @@ If you find *OntoMerger* useful in your work or research, please consider adding
    title = {{OntoMerger: An Ontology Alignment Library for
              Creating Minimal and Connected Domain Knowledge
              Sub-graphs.}},
-   url = {http://arxiv.org/abs/???},
+   url = {https://arxiv.org/abs/2206.02238},
    year = {2022}
 }
 ```

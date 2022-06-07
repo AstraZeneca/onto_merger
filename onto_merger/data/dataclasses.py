@@ -229,7 +229,7 @@ class AlignmentStep:
         self.elapsed = 0
 
     def task_finished(self) -> None:
-        """Stops the task runtime counter.
+        """Stop the task runtime counter.
 
         :return:
         """
@@ -275,7 +275,7 @@ class ConnectivityStep:
         self.elapsed = 0
 
     def task_finished(self) -> None:
-        """Stops the task runtime counter.
+        """Stop the task runtime counter.
 
         :return:
         """
@@ -287,7 +287,7 @@ class ConnectivityStep:
 def convert_runtime_steps_to_named_table(
         steps: List[RuntimeData],
 ) -> NamedTable:
-    """Converts the runtime data to a named table.
+    """Convert the runtime data to a named table.
 
     :param steps: The list of runtime step objects.
     :return: The runtime data named table.
@@ -336,7 +336,7 @@ def convert_connectivity_steps_to_named_table(
 
 
 def format_datetime(date_time: datetime) -> str:
-    """Formats a date time to string.
+    """Format a date time to string.
 
     :param date_time: The date time.
     :return: The formatted date time as a string.

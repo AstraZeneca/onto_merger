@@ -155,14 +155,13 @@ def produce_table_node_namespace_distribution(
         node_table = produce_table_with_namespace_column_for_node_ids(node_table)
 
     # count per NS, descending, with ratio of total
-    namespace_distribution_table = (
-        node_table
-            .groupby([ns_column])
-            .count()
-            .reset_index()
-            .sort_values(COLUMN_DEFAULT_ID, ascending=False)
-            .rename(columns={COLUMN_DEFAULT_ID: COLUMN_COUNT, ns_column: COLUMN_NAMESPACE})
-    )
+    namespace_distribution_table = node_table\
+        .groupby([ns_column])\
+        .count()\
+        .reset_index()\
+        .sort_values(COLUMN_DEFAULT_ID, ascending=False)\
+        .rename(columns={COLUMN_DEFAULT_ID: COLUMN_COUNT, ns_column: COLUMN_NAMESPACE})
+
     namespace_distribution_table[COLUMN_FREQUENCY] = namespace_distribution_table.apply(
         lambda x: f"{((x[COLUMN_COUNT] / node_table_count) * 100):.2f}%", axis=1
     )

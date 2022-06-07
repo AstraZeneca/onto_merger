@@ -493,6 +493,7 @@ class DataManager:
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DATA_TESTS)
 
     def get_domain_ontology_path(self) -> str:
+        """Produce the path for the domain ontology folder."""
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
 
     def get_dropped_mappings_path(self) -> str:
