@@ -43,11 +43,10 @@ If you find *OntoMerger* useful in your work or research, please consider adding
 ```bibtex
 @article{ontomerger,
    arxivId = {???},
-   author = {Geleta, David and Rozemberczki, Benedek and Nikolov, Andriy and O'Donoghue, Mark and Gogleva, Anna and Tamma, Valentina},
-   month = {may},
-   title = {{OntoMerger: An Ontology Alignment Library for
-             Creating Minimal and Connected Domain Knowledge
-             Sub-graphs.}},
+   author = {Geleta, David and Nikolov, Andriy and O'Donoghue, Mark and Rozemberczki, Benedek 
+             and Gogleva, Anna and Tamma, Valentina and Payne, Terry R.},
+   month = {june},
+   title = {{OntoMerger: An Ontology Integration Library for Deduplicating and Connecting Knowledge Graph Nodes.}},
    url = {https://arxiv.org/abs/2206.02238},
    year = {2022}
 }
