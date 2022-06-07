@@ -2,27 +2,32 @@
 
 from typing import List, Tuple
 
-from pandas import DataFrame
 import pandas as pd
+from pandas import DataFrame
 
 from onto_merger.alignment import mapping_utils, merge_utils
 from onto_merger.analyser import analysis_utils
 from onto_merger.data.constants import (
+    COLUMN_MAPPING_TYPE_GROUP,
     COLUMN_NAMESPACE,
     COLUMN_PROVENANCE,
     COLUMN_RELATION,
+    COLUMN_SOURCE_ID_ALIGNED_TO,
+    COLUMN_STEP_COUNTER,
     MAPPING_TYPE_GROUP_EQV,
     MAPPING_TYPE_GROUP_XREF,
     ONTO_MERGER,
     RELATION_MERGE,
     SCHEMA_HIERARCHY_EDGE_TABLE,
+    SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MAPPINGS,
+    TABLE_MAPPINGS_FOR_INPUT_NODES,
     TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
     TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES,
-    TABLE_NODES_OBSOLETE, COLUMN_STEP_COUNTER, COLUMN_SOURCE_ID_ALIGNED_TO,
-    COLUMN_MAPPING_TYPE_GROUP, SCHEMA_MERGE_TABLE_WITH_META_DATA, TABLE_MAPPINGS_FOR_INPUT_NODES)
+    TABLE_NODES_OBSOLETE,
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import (
     AlignmentConfig,

@@ -11,10 +11,10 @@ from onto_merger.data.constants import (
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
+    SCHEMA_MERGE_TABLE,
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_MERGED,
-    SCHEMA_MERGE_TABLE,
 )
 from onto_merger.data.dataclasses import NamedTable
 

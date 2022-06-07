@@ -8,7 +8,9 @@ from great_expectations.core import ExpectationSuite
 from pandas import DataFrame
 from ruamel import yaml
 
-from onto_merger.analyser.report_analyser_utils import produce_ge_validation_analysis_as_table
+from onto_merger.analyser.report_analyser_utils import (
+    produce_ge_validation_analysis_as_table,
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, NamedTable
 from onto_merger.data_testing.ge_expectation_helper import (

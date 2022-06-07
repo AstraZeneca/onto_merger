@@ -5,8 +5,13 @@ import pandas as pd
 import plotly.express as px
 from pandas import DataFrame
 
-from onto_merger.analyser.constants import COLUMN_NAMESPACE, COLUMN_NAMESPACE_FREQ, \
-    COLUMN_NAMESPACE_SOURCE_ID, COLUMN_NAMESPACE_TARGET_ID, COLUMN_FREQ
+from onto_merger.analyser.constants import (
+    COLUMN_FREQ,
+    COLUMN_NAMESPACE,
+    COLUMN_NAMESPACE_FREQ,
+    COLUMN_NAMESPACE_SOURCE_ID,
+    COLUMN_NAMESPACE_TARGET_ID,
+)
 
 # note svg doesnt work on static websites
 # _FIGURE_FORMAT = "svg"

@@ -13,6 +13,7 @@ from pandas import DataFrame
 from onto_merger.alignment import merge_utils
 from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
 from onto_merger.data.constants import (
+    DIRECTORY_ANALYSIS,
     DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
@@ -34,15 +35,21 @@ from onto_merger.data.constants import (
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MAPPINGS_DOMAIN,
     TABLE_MAPPINGS_UPDATED,
+    TABLE_MERGES_AGGREGATED,
     TABLE_MERGES_WITH_META_DATA,
+    TABLE_NODES,
+    TABLE_NODES_MERGED,
     TABLES_INPUT,
-    TABLES_OUTPUT, TABLES_INTERMEDIATE, DIRECTORY_ANALYSIS, TABLE_NODES, TABLE_NODES_MERGED, TABLE_MERGES_AGGREGATED)
+    TABLES_INTERMEDIATE,
+    TABLES_OUTPUT,
+)
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     AlignmentConfigBase,
     AlignmentConfigMappingTypeGroups,
     DataRepository,
-    NamedTable)
+    NamedTable,
+)
 from onto_merger.logger.log import get_logger
 
 logger = get_logger(__name__)

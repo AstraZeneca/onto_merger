@@ -56,11 +56,12 @@ def main(project_folder_path: str) -> None:
 #
 import os
 from typing import List
-from onto_merger.report import report_generator
+
 from onto_merger.analyser.report_analyser import ReportAnalyser
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import DataRepository, RuntimeData
 from onto_merger.logger.log import setup_logger
+from onto_merger.report import report_generator
 
 # project_folder_path = os.path.abspath(
 #     "/Users/kmnb265/Desktop/ONTOMERGE_Data/bikg_2022-02-28-4.27.0_disease_full_background_knowledge")

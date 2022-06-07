@@ -4,10 +4,7 @@ import pytest
 from pandas import DataFrame
 
 from onto_merger.alignment import hierarchy_utils
-from onto_merger.data.constants import (
-    COLUMN_DEFAULT_ID,
-    SCHEMA_HIERARCHY_EDGE_TABLE,
-)
+from onto_merger.data.constants import COLUMN_DEFAULT_ID, SCHEMA_HIERARCHY_EDGE_TABLE
 from onto_merger.data.dataclasses import NamedTable
 
 

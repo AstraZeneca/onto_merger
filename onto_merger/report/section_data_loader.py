@@ -9,12 +9,23 @@ import pandas as pd
 
 from onto_merger.analyser.constants import TABLE_SECTION_SUMMARY, TABLE_STATS
 from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
-from onto_merger.data.constants import DIRECTORY_INTERMEDIATE, DIRECTORY_INPUT, DIRECTORY_OUTPUT
+from onto_merger.data.constants import (
+    DIRECTORY_INPUT,
+    DIRECTORY_INTERMEDIATE,
+    DIRECTORY_OUTPUT,
+)
 from onto_merger.data.data_manager import DataManager
-from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
-    SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
-from onto_merger.version import __version__ as onto_merger_version
 from onto_merger.logger.log import get_logger
+from onto_merger.report.constants import (
+    SECTION_ALIGNMENT,
+    SECTION_CONNECTIVITY,
+    SECTION_DATA_PROFILING,
+    SECTION_DATA_TESTS,
+    SECTION_INPUT,
+    SECTION_OUTPUT,
+    SECTION_OVERVIEW,
+)
+from onto_merger.version import __version__ as onto_merger_version
 
 logger = get_logger(__name__)
 

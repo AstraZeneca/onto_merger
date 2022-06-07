@@ -1,7 +1,7 @@
 import pandas as pd
 
-from onto_merger.data.constants import SCHEMA_EDGE_SOURCE_TO_TARGET_IDS
 from onto_merger.alignment.networkit_utils import NetworkitGraph
+from onto_merger.data.constants import SCHEMA_EDGE_SOURCE_TO_TARGET_IDS
 
 
 def test_get_hierarchy_edge_for_unmapped_node():

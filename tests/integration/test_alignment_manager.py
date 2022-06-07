@@ -6,6 +6,7 @@ import pytest
 
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.data.constants import (
+    DIRECTORY_ANALYSIS,
     DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
@@ -13,7 +14,7 @@ from onto_merger.data.constants import (
     DIRECTORY_REPORT,
     TABLE_ALIGNMENT_STEPS_REPORT,
     TABLE_MERGES_WITH_META_DATA,
-    DIRECTORY_ANALYSIS)
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, DataRepository, NamedTable
 from tests.fixtures import (

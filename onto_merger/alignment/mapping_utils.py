@@ -7,8 +7,8 @@ from pandas import DataFrame
 
 from onto_merger.analyser.analysis_utils import (
     get_namespace_column_name_for_column,
-    produce_table_with_namespace_column_for_node_ids,
     produce_table_node_ids_from_edge_table,
+    produce_table_with_namespace_column_for_node_ids,
 )
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,

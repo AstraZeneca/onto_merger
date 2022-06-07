@@ -1,8 +1,8 @@
 """Tests for the Pipeline class."""
 import os
 import shutil
-from pathlib import Path
 from ast import literal_eval
+from pathlib import Path
 
 import pandas as pd
 import pytest

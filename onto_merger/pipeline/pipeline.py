@@ -4,7 +4,7 @@ from typing import List
 
 from pandas import DataFrame
 
-from onto_merger.alignment import merge_utils, hierarchy_utils
+from onto_merger.alignment import hierarchy_utils, merge_utils
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.alignment.hierarchy_utils import HierarchyManager
 from onto_merger.alignment_config.validator import validate_alignment_configuration
@@ -16,8 +16,13 @@ from onto_merger.data.constants import (
     DIRECTORY_INTERMEDIATE,
 )
 from onto_merger.data.data_manager import DataManager
-from onto_merger.data.dataclasses import DataRepository, RuntimeData, convert_runtime_steps_to_named_table, \
-    format_datetime, NamedTable
+from onto_merger.data.dataclasses import (
+    DataRepository,
+    NamedTable,
+    RuntimeData,
+    convert_runtime_steps_to_named_table,
+    format_datetime,
+)
 from onto_merger.data_testing.ge_runner import GERunner
 from onto_merger.logger.log import setup_logger
 from onto_merger.report import report_generator

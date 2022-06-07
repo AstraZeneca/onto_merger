@@ -9,7 +9,10 @@ from tqdm import tqdm
 
 from onto_merger.alignment import networkx_utils
 from onto_merger.alignment.networkit_utils import NetworkitGraph
-from onto_merger.analyser.analysis_utils import filter_nodes_for_namespace, produce_table_node_ids_from_edge_table
+from onto_merger.analyser.analysis_utils import (
+    filter_nodes_for_namespace,
+    produce_table_node_ids_from_edge_table,
+)
 from onto_merger.data.constants import (
     COLUMN_DEFAULT_ID,
     COLUMN_PROVENANCE,
@@ -20,19 +23,24 @@ from onto_merger.data.constants import (
     RELATION_RDFS_SUBCLASS_OF,
     SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MERGE_TABLE,
+    SCHEMA_NODE_ID_LIST_TABLE,
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MERGES_AGGREGATED,
     TABLE_NODES,
-    TABLE_NODES_UNMAPPED, TABLE_NODES_CONNECTED, SCHEMA_NODE_ID_LIST_TABLE, TABLE_NODES_DANGLING,
-    TABLE_NODES_SEED, TABLE_NODES_CONNECTED_EXC_SEED)
+    TABLE_NODES_CONNECTED,
+    TABLE_NODES_CONNECTED_EXC_SEED,
+    TABLE_NODES_DANGLING,
+    TABLE_NODES_SEED,
+    TABLE_NODES_UNMAPPED,
+)
 from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
     ConnectivityStep,
     DataRepository,
     NamedTable,
-    convert_connectivity_steps_to_named_table
+    convert_connectivity_steps_to_named_table,
 )
 from onto_merger.logger.log import get_logger
 

@@ -3,8 +3,8 @@
 from jinja2 import Environment, FileSystemLoader
 
 from onto_merger.data.data_manager import DataManager
-from onto_merger.report.section_data_loader import load_report_data
 from onto_merger.logger.log import get_logger
+from onto_merger.report.section_data_loader import load_report_data
 
 logger = get_logger(__name__)
 

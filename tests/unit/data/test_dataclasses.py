@@ -6,10 +6,12 @@ import pandas as pd
 from pandas import DataFrame
 
 from onto_merger.data.constants import (
+    SCHEMA_ALIGNMENT_STEPS_TABLE,
     SCHEMA_DATA_REPO_SUMMARY,
     SCHEMA_MAPPING_TABLE,
+    TABLE_ALIGNMENT_STEPS_REPORT,
     TABLE_MAPPINGS,
-    SCHEMA_ALIGNMENT_STEPS_TABLE, TABLE_ALIGNMENT_STEPS_REPORT)
+)
 from onto_merger.data.dataclasses import (
     AlignmentConfigMappingTypeGroups,
     AlignmentStep,

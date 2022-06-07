@@ -8,24 +8,57 @@ from typing import List
 
 from pandas import DataFrame
 
-from onto_merger.analyser import plotly_utils
-from onto_merger.analyser import report_analyser_utils
-from onto_merger.analyser.constants import ANALYSIS_NODE_NAMESPACE_FREQ, \
-    ANALYSIS_PROV, ANALYSIS_TYPE, ANALYSIS_MAPPED_NSS, \
-    HEATMAP_MAPPED_NSS, ANALYSIS_CONNECTED_NSS, ANALYSIS_MERGES_NSS, \
-    ANALYSIS_MERGES_NSS_FOR_CANONICAL, ANALYSIS_CONNECTED_NSS_CHART
-from onto_merger.data.constants import DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, \
-    TABLE_NODES_OBSOLETE, TABLE_MAPPINGS, TABLE_EDGES_HIERARCHY, TABLE_NODES, \
-    TABLE_NODES_MERGED, TABLE_NODES_UNMAPPED, TABLE_NODES_DANGLING, \
-    TABLE_ALIGNMENT_STEPS_REPORT, TABLE_CONNECTIVITY_STEPS_REPORT, TABLE_PIPELINE_STEPS_REPORT, \
-    TABLE_EDGES_HIERARCHY_POST, TABLE_MERGES_AGGREGATED, \
-    TABLE_NODES_CONNECTED, DIRECTORY_ANALYSIS, TABLE_NODES_DOMAIN, TABLE_MAPPINGS_DOMAIN
+from onto_merger.analyser import plotly_utils, report_analyser_utils
+from onto_merger.analyser.constants import (
+    ANALYSIS_CONNECTED_NSS,
+    ANALYSIS_CONNECTED_NSS_CHART,
+    ANALYSIS_MAPPED_NSS,
+    ANALYSIS_MERGES_NSS,
+    ANALYSIS_MERGES_NSS_FOR_CANONICAL,
+    ANALYSIS_NODE_NAMESPACE_FREQ,
+    ANALYSIS_PROV,
+    ANALYSIS_TYPE,
+    HEATMAP_MAPPED_NSS,
+)
+from onto_merger.data.constants import (
+    DIRECTORY_ANALYSIS,
+    DIRECTORY_INTERMEDIATE,
+    DIRECTORY_OUTPUT,
+    TABLE_ALIGNMENT_STEPS_REPORT,
+    TABLE_CONNECTIVITY_STEPS_REPORT,
+    TABLE_EDGES_HIERARCHY,
+    TABLE_EDGES_HIERARCHY_POST,
+    TABLE_MAPPINGS,
+    TABLE_MAPPINGS_DOMAIN,
+    TABLE_MERGES_AGGREGATED,
+    TABLE_NODES,
+    TABLE_NODES_CONNECTED,
+    TABLE_NODES_DANGLING,
+    TABLE_NODES_DOMAIN,
+    TABLE_NODES_MERGED,
+    TABLE_NODES_OBSOLETE,
+    TABLE_NODES_UNMAPPED,
+    TABLE_PIPELINE_STEPS_REPORT,
+)
 from onto_merger.data.data_manager import DataManager
-from onto_merger.data.dataclasses import NamedTable, DataRepository, AlignmentConfig, format_datetime, RuntimeData, \
-    convert_runtime_steps_to_named_table
+from onto_merger.data.dataclasses import (
+    AlignmentConfig,
+    DataRepository,
+    NamedTable,
+    RuntimeData,
+    convert_runtime_steps_to_named_table,
+    format_datetime,
+)
 from onto_merger.logger.log import get_logger
-from onto_merger.report.constants import SECTION_INPUT, SECTION_OUTPUT, SECTION_DATA_TESTS, \
-    SECTION_DATA_PROFILING, SECTION_CONNECTIVITY, SECTION_OVERVIEW, SECTION_ALIGNMENT
+from onto_merger.report.constants import (
+    SECTION_ALIGNMENT,
+    SECTION_CONNECTIVITY,
+    SECTION_DATA_PROFILING,
+    SECTION_DATA_TESTS,
+    SECTION_INPUT,
+    SECTION_OUTPUT,
+    SECTION_OVERVIEW,
+)
 
 logger = get_logger(__name__)
 
