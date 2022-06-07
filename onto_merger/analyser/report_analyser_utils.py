@@ -113,10 +113,10 @@ def produce_summary_overview(
 
 def produce_summary_input(data_repo: DataRepository) -> NamedTable:
     """Produce the input section summary.
-    
+
     :param data_repo: The data repository containing the produced tables.
     :return: The summary as a named table.
-    """""
+    """
     summary = [
         {"metric": "Dataset",
          "values": '<a href="../../input" target="_blank">Link</a>'},
