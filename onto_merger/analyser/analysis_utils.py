@@ -156,7 +156,7 @@ def produce_table_node_namespace_distribution(
 
     # count per NS, descending, with ratio of total
     namespace_distribution_table = (
-        node_table\
+        node_table
             .groupby([ns_column])
             .count()
             .reset_index()
@@ -167,4 +167,3 @@ def produce_table_node_namespace_distribution(
         lambda x: f"{((x[COLUMN_COUNT] / node_table_count) * 100):.2f}%", axis=1
     )
     return namespace_distribution_table[SCHEMA_NODE_NAMESPACE_FREQUENCY_TABLE]
-

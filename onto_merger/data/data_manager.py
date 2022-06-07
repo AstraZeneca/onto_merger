@@ -609,15 +609,19 @@ class DataManager:
             ,
             NamedTable(
                 name=TABLE_MAPPINGS_DOMAIN,
-                dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)
-                    .dataframe[SCHEMA_MAPPING_TABLE]
-                    .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
+                dataframe=(
+                    data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe[SCHEMA_MAPPING_TABLE].sort_values(
+                        by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False
+                    )
+                ),
             ),
             NamedTable(
                 name=TABLE_EDGES_HIERARCHY_DOMAIN,
-                dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST)
-                    .dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
-                    .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False),
+                dataframe=(
+                    data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe[SCHEMA_HIERARCHY_EDGE_TABLE].sort_values(
+                        by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False
+                    )
+                ),
             ),
         ]
 

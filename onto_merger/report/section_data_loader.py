@@ -46,6 +46,11 @@ UNIQUE_ID = "unique_id"
 
 # MAIN #
 def load_report_data(data_manager: DataManager) -> dict:
+    """Load the HTML report data.
+
+    :param data_manager: The data manager used for loading analysis files.
+    :return: The loaded data as a dictionary.
+    """
     return {
         "date": f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')}",
         "version": onto_merger_version,
@@ -612,7 +617,6 @@ def _produce_data_file_subsections(section_name: str, data_manager: DataManager)
 
 # DESCRIPTION LOADERS #
 def _load_table_description_data(table_name: str) -> List[dict]:
-    """Table descriptions explaining columns of tables presented in the report."""
     try:
         df = pd.read_csv(os.path.abspath(
             f"../../onto_merger/onto_merger/report/data/table_column_descriptions/{table_name}.csv"))

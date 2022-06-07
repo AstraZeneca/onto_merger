@@ -93,7 +93,7 @@ class ReportAnalyser:
 
         :return:
         """
-        logger.info(f"Started producing report analysis...")
+        logger.info("Started producing report analysis...")
         self._produce_input_dataset_analysis()
         self._produce_output_dataset_analysis()
         self._produce_alignment_process_analysis()
@@ -104,7 +104,7 @@ class ReportAnalyser:
             data_profiling_stats=data_profiling_stats,
             data_test_stats=data_test_stats,
         )
-        logger.info(f"Finished producing report analysis.")
+        logger.info("Finished producing report analysis.")
 
     # SECTIONS #
     def _produce_input_dataset_analysis(self) -> None:
@@ -177,7 +177,7 @@ class ReportAnalyser:
             NamedTable(f"{TABLE_NODES_UNMAPPED}_{ANALYSIS_NODE_NAMESPACE_FREQ}",
                        report_analyser_utils.produce_node_namespace_freq(
                            nodes=self._data_repo.get(table_name=TABLE_NODES_UNMAPPED).dataframe)),
-            NamedTable(f"steps_detail",
+            NamedTable("steps_detail",
                        self._data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe),
         ]
         tables.extend(
@@ -223,7 +223,7 @@ class ReportAnalyser:
                        report_analyser_utils.produce_node_namespace_freq(
                            nodes=self._data_repo.get(table_name=TABLE_NODES_DANGLING).dataframe),
                        ),
-            NamedTable(f"steps_detail",
+            NamedTable("steps_detail",
                        self._data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe),
         ]
         tables.extend(
@@ -281,8 +281,8 @@ class ReportAnalyser:
         section_dataset_name = SECTION_DATA_TESTS
         logger.info(f"Producing report section '{section_dataset_name}' analysis...")
         merged_test_stats, dataset_stat_tables = report_analyser_utils.produce_data_testing_table_stats(
-            data_manager=self._data_manager,
-            section_name=section_dataset_name)
+            data_manager=self._data_manager
+        )
         tables = dataset_stat_tables + [
             report_analyser_utils.produce_summary_data_tests(data_repo=self._data_repo,
                                                              stats=merged_test_stats),
@@ -326,7 +326,6 @@ class ReportAnalyser:
             report_analyser_utils.produce_summary_overview(
                 data_manager=self._data_manager,
                 data_repo=self._data_repo,
-                node_status=node_status_df,
             ),
             report_analyser_utils.produce_validation_overview_analyses(
                 data_profiling_stats=data_profiling_stats,
@@ -347,10 +346,10 @@ class ReportAnalyser:
         # runtime
         end_date_time = datetime.now()
         analysis_runtime = RuntimeData(
-                task="ANALYSIS",
-                start=format_datetime(self._start_date_time),
-                end=format_datetime(end_date_time),
-                elapsed=(end_date_time - self._start_date_time).total_seconds()
+            task="ANALYSIS",
+            start=format_datetime(self._start_date_time),
+            end=format_datetime(end_date_time),
+            elapsed=(end_date_time - self._start_date_time).total_seconds()
         )
         self._runtime_data.append(analysis_runtime)
         run_time_table = convert_runtime_steps_to_named_table(steps=self._runtime_data)

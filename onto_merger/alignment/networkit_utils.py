@@ -66,7 +66,7 @@ class NetworkitGraph:
 
     @staticmethod
     def _create_networkit_graph(edges: DataFrame, node_id_to_index: dict) -> Graph:
-        """Produce a network x graph object from a hierarchy edge table.
+        """Produce a networkit graph object from a hierarchy edge table.
 
         :param node_id_to_index:
         :param edges: The hierarchy edge table.

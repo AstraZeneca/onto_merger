@@ -311,13 +311,11 @@ class AlignmentManager:
 
         # record start step meta data
         step = AlignmentStep(
-                mapping_type_group=mapping_type_group_name,
-                source="INITIALISATION",
-                step_counter=0,
-                count_unmapped_nodes=(
-                        len(self._data_repo_input.get(TABLE_NODES).dataframe)
-                ),
-            )
+            mapping_type_group=mapping_type_group_name,
+            source="INITIALISATION",
+            step_counter=0,
+            count_unmapped_nodes=(len(self._data_repo_input.get(TABLE_NODES).dataframe)),
+        )
         step.count_mappings = len(self_merges_for_seed_nodes.dataframe)
         step.count_merged_nodes = step.count_mappings
         step.task_finished()

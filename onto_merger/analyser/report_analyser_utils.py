@@ -1,3 +1,5 @@
+"""Helper methods to analyse input and output data."""
+
 import itertools
 import json
 import os
@@ -41,7 +43,6 @@ from onto_merger.data.constants import (
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MAPPINGS,
     TABLE_MAPPINGS_DOMAIN,
-    TABLE_MERGES_AGGREGATED,
     TABLE_NODES,
     TABLE_NODES_CONNECTED,
     TABLE_NODES_CONNECTED_EXC_SEED,
@@ -83,8 +84,14 @@ FLOAT_ROUND_TO = 2
 
 # SUMMARY SUBSECTIONS #
 def produce_summary_overview(
-        data_manager: DataManager, data_repo: DataRepository, node_status: DataFrame,
+        data_manager: DataManager, data_repo: DataRepository,
 ) -> NamedTable:
+    """Produce the overview section summary.
+
+    :param data_manager: The data manager instance.
+    :param data_repo: The data repository containing the produced tables.
+    :return: The summary as a named table.
+    """
     config = data_manager.load_alignment_config()
     steps_report = data_repo.get(table_name=TABLE_PIPELINE_STEPS_REPORT).dataframe
     elapsed_time = timedelta(seconds=int(steps_report['elapsed'].sum()))
@@ -105,6 +112,11 @@ def produce_summary_overview(
 
 
 def produce_summary_input(data_repo: DataRepository) -> NamedTable:
+    """Produce the input section summary.
+    
+    :param data_repo: The data repository containing the produced tables.
+    :return: The summary as a named table.
+    """""
     summary = [
         {"metric": "Dataset",
          "values": '<a href="../../input" target="_blank">Link</a>'},
@@ -121,6 +133,11 @@ def produce_summary_input(data_repo: DataRepository) -> NamedTable:
 
 
 def produce_summary_output(data_repo: DataRepository) -> NamedTable:
+    """Produce the output section summary.
+
+    :param data_repo: The data repository containing the produced tables.
+    :return: The summary as a named table.
+    """""
     nodes_connected = data_repo.get(TABLE_NODES_CONNECTED).dataframe
     nb_unique_nodes = len(data_repo.get(table_name=TABLE_NODES_DOMAIN).dataframe)
     summary = [
@@ -143,6 +160,11 @@ def produce_summary_output(data_repo: DataRepository) -> NamedTable:
 
 
 def produce_summary_alignment(data_repo: DataRepository) -> NamedTable:
+    """Produce the alignment section summary.
+
+    :param data_repo: The data repository containing the produced tables.
+    :return: The summary as a named table.
+    """""
     steps_report = data_repo.get(table_name=TABLE_ALIGNMENT_STEPS_REPORT).dataframe
     summary = [
         {"metric": "Process runtime",
@@ -165,6 +187,11 @@ def produce_summary_alignment(data_repo: DataRepository) -> NamedTable:
 
 
 def produce_summary_connectivity(data_repo: DataRepository) -> NamedTable:
+    """Produce the connectivity section summary.
+
+    :param data_repo: The data repository containing the produced tables.
+    :return: The summary as a named table.
+    """""
     steps_report = data_repo.get(table_name=TABLE_CONNECTIVITY_STEPS_REPORT).dataframe
     nodes_connected_seed = steps_report['count_connected_nodes'].iloc[0]
     nodes_connected_not_seed = steps_report['count_connected_nodes'].sum() - nodes_connected_seed
@@ -191,6 +218,12 @@ def produce_summary_connectivity(data_repo: DataRepository) -> NamedTable:
 
 def produce_summary_data_tests(data_repo: DataRepository,
                                stats: DataFrame) -> NamedTable:
+    """Produce the data testing section summary.
+
+    :param stats: The analysis of the data testing.
+    :param data_repo: The data repository containing the produced tables.
+    :return: The summary as a named table.
+    """""
     summary = [
         {"metric": "Process runtime",
          "values": _get_runtime_for_main_step(process_name="VALIDATION", data_repo=data_repo)},
@@ -218,11 +251,17 @@ def produce_summary_data_tests(data_repo: DataRepository,
 
 def produce_summary_data_profiling(data_repo: DataRepository,
                                    data_profiling_stats: DataFrame) -> NamedTable:
+    """Produce the data profiling section summary.
+
+    :param data_profiling_stats: The analysis of the data profiling.
+    :param data_repo: The data repository containing the produced tables.
+    :return: The summary as a named table.
+    """""
     summary = [
         {"metric": "Process runtime",
          "values": _get_runtime_for_main_step(process_name="PROFILING", data_repo=data_repo)},
         {"metric": "Data profiling reports (folder)",
-         "values": f'<a href="data_profile_reports/" target="_blank">Link</a>'},
+         "values": '<a href="data_profile_reports/" target="_blank">Link</a>'},
         {"metric": "Number of tables profiled", "values": len(data_profiling_stats)},
         {"metric": "Number of rows profiled", "values": data_profiling_stats['rows'].sum()},
         {"metric": "Total file size",
@@ -297,7 +336,7 @@ def produce_step_node_analysis_plot(
 
 # SECTION: DATA TESTING
 def produce_data_testing_table_stats(
-        data_manager: DataManager, section_name: str
+        data_manager: DataManager
 ) -> (DataFrame, List[NamedTable]):
     validation_analysis = _produce_ge_validation_analysis(data_manager=data_manager)
     ge_validation_report_map = _produce_ge_validation_report_map(
@@ -854,7 +893,7 @@ def produce_connectivity_hierarchy_edge_overview_analysis(
     df["status"] = df.apply(
         lambda x: f"{x['status_no_freq']} ({x['freq']}%)", axis=1
     )
-    plotly_utils.produce_status_stacked_bar_char_edge(
+    plotly_utils.produce_status_stacked_bar_chart_edge(
         analysis_table=df,
         file_path=data_manager.get_analysis_figure_path(
             dataset="connectivity",
@@ -869,11 +908,13 @@ def produce_connectivity_hierarchy_edge_overview_analysis(
         ["Node position", "Child nodes", len(output_child_nodes)],
         ["Node position", "Parent nodes", len(output_parent_nodes)],
     ], columns=["category", "status_no_freq", "count"])
-    child_parent_df = _add_freq_column(df=child_parent_df, total_count=len(edges_output), column_name_count=COLUMN_COUNT)
+    child_parent_df = _add_freq_column(
+        df=child_parent_df, total_count=len(edges_output), column_name_count=COLUMN_COUNT
+    )
     child_parent_df["status"] = child_parent_df.apply(
         lambda x: f"{x['status_no_freq']} ({x['freq']}%)", axis=1
     )
-    plotly_utils.produce_status_stacked_bar_char_edge(
+    plotly_utils.produce_status_stacked_bar_chart_edge(
         analysis_table=child_parent_df,
         file_path=data_manager.get_analysis_figure_path(
             dataset="connectivity",
@@ -918,10 +959,15 @@ def produce_overview_hierarchy_edge_comparison(
     input_nodes = data_repo.get(TABLE_NODES).dataframe
     input_nodes_ids = input_nodes[COLUMN_DEFAULT_ID].tolist()
     input_nodes_connected = hierarchy_utils.produce_named_table_nodes_connected(hierarchy_edges=input_edges) \
-        .dataframe.query(expr=f"{COLUMN_DEFAULT_ID} == @input_nodes_ids", inplace=False)
+        .dataframe.query(
+        expr=f"{COLUMN_DEFAULT_ID} == @input_nodes_ids", local_dict={"input_nodes_ids": input_nodes_ids}, inplace=False
+    )
     input_nodes_connected_ids = input_nodes_connected[COLUMN_DEFAULT_ID].tolist()
     input_nodes_dangling = input_nodes.query(
-        expr=f"{COLUMN_DEFAULT_ID} != @input_nodes_connected_ids", inplace=False)
+        expr=f"{COLUMN_DEFAULT_ID} != @input_nodes_connected_ids",
+        local_dict={"input_nodes_connected_ids": input_nodes_connected_ids},
+        inplace=False
+    )
     input_child_nodes, input_parent_nodes = _get_leaf_and_parent_nodes(hierarchy_edges=input_edges)
 
     # output
@@ -1172,7 +1218,6 @@ def produce_runtime_tables(
             analysed_table_name="pipeline_steps_report",
             analysis_table_suffix=GANTT_CHART
         ),
-        label_replacement={}
     )
     return [
         NamedTable("pipeline_steps_report_step_duration", runtime_table[["task", "elapsed_sec"]]),

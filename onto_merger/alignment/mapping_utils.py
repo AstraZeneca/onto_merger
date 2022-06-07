@@ -141,6 +141,12 @@ def get_mappings_with_updated_node_ids(
 def get_nodes_with_updated_node_ids(
     nodes: DataFrame, mappings_obsolete_to_current_node_id: DataFrame
 ) -> DataFrame:
+    """Produce the node table with only current node IDs.
+
+    :param nodes: The original (input) node table
+    :param mappings_obsolete_to_current_node_id: The node ID update mappings.
+    :return: The updated node table.
+    """
     # internal mappings that would apply
     mappings_obsolete_to_current_node_id_applicable = mappings_obsolete_to_current_node_id.copy().query(
         expr=(f"{COLUMN_SOURCE_ID} == @node_ids_in_mappings"),
@@ -380,6 +386,12 @@ def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: 
 
 
 def filter_mappings_for_input_node_set(input_nodes: DataFrame, mappings: DataFrame) -> DataFrame:
+    """Filter a mapping set so it only contains mappings referencing nodes from the input set.
+
+    :param input_nodes: The set of input nodes.
+    :param mappings: The mapping set to be filtered.
+    :return: The filtered mapping set.
+    """
     node_ids_to_keep = list(input_nodes[COLUMN_DEFAULT_ID])
     mapping_subset = mappings.query(
         f"({COLUMN_SOURCE_ID} == @node_ids) and ({COLUMN_TARGET_ID} == @node_ids)",
@@ -421,7 +433,7 @@ def produce_self_merges_for_seed_nodes(seed_id: str, nodes: DataFrame, nodes_obs
     :param seed_id: The seed ontology name.
     :param nodes: The set of all nodes.
     :param nodes_obsolete: The set of obsolete nodes.
-    :return:
+    :return: The merged table.
     """
     # get only seed nodes
     df = produce_table_with_namespace_column_for_node_ids(table=nodes)

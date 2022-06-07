@@ -1,7 +1,8 @@
+"""Helpers for producing analysis plots."""
+
 from typing import Union
 
 import numpy as np
-import pandas as pd
 import plotly.express as px
 from pandas import DataFrame
 
@@ -13,9 +14,7 @@ from onto_merger.analyser.constants import (
     COLUMN_NAMESPACE_TARGET_ID,
 )
 
-# note svg doesnt work on static websites
-# _FIGURE_FORMAT = "svg"
-FIGURE_FORMAT = "png"
+FIGURE_FORMAT = "png"  # svg doesnt work on static websites
 _COLOR_WHITE = "#fff"
 _WIDTH_ONE_COL_ROW = 1100
 _WIDTH_TWO_COL_ROW = round(_WIDTH_ONE_COL_ROW / 2)
@@ -25,9 +24,9 @@ def _get_figure_filepath(file_path: str) -> str:
     return f"{file_path}.{FIGURE_FORMAT}"
 
 
-def _format_percentage_column_to_decimal_places(analysis_table: DataFrame,
-                                                column_name: str,
-                                                decimal: int = 2) -> DataFrame:
+def _format_percentage_column_to_decimal_places(
+        analysis_table: DataFrame, column_name: str, decimal: int = 2
+) -> DataFrame:
     analysis_table[column_name] = analysis_table.apply(
         lambda x: round(x[column_name], decimal),
         axis=1,
@@ -39,6 +38,12 @@ def produce_nodes_ns_freq_chart(
         analysis_table: DataFrame,
         file_path: str,
 ) -> None:
+    """Produce a node namespace frequency chart figure .
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     px.bar(
         _format_percentage_column_to_decimal_places(
             analysis_table=analysis_table,
@@ -61,7 +66,16 @@ def produce_status_stacked_bar_chart(
         is_one_bar: bool,
         showlegend: bool = False,
         labels: Union[dict, None] = None,
-):
+) -> None:
+    """Produce a node status bar chart figure .
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :param is_one_bar: If True the figure height will be calculated for one bar, otherwise for multiple bars.
+    :param showlegend: If True the legend will be display, otherwise hidden.
+    :param labels: If given it will rename the axis & legend labels.
+    :return:
+    """
     # adjust setting for 1 vs multiple bars
     if is_one_bar is True:
         showaxis = False
@@ -85,16 +99,18 @@ def produce_status_stacked_bar_chart(
             if labels is None else labels
         ),
     ) \
-        .update_layout({
-        "plot_bgcolor": _COLOR_WHITE,
-        'showlegend': showlegend,
-        'margin': {
-            "l": 0,  # left
-            "r": 0,  # right
-            "t": 0,  # top
-            "b": 0,  # bottom
+        .update_layout(
+        {
+            "plot_bgcolor": _COLOR_WHITE,
+            'showlegend': showlegend,
+            'margin': {
+                "l": 0,  # left
+                "r": 0,  # right
+                "t": 0,  # top
+                "b": 0,  # bottom
+            }
         }
-    }) \
+    ) \
         .update_yaxes(autorange="reversed") \
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
         .update_xaxes(visible=showaxis) \
@@ -102,10 +118,16 @@ def produce_status_stacked_bar_chart(
         .write_image(_get_figure_filepath(file_path=file_path))
 
 
-def produce_status_stacked_bar_char_edge(
+def produce_status_stacked_bar_chart_edge(
         analysis_table: DataFrame,
         file_path: str,
-):
+) -> None:
+    """Produce an edge hierarchy bar chart figure .
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     # produce image
     px.bar(
         analysis_table,
@@ -120,27 +142,34 @@ def produce_status_stacked_bar_char_edge(
             {'status': 'Status', 'status_no_freq': 'Stage', 'category': ''}
         ),
     ) \
-        .update_layout({
-        "plot_bgcolor": _COLOR_WHITE,
-        'showlegend': True,
-        'margin': {
-            "l": 0,  # left
-            "r": 0,  # right
-            "t": 0,  # top
-            "b": 0,  # bottom
+        .update_layout(
+        {
+            "plot_bgcolor": _COLOR_WHITE,
+            'showlegend': True,
+            'margin': {
+                "l": 0,  # left
+                "r": 0,  # right
+                "t": 0,  # top
+                "b": 0,  # bottom
+            }
         }
-    }) \
+    ) \
         .update_traces(textposition='inside', textfont_size=14, textfont_color="white") \
         .update_xaxes(visible=False) \
         .update_yaxes(visible=False) \
         .write_image(_get_figure_filepath(file_path=file_path))
 
 
-
 def produce_mapping_type_freq_chart(
         analysis_table: DataFrame,
         file_path: str,
 ) -> None:
+    """Produce a mapping type frequency figure .
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     px.bar(
         _format_percentage_column_to_decimal_places(
             analysis_table=analysis_table,
@@ -161,6 +190,12 @@ def produce_merged_nss_stacked_bar_chart(
         analysis_table: DataFrame,
         file_path: str,
 ) -> None:
+    """Produce a bar chart figure for merged namespaces.
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     _produce_directed_edge_stacked_bar_chart(
         analysis_table=analysis_table,
         file_path=file_path,
@@ -180,6 +215,12 @@ def produce_hierarchy_nss_stacked_bar_chart(
         analysis_table: DataFrame,
         file_path: str,
 ) -> None:
+    """Produce a bar chart figure for mapped namespaces.
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     _produce_directed_edge_stacked_bar_chart(
         analysis_table=analysis_table,
         file_path=file_path,
@@ -238,7 +279,15 @@ def _produce_directed_edge_stacked_bar_chart(
         .write_image(_get_figure_filepath(file_path=file_path))
 
 
-def produce_edge_heatmap(analysis_table: DataFrame, file_path: str):
+def produce_edge_heatmap(
+        analysis_table: DataFrame, file_path: str
+) -> None:
+    """Produce a heatmap for mapped namespaces figure.
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     data = analysis_table.copy()
     data = data[list(data.columns)].replace({'0': np.nan, 0: np.nan})
     px.imshow(
@@ -254,8 +303,13 @@ def produce_edge_heatmap(analysis_table: DataFrame, file_path: str):
 def produce_gantt_chart(
         analysis_table: DataFrame,
         file_path: str,
-        label_replacement: dict,
 ) -> None:
+    """Produce a Gantt chart figure.
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     px.timeline(
         analysis_table,
         x_start="start",
@@ -286,7 +340,13 @@ def produce_gantt_chart(
 def produce_vertical_bar_chart_stacked(
         analysis_table: DataFrame,
         file_path: str,
-):
+) -> None:
+    """Produce a vertical bar chart figure.
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     px.bar(
         analysis_table,
         x="step_name",
@@ -305,7 +365,13 @@ def produce_vertical_bar_chart_stacked(
 def produce_vertical_bar_chart_cluster_size_bins(
         analysis_table: DataFrame,
         file_path: str,
-):
+) -> None:
+    """Produce cluster size bins figure.
+
+    :param analysis_table: The data used to produce the figure.
+    :param file_path: The path to save the figure.
+    :return:
+    """
     px.bar(
         analysis_table,
         x="cluster_size",

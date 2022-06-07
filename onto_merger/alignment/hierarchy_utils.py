@@ -48,8 +48,13 @@ logger = get_logger(__name__)
 
 
 class HierarchyManager:
+    """Connect domain ontology nodes to form a single DAG."""
 
     def __init__(self, data_manager: DataManager):
+        """Initialise the HierarchyManager class.
+
+        :param data_manager: The data manager instance used to perform data operations and produce file paths.
+        """
         self.data_manager = data_manager
         self.f = open(self.data_manager.get_hierarchy_edges_paths_debug_file_path(), "w")
         self.f.write("connected_node_id,connected_node_ns,length_original_path,"
@@ -309,6 +314,11 @@ def _produce_hierarchy_edge_table_from_edge_path_lists(edges_for_all_nodes: List
 
 
 def post_process_connectivity_results(data_repo: DataRepository) -> List[NamedTable]:
+    """Produce tables for analysing the connectivity results.
+
+    :param data_repo: The data repository containing the produced tables.
+    :return: The produced named tables.
+    """
     nodes_connected = produce_named_table_nodes_connected(
         hierarchy_edges=data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe
     )

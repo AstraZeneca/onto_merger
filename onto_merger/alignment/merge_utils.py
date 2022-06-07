@@ -44,6 +44,14 @@ logger = get_logger(__name__)
 def post_process_alignment_results(data_repo: DataRepository,
                                    seed_id: str,
                                    alignment_priority_order: List[str]) -> List[NamedTable]:
+    """Produce tables for analysing the alignment results.
+
+    :param data_repo: The data repository containing the produced tables.
+    :param seed_id: The ID of the seed ontology.
+    :param alignment_priority_order: The alignment priority order.
+    :return: The produced named tables.
+    """
+
     # aggregate merges
     table_aggregated_merges = _produce_named_table_aggregated_merges(
         merges=data_repo.get(TABLE_MERGES_WITH_META_DATA).dataframe,
@@ -209,6 +217,12 @@ def produce_named_table_merges_with_alignment_meta_data(
 
 
 def produce_named_table_domain_nodes(nodes: DataFrame, merged_nodes: DataFrame, ) -> NamedTable:
+    """Produce the domain merges named table ready for distribution by removing merged nodes from input.
+
+    :param nodes: The input nodes.
+    :param merged_nodes: The node merges.
+    :return: The domain nodes named table.
+    """
     df = pd.concat([
         nodes[SCHEMA_NODE_ID_LIST_TABLE],
         merged_nodes[SCHEMA_NODE_ID_LIST_TABLE],
@@ -220,6 +234,11 @@ def produce_named_table_domain_nodes(nodes: DataFrame, merged_nodes: DataFrame, 
 
 
 def produce_named_table_domain_merges(merges_aggregated: DataFrame, ) -> NamedTable:
+    """Produce the domain merges named table ready for distribution.
+
+    :param merges_aggregated: The aggregated node merges with canoncial node IDs.
+    :return: The domain merges named table.
+    """
     df = merges_aggregated.copy()
     df[COLUMN_RELATION] = RELATION_MERGE
     df[COLUMN_PROVENANCE] = ONTO_MERGER
@@ -230,9 +249,8 @@ def produce_named_table_domain_merges(merges_aggregated: DataFrame, ) -> NamedTa
 def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
     """Produce the dataframe of unmapped node IDs.
 
-    :param seed_id:
-    :param merges:
     :param nodes: The set of input nodes to be filtered.
+    :param merges: The merge table.
     :return: The set of unmapped nodes.
     """
     merged_nodes = _produce_table_merged_nodes(merges=merges)
