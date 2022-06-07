@@ -378,7 +378,7 @@ class DataManager:
                 os.path.join(images_folder_to_path, figure_file)
             )
             for figure_file in os.listdir(self.get_analysis_folder_path())
-            if (figure_file.endswith(".png") or figure_file.endswith(".svg"))
+            if figure_file.endswith(f".{self.config.image_format}")
         ]
 
     def move_data_docs_to_reports(self) -> None:
@@ -546,7 +546,6 @@ class DataManager:
         return os.path.join(
             self.get_analysis_folder_path(),
             file_name_with_type,
-
         )
 
     def _produce_analysis_report_folder_path(self) -> str:
