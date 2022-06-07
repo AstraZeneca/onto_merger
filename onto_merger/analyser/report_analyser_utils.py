@@ -5,7 +5,7 @@ import json
 import os
 from datetime import timedelta
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 import pandas as pd
 from pandas import DataFrame
@@ -355,7 +355,7 @@ def produce_step_node_analysis_plot(
 # SECTION: DATA TESTING
 def produce_data_testing_table_stats(
         data_manager: DataManager
-) -> (DataFrame, List[NamedTable]):
+) -> Tuple[DataFrame, List[NamedTable]]:
     """Produce the data testing analysis.
 
     :param data_manager: The data manager instance.
@@ -461,7 +461,7 @@ def _produce_data_test_stats_for_directory(tables: List[str],
 # SECTION: DATA PROFILING
 def produce_data_profiling_table_stats(
         data_manager: DataManager
-) -> (DataFrame, List[NamedTable]):
+) -> Tuple[DataFrame, List[NamedTable]]:
     """Produce the data profiling analysis.
 
     :param data_manager: The data manager instance.
@@ -868,7 +868,7 @@ def produce_edges_analysis_for_mapped_or_connected_nss_heatmap(edges: DataFrame,
     cols = [analysis_utils.get_namespace_column_name_for_column(COLUMN_SOURCE_ID),
             analysis_utils.get_namespace_column_name_for_column(COLUMN_TARGET_ID)]
     df = analysis_utils.produce_table_with_namespace_column_for_node_ids(table=edges)
-    df: DataFrame = df.groupby(cols).agg(count=(COLUMN_SOURCE_ID, 'count')) \
+    df = df.groupby(cols).agg(count=(COLUMN_SOURCE_ID, 'count')) \
         .reset_index().sort_values(COLUMN_COUNT, ascending=False)
 
     # matrix
@@ -1020,7 +1020,7 @@ def produce_connectivity_hierarchy_edge_overview_analyses(
 def produce_hierarchy_edge_analysis_for_connected_nss(edges: DataFrame) -> DataFrame:
     """Produce hierarchy edge connected namespace analysis.
 
-    :param edges_output: The hierarchy edges to be analysed.
+    :param edges: The hierarchy edges to be analysed.
     :return: The analysis result tables.
     """
     df = analysis_utils.produce_table_with_namespace_column_pair(
@@ -1034,7 +1034,7 @@ def produce_hierarchy_edge_analysis_for_connected_nss(edges: DataFrame) -> DataF
     return df
 
 
-def _get_leaf_and_parent_nodes(hierarchy_edges: DataFrame) -> (DataFrame, DataFrame):
+def _get_leaf_and_parent_nodes(hierarchy_edges: DataFrame) -> Tuple[DataFrame, DataFrame]:
     df = hierarchy_edges.copy()
     parent_nodes = df[[COLUMN_TARGET_ID]].drop_duplicates(keep="first", inplace=False) \
         .rename(columns={COLUMN_TARGET_ID: COLUMN_DEFAULT_ID})
@@ -1307,6 +1307,7 @@ def _get_table_type_for_table_name(table_name: str) -> str:
         return TABLE_TYPE_MAPPING
     elif table_name in TABLES_MERGE:
         return TABLE_TYPE_MERGE
+    return ""
 
 
 # RUNTIME ANALYSIS #
