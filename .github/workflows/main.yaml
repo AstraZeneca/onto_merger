@@ -31,7 +31,8 @@ jobs:
          pip install pytest
          pip install tox
          pip install nbconvert
-         pip install markupsafe==2.0.1 
+         pip install markupsafe==2.0.1
+      - name: Run installation part 2 requirements.
          python setup.py install
       - name: Run code quality tests
         run: |
