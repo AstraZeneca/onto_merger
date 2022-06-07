@@ -32,8 +32,8 @@ jobs:
          pip install tox
          pip install nbconvert
          pip install markupsafe==2.0.1
-      - name: Run installation part 2 requirements.
-        run: python setup.py install
+         python setup.py install
+         chmod +x /usr/share/miniconda/envs/
       - name: Run code quality tests
         run: |
           tox -e flake8
