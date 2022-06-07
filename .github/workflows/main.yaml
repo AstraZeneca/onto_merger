@@ -33,7 +33,7 @@ jobs:
          pip install nbconvert
          pip install markupsafe==2.0.1
       - name: Run installation part 2 requirements.
-         python setup.py install
+         run: python setup.py install
       - name: Run code quality tests
         run: |
           tox -e flake8
