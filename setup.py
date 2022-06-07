@@ -16,7 +16,7 @@ install_requires = [
     "docopt==0.6.2",
     "plotly-express==0.4.1",
     "tqdm==4.64.0",
-    "kaleido",
+    "kaleido==0.2.1",
 ]
 
 setup_requires = ["pytest-runner"]
