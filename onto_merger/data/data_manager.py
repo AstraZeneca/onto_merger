@@ -11,7 +11,6 @@ import pandas as pd
 from pandas import DataFrame
 
 from onto_merger.alignment import merge_utils
-from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
 from onto_merger.data.constants import (
     DIRECTORY_ANALYSIS,
     DIRECTORY_DATA_TESTS,
@@ -70,6 +69,7 @@ class DataManager:
         if clear_output_directory is True:
             self._clear_output_directory()
         self._create_output_directory_structure()
+        self.config = self.load_alignment_config()
 
     # CONFIG #
     def load_alignment_config(self) -> AlignmentConfig:
@@ -104,6 +104,8 @@ class DataManager:
             mapping_type_groups=AlignmentConfigMappingTypeGroups.from_dict(mapping_config["type_groups"]),
             as_dict=config_json,
         )
+        if "image_format" in config_json:
+            alignment_config.image_format = config_json["image_format"],
         return alignment_config
 
     # DIRECTORY STRUCTURE #
@@ -373,7 +375,8 @@ class DataManager:
                 os.path.join(self.get_analysis_folder_path(), figure_file),
                 os.path.join(images_folder_to_path, figure_file)
             )
-            for figure_file in os.listdir(self.get_analysis_folder_path()) if figure_file.endswith(f".{FIGURE_FORMAT}")
+            for figure_file in os.listdir(self.get_analysis_folder_path())
+            if (figure_file.endswith(".png") or figure_file.endswith(".svg"))
         ]
 
     def move_data_docs_to_reports(self) -> None:
@@ -532,13 +535,16 @@ class DataManager:
         :param analysis_table_suffix:
         :return:
         """
+        file_name = self._get_analysis_figure_file_name(
+            dataset=dataset,
+            analysed_table_name=analysed_table_name,
+            analysis_table_suffix=analysis_table_suffix
+        )
+        file_name_with_type = f"{file_name}.{self.config.image_format}"
         return os.path.join(
             self.get_analysis_folder_path(),
-            self._get_analysis_figure_file_name(
-                dataset=dataset,
-                analysed_table_name=analysed_table_name,
-                analysis_table_suffix=analysis_table_suffix
-            )
+            file_name_with_type,
+
         )
 
     def _produce_analysis_report_folder_path(self) -> str:
@@ -606,8 +612,8 @@ class DataManager:
                 merged_nodes=data_repo.get(TABLE_NODES_MERGED).dataframe,
             ),
             merge_utils.produce_named_table_domain_merges(
-                merges_aggregated=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe)
-            ,
+                merges_aggregated=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe
+            ),
             NamedTable(
                 name=TABLE_MAPPINGS_DOMAIN,
                 dataframe=(

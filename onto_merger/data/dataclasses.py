@@ -65,6 +65,7 @@ class AlignmentConfig:
     base_config: AlignmentConfigBase
     mapping_type_groups: AlignmentConfigMappingTypeGroups
     as_dict: dict
+    image_format: str = "png"
 
 
 @dataclass

@@ -8,7 +8,6 @@ from typing import List
 import pandas as pd
 
 from onto_merger.analyser.constants import TABLE_SECTION_SUMMARY, TABLE_STATS
-from onto_merger.analyser.plotly_utils import FIGURE_FORMAT
 from onto_merger.data.constants import (
     DIRECTORY_INPUT,
     DIRECTORY_INTERMEDIATE,
@@ -200,7 +199,7 @@ def _produce_runtime_info_subsection(section_name: str, data_manager: DataManage
         TITLE: "Processing",
         LINK_TITLE: "pipeline",
         DATASET: {
-            "gantt_img": f"images/{section_name}_pipeline_steps_report_gantt_chart.{FIGURE_FORMAT}",
+            "gantt_img": f"images/{section_name}_pipeline_steps_report_gantt_chart.{data_manager.config.image_format}",
             "runtime_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name="pipeline_steps_report_step_duration",
@@ -228,7 +227,11 @@ def _produce_nodes_subsection(section_name: str, data_manager: DataManager, is_o
         TITLE: "Nodes" if is_obsolete is False else "Nodes (Obsolete)",
         LINK_TITLE: "nodes" if is_obsolete is False else "nodes_obsolete",
         DATASET: {
-            "node_status_fig_path": _get_figure_path(section_name=section_name, table_name="node_status"),
+            "node_status_fig_path": _get_figure_path(
+                section_name=section_name,
+                table_name="node_status",
+                image_format=data_manager.config.image_format
+            ),
             "node_status_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name="node_status"
@@ -254,9 +257,17 @@ def _produce_mappings_subsection(section_name: str, data_manager: DataManager) -
         DATASET: {
             "analysed_entity": "Mappings",
             "analysis_table_template": "data_content/table_mapping_analysis.html",
-            "heatmap_fig_path": _get_figure_path(section_name=section_name, table_name=table_name),
+            "heatmap_fig_path": _get_figure_path(
+                section_name=section_name,
+                table_name=table_name,
+                image_format=data_manager.config.image_format
+            ),
             "heatmap_fig_alt_text": "...",
-            "types_fig_path": _get_figure_path(section_name=section_name, table_name="mappings_type_analysis"),
+            "types_fig_path": _get_figure_path(
+                section_name=section_name,
+                table_name="mappings_type_analysis",
+                image_format=data_manager.config.image_format
+            ),
             "types_fig_alt_text": "...",
             TABLE_ANALYSIS: data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
@@ -279,7 +290,8 @@ def _produce_edges_hierarchy_subsection(section_name: str, data_manager: DataMan
             "analysed_entity": "Hierarchy edges",
             "analysis_table_template": "data_content/table_edge_analysis.html",
             "analysis_fig_path": _get_figure_path(section_name=section_name,
-                                                  table_name=f"{table_name}_chart"),
+                                                  table_name=f"{table_name}_chart",
+                                                  image_format=data_manager.config.image_format),
             "analysis_fig_alt_text": "...",
             TABLE_ANALYSIS: data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
@@ -327,7 +339,11 @@ def _produce_overview_nodes_subsection(section_name: str, data_manager: DataMana
         TITLE: "Node analysis",
         LINK_TITLE: "nodes",
         DATASET: {
-            "node_status_fig_path": _get_figure_path(section_name=section_name, table_name="node_status"),
+            "node_status_fig_path": _get_figure_path(
+                section_name=section_name,
+                table_name="node_status",
+                image_format=data_manager.config.image_format
+            ),
             "node_status_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name="node_status"
@@ -396,7 +412,8 @@ def _produce_alignment_detail_subsection(section_name: str, data_manager: DataMa
         LINK_TITLE: "step_details",
         DATASET: {
             "fig_path": _get_figure_path(section_name=section_name,
-                                         table_name="step_node_analysis_stacked_bar_chart"),
+                                         table_name="step_node_analysis_stacked_bar_chart",
+                                         image_format=data_manager.config.image_format),
             "steps_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name="steps_detail"
@@ -416,7 +433,8 @@ def _produce_alignment_node_subsection(section_name: str, data_manager: DataMana
         LINK_TITLE: "node_analysis",
         DATASET: {
             "node_status_fig_path": _get_figure_path(section_name=section_name,
-                                                     table_name="node_status"),
+                                                     table_name="node_status",
+                                                     image_format=data_manager.config.image_format),
             "node_status_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name="node_status",
@@ -462,7 +480,9 @@ def _produce_merges_subsection_namespaces(section_name: str, data_manager: DataM
         DATASET: {
             "analysed_entity": "Merges",
             "analysis_table_template": "data_content/table_merge_analysis.html",
-            "analysis_fig_path": _get_figure_path(section_name=section_name, table_name="merges_nss_analysis"),
+            "analysis_fig_path": _get_figure_path(section_name=section_name,
+                                                  table_name="merges_nss_analysis",
+                                                  image_format=data_manager.config.image_format),
             "analysis_fig_alt_text": "...",
             TABLE_ANALYSIS: data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
@@ -485,7 +505,9 @@ def _produce_merges_subsection_clusters(section_name: str, data_manager: DataMan
         TITLE: "Clusters",
         LINK_TITLE: "cluster",
         DATASET: {
-            "analysis_fig_path": _get_figure_path(section_name=section_name, table_name="merges_cluster_size_bins"),
+            "analysis_fig_path": _get_figure_path(section_name=section_name,
+                                                  table_name="merges_cluster_size_bins",
+                                                  image_format=data_manager.config.image_format),
             "analysis_fig_alt_text": "Node merge cluster size bin frequency",
             TABLE_ANALYSIS: data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
@@ -508,7 +530,8 @@ def _produce_connectivity_detail_subsection(section_name: str, data_manager: Dat
         LINK_TITLE: "step_details",
         DATASET: {
             "fig_path": _get_figure_path(section_name=section_name,
-                                         table_name="step_node_analysis_stacked_bar_chart"),
+                                         table_name="step_node_analysis_stacked_bar_chart",
+                                         image_format=data_manager.config.image_format),
             "steps_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name="steps_detail"
@@ -528,7 +551,8 @@ def _produce_connectivity_node_subsection(section_name: str, data_manager: DataM
         LINK_TITLE: "node_analysis",
         DATASET: {
             "node_status_fig_path": _get_figure_path(section_name=section_name,
-                                                     table_name="node_status"),
+                                                     table_name="node_status",
+                                                     image_format=data_manager.config.image_format),
             "node_status_table": data_manager.load_analysis_report_table_as_dict(
                 section_name=section_name,
                 table_name="node_status",
@@ -570,7 +594,8 @@ def _produce_connectivity_edge_subsection(section_name: str, data_manager: DataM
         LINK_TITLE: "edge_analysis",
         DATASET: {
             "fig_status": _get_figure_path(section_name=section_name,
-                                           table_name="edges_hierarchy_status"),
+                                           table_name="edges_hierarchy_status",
+                                           image_format=data_manager.config.image_format),
             "fig_child_parent": _get_figure_path(section_name=section_name,
                                                  table_name="edges_hierarchy_child_parent"),
             "path_overview_tables": available_path_overview_tables
@@ -636,8 +661,8 @@ def _get_section_icon_file_name(section_name: str) -> str:
     return f"icon_{section_name}.png"
 
 
-def _get_figure_path(section_name: str, table_name: str) -> str:
-    return f"images/{section_name}_{table_name}.{FIGURE_FORMAT}"
+def _get_figure_path(section_name: str, table_name: str, image_format: str) -> str:
+    return f"images/{section_name}_{table_name}.{image_format}"
 
 
 def _get_unique_id_for_description_table(section_name: str, table_name: str) -> str:
