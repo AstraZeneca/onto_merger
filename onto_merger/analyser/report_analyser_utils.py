@@ -107,7 +107,7 @@ def produce_summary_overview(
 def produce_summary_input(data_repo: DataRepository) -> NamedTable:
     summary = [
         {"metric": "Dataset",
-         "values": f'<a href="../../input" target="_blank">Link</a>'},
+         "values": '<a href="../../input" target="_blank">Link</a>'},
         {"metric": "Number of nodes", "values": len(data_repo.get(table_name=TABLE_NODES).dataframe)},
         {"metric": "Number of obsolete nodes", "values": len(data_repo.get(table_name=TABLE_NODES_OBSOLETE).dataframe)},
         {"metric": "Number of mappings", "values": len(data_repo.get(table_name=TABLE_MAPPINGS).dataframe)},
@@ -125,7 +125,7 @@ def produce_summary_output(data_repo: DataRepository) -> NamedTable:
     nb_unique_nodes = len(data_repo.get(table_name=TABLE_NODES_DOMAIN).dataframe)
     summary = [
         {"metric": "Dataset",
-         "values": f'<a href="../../output/domain_ontology" target="_blank">Link</a>'},
+         "values": '<a href="../../output/domain_ontology" target="_blank">Link</a>'},
         {"metric": "Number of unique nodes", "values": nb_unique_nodes},
         {"metric": "Number of merged nodes",
          "values": len(data_repo.get(table_name=TABLE_NODES_MERGED).dataframe)},

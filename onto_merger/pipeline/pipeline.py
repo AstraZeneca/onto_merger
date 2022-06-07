@@ -128,7 +128,7 @@ class Pipeline:
         errors = results_df["nb_failed_validations"].sum()
         if errors > 0:
             self.logger.error(f"The INPUT data validation found {errors} errors. Terminating process. "
-                              + f"Please resolve the errors, or force skipping errors in the config (see report "
+                              + "Please resolve the errors, or force skipping errors in the config (see report "
                               + f"'{self._data_manager.get_ge_data_docs_index_path_for_input()}').")
             if self._alignment_config.base_config.force_through_failed_validation is False:
                 raise Exception

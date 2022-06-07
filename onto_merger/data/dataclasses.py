@@ -169,6 +169,13 @@ class RuntimeData:
             end: str,
             elapsed: float,
     ):
+        """Initialise the RuntimeData dataclass.
+
+        :param task: The task name.
+        :param start: The task start date time string.
+        :param end: The task end date time string.
+        :param elapsed: The task elapsed seconds.
+        """
         self.task = task
         self.start = start
         self.end = end
@@ -198,7 +205,7 @@ class AlignmentStep:
             source: str,
             step_counter: int,
             count_unmapped_nodes: int,
-    ):
+    ) -> None:
         """Initialise the AlignmentStep dataclass.
 
         :param mapping_type_group: The mapping type group used
@@ -221,7 +228,11 @@ class AlignmentStep:
         self.end = ""
         self.elapsed = 0
 
-    def task_finished(self):
+    def task_finished(self) -> None:
+        """Stops the task runtime counter.
+
+        :return:
+        """
         end = datetime.now()
         self.end = format_datetime(date_time=end)
         self.elapsed = (end - self.start_date_time).total_seconds()
@@ -263,7 +274,11 @@ class ConnectivityStep:
         self.end = ""
         self.elapsed = 0
 
-    def task_finished(self):
+    def task_finished(self) -> None:
+        """Stops the task runtime counter.
+
+        :return:
+        """
         end = datetime.now()
         self.end = format_datetime(date_time=end)
         self.elapsed = (end - self.start_date_time).total_seconds()
@@ -272,6 +287,11 @@ class ConnectivityStep:
 def convert_runtime_steps_to_named_table(
         steps: List[RuntimeData],
 ) -> NamedTable:
+    """Converts the runtime data to a named table.
+
+    :param steps: The list of runtime step objects.
+    :return: The runtime data named table.
+    """
     return NamedTable(
         TABLE_PIPELINE_STEPS_REPORT,
         pd.DataFrame(
@@ -316,4 +336,9 @@ def convert_connectivity_steps_to_named_table(
 
 
 def format_datetime(date_time: datetime) -> str:
+    """Formats a date time to string.
+
+    :param date_time: The date time.
+    :return: The formatted date time as a string.
+    """
     return f"{date_time.strftime('%Y-%m-%d %H:%M:%S')}"

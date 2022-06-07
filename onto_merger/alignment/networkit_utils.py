@@ -73,7 +73,7 @@ class NetworkitGraph:
         :return: The network x graph.
         """
         graph = nk.Graph(len(node_id_to_index), weighted=False, directed=True)
-        with tqdm(total=len(edges), desc=f"Adding edges to Networkit graph") as progress_bar:
+        with tqdm(total=len(edges), desc="Adding edges to Networkit graph") as progress_bar:
             for _, row in edges.iterrows():
                 graph.addEdge(node_id_to_index[row[COLUMN_SOURCE_ID]], node_id_to_index[row[COLUMN_TARGET_ID]])
                 progress_bar.update(1)
@@ -83,7 +83,7 @@ class NetworkitGraph:
     def _produce_node_id_maps(node_ids: List[str]) -> (Dict[str, int], Dict[int, str]):
         node_id_to_index_map = dict()
         node_index_to_id_map = dict()
-        with tqdm(total=len(node_ids), desc=f"Producing node ID lookup maps") as progress_bar:
+        with tqdm(total=len(node_ids), desc="Producing node ID lookup maps") as progress_bar:
             for idx, node_id in enumerate(node_ids):
                 node_id_to_index_map[node_id] = idx
                 node_index_to_id_map[idx] = node_id

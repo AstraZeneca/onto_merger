@@ -107,7 +107,7 @@ class DataManager:
         return alignment_config
 
     # DIRECTORY STRUCTURE #
-    def _create_output_directory_structure(self):
+    def _create_output_directory_structure(self) -> None:
         """Produce the empty directory structure for the output files.."""
         directory_paths = [
             self.get_analysis_folder_path(),
@@ -120,7 +120,7 @@ class DataManager:
         for directory_path in directory_paths:
             Path(directory_path).mkdir(parents=True, exist_ok=True)
 
-    def _clear_output_directory(self):
+    def _clear_output_directory(self) -> None:
         """Delete the output folder and its contents."""
         output_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT)
         if os.path.exists(output_path):
@@ -181,6 +181,11 @@ class DataManager:
         ]
 
     def load_specified_tables(self, table_names: List[str]) -> List[NamedTable]:
+        """Load tables specified in the input.
+
+        :param table_names: The list of tables to load.
+        :return: The loaded named tables.
+        """
         return [
             NamedTable(
                 table_name,
@@ -194,6 +199,13 @@ class DataManager:
                                            section_name: str,
                                            table_name: str,
                                            rename_columns: dict = None) -> List[dict]:
+        """Load a CSV table as a list of dictionaries.
+
+        :param section_name: The name of the report section (prefix of the file).
+        :param table_name: The name of the report section (suffix of the file).
+        :param rename_columns: Column renaming dictionary.
+        :return: The CSV loaded as a list of dictionaries.
+        """
         # todo fix this hack
         df = self.load_analysis_report_table(section_name=section_name, table_name=table_name)
         if df is None:
@@ -209,6 +221,12 @@ class DataManager:
         ]
 
     def load_analysis_report_table(self, section_name: str, table_name: str) -> Union[DataFrame, None]:
+        """Load an analysis report table.
+
+        :param section_name: The name of the report section (prefix of the file).
+        :param table_name: The name of the report section (suffix of the file).
+        :return: The loaded table as a dataframe if the table exists, otherwise None.
+        """
         file_name = f"{section_name}_{table_name}.csv"
         logger.info(f"load_analysis_report_table {os.path.join(self.get_analysis_folder_path(), file_name)}")
         file_path = os.path.join(self.get_analysis_folder_path(), file_name)
@@ -223,14 +241,22 @@ class DataManager:
     def save_table(
             self, table: NamedTable, process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"
     ) -> None:
-        """Save a given Pandas dataframe as a CSV."""
+        """Save a given Pandas dataframe as a CSV.
+
+        :return:
+        """
         # only output tables are saved
         file_path = self.get_table_path(process_directory=process_directory, table_name=table.name)
         logger.info(f"Saving table '{f'{table.name}.csv'}' with {len(table.dataframe):,d} " + f"row(s) to {file_path}.")
         table.dataframe.to_csv(file_path, index=False)
 
     def save_tables(self, tables: List[NamedTable], process_directory: str = None) -> None:
-        """Save a list of named tables Pandas dataframe part as CSVs."""
+        """Save a list of named tables Pandas dataframe part as CSVs.
+
+        :param tables: The tables to be saved.
+        :param process_directory: The process directory where the tables are saved to.
+        :return:
+        """
         for table in tables:
             if not process_directory:
                 self.save_table(table=table)
@@ -240,6 +266,7 @@ class DataManager:
     def save_domain_ontology_tables(self, tables: List[NamedTable]) -> None:
         """Save the domain ontology files.
 
+        :param tables: The domain ontology named tables that we are saving.
         :return:
         """
         self.save_tables(
@@ -255,6 +282,15 @@ class DataManager:
                             analysed_table_name: str,
                             analysis_table_suffix: str,
                             index=False) -> None:
+        """Save an analysis table.
+
+        :param analysis_table: The analysis table we are saving.
+        :param dataset: The name of the analysed dataset (used for forming the file path).
+        :param analysed_table_name: The name of the analysis table (used for forming the file path).
+        :param analysis_table_suffix: The suffix of the file path (analysis type).
+        :param index: Save with index if True, otherwise save it without index.
+        :return:
+        """
         analysis_table.to_csv(
             os.path.join(
                 self.get_analysis_folder_path(),
@@ -267,6 +303,13 @@ class DataManager:
                                    dataset: str,
                                    tables: List[NamedTable],
                                    index=False) -> None:
+        """Save named analysis tables.
+
+        :param dataset: The name of the analysed dataset (used for forming the file path).
+        :param tables: The list of named tables we are saving.
+        :param index: Save with index if True, otherwise save it without index.
+        :return:
+        """
         for table in tables:
             table.dataframe.to_csv(
                 path_or_buf=os.path.join(
@@ -297,7 +340,12 @@ class DataManager:
             )
 
     def save_merged_ontology_report(self, content: str, template_search_path: str) -> str:
-        """Save the analysis report HTML content."""
+        """Save the analysis report HTML content.
+
+        :param content: The report content as a string.
+        :param template_search_path: The template path used to specify the report file path.
+        :return: The saved report file path.
+        """
         file_path = self.produce_analysis_report_path()
         with open(file_path, "w") as f:
             f.write(content)
@@ -305,7 +353,12 @@ class DataManager:
         return file_path
 
     # COPY & MOVE #
-    def _copy_analysis_images_and_report_assets(self, template_search_path: str):
+    def _copy_analysis_images_and_report_assets(self, template_search_path: str) -> None:
+        """Copy the images and analysis figures that are displayed in the HTML report.
+
+        :param template_search_path: The template path used to specify the report file path.
+        :return:
+        """
         # images  from assets
         images_folder_to_path = os.path.join(self._produce_analysis_report_folder_path(), "images")
 
@@ -414,30 +467,43 @@ class DataManager:
         )
 
     @staticmethod
-    def get_analysis_figure_file_name(dataset: str,
-                                      analysed_table_name: str,
-                                      analysis_table_suffix: str) -> str:
+    def _get_analysis_figure_file_name(dataset: str,
+                                       analysed_table_name: str,
+                                       analysis_table_suffix: str) -> str:
         return f"{dataset}_{analysed_table_name}_{analysis_table_suffix}"
 
     def get_analysis_figure_path(self,
                                  dataset: str,
                                  analysed_table_name: str,
                                  analysis_table_suffix: str) -> str:
+        """Produce the path for an analysis figure.
+
+        :param dataset:
+        :param analysed_table_name:
+        :param analysis_table_suffix:
+        :return:
+        """
         return os.path.join(
             self.get_analysis_folder_path(),
-            self.get_analysis_figure_file_name(
+            self._get_analysis_figure_file_name(
                 dataset=dataset,
                 analysed_table_name=analysed_table_name,
                 analysis_table_suffix=analysis_table_suffix
             )
         )
 
-    def _produce_analysis_report_folder_path(self):
-        """Produce the analysis report path."""
+    def _produce_analysis_report_folder_path(self) -> str:
+        """Produce the analysis report folder path.
+
+        :return: The analysis report folder path.
+        """
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
 
-    def produce_analysis_report_path(self):
-        """Produce the analysis report HTML path."""
+    def produce_analysis_report_path(self) -> str:
+        """Produce the analysis report HTML path.
+
+        :return: The report HTML path.
+        """
         return os.path.join(self._produce_analysis_report_folder_path(), "index.html")
 
     # TABLES #
@@ -446,7 +512,7 @@ class DataManager:
         """Merge a list of named tables (that must be the same type) into a single named table.
 
         :param tables: The list of named tables.
-        :return:
+        :return: The merged named table.
         """
         return NamedTable(
             tables[0].name,
@@ -455,7 +521,10 @@ class DataManager:
 
     @staticmethod
     def produce_empty_merge_table() -> NamedTable:
-        """Produce an empty named merge table."""
+        """Produce an empty named merge table.
+
+        :return: The merged named table.
+        """
         return NamedTable(
             name=TABLE_MERGES_WITH_META_DATA,
             dataframe=pd.DataFrame([], columns=list(SCHEMA_MERGE_TABLE_WITH_META_DATA)),
@@ -463,7 +532,10 @@ class DataManager:
 
     @staticmethod
     def produce_empty_hierarchy_table() -> NamedTable:
-        """Produce an empty hierarchy edge table."""
+        """Produce an empty hierarchy edge table.
+
+        :return: The empty hierarchy named table.
+        """
         return NamedTable(
             name=TABLE_EDGES_HIERARCHY,
             dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
@@ -503,6 +575,10 @@ class DataManager:
 
     @staticmethod
     def get_file_system_loader_path() -> str:
+        """Return the file system loader path according to the run environment (testing or live).
+
+        :return: The file system loader path
+        """
         if "tox.ini" in os.listdir("."):
             return "onto_merger/report"
         return "../../onto_merger/onto_merger/report"
