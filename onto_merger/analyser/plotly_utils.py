@@ -44,7 +44,7 @@ def produce_nodes_ns_freq_chart(
         .update_yaxes(autorange="reversed")
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path, include_plotlyjs=False)
+        fig.write_html(file_path, include_plotlyjs=False, full_html=False)
     else:
         fig.write_image(file_path)
 
@@ -106,7 +106,7 @@ def produce_status_stacked_bar_chart(
         .update_yaxes(visible=showaxis)
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path, include_plotlyjs=False)
+        fig.write_html(file_path, include_plotlyjs=False, full_html=False)
     else:
         fig.write_image(file_path)
 
@@ -182,7 +182,7 @@ def produce_mapping_type_freq_chart(
         .update_yaxes(autorange="reversed")
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path, include_plotlyjs=False)
+        fig.write_html(file_path, include_plotlyjs=False, full_html=False)
     else:
         fig.write_image(file_path)
 
@@ -279,7 +279,7 @@ def _produce_directed_edge_stacked_bar_chart(
     )
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path, include_plotlyjs=False)
+        fig.write_html(file_path, include_plotlyjs=False, full_html=False)
     else:
         fig.write_image(file_path)
 
@@ -304,7 +304,7 @@ def produce_edge_heatmap(
         .update_layout(plot_bgcolor=_COLOR_WHITE)
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path, include_plotlyjs=False)
+        fig.write_html(file_path, include_plotlyjs=False, full_html=False)
     else:
         fig.write_image(file_path)
 
@@ -345,7 +345,7 @@ def produce_gantt_chart(
         .update_yaxes(autorange="reversed")
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path, include_plotlyjs=False)
+        fig.write_html(file_path, include_plotlyjs=False, full_html=False)
     else:
         fig.write_image(file_path)
 
@@ -374,7 +374,7 @@ def produce_vertical_bar_chart_stacked(
         .update_xaxes({"tickmode": "linear"})
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path, include_plotlyjs=False)
+        fig.write_html(file_path, include_plotlyjs=False, full_html=False)
     else:
         fig.write_image(file_path)
 
@@ -401,7 +401,7 @@ def produce_vertical_bar_chart_cluster_size_bins(
         .update_layout(plot_bgcolor=_COLOR_WHITE)
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path, include_plotlyjs=False)
+        fig.write_html(file_path, include_plotlyjs=False, full_html=False)
     else:
         fig.write_image(file_path)
 
