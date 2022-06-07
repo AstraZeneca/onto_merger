@@ -597,7 +597,8 @@ def _produce_connectivity_edge_subsection(section_name: str, data_manager: DataM
                                            table_name="edges_hierarchy_status",
                                            image_format=data_manager.config.image_format),
             "fig_child_parent": _get_figure_path(section_name=section_name,
-                                                 table_name="edges_hierarchy_child_parent"),
+                                                 table_name="edges_hierarchy_child_parent",
+                                                 image_format=data_manager.config.image_format),
             "path_overview_tables": available_path_overview_tables
         },
         TEMPLATE: "subsection_content/connectivity-edge-analysis.html",
