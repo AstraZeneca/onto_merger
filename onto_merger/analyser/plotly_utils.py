@@ -420,4 +420,3 @@ def _format_percentage_column_to_decimal_places(
         axis=1,
     )
     return analysis_table
-
