@@ -54,7 +54,7 @@ def produce_nodes_ns_freq_chart(
         .update_yaxes(autorange="reversed")
 
     if file_path.endswith(".html"):
-        fig.write_html(file_path)
+        fig.write_html(file_path, include_plotlyjs=False)
     else:
         fig.write_image(file_path)
 
