@@ -98,14 +98,16 @@ class DataManager:
         :param config_json: The alignment configuration as a dictionary.
         :return: The AlignmentConfig dataclass.
         """
+        image_format = "png"
+        if "image_format" in config_json:
+            image_format = config_json.get("image_format")
         mapping_config: dict = config_json["mappings"]
         alignment_config = AlignmentConfig(
             base_config=AlignmentConfigBase.from_dict(config_json),
             mapping_type_groups=AlignmentConfigMappingTypeGroups.from_dict(mapping_config["type_groups"]),
             as_dict=config_json,
+            image_format=image_format
         )
-        if "image_format" in config_json:
-            alignment_config.image_format = config_json["image_format"],
         return alignment_config
 
     # DIRECTORY STRUCTURE #
