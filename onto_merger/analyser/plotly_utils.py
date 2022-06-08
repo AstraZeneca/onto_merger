@@ -29,9 +29,6 @@ def produce_nodes_ns_freq_chart(
     :param file_path: The path to save the figure.
     :return:
     """
-    if file_path.endswith(".html"):
-        return
-
     fig = px.bar(
         _format_percentage_column_to_decimal_places(
             analysis_table=analysis_table,
@@ -65,9 +62,6 @@ def produce_status_stacked_bar_chart(
     :param labels: If given it will rename the axis & legend labels.
     :return:
     """
-    if file_path.endswith(".html"):
-        return
-
     # adjust setting for 1 vs multiple bars
     if is_one_bar is True:
         showaxis = False
@@ -121,10 +115,7 @@ def produce_status_stacked_bar_chart_edge(
     :param file_path: The path to save the figure.
     :return:
     """
-    if file_path.endswith(".html"):
-        return
-
-        # produce image
+    # produce image
     fig = px.bar(
         analysis_table,
         y="category",
@@ -167,9 +158,6 @@ def produce_mapping_type_freq_chart(
     :param file_path: The path to save the figure.
     :return:
     """
-    if file_path.endswith(".html"):
-        return
-
     fig = px.bar(
         _format_percentage_column_to_decimal_places(
             analysis_table=analysis_table,
@@ -243,9 +231,6 @@ def _produce_directed_edge_stacked_bar_chart(
         label_replacement: dict,
         y: str, x: str, text: str, color: str,
 ) -> None:
-    if file_path.endswith(".html"):
-        return
-
     data = _format_percentage_column_to_decimal_places(
         analysis_table=analysis_table,
         column_name=COLUMN_FREQ,
@@ -293,9 +278,6 @@ def produce_edge_heatmap(
     :param file_path: The path to save the figure.
     :return:
     """
-    if file_path.endswith(".html"):
-        return
-
     data = analysis_table.copy()
     data = data[list(data.columns)].replace({'0': np.nan, 0: np.nan})
     fig = px.imshow(
@@ -319,9 +301,6 @@ def produce_gantt_chart(
     :param file_path: The path to save the figure.
     :return:
     """
-    if file_path.endswith(".html"):
-        return
-
     fig = px.timeline(
         analysis_table,
         x_start="start",
@@ -360,9 +339,6 @@ def produce_vertical_bar_chart_stacked(
     :param file_path: The path to save the figure.
     :return:
     """
-    if file_path.endswith(".html"):
-        return
-
     fig = px.bar(
         analysis_table,
         x="step_name",
@@ -389,9 +365,6 @@ def produce_vertical_bar_chart_cluster_size_bins(
     :param file_path: The path to save the figure.
     :return:
     """
-    if file_path.endswith(".html"):
-        return
-
     fig = px.bar(
         analysis_table,
         x="cluster_size",
