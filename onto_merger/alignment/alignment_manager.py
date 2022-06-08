@@ -1,25 +1,27 @@
 """Alignment process runner and helper methods."""
 
-import dataclasses
 from typing import List, Tuple
 
 import pandas as pd
 from pandas import DataFrame
 
 from onto_merger.alignment import mapping_utils, merge_utils
-from onto_merger.analyser import analysis_util
+from onto_merger.analyser import analysis_utils
 from onto_merger.data.constants import (
+    COLUMN_MAPPING_TYPE_GROUP,
     COLUMN_NAMESPACE,
     COLUMN_PROVENANCE,
     COLUMN_RELATION,
+    COLUMN_SOURCE_ID_ALIGNED_TO,
+    COLUMN_STEP_COUNTER,
     MAPPING_TYPE_GROUP_EQV,
     MAPPING_TYPE_GROUP_XREF,
     ONTO_MERGER,
     RELATION_MERGE,
-    SCHEMA_ALIGNMENT_STEPS_TABLE,
     SCHEMA_HIERARCHY_EDGE_TABLE,
-    TABLE_ALIGNMENT_STEPS_REPORT,
+    SCHEMA_MERGE_TABLE_WITH_META_DATA,
     TABLE_MAPPINGS,
+    TABLE_MAPPINGS_FOR_INPUT_NODES,
     TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
     TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES_WITH_META_DATA,
@@ -32,6 +34,7 @@ from onto_merger.data.dataclasses import (
     AlignmentStep,
     DataRepository,
     NamedTable,
+    convert_alignment_steps_to_named_table,
 )
 from onto_merger.logger.log import get_logger
 
@@ -42,10 +45,10 @@ class AlignmentManager:
     """Alignment process pipeline."""
 
     def __init__(
-        self,
-        alignment_config: AlignmentConfig,
-        data_repo: DataRepository,
-        data_manager: DataManager,
+            self,
+            alignment_config: AlignmentConfig,
+            data_repo: DataRepository,
+            data_manager: DataManager,
     ):
         """Initialise the AlignmentManager class.
 
@@ -74,7 +77,7 @@ class AlignmentManager:
         """
         # prepare for alignment
         self._preprocess_mappings()
-        source_alignment_order = produce_source_alignment_priority_order(
+        source_alignment_order = _produce_source_alignment_priority_order(
             seed_ontology_name=self._alignment_config.base_config.seed_ontology_name,
             nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
         )
@@ -85,6 +88,7 @@ class AlignmentManager:
             sources_to_align=source_alignment_order,
             mapping_type_group_name=MAPPING_TYPE_GROUP_EQV,
             mapping_types=self._alignment_config.mapping_type_groups.equivalence,
+            start_step=0,
         )
 
         # (2) use the weaker relations: database reference
@@ -92,7 +96,18 @@ class AlignmentManager:
             sources_to_align=source_alignment_order,
             mapping_type_group_name=MAPPING_TYPE_GROUP_XREF,
             mapping_types=self._alignment_config.mapping_type_groups.database_reference,
+            start_step=len(source_alignment_order)
         )
+
+        # remove self merges
+        all_merges = self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA).dataframe
+        filtered_merges = pd.concat([
+            all_merges,
+            self._data_repo_output.get("SEED_MERGES").dataframe]).drop_duplicates(keep=False)
+        self._data_repo_output.update(
+            table=NamedTable(TABLE_MERGES_WITH_META_DATA, filtered_merges)
+        )
+        logger.info(f"Filtered out seed self merges ({len(all_merges):,d} -> {len(filtered_merges):,d})")
 
         # save meta data
         self._data_repo_output.update(
@@ -102,10 +117,11 @@ class AlignmentManager:
         return self._data_repo_output, source_alignment_order
 
     def _align_sources(
-        self,
-        sources_to_align: List[str],
-        mapping_type_group_name: str,
-        mapping_types: List[str],
+            self,
+            sources_to_align: List[str],
+            mapping_type_group_name: str,
+            mapping_types: List[str],
+            start_step: int,
     ) -> None:
         """Run the alignment for each source according to the priority order, for a given mapping type group.
 
@@ -118,10 +134,10 @@ class AlignmentManager:
         :return:
         """
         for source_id in sources_to_align:
-            step_counter = sources_to_align.index(source_id) + 1
+            step_counter = start_step + sources_to_align.index(source_id) + 1
             logger.info(
                 f"* * * * * SOURCE: {source_id} | STEP: {step_counter} of "
-                + f"{len(sources_to_align)} | MAPPING: {mapping_type_group_name} "
+                + f"{len(sources_to_align) * 2} | MAPPING: {mapping_type_group_name} "
                 + "* * * * *"
             )
             (merges_for_source, alignment_step) = self._align_nodes_to_source(
@@ -133,11 +149,11 @@ class AlignmentManager:
             self._store_results_from_alignment_step(merges_for_source=merges_for_source, alignment_step=alignment_step)
 
     def _align_nodes_to_source(
-        self,
-        source_id: str,
-        step_counter: int,
-        mapping_type_group_name: str,
-        mapping_types: List[str],
+            self,
+            source_id: str,
+            step_counter: int,
+            mapping_type_group_name: str,
+            mapping_types: List[str],
     ) -> Tuple[NamedTable, AlignmentStep]:
         """Perform an alignment step to a source.
 
@@ -147,7 +163,7 @@ class AlignmentManager:
         :param mapping_types: The mapping types in the given type group.
         :return: The merge named table for the step, and the step meta data dataclass.
         """
-        unmapped_nodes = mapping_utils.produce_table_unmapped_nodes(
+        unmapped_nodes = merge_utils.produce_table_unmapped_nodes(
             nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
             merges=self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA).dataframe,
         )
@@ -155,7 +171,7 @@ class AlignmentManager:
         # (1) get mappings for NS
         mappings_for_ns = mapping_utils.get_mappings_for_namespace(
             namespace=source_id,
-            edges=self._data_repo_output.get(TABLE_MAPPINGS_UPDATED).dataframe,
+            edges=self._data_repo_output.get(TABLE_MAPPINGS_FOR_INPUT_NODES).dataframe,
         )
         alignment_step = AlignmentStep(
             mapping_type_group=mapping_type_group_name,
@@ -229,14 +245,6 @@ class AlignmentManager:
             permitted_mapping_relations=self._alignment_config.mapping_type_groups.equivalence,
             mappings=mappings_obsolete_to_current_node_id,
         )
-        mappings_obsolete_to_current_node_id_merge_strength[COLUMN_RELATION] = RELATION_MERGE
-        mappings_obsolete_to_current_node_id_merge_strength[COLUMN_PROVENANCE] = ONTO_MERGER
-        self._data_repo_output.update(
-            table=NamedTable(
-                name=TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
-                dataframe=mappings_obsolete_to_current_node_id_merge_strength[SCHEMA_HIERARCHY_EDGE_TABLE],
-            )
-        )
 
         # get the mappings without the internal code reassignment and update
         # any obsolete node IDs
@@ -245,6 +253,40 @@ class AlignmentManager:
             mappings_obsolete_to_current_node_id=mappings_obsolete_to_current_node_id_merge_strength,
         )
         self._data_repo_output.update(table=NamedTable(name=TABLE_MAPPINGS_UPDATED, dataframe=mappings_updated))
+
+        # mappings that cover input nodes
+        mappings_for_input_nodes = mapping_utils.filter_mappings_for_input_node_set(
+            input_nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
+            mappings=mappings_updated,
+        )
+        self._data_repo_output.update(
+            table=NamedTable(name=TABLE_MAPPINGS_FOR_INPUT_NODES, dataframe=mappings_for_input_nodes)
+        )
+
+        #
+        mappings_obsolete_to_current_node_id_applicable = mapping_utils.get_nodes_with_updated_node_ids(
+            nodes=self._data_repo_input.get(TABLE_NODES).dataframe,
+            mappings_obsolete_to_current_node_id=mappings_obsolete_to_current_node_id_merge_strength,
+        )
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_RELATION] = RELATION_MERGE
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_PROVENANCE] = ONTO_MERGER
+        self._data_repo_output.update(
+            table=NamedTable(
+                name=TABLE_MAPPINGS_OBSOLETE_TO_CURRENT,
+                dataframe=mappings_obsolete_to_current_node_id_applicable[SCHEMA_HIERARCHY_EDGE_TABLE],
+            )
+        )
+
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_STEP_COUNTER] = 0
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_SOURCE_ID_ALIGNED_TO] = "INTERNAL"
+        mappings_obsolete_to_current_node_id_applicable[COLUMN_MAPPING_TYPE_GROUP] = MAPPING_TYPE_GROUP_EQV
+        self._data_repo_output.update(
+            table=DataManager.merge_tables_of_same_type(
+                tables=[NamedTable(TABLE_MERGES_WITH_META_DATA,
+                                   mappings_obsolete_to_current_node_id_applicable[SCHEMA_MERGE_TABLE_WITH_META_DATA]),
+                        self._data_repo_output.get(TABLE_MERGES_WITH_META_DATA)]
+            )
+        )
 
         logger.info("Finished pre-processing mappings.")
 
@@ -265,17 +307,20 @@ class AlignmentManager:
             nodes_obsolete=self._data_repo_input.get(TABLE_NODES_OBSOLETE).dataframe,
         )
         self._data_repo_output.update(table=self_merges_for_seed_nodes)
+        self._data_repo_output.update(table=NamedTable("SEED_MERGES", self_merges_for_seed_nodes.dataframe))
 
         # record start step meta data
+        step = AlignmentStep(
+            mapping_type_group=mapping_type_group_name,
+            source="INITIALISATION",
+            step_counter=0,
+            count_unmapped_nodes=(len(self._data_repo_input.get(TABLE_NODES).dataframe)),
+        )
+        step.count_mappings = len(self_merges_for_seed_nodes.dataframe)
+        step.count_merged_nodes = step.count_mappings
+        step.task_finished()
         self._alignment_steps.append(
-            AlignmentStep(
-                mapping_type_group=mapping_type_group_name,
-                source="START",
-                step_counter=0,
-                count_unmapped_nodes=(
-                    len(self._data_repo_input.get(TABLE_NODES).dataframe) - len(self_merges_for_seed_nodes.dataframe)
-                ),
-            )
+            step
         )
 
     def _store_results_from_alignment_step(self, merges_for_source: NamedTable, alignment_step: AlignmentStep) -> None:
@@ -285,6 +330,7 @@ class AlignmentManager:
         :param alignment_step: The alignment step meta data.
         :return:
         """
+        alignment_step.task_finished()
         self._alignment_steps.append(alignment_step)
         self._data_repo_output.update(
             table=DataManager.merge_tables_of_same_type(
@@ -293,7 +339,7 @@ class AlignmentManager:
         )
 
 
-def produce_source_alignment_priority_order(seed_ontology_name: str, nodes: DataFrame) -> List[str]:
+def _produce_source_alignment_priority_order(seed_ontology_name: str, nodes: DataFrame) -> List[str]:
     """Produce the alignment process source priority order.
 
     The alignment order is produced by putting the seed ontology as first (this
@@ -306,25 +352,8 @@ def produce_source_alignment_priority_order(seed_ontology_name: str, nodes: Data
     """
     priority_order = [seed_ontology_name]
     ontology_namespaces = list(
-        analysis_util.produce_table_node_namespace_distribution(node_table=nodes)[COLUMN_NAMESPACE]
+        analysis_utils.produce_table_node_namespace_distribution(node_table=nodes)[COLUMN_NAMESPACE]
     )
     ontology_namespaces.remove(seed_ontology_name)
     priority_order.extend(ontology_namespaces)
     return priority_order
-
-
-def convert_alignment_steps_to_named_table(
-    alignment_steps: List[AlignmentStep],
-) -> NamedTable:
-    """Convert the list of AlignmentStep dataclasses to a named table.
-
-    :param alignment_steps: The list of AlignmentStep dataclasses.
-    :return: The AlignmentStep report dataframe wrapped as a named table.
-    """
-    return NamedTable(
-        TABLE_ALIGNMENT_STEPS_REPORT,
-        pd.DataFrame(
-            [dataclasses.astuple(alignment_step) for alignment_step in alignment_steps],
-            columns=SCHEMA_ALIGNMENT_STEPS_TABLE,
-        ),
-    )

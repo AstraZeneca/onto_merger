@@ -1,6 +1,7 @@
 {
   "domain_node_type": "Disease",
   "seed_ontology_name": "MONDO",
+  "image_format": "html",
   "mappings": {
     "type_groups": {
       "equivalence": [

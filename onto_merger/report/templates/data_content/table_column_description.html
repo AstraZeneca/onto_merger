@@ -1,0 +1,22 @@
+<table class="table table-hover summary table-striped">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Column</b></td>
+            <td style="width:80%"><b>Description</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if rows | length > 0 %}
+      {% for row in rows %}
+        <tr>
+          <td style="font-style: italic;">{{ row['column'] }}</td>
+          <td>{{ row['description'] }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="2">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

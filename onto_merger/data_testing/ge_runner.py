@@ -2,11 +2,16 @@
 import logging
 import os
 import sys
-from typing import List
+from typing import List, Union
 
 from great_expectations.core import ExpectationSuite
+from pandas import DataFrame
 from ruamel import yaml
 
+from onto_merger.analyser.report_analyser_utils import (
+    produce_ge_validation_analysis_as_table,
+)
+from onto_merger.data.data_manager import DataManager
 from onto_merger.data.dataclasses import AlignmentConfig, NamedTable
 from onto_merger.data_testing.ge_expectation_helper import (
     produce_expectations_for_table,
@@ -35,18 +40,20 @@ class GERunner:
 
     checkpoint_name = "first_checkpoint"
 
-    def __init__(self, alignment_config: AlignmentConfig, ge_base_directory: str) -> None:
+    def __init__(self, alignment_config: AlignmentConfig, ge_base_directory: str, data_manager: DataManager) -> None:
         """Initialise the class.
 
         :param alignment_config: The alignment process configuration dataclass.
-        :param ge_base_directory: The base directory where the data tests outputs will
+        :param ge_base_directory: The base directory of the validation framework.
+        :param data_manager: The data manager instance.
         be stored.
         """
         self._alignment_config = alignment_config
         self._ge_base_directory = ge_base_directory
         self._ge_context = produce_ge_context(ge_base_directory=self._ge_base_directory)
+        self._data_manager = data_manager
 
-    def run_ge_tests(self, named_tables: List[NamedTable], data_origin: str) -> None:
+    def run_ge_tests(self, named_tables: List[NamedTable], data_origin: str) -> Union[DataFrame, None]:
         """Run data tests for a list of named tables.
 
         :param data_origin: The origin of the tested data (INPUT|INTERMEDIATE|DOMAIN_ONTOLOGY).
@@ -57,7 +64,7 @@ class GERunner:
         block_print()
         if len(named_tables) == 0:
             enable_print()
-            return
+            return None
         logger.info("Started Great Expectations data tests...")
 
         # for table, i.e. nodes edges and mappings
@@ -74,9 +81,13 @@ class GERunner:
         # produce the data docs
         self._ge_context.build_data_docs()
 
+        # aggregate results
+        results_df = produce_ge_validation_analysis_as_table(data_manager=self._data_manager)
+
         # done
         logger.info("Finished running Great Expectations data tests.")
         enable_print()
+        return results_df
 
     def _configure_ge_context_data_sources(self, loaded_tables: List[NamedTable], data_origin: str) -> None:
         """Update the data test context with the tables that are being tested.

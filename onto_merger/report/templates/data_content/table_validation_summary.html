@@ -1,0 +1,38 @@
+<div class="table-full-row">
+<table class="table table-hover third_party_data">
+    <thead>
+        <tr>
+            <td style="width:10%;text-align:center"><b>Status</b></td>
+            <td style="width:15%"><b>Dataset</b></td>
+            <td style="width:15%"><b>Total tables</b></td>
+            <td style="width:15%"><b>Total rows</b></td>
+            <td style="width:15%"><b>Total file size</b></td>
+            <td style="width:15%"><b>Total data tests</b></td>
+            <td style="width:15%"><b>Test success (%)</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if subsection_data['rows'] | length > 0 %}
+      {% for row in subsection_data['rows'] %}
+        <tr>
+            {% if row['success_status'] is true %}
+                <td style="text-align:center"><img class="status_check" src="images/check.png" alt="Status check passed"></td>
+            {% else %}
+                <td style="text-align:center"><img class="status_check" src="images/delete.png" alt="Status check failed"></td>
+            {% endif %}
+            <td><code>{{ row['directory'] }}</code></td>
+            <td>{{ row['tables'] }}</td>
+            <td>{{ row['rows'] }}</td>
+            <td>{{ row['file_size'] }}</td>
+            <td>{{ row['nb_validations'] }}</td>
+            <td>{{ row['success_ratio'] }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="7">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+</div>

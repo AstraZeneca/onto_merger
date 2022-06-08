@@ -11,8 +11,8 @@ from onto_merger.data.constants import (
     COLUMN_SOURCE_ID,
     COLUMN_TARGET_ID,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
+    SCHEMA_MERGE_TABLE,
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
-    TABLE_MERGES,
     TABLE_MERGES_WITH_META_DATA,
     TABLE_NODES_MERGED,
 )
@@ -32,7 +32,7 @@ def test_aggregate_merges(example_merges):
 
     alignment_priority_order = ["C", "E", "B", "D", "A"]
 
-    actual = merge_utils.produce_named_table_aggregate_merges(
+    actual = merge_utils._produce_named_table_aggregated_merges(
         merges=example_merges, alignment_priority_order=alignment_priority_order
     ).dataframe
 
@@ -48,7 +48,7 @@ def test_get_canonical_node_for_merge_cluster():
     canonical_node = "C:1"
     input_cluster = ["A:1", "B:1", canonical_node]
     input_alignment_priority_order = ["C", "B", "A"]
-    actual = merge_utils.get_canonical_node_for_merge_cluster(
+    actual = merge_utils._get_canonical_node_for_merge_cluster(
         merge_cluster=input_cluster,
         alignment_priority_order=input_alignment_priority_order,
     )
@@ -56,7 +56,7 @@ def test_get_canonical_node_for_merge_cluster():
     assert actual == canonical_node
 
     # canonical cannot be found
-    actual_no_canonical = merge_utils.get_canonical_node_for_merge_cluster(
+    actual_no_canonical = merge_utils._get_canonical_node_for_merge_cluster(
         merge_cluster=input_cluster,
         alignment_priority_order=["X"],
     )
@@ -65,7 +65,7 @@ def test_get_canonical_node_for_merge_cluster():
 
 def test_produce_named_table_merged_nodes(example_merges):
     expected = pd.DataFrame(["A:1", "B:1", "D:2"], columns=[[COLUMN_DEFAULT_ID]])
-    actual = merge_utils.produce_named_table_merged_nodes(merges=example_merges)
+    actual = merge_utils._produce_named_table_merged_nodes(merges_aggregated=example_merges)
     assert isinstance(actual, NamedTable)
     assert actual.name == TABLE_NODES_MERGED
     assert isinstance(actual.dataframe, DataFrame)
@@ -94,3 +94,22 @@ def test_produce_named_table_merges_with_alignment_meta_data(example_merges):
     assert actual.name == TABLE_MERGES_WITH_META_DATA
     assert isinstance(actual.dataframe, DataFrame)
     assert np.array_equal(actual.dataframe.values, expected.values) is True
+
+
+def test_produce_table_unmapped_nodes():
+    # input
+    input_merges = pd.DataFrame(
+        [("FOOBAR:1234", "MONDO:0000123"), ("FIZZBANG:0000001", "MONDO:0000456")],
+        columns=SCHEMA_MERGE_TABLE,
+    )
+    input_nodes = pd.DataFrame(["FIZZBANG:0000001", "SNOMED:001", "FOOBAR:1234"], columns=[COLUMN_DEFAULT_ID])
+
+    # run
+    actual = merge_utils.produce_table_unmapped_nodes(nodes=input_nodes, merges=input_merges)
+
+    # expected
+    expected = pd.DataFrame(["SNOMED:001"], columns=[COLUMN_DEFAULT_ID])
+
+    # evaluate
+    assert isinstance(actual, DataFrame)
+    assert np.array_equal(actual.values, expected.values) is True

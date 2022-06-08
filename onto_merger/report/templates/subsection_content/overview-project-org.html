@@ -1,0 +1,27 @@
+<div class="col-sm-6">
+    <p class="h4 table-title">Folders</p>
+    {% with rows=subsection_data['summary_table'] %}
+        {% include 'templates/data_content/table_summary_two_col.html' %}
+    {% endwith %}
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
+    {% include 'templates/subsection_content/horizontal-rule.html' %}
+
+    <p>This table provides links to the main folders used or produced by the pipeline.</p>
+    <ul>
+        <li>The <b>Input data</b> folder contains pipeline input and configuration.</li>
+        <li>The <b>Domain ontology</b> folder contains the result of the pipeline process.</li>
+        <li>The <b>Analysis data & plots</b> folders provide the content of this report and some
+        helpful files for debugging the process.</li>
+        <li>The <b>Data profiling reports</b> folder contains the HTML report files produced by Pandas profiling.</li>
+        <li>The <b>Data test configurations & report</b> folders contain the validation setting JSON-s and the
+            resulting HTML report.</li>
+        <li>The <b>Dropped mappings</b> folder contain the mapping that could not be used during the
+            alignment process (due to multiplicity issues).</li>
+        <li>The <b>Pipeline logs</b> folder contain the log files produced by OntoMerger.</li>
+    </ul>
+    <p>For more details about the project folder organisation and content, please
+        <a href="https://ontomerger.readthedocs.io/en/latest/notes/data.html#project-folder-organisation">
+        read the docs</a>.</p>
+</div>

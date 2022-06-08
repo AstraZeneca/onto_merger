@@ -1,0 +1,16 @@
+<div class="overview summary">
+    {% include 'templates/subsection_content/node-status.html' %}
+
+    <hr class="panel-separator">
+    <h4>Merged & Unmapped</h4>
+    <div class="col-sm-6">
+        {% with rows=subsection_data['merged_nodes_table'], title='Merged' %}
+            {% include 'templates/data_content/table_frequency.html' %}
+        {% endwith %}
+    </div>
+    <div class="col-sm-6">
+        {% with rows=subsection_data['unmapped_nodes_table'], title='Unmapped' %}
+            {% include 'templates/data_content/table_frequency.html' %}
+        {% endwith %}
+    </div>
+</div>

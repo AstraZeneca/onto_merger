@@ -6,6 +6,7 @@ import pytest
 
 from onto_merger.alignment.alignment_manager import AlignmentManager
 from onto_merger.data.constants import (
+    DIRECTORY_ANALYSIS,
     DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
@@ -35,11 +36,11 @@ def test_align_nodes(
     assert actual_outputs == {
         DIRECTORY_REPORT,
         DIRECTORY_INTERMEDIATE,
-        DIRECTORY_DOMAIN_ONTOLOGY
+        DIRECTORY_DOMAIN_ONTOLOGY,
     }
     assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_DOMAIN_ONTOLOGY)) == []
     assert set(os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_INTERMEDIATE))) \
-           == {DIRECTORY_DATA_TESTS, DIRECTORY_DROPPED_MAPPINGS}
+           == {DIRECTORY_DATA_TESTS, DIRECTORY_DROPPED_MAPPINGS, DIRECTORY_ANALYSIS}
     assert os.listdir(os.path.join(TEST_FOLDER_OUTPUT_PATH, DIRECTORY_INTERMEDIATE, DIRECTORY_DROPPED_MAPPINGS)) \
            == []
 

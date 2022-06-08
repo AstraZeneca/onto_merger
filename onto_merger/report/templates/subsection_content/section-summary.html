@@ -1,0 +1,12 @@
+<div class="col-sm-6">
+    <p class="h4 table-title">Statistics</p>
+    {% with rows=subsection_data['summary_table'] %}
+        {% include 'templates/data_content/table_summary_two_col.html' %}
+    {% endwith %}
+</div>
+<div class="col-sm-6">
+    <p class="h4 table-title">About</p>
+    {% include 'templates/subsection_content/horizontal-rule.html' %}
+    {% set path = 'data/section_summary_descriptions/' + link_title + '_summary_about.html' %}
+    {% include path %}
+</div>

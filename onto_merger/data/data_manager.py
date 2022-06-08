@@ -5,14 +5,14 @@ import os
 import shutil
 import typing
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 import pandas as pd
 from pandas import DataFrame
 
+from onto_merger.alignment import merge_utils
 from onto_merger.data.constants import (
-    COLUMN_PROVENANCE,
-    COLUMN_RELATION,
+    DIRECTORY_ANALYSIS,
     DIRECTORY_DATA_TESTS,
     DIRECTORY_DOMAIN_ONTOLOGY,
     DIRECTORY_DROPPED_MAPPINGS,
@@ -25,25 +25,22 @@ from onto_merger.data.constants import (
     DOMAIN_SUFFIX,
     FILE_NAME_CONFIG_JSON,
     FILE_NAME_LOG,
-    ONTO_MERGER,
-    RELATION_MERGE,
     SCHEMA_EDGE_SOURCE_TO_TARGET_IDS,
     SCHEMA_HIERARCHY_EDGE_TABLE,
     SCHEMA_MAPPING_TABLE,
     SCHEMA_MERGE_TABLE_WITH_META_DATA,
-    SCHEMA_NODE_ID_LIST_TABLE,
     TABLE_EDGES_HIERARCHY,
     TABLE_EDGES_HIERARCHY_DOMAIN,
     TABLE_EDGES_HIERARCHY_POST,
     TABLE_MAPPINGS_DOMAIN,
     TABLE_MAPPINGS_UPDATED,
     TABLE_MERGES_AGGREGATED,
-    TABLE_MERGES_DOMAIN,
     TABLE_MERGES_WITH_META_DATA,
-    TABLE_NAME_TO_TABLE_SCHEMA_MAP,
     TABLE_NODES,
-    TABLE_NODES_DOMAIN,
+    TABLE_NODES_MERGED,
     TABLES_INPUT,
+    TABLES_INTERMEDIATE,
+    TABLES_OUTPUT,
 )
 from onto_merger.data.dataclasses import (
     AlignmentConfig,
@@ -58,7 +55,7 @@ logger = get_logger(__name__)
 
 
 class DataManager:
-    """Class to provide methods for performing file operations: loading and saving data frames, JSONs, and deleting files.
+    """Performs file operations: loading and saving data frames, JSONs, and deleting files.
 
     Note: in the future this can be extend to split between Pandas and Spark operations.
     """
@@ -72,7 +69,9 @@ class DataManager:
         if clear_output_directory is True:
             self._clear_output_directory()
         self._create_output_directory_structure()
+        self.config = self.load_alignment_config()
 
+    # CONFIG #
     def load_alignment_config(self) -> AlignmentConfig:
         """Parse the alignment configuration file into an AlignmentConfig dataclass.
 
@@ -99,14 +98,39 @@ class DataManager:
         :param config_json: The alignment configuration as a dictionary.
         :return: The AlignmentConfig dataclass.
         """
+        image_format = "html"
+        if "image_format" in config_json:
+            image_format = config_json.get("image_format")
         mapping_config: dict = config_json["mappings"]
         alignment_config = AlignmentConfig(
             base_config=AlignmentConfigBase.from_dict(config_json),
             mapping_type_groups=AlignmentConfigMappingTypeGroups.from_dict(mapping_config["type_groups"]),
             as_dict=config_json,
+            image_format=image_format
         )
         return alignment_config
 
+    # DIRECTORY STRUCTURE #
+    def _create_output_directory_structure(self) -> None:
+        """Produce the empty directory structure for the output files.."""
+        directory_paths = [
+            self.get_analysis_folder_path(),
+            self._get_profiled_report_directory_path(),
+            self.get_data_tests_path(),
+            self.get_dropped_mappings_path(),
+            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS),
+            self.get_domain_ontology_folder_path(),
+        ]
+        for directory_path in directory_paths:
+            Path(directory_path).mkdir(parents=True, exist_ok=True)
+
+    def _clear_output_directory(self) -> None:
+        """Delete the output folder and its contents."""
+        output_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT)
+        if os.path.exists(output_path):
+            shutil.rmtree(output_path, ignore_errors=True)
+
+    # LOADING #
     def load_table(self, table_name: str, process_directory: str) -> DataFrame:
         """Load a table as a data frame.
 
@@ -132,9 +156,323 @@ class DataManager:
             for table_name in TABLES_INPUT
         ]
 
+    def load_output_tables(self) -> List[NamedTable]:
+        """Load the output csv-s into named tables.
+
+        :return: The output named tables.
+        """
+        return [
+            NamedTable(
+                f"{table_name}{DOMAIN_SUFFIX}",
+                self.load_table(table_name=table_name,
+                                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}"),
+            )
+            for table_name in TABLES_OUTPUT
+        ]
+
+    def load_intermediate_tables(self) -> List[NamedTable]:
+        """Load the intermediate csv-s into named tables.
+
+        :return: The intermediate named tables.
+        """
+        return [
+            NamedTable(
+                table_name,
+                self.load_table(table_name=table_name,
+                                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"),
+            )
+            for table_name in TABLES_INTERMEDIATE
+        ]
+
+    def load_specified_tables(self, table_names: List[str]) -> List[NamedTable]:
+        """Load tables specified in the input.
+
+        :param table_names: The list of tables to load.
+        :return: The loaded named tables.
+        """
+        return [
+            NamedTable(
+                table_name,
+                self.load_table(table_name=table_name,
+                                process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"),
+            )
+            for table_name in table_names
+        ]
+
+    def load_analysis_report_table_as_dict(self,
+                                           section_name: str,
+                                           table_name: str,
+                                           rename_columns: dict = None) -> List[dict]:
+        """Load a CSV table as a list of dictionaries.
+
+        :param section_name: The name of the report section (prefix of the file).
+        :param table_name: The name of the report section (suffix of the file).
+        :param rename_columns: Column renaming dictionary.
+        :return: The CSV loaded as a list of dictionaries.
+        """
+        # todo fix this hack
+        df = self.load_analysis_report_table(section_name=section_name, table_name=table_name)
+        if df is None:
+            return []
+        if rename_columns is not None:
+            df.rename(columns=rename_columns, inplace=True)
+        return [
+            {
+                col: row[col]
+                for col in list(df)
+            }
+            for _, row in df.iterrows()
+        ]
+
+    def load_analysis_report_table(self, section_name: str, table_name: str) -> Union[DataFrame, None]:
+        """Load an analysis report table.
+
+        :param section_name: The name of the report section (prefix of the file).
+        :param table_name: The name of the report section (suffix of the file).
+        :return: The loaded table as a dataframe if the table exists, otherwise None.
+        """
+        file_name = f"{section_name}_{table_name}.csv"
+        logger.info(f"load_analysis_report_table {os.path.join(self.get_analysis_folder_path(), file_name)}")
+        file_path = os.path.join(self.get_analysis_folder_path(), file_name)
+        try:
+            df = pd.read_csv(file_path)
+            return df
+        except FileNotFoundError as e:
+            logger.error(f"Data table missing: {e}")
+        return None
+
+    # SAVING #
+    def save_table(
+            self, table: NamedTable, process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"
+    ) -> None:
+        """Save a given Pandas dataframe as a CSV.
+
+        :return:
+        """
+        # only output tables are saved
+        file_path = self.get_table_path(process_directory=process_directory, table_name=table.name)
+        logger.info(f"Saving table '{f'{table.name}.csv'}' with {len(table.dataframe):,d} " + f"row(s) to {file_path}.")
+        table.dataframe.to_csv(file_path, index=False)
+
+    def save_tables(self, tables: List[NamedTable], process_directory: str = None) -> None:
+        """Save a list of named tables Pandas dataframe part as CSVs.
+
+        :param tables: The tables to be saved.
+        :param process_directory: The process directory where the tables are saved to.
+        :return:
+        """
+        for table in tables:
+            if not process_directory:
+                self.save_table(table=table)
+            else:
+                self.save_table(table=table, process_directory=process_directory)
+
+    def save_domain_ontology_tables(self, tables: List[NamedTable]) -> None:
+        """Save the domain ontology files.
+
+        :param tables: The domain ontology named tables that we are saving.
+        :return:
+        """
+        self.save_tables(
+            tables=[
+                NamedTable(name=table.name.replace(DOMAIN_SUFFIX, ""), dataframe=table.dataframe) for table in tables
+            ],
+            process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}",
+        )
+
+    def save_analysis_table(self,
+                            analysis_table: DataFrame,
+                            dataset: str,
+                            analysed_table_name: str,
+                            analysis_table_suffix: str,
+                            index=False) -> None:
+        """Save an analysis table.
+
+        :param analysis_table: The analysis table we are saving.
+        :param dataset: The name of the analysed dataset (used for forming the file path).
+        :param analysed_table_name: The name of the analysis table (used for forming the file path).
+        :param analysis_table_suffix: The suffix of the file path (analysis type).
+        :param index: Save with index if True, otherwise save it without index.
+        :return:
+        """
+        analysis_table.to_csv(
+            os.path.join(
+                self.get_analysis_folder_path(),
+                f"{dataset}_{analysed_table_name}_{analysis_table_suffix}.csv"
+            ),
+            index=index
+        )
+
+    def save_analysis_named_tables(self,
+                                   dataset: str,
+                                   tables: List[NamedTable],
+                                   index=False) -> None:
+        """Save named analysis tables.
+
+        :param dataset: The name of the analysed dataset (used for forming the file path).
+        :param tables: The list of named tables we are saving.
+        :param index: Save with index if True, otherwise save it without index.
+        :return:
+        """
+        for table in tables:
+            table.dataframe.to_csv(
+                path_or_buf=os.path.join(
+                    self.get_analysis_folder_path(),
+                    f"{dataset}_{table.name}.csv"
+                ),
+                index=index
+            )
+
+    def save_dropped_mappings_table(
+            self, table: DataFrame, step_count: int, source_id: str, mapping_type: str
+    ) -> None:
+        """Save a dropped mapping dataframe as a CSV, with meta data in the file name.
+
+        :param table: The dataframe to be saved.
+        :param step_count: The alignment step number.
+        :param source_id: The aligned source name.
+        :param mapping_type: The type of mappings in the table.
+        :return:
+        """
+        if len(table) > 0:
+            table.to_csv(
+                path_or_buf=os.path.join(
+                    self.get_dropped_mappings_path(),
+                    f"{mapping_type}_{str(step_count)}_{source_id}.csv",
+                ),
+                index=False,
+            )
+
+    def save_merged_ontology_report(self, content: str, template_search_path: str) -> str:
+        """Save the analysis report HTML content.
+
+        :param content: The report content as a string.
+        :param template_search_path: The template path used to specify the report file path.
+        :return: The saved report file path.
+        """
+        file_path = self.produce_analysis_report_path()
+        with open(file_path, "w") as f:
+            f.write(content)
+        self._copy_analysis_images_and_report_assets(template_search_path=template_search_path)
+        return file_path
+
+    # COPY & MOVE #
+    def _copy_analysis_images_and_report_assets(self, template_search_path: str) -> None:
+        """Copy the images and analysis figures that are displayed in the HTML report.
+
+        :param template_search_path: The template path used to specify the report file path.
+        :return:
+        """
+        # images  from assets
+        images_folder_to_path = os.path.join(self._produce_analysis_report_folder_path(), "images")
+
+        if Path(images_folder_to_path).exists() is False:
+            shutil.copytree(
+                os.path.abspath(os.path.join(f"{template_search_path}/templates/images")),
+                images_folder_to_path
+            )
+        # plots from analysis output folder
+        [
+            shutil.move(
+                os.path.join(self.get_analysis_folder_path(), figure_file),
+                os.path.join(images_folder_to_path, figure_file)
+            )
+            for figure_file in os.listdir(self.get_analysis_folder_path())
+            if figure_file.endswith(f".{self.config.image_format}")
+        ]
+
+    def move_data_docs_to_reports(self) -> None:
+        """Move the data doc files to the report folder."""
+        from_path = os.path.join(self.get_data_tests_path(), "uncommitted/data_docs")
+        to_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "data_docs")
+        shutil.copytree(from_path, to_path)
+
+    # PATHS #
+    def get_project_folder_path(self) -> str:
+        """Produce the project folder absolute path.
+
+        :return: The path as a string.
+        """
+        return str(self._project_folder_path)
+
+    def get_input_folder_path(self) -> str:
+        """Produce the input data folder absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self._project_folder_path, DIRECTORY_INPUT)
+
+    def get_domain_ontology_folder_path(self) -> str:
+        """Produce the output data (i.e. domain ontology) folder absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
+
+    def get_intermediate_folder_path(self) -> str:
+        """Produce the intermediate data folder absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE)
+
+    def get_ge_data_docs_folder_path(self):
+        """Produce the data docs folder (post copy to reports) absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "data_docs")
+
+    def get_ge_data_docs_validations_folder_path(self):
+        """Produce the data validation configuration JSON folder absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self.get_ge_data_docs_folder_path(), "local_site/validations")
+
+    def get_ge_data_docs_index_path_for_input(self):
+        """Produce the data docs HTML report main page absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self.get_data_tests_path(), "uncommitted/data_docs/local_site/index.html")
+
+    def get_ge_json_validations_folder_path(self):
+        """Produce the data validation result JSONs folder absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self.get_data_tests_path(), "uncommitted/validations")
+
+    def get_output_report_folder_path(self):
+        """Produce the HTML report folder absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
+
+    def get_analysis_folder_path(self):
+        """Produce the analysis data folder absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_ANALYSIS)
+
+    def get_hierarchy_edges_paths_debug_file_path(self):
+        """Produce the hierarchy edge debug file absolute path.
+
+        :return: The path as a string.
+        """
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_ANALYSIS,
+                            "connectivity_hierarchy_edges_paths.csv")
+
     @staticmethod
     def get_absolute_path(path: str) -> str:
-        """Return the absolute path for a path."""
+        """Return the absolute path for a path.
+
+        :param path: The input path as a string.
+        :return: The absolute pathas a string.
+        """
         return os.path.abspath(path)
 
     def get_table_path(self, process_directory: str, table_name: str) -> str:
@@ -159,6 +497,10 @@ class DataManager:
         """Produce the path for data test directory."""
         return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_INTERMEDIATE, DIRECTORY_DATA_TESTS)
 
+    def get_domain_ontology_path(self) -> str:
+        """Produce the path for the domain ontology folder."""
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY)
+
     def get_dropped_mappings_path(self) -> str:
         """Produce the path for a dropped mapping."""
         return os.path.join(
@@ -178,51 +520,81 @@ class DataManager:
             self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS, FILE_NAME_LOG
         )
 
-    def _create_output_directory_structure(self):
-        """Produce the empty directory structure for the output files.."""
-        directory_paths = [
-            self._get_profiled_report_directory_path(),
-            self.get_data_tests_path(),
-            self.get_dropped_mappings_path(),
-            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, DIRECTORY_LOGS),
-            os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_DOMAIN_ONTOLOGY),
-        ]
-        for directory_path in directory_paths:
-            Path(directory_path).mkdir(parents=True, exist_ok=True)
+    @staticmethod
+    def _get_analysis_figure_file_name(dataset: str,
+                                       analysed_table_name: str,
+                                       analysis_table_suffix: str) -> str:
+        return f"{dataset}_{analysed_table_name}_{analysis_table_suffix}"
 
-    def _clear_output_directory(self):
-        """Delete the output folder and its contents."""
-        output_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT)
-        if os.path.exists(output_path):
-            shutil.rmtree(output_path)
+    def get_analysis_figure_path(self,
+                                 dataset: str,
+                                 analysed_table_name: str,
+                                 analysis_table_suffix: str) -> str:
+        """Produce the path for an analysis figure.
 
-    def save_table(
-        self, table: NamedTable, process_directory: str = f"{DIRECTORY_OUTPUT}/{DIRECTORY_INTERMEDIATE}"
-    ) -> None:
-        """Save a given Pandas dataframe as a CSV."""
-        # only output tables are saved
-        file_path = self.get_table_path(process_directory=process_directory, table_name=table.name)
-        logger.info(f"Saving table '{f'{table.name}.csv'}' with {len(table.dataframe):,d} " + f"row(s) to {file_path}.")
-        table.dataframe.to_csv(file_path, index=False)
-
-    def save_tables(self, tables: List[NamedTable], process_directory: str = None) -> None:
-        """Save a list of named tables Pandas dataframe part as CSVs."""
-        for table in tables:
-            if not process_directory:
-                self.save_table(table=table)
-            else:
-                self.save_table(table=table, process_directory=process_directory)
-
-    def save_domain_ontology_tables(self, tables: List[NamedTable]) -> None:
-        """Save the domain ontology files.
-
+        :param dataset:
+        :param analysed_table_name:
+        :param analysis_table_suffix:
         :return:
         """
-        self.save_tables(
-            tables=[
-                NamedTable(name=table.name.replace(DOMAIN_SUFFIX, ""), dataframe=table.dataframe) for table in tables
-            ],
-            process_directory=f"{DIRECTORY_OUTPUT}/{DIRECTORY_DOMAIN_ONTOLOGY}",
+        file_name = self._get_analysis_figure_file_name(
+            dataset=dataset,
+            analysed_table_name=analysed_table_name,
+            analysis_table_suffix=analysis_table_suffix
+        )
+        file_name_with_type = f"{file_name}.{self.config.image_format}"
+        return os.path.join(
+            self.get_analysis_folder_path(),
+            file_name_with_type,
+        )
+
+    def _produce_analysis_report_folder_path(self) -> str:
+        """Produce the analysis report folder path.
+
+        :return: The analysis report folder path.
+        """
+        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT)
+
+    def produce_analysis_report_path(self) -> str:
+        """Produce the analysis report HTML path.
+
+        :return: The report HTML path.
+        """
+        return os.path.join(self._produce_analysis_report_folder_path(), "index.html")
+
+    # TABLES #
+    @staticmethod
+    def merge_tables_of_same_type(tables: List[NamedTable]) -> NamedTable:
+        """Merge a list of named tables (that must be the same type) into a single named table.
+
+        :param tables: The list of named tables.
+        :return: The merged named table.
+        """
+        return NamedTable(
+            tables[0].name,
+            pd.concat([table.dataframe for table in tables]).drop_duplicates(keep="first"),
+        )
+
+    @staticmethod
+    def produce_empty_merge_table() -> NamedTable:
+        """Produce an empty named merge table.
+
+        :return: The merged named table.
+        """
+        return NamedTable(
+            name=TABLE_MERGES_WITH_META_DATA,
+            dataframe=pd.DataFrame([], columns=list(SCHEMA_MERGE_TABLE_WITH_META_DATA)),
+        )
+
+    @staticmethod
+    def produce_empty_hierarchy_table() -> NamedTable:
+        """Produce an empty hierarchy edge table.
+
+        :return: The empty hierarchy named table.
+        """
+        return NamedTable(
+            name=TABLE_EDGES_HIERARCHY,
+            dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
         )
 
     @staticmethod
@@ -235,96 +607,38 @@ class DataManager:
         :param data_repo: The data repository containing the files.
         :return: The finalised (i.e. domain ontology) tables.
         """
-        # finalise table
-        table_merges = data_repo.get(TABLE_MERGES_AGGREGATED).dataframe.copy()
-        table_merges[COLUMN_RELATION] = RELATION_MERGE
-        table_merges[COLUMN_PROVENANCE] = ONTO_MERGER
-        table_merges = table_merges[TABLE_NAME_TO_TABLE_SCHEMA_MAP[TABLE_MERGES_DOMAIN]]
-
         return [
-            NamedTable(
-                name=TABLE_NODES_DOMAIN,
-                dataframe=data_repo.get(TABLE_NODES)
-                .dataframe[SCHEMA_NODE_ID_LIST_TABLE]
-                .sort_values(by=SCHEMA_NODE_ID_LIST_TABLE, ascending=True, inplace=False),
+            merge_utils.produce_named_table_domain_nodes(
+                nodes=data_repo.get(TABLE_NODES).dataframe,
+                merged_nodes=data_repo.get(TABLE_NODES_MERGED).dataframe,
+            ),
+            merge_utils.produce_named_table_domain_merges(
+                merges_aggregated=data_repo.get(TABLE_MERGES_AGGREGATED).dataframe
             ),
             NamedTable(
                 name=TABLE_MAPPINGS_DOMAIN,
-                dataframe=data_repo.get(TABLE_MAPPINGS_UPDATED)
-                .dataframe[SCHEMA_MAPPING_TABLE]
-                .sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
-            ),
-            NamedTable(
-                name=TABLE_MERGES_DOMAIN,
-                dataframe=table_merges.sort_values(by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False),
+                dataframe=(
+                    data_repo.get(TABLE_MAPPINGS_UPDATED).dataframe[SCHEMA_MAPPING_TABLE].sort_values(
+                        by=SCHEMA_EDGE_SOURCE_TO_TARGET_IDS, ascending=True, inplace=False
+                    )
+                ),
             ),
             NamedTable(
                 name=TABLE_EDGES_HIERARCHY_DOMAIN,
-                dataframe=data_repo.get(TABLE_EDGES_HIERARCHY_POST)
-                .dataframe[SCHEMA_HIERARCHY_EDGE_TABLE]
-                .sort_values(by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False),
+                dataframe=(
+                    data_repo.get(TABLE_EDGES_HIERARCHY_POST).dataframe[SCHEMA_HIERARCHY_EDGE_TABLE].sort_values(
+                        by=SCHEMA_HIERARCHY_EDGE_TABLE, ascending=True, inplace=False
+                    )
+                ),
             ),
         ]
 
-    def save_merged_ontology_report(self, content) -> str:
-        """Save the analysis report HTML content."""
-        file_path = self.produce_merged_ontology_report_path()
-        with open(file_path, "w") as f:
-            f.write(content)
-        return file_path
+    @staticmethod
+    def get_file_system_loader_path() -> str:
+        """Return the file system loader path according to the run environment (testing or live).
 
-    def produce_merged_ontology_report_path(self):
-        """Produce the analysis report HTML path."""
-        return os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "index.html")
-
-    def save_dropped_mappings_table(self, table: DataFrame, step_count: int, source_id: str, mapping_type: str) -> None:
-        """Save a dropped mapping dataframe as a CSV, with meta data in the file name.
-
-        :param table: The dataframe to be saved.
-        :param step_count: The alignment step number.
-        :param source_id: The aligned source name.
-        :param mapping_type: The type of mappings in the table.
-        :return:
+        :return: The file system loader path
         """
-        if len(table) > 0:
-            table.to_csv(
-                path_or_buf=os.path.join(
-                    self.get_dropped_mappings_path(),
-                    f"{mapping_type}_{str(step_count)}_{source_id}.csv",
-                ),
-                index=False,
-            )
-
-    def move_data_docs_to_reports(self) -> None:
-        """Move the data doc files to the report folder."""
-        from_path = os.path.join(self.get_data_tests_path(), "uncommitted/data_docs")
-        to_path = os.path.join(self._project_folder_path, DIRECTORY_OUTPUT, DIRECTORY_REPORT, "data_docs")
-        shutil.copytree(from_path, to_path)
-
-    @staticmethod
-    def merge_tables_of_same_type(tables: List[NamedTable]) -> NamedTable:
-        """Merge a list of named tables (that must be the same type) into a single named table.
-
-        :param tables: The list of named tables.
-        :return:
-        """
-        return NamedTable(
-            tables[0].name,
-            pd.concat([table.dataframe for table in tables]).drop_duplicates(keep="first"),
-        )
-
-    @staticmethod
-    def produce_empty_merge_table() -> NamedTable:
-        """Produce an empty named merge table."""
-        return NamedTable(
-            name=TABLE_MERGES_WITH_META_DATA,
-            dataframe=pd.DataFrame([], columns=list(SCHEMA_MERGE_TABLE_WITH_META_DATA)),
-        )
-
-    @staticmethod
-    def produce_empty_hierarchy_table() -> NamedTable:
-        """Produce an empty hierarchy edge table."""
-        return NamedTable(
-            name=TABLE_EDGES_HIERARCHY,
-            dataframe=pd.DataFrame([], columns=SCHEMA_HIERARCHY_EDGE_TABLE),
-        )
+        if "tox.ini" in os.listdir("."):
+            return "onto_merger/report"
+        return "../../onto_merger/onto_merger/report"

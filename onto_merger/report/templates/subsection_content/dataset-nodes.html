@@ -1,0 +1,18 @@
+<div class="overview summary">
+    {% if subsection_data['is_obsolete'] == false %}
+        {% include 'templates/subsection_content/node-status.html' %}
+
+        <hr class="panel-separator">
+
+        <h4>Node analysis</h4>
+    {% else %}
+        <h4>Obsolete node analysis</h4>
+    {% endif %}
+    {% with rows=subsection_data['table_analysis'] %}
+        {% include 'templates/data_content/table_node_analysis.html' %}
+    {% endwith %}
+
+    {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
+        {% include 'templates/subsection_content/table-description-accordion.html' %}
+    {% endwith %}
+</div>

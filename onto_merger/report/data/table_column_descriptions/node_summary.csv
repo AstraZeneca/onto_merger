@@ -1,0 +1,6 @@
+column,description
+Node Origin,The ontology (or namespace) the node originates from.
+Input,"Nodes that assume to belong to the same domain that most likely contain duplicated, connected and overlapping nodes."
+Merged,Nodes that are mapped and merged onto other nodes.
+Only connected,"Nodes that are not merged onto other nodes, but are connected to the hierarchy."
+Dangling,Nodes that are not neither merged nor connected.

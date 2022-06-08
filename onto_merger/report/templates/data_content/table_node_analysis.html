@@ -1,0 +1,28 @@
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Origin</b></td>
+            <td style="width:20%"><b>Count</b></td>
+            <td style="width:20%"><b>Frequency</b></td>
+            <td style="width:20%"><b>Mapping coverage</b></td>
+            <td style="width:20%"><b>Hierarchy coverage</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if rows | length > 0 %}
+      {% for row in rows %}
+        <tr>
+          <td>{{ row['namespace'] }}</td>
+          <td>{{ row['namespace_count'] }}</td>
+          <td>{{ row['namespace_freq'] }}%</td>
+          <td>{{ row['mapping_coverage_freq'] }}%</td>
+          <td>{{ row['edge_coverage_freq'] }}%</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="5">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

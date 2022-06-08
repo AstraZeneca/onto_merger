@@ -8,7 +8,7 @@ from typing import List
 import pytest
 
 from onto_merger.alignment import AlignmentManager
-from onto_merger.analyser.analysis_util import (
+from onto_merger.analyser.analysis_utils import (
     produce_table_with_namespace_column_for_node_ids,
 )
 from onto_merger.data.constants import (
@@ -42,6 +42,8 @@ def data_repo() -> DataRepository:
 @typing.no_type_check
 @pytest.fixture()
 def data_manager() -> DataManager:
+    if os.path.exists(TEST_FOLDER_OUTPUT_PATH) & os.path.isdir(TEST_FOLDER_OUTPUT_PATH):
+        shutil.rmtree(TEST_FOLDER_OUTPUT_PATH)
     yield DataManager(project_folder_path=TEST_FOLDER_PATH)
     if os.path.exists(TEST_FOLDER_OUTPUT_PATH) & os.path.isdir(TEST_FOLDER_OUTPUT_PATH):
         shutil.rmtree(TEST_FOLDER_OUTPUT_PATH)

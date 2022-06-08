@@ -1,0 +1,30 @@
+<div class="three-parts">
+        <div class="row-cols-sm-auto">
+            <div class="col-sm-12">
+                <div class="col-sm-6">
+                    <h4>Types</h4>
+                    <img class="img-responsive center-img"
+                         src="{{ subsection_data['types_fig_path'] }}"
+                         alt="{{ subsection_data['types_fig_alt_text'] }}">
+                </div>
+                <div class="col-sm-6">
+                    <h4>Mapped Namespaces</h4>
+                    <img class="img-responsive center-img"
+                         src="{{ subsection_data['heatmap_fig_path'] }}"
+                         alt="{{ subsection_data['heatmap_fig_alt_text'] }}">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <hr class="panel-separator">
+            <h4 class="h4 table-title-2">{{ subsection_data['analysed_entity'] }} analysis</h4>
+            {% with rows=subsection_data['table_analysis'], template=subsection_data['analysis_table_template'] %}
+                {% set path = 'templates/' + template %}{% include path %}
+            {% endwith %}
+        </div>
+        <div class="col-sm-12">
+            {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
+                {% include 'templates/subsection_content/table-description-accordion.html' %}
+            {% endwith %}
+        </div>
+</div>

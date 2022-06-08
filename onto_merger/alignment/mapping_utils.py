@@ -5,8 +5,9 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
-from onto_merger.analyser.analysis_util import (
+from onto_merger.analyser.analysis_utils import (
     get_namespace_column_name_for_column,
+    produce_table_node_ids_from_edge_table,
     produce_table_with_namespace_column_for_node_ids,
 )
 from onto_merger.data.constants import (
@@ -18,7 +19,6 @@ from onto_merger.data.constants import (
     COLUMN_TARGET_ID,
     SCHEMA_MAPPING_TABLE,
     TABLE_MERGES_WITH_META_DATA,
-    TABLE_NODES_UNMAPPED,
 )
 from onto_merger.data.dataclasses import NamedTable
 from onto_merger.logger.log import get_logger
@@ -41,6 +41,25 @@ def get_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
     ]
     logger.info(
         f"Found {len(mapping_subset)} 'internal_node_reassignment' mappings from total " + f"{len(mappings)} mappings."
+    )
+    return mapping_subset
+
+
+def filter_out_mappings_internal_node_reassignment(mappings: DataFrame) -> DataFrame:
+    """Filter a mapping set so each remaining mapping is between nodes of the same ontology.
+
+    :param mappings: The input mapping set ot be filtered.
+    :return: The internal code re-assigment mappings table.
+    """
+    query = (
+        f"{get_namespace_column_name_for_column(COLUMN_SOURCE_ID)} != "
+        + f"{get_namespace_column_name_for_column(COLUMN_TARGET_ID)}"
+    )
+    mapping_subset = produce_table_with_namespace_column_for_node_ids(table=mappings).query(expr=query, inplace=False)[
+        SCHEMA_MAPPING_TABLE
+    ]
+    logger.info(
+        f"Filtered out {len(mappings) - len(mapping_subset)} mappings from total " + f"{len(mappings)} mappings."
     )
     return mapping_subset
 
@@ -100,16 +119,44 @@ def get_mappings_with_updated_node_ids(
     mappings.
     :return: The updated mapping set.
     """
-    # todo implement
-    # remove internal from mapping set >> these are oriented so need to check
-    # the list of IDs
-    # df = get_mappings_internal_node_reassignment(mappings=mappings)
-    #
-    # # remap mapping set >> update_mappings_with_current_node_ids
+    # internal mappings that would apply
+    node_ids_in_mappings = produce_table_node_ids_from_edge_table(edges=mappings)[COLUMN_DEFAULT_ID].tolist()
+    mappings_obsolete_to_current_node_id_applicable = mappings_obsolete_to_current_node_id.query(
+        expr=(f"{COLUMN_SOURCE_ID} == @node_ids_in_mappings"),
+        local_dict={"node_ids_in_mappings": node_ids_in_mappings},
+        inplace=False,
+    )
+    logger.info(f"Out of {len(mappings_obsolete_to_current_node_id)} obsolete_to_current_node_id mappings, "
+                + f"{len(mappings_obsolete_to_current_node_id_applicable)} can be applied to mappings.")
 
-    mappings_update = mappings.copy()
+    mappings_updated = filter_out_mappings_internal_node_reassignment(mappings=mappings)
+    mappings_updated = update_mappings_with_current_node_ids(
+        mappings_internal_obsolete_to_current_node_id=mappings_obsolete_to_current_node_id_applicable,
+        mappings=mappings_updated,
+    )
 
-    return mappings_update
+    return mappings_updated
+
+
+def get_nodes_with_updated_node_ids(
+    nodes: DataFrame, mappings_obsolete_to_current_node_id: DataFrame
+) -> DataFrame:
+    """Produce the node table with only current node IDs.
+
+    :param nodes: The original (input) node table
+    :param mappings_obsolete_to_current_node_id: The node ID update mappings.
+    :return: The updated node table.
+    """
+    # internal mappings that would apply
+    mappings_obsolete_to_current_node_id_applicable = mappings_obsolete_to_current_node_id.copy().query(
+        expr=(f"{COLUMN_SOURCE_ID} == @node_ids_in_mappings"),
+        local_dict={"node_ids_in_mappings": nodes[COLUMN_DEFAULT_ID].tolist()},
+        inplace=False,
+    )
+    logger.info(f"Out of {len(mappings_obsolete_to_current_node_id)} obsolete_to_current_node_id mappings, "
+                + f"{len(mappings_obsolete_to_current_node_id_applicable)} can be applied to nodes.")
+
+    return mappings_obsolete_to_current_node_id_applicable
 
 
 def add_comparison_column_for_reoriented_mappings(mappings: DataFrame):
@@ -299,38 +346,6 @@ def orient_mappings_to_namespace(required_target_id_namespace: str, mappings: Da
     return df[SCHEMA_MAPPING_TABLE]
 
 
-def produce_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> DataFrame:
-    """Produce the dataframe of unmapped node IDs.
-
-    :param nodes: The set of input nodes to be filtered.
-    :param merges: The set of merges used to determine node mapped status.
-    :return: The set of unmapped nodes.
-    """
-    merges_updated = merges[[COLUMN_SOURCE_ID]].rename(
-        columns={COLUMN_SOURCE_ID: COLUMN_DEFAULT_ID},
-        inplace=False,
-    )[[COLUMN_DEFAULT_ID]]
-
-    df = pd.concat([nodes[[COLUMN_DEFAULT_ID]], merges_updated, merges_updated]).drop_duplicates(keep=False)
-
-    logger.info(
-        f"Out of {len(nodes):,d} nodes, {len(df):,d} "
-        + f"({((len(df) / len(nodes)) * 100):.2f}%) "
-        + f"are unmapped (merges {len(merges):,d})."
-    )
-    return df
-
-
-def produce_named_table_unmapped_nodes(nodes: DataFrame, merges: DataFrame) -> NamedTable:
-    """Produce the named table of unmapped node IDs.
-
-    :param nodes: The set of input nodes to be filtered.
-    :param merges: The set of merges used to determine node mapped status.
-    :return: The set of unmapped nodes.
-    """
-    return NamedTable(TABLE_NODES_UNMAPPED, produce_table_unmapped_nodes(nodes=nodes, merges=merges))
-
-
 def get_mappings_with_mapping_relations(permitted_mapping_relations: List[str], mappings: DataFrame) -> DataFrame:
     """Filter a mapping set for permitted mapping relations.
 
@@ -370,6 +385,26 @@ def deduplicate_mappings_for_type_group(mapping_type_group_name: str, mappings: 
     return mappings_deduplicated
 
 
+def filter_mappings_for_input_node_set(input_nodes: DataFrame, mappings: DataFrame) -> DataFrame:
+    """Filter a mapping set so it only contains mappings referencing nodes from the input set.
+
+    :param input_nodes: The set of input nodes.
+    :param mappings: The mapping set to be filtered.
+    :return: The filtered mapping set.
+    """
+    node_ids_to_keep = list(input_nodes[COLUMN_DEFAULT_ID])
+    mapping_subset = mappings.query(
+        f"({COLUMN_SOURCE_ID} == @node_ids) and ({COLUMN_TARGET_ID} == @node_ids)",
+        local_dict={"node_ids": node_ids_to_keep},
+        inplace=False,
+    )
+    logger.info(
+        f"Found {len(mapping_subset):,d} mappings (from total {len(mappings):,d}) "
+        + f"for {len(input_nodes):,d} input_nodes."
+    )
+    return mapping_subset
+
+
 def filter_mappings_for_node_set(nodes: DataFrame, mappings: DataFrame) -> DataFrame:
     """Filter a mapping set such that the source node IDs must belong to the specified node ID list.
 
@@ -398,7 +433,7 @@ def produce_self_merges_for_seed_nodes(seed_id: str, nodes: DataFrame, nodes_obs
     :param seed_id: The seed ontology name.
     :param nodes: The set of all nodes.
     :param nodes_obsolete: The set of obsolete nodes.
-    :return:
+    :return: The merged table.
     """
     # get only seed nodes
     df = produce_table_with_namespace_column_for_node_ids(table=nodes)

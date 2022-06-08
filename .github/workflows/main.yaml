@@ -11,7 +11,7 @@ on:
 
 jobs:
     build:
-      runs-on: ubuntu-latest
+      runs-on: macos-latest
       steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
@@ -31,8 +31,8 @@ jobs:
          pip install pytest
          pip install tox
          pip install nbconvert
-         pip install markupsafe==2.0.1 
-         python setup.py install
+         pip install markupsafe==2.0.1
+         pip install -r requirements.txt
       - name: Run code quality tests
         run: |
           tox -e flake8

@@ -1,0 +1,38 @@
+<table class="freq table table-hover summary">
+    <thead>
+        <tr>
+            <td style="width:20%"><b>Node Origin</b></td>
+            <td style="width:20%"><b>Input</b></td>
+            <td style="width:20%"><b>Merged</b></td>
+            <td style="width:20%"><b>Only connected</b></td>
+            <td style="width:20%"><b>Dangling</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if rows | length > 0 %}
+      {% for row in rows %}
+        {% if rows.index(row) == 0 %}
+            <tr class="first-row">
+              <td style="color: #23527c; font-weight: normal">{{ row['ns'] }}</td>
+              <td style="color: #23527c; font-weight: normal">{{ row['input'] }}</td>
+              <td>{{ row['merged'] }}</td>
+              <td>{{ row['only_connected'] }}</td>
+              <td>{{ row['dangling'] }}</td>
+            </tr>
+        {% else %}
+            <tr>
+              <td>{{ row['ns'] }}</td>
+              <td>{{ row['input'] }}</td>
+              <td>{{ row['merged'] }}</td>
+              <td>{{ row['only_connected'] }}</td>
+              <td>{{ row['dangling'] }}</td>
+            </tr>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="5">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

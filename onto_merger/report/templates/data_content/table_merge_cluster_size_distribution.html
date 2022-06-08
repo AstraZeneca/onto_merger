@@ -1,0 +1,22 @@
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td style="width:30%"><b>Metric</b></td>
+            <td style="width:70%"><b>Cluster Size </b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {% if rows | length > 0 %}
+      {% for row in rows %}
+        <tr>
+          <td>{{ row['index'] }}</td>
+          <td>{{ row['cluster_size'] }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="2">No values found.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

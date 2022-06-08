@@ -1,0 +1,24 @@
+<div class="overview summary">
+    <div class="col-sm-12">
+        <img class="img-responsive center-img one-row"
+             src="{{ subsection_data['analysis_fig_path'] }}"
+             alt="{{ subsection_data['analysis_fig_alt_text'] }}">
+
+        <hr class="panel-separator">
+        <p class="h4 table-title-2">Merges aggregated</p>
+        {% with rows=subsection_data['table_analysis_2'] %}
+            {% include 'templates/data_content/table_merge_analysis_aggregated_for_canonical.html' %}
+        {% endwith %}
+
+        <hr class="panel-separator">
+        <p class="h4 table-title-2">Merges detailed</p>
+        {% with rows=subsection_data['table_analysis'] %}
+            {% include 'templates/data_content/table_merge_analysis.html' %}
+        {% endwith %}
+
+        <hr class="panel-separator">
+        {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
+            {% include 'templates/subsection_content/table-description-accordion.html' %}
+        {% endwith %}
+    </div>
+</div>

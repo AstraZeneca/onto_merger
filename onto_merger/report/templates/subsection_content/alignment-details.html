@@ -1,0 +1,18 @@
+<div class="overview summary">
+    <h4>Mapped vs Unmapped</h4>
+    <div style="align-content: center">
+        <img class="img-responsive center-img"
+             style="align-content: center"
+             src="{{ subsection_data['fig_path'] }}" alt="foo">
+    </div>
+
+    <hr class="panel-separator">
+
+    <h4>Alignment step details</h4>
+    {% with table_data=subsection_data['steps_table'] %}
+        {% include 'templates/data_content/table_steps_alignment.html' %}
+    {% endwith %}
+    {% with rows=subsection_data['table_description'], unique_id=subsection_data['unique_id'] %}
+        {% include 'templates/subsection_content/table-description-accordion.html' %}
+    {% endwith %}
+</div>

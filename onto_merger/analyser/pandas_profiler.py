@@ -34,8 +34,9 @@ def produce_table_report(table: NamedTable) -> ProfileReport:
     :return:
     """
     return ProfileReport(
-        df=table.dataframe,
+        df=table.dataframe.reset_index(drop=True, inplace=False),
         title=f"{table.name} Profiling Report",
+        html={"style": {"logo": "../images/onto_merger_logo.jpg"}},
         minimal=True,
         n_freq_table_max=250,
     )

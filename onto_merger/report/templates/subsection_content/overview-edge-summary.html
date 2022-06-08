@@ -1,0 +1,19 @@
+<div class="overview summary">
+
+    <h4 class="h4 table-title-2">General comparison</h4>
+    {% if subsection_data['table_general_comparison'] %}
+        {% with rows=subsection_data['table_general_comparison'] %}
+            {% include 'templates/data_content/table_overview_hierarchy_edge_general_comparison.html' %}
+        {% endwith %}
+    {% endif %}
+
+    <hr class="panel-separator">
+
+    <h4 class="h4 table-title-2">Children count comparison</h4>
+    {% if subsection_data['table_children_count_comparison'] %}
+        {% with rows=subsection_data['table_children_count_comparison'] %}
+            {% include 'templates/data_content/table_overview_hierarchy_edge_children_count_comparison.html' %}
+        {% endwith %}
+    {% endif %}
+
+</div>
