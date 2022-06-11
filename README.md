@@ -19,9 +19,9 @@
 [![Docs Status][docs-image]][docs-url]
 [![Code Coverage][coverage-image]][coverage-url]
 [![Build Status][build-image]][build-url]
-[![Arxiv](https://img.shields.io/badge/ArXiv-2202.05240-orange.svg)]()
+[![Arxiv](https://img.shields.io/badge/ArXiv-2206.02238-orange.svg)]()
 
-**[Documentation](https://ontomerger.readthedocs.io)** | **[External Resources](https://ontomerger.readthedocs.io/en/latest/notes/resources.html)**
+**[Paper](https://arxiv.org/abs/2206.02238)** | **[Documentation](https://ontomerger.readthedocs.io)** | **[External Resources](https://ontomerger.readthedocs.io/en/latest/notes/resources.html)**
 
 --------------------------------------------------------------------------------
 
@@ -41,14 +41,12 @@ to further reduce duplication, as well as to increase connectivity.
 If you find *OntoMerger* useful in your work or research, please consider adding the following citation:
 
 ```bibtex
-@article{ontomerger,
-   arxivId = {???},
-   author = {Geleta, David and Nikolov, Andriy and O'Donoghue, Mark and Rozemberczki, Benedek 
-             and Gogleva, Anna and Tamma, Valentina and Payne, Terry R.},
-   month = {june},
-   title = {{OntoMerger: An Ontology Integration Library for Deduplicating and Connecting Knowledge Graph Nodes.}},
-   url = {https://arxiv.org/abs/2206.02238},
-   year = {2022}
+@misc{ontomerger,
+  doi = {10.48550/ARXIV.2206.02238},
+  author = {Geleta, David and Nikolov, Andriy and ODonoghue, Mark and Rozemberczki, Benedek and Gogleva, Anna and Tamma, Valentina and Payne, Terry R.},
+  title = {OntoMerger: An Ontology Integration Library for Deduplicating and Connecting Knowledge Graph Nodes},
+  publisher = {arXiv},
+  year = {2022},
 }
 ```
 --------------------------------------------------------------------------------
