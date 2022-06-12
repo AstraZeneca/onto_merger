@@ -53,8 +53,6 @@ If you find *OntoMerger* useful in your work or research, please consider adding
 
 **Getting Started**
 
-The API of `onto_merger` ...
-
 ```python
 
 from onto_merger.pipeline import Pipeline
