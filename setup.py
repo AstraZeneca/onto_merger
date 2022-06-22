@@ -15,7 +15,7 @@ install_requires = [
     "jsonschema==4.4.0",
     "networkx",
     "ruamel.yaml==0.17.17",
-    "numpy==1.21.5",
+    "numpy==1.22.0",
     "docopt==0.6.2",
     "plotly-express==0.4.1",
     "tqdm==4.64.0",
