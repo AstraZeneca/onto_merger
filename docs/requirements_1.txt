@@ -15,3 +15,8 @@ markupsafe==2.0.1
 nbconvert
 sphinxcontrib-pseudocode
 Jinja2==3.0.0
+dataclasses-json
+networkx
+pandas-profiling
+plotly
+great_expectations
