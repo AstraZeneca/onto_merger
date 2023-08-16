@@ -34,7 +34,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 author = "David Geleta"
-project = "onto-merger"
+project = "onto_merger"
 copyright = f"{datetime.datetime.now().year}, {author}"
 
 # version = onto_merger.__version__
