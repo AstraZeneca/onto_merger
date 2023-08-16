@@ -202,7 +202,7 @@ class DataManager:
     def load_analysis_report_table_as_dict(self,
                                            section_name: str,
                                            table_name: str,
-                                           rename_columns: dict[str, str] = None) -> List[dict]:
+                                           rename_columns: Union[None, dict[str, str]] = None) -> List[dict]:
         """Load a CSV table as a list of dictionaries.
 
         :param section_name: The name of the report section (prefix of the file).
@@ -254,7 +254,7 @@ class DataManager:
         logger.info(f"Saving table '{f'{table.name}.csv'}' with {len(table.dataframe):,d} " + f"row(s) to {file_path}.")
         table.dataframe.to_csv(file_path, index=False)
 
-    def save_tables(self, tables: List[NamedTable], process_directory: str = None) -> None:
+    def save_tables(self, tables: List[NamedTable], process_directory: Union[None, str] = None) -> None:
         """Save a list of named tables Pandas dataframe part as CSVs.
 
         :param tables: The tables to be saved.
