@@ -202,7 +202,7 @@ class DataManager:
     def load_analysis_report_table_as_dict(self,
                                            section_name: str,
                                            table_name: str,
-                                           rename_columns: dict = None) -> List[dict]:
+                                           rename_columns: dict[str, str] = None) -> List[dict]:
         """Load a CSV table as a list of dictionaries.
 
         :param section_name: The name of the report section (prefix of the file).
