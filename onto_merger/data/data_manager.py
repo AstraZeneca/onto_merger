@@ -5,7 +5,7 @@ import os
 import shutil
 import typing
 from pathlib import Path
-from typing import List, Union
+from typing import Dict, List, Union
 
 import pandas as pd
 from pandas import DataFrame
@@ -202,7 +202,7 @@ class DataManager:
     def load_analysis_report_table_as_dict(self,
                                            section_name: str,
                                            table_name: str,
-                                           rename_columns: Union[None, dict[str, str]] = None) -> List[dict]:
+                                           rename_columns: Union[None, Dict[str, str]] = None) -> List[dict]:
         """Load a CSV table as a list of dictionaries.
 
         :param section_name: The name of the report section (prefix of the file).
