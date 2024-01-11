@@ -11,7 +11,7 @@ install_requires = [
     "pandas-profiling==3.1.0",
     "dataclasses-json==0.5.7",
     "great_expectations==0.15.2",
-    "jinja2==3.0.3",
+    "jinja2==3.1.3",
     "jsonschema==4.18.0",
     "networkx",
     "ruamel.yaml==0.17.17",
